@@ -1,0 +1,27 @@
+# KIVID
+
+Application : Prescriptions d'exercices de kinésithérapie. 
+
+### Prérequi
+
+*Prérequis sur votre machine pour le bon fonctionnement de ce projet : 
+- PHP Version 7.4 [Installer PHP](https://www.php.net/manual/fr/install.php)
+- Composer [Installer Composer](https://getcomposer.org/download/) 
+- Symfony CLI (Binaire) [Installer Binaire Symfony](https://symfony.com/download) 
+- Docker & Docker-compose [Installer Docker-compose](https://docs.docker.com/compose/install/)
+
+### Installation
+
+Après avoir cloné le projet avec ``git clone https://gitlab.com/kivid/kivid.git kivid``
+
+Exécutez la commande ``cd kivid`` pour vous rendre dans le dossier depuis le terminal.
+
+Ensuite, dans l'ordre taper les commandes dans votre terminal : 
+
+- 1 ``composer install`` afin d'installer toutes les dépendances composer du projet.
+
+- 2 ``docker-compose up -d`` afin de lancer l'ensemble des conteneurs docker.
+  
+- 3 ``symfony serve -d`` afin de lancer le serveur symfony.
+
+Vous pouvez maintenant accéder à l'application : ``https://127.0.0.1:8000``
