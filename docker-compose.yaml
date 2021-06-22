@@ -1,0 +1,13 @@
+version: '3.7'
+services:
+    database:
+        image: 'postgres:alpine'
+        environment:
+            POSTGRES_PASSWORD: main
+            POSTGRES_USER: main
+            POSTGRES_DB: kivid
+        ports:
+            - '5433:5432'
+    mailer:
+        image: schickling/mailcatcher
+        ports: [1025, 1080]
