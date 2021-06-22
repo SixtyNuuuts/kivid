@@ -30,3 +30,12 @@ Ensuite, dans l'ordre taper les commandes dans votre terminal :
 - 5 ``symfony serve -d`` afin de lancer le serveur symfony.
 
 Vous pouvez maintenant accéder à l'application : ``https://127.0.0.1:8000``
+
+
+### Analyse du code
+
+- 1 ``php vendor/bin/phpstan analyse`` pour une analyse statique du code.
+
+- 2 ``php vendor/bin/phpstan analyse`` pour une analyse statique du code.
+
+- 3 ``symfony console lint:twig templates`` pour vérifier les erreurs de syntaxe dans les fichiers Twig.
