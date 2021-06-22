@@ -34,8 +34,10 @@ Vous pouvez maintenant accéder à l'application : ``https://127.0.0.1:8000``
 
 ### Analyse du code
 
-- 1 ``php vendor/bin/phpstan analyse`` pour une analyse statique du code.
+- 1 ``php vendor/bin/phpcs -p --standard=PSR2 ./src`` pour analyser les fichiers PHP, Javascript, CSS afin de détecter des violations définies par le standard PSR2.
 
-- 2 ``php vendor/bin/phpstan analyse`` pour une analyse statique du code.
+- 2 ``php vendor/bin/phpcbf -p --standard=PSR2 ./src`` pour corriger au maximum les erreurs détectées par phpcs.
 
-- 3 ``symfony console lint:twig templates`` pour vérifier les erreurs de syntaxe dans les fichiers Twig.
+- 3 ``php vendor/bin/phpstan analyse`` pour une analyse statique du code.
+
+- 4 ``symfony console lint:twig templates`` pour vérifier les erreurs de syntaxe dans les fichiers Twig.
