@@ -3,17 +3,12 @@
 {% block title %}Home Kivid{% endblock %}
 
 {% block body %}
-{% for rubrique, messages in app.flashes %}
-    {% for message in message %}
-        <div> {{ rubrique }} :  {{ message }}</div>
-    {% endfor %}
-{% endfor %}
-
 <div>
     <h1>Home Kivid</h1>
 
     Bienvenue !
     
+    <a href="{{ path('app_login') }}">Se connecter</a>
     <a href="{{ path('app_register') }}">S'inscrire</a>
 </div>
 {% endblock %}

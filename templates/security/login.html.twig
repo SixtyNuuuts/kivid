@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion Kivid{% endblock %}
+
+{% block body %}
+    <h1>Veuillez vous connecter</h1>
+
+    {{ form_start(loginForm) }}
+        {{ form_row(loginForm.email) }}
+        {{ form_row(loginForm.password) }}
+        {# {{ form_row(loginForm.rememberMe) }} #}
+        {# https://symfony.com/doc/current/security/remember_me.html #}
+
+        <button type="submit" class="btn">S'identifier</button>
+    {{ form_end(loginForm) }}
+{% endblock %}
