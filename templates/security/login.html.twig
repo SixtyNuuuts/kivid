@@ -3,18 +3,6 @@
 {% block title %}Connexion Kivid{% endblock %}
 
 {% block body %}
-    {% include 'partial/_flash.html.twig' %}
-
-    {% if error %}
-        <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-    {% endif %}
-
-    {% if app.user %}
-        <div>
-            Vous êtes connecté en tant que {{ app.user.username }}, <a href="{{ path('app_logout') }}">Se déconnecter</a>
-        </div>
-    {% endif %}
-
     <h1>Veuillez vous connecter</h1>
 
     {{ form_start(loginForm) }}
