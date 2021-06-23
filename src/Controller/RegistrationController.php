@@ -2,14 +2,12 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
 use App\Entity\Doctor;
 use App\Entity\Patient;
-use App\Form\DoctorFormType;
-use App\Form\PatientFormType;
 use App\Security\EmailVerifier;
+use App\Form\RegistrationFormType;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Mime\Address;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,9 +16,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 
-/**
- * @Route("/register")
- */
 class RegistrationController extends AbstractController
 {
     private $emailVerifier;
@@ -33,84 +28,54 @@ class RegistrationController extends AbstractController
     }
 
     /**
-     * @Route("/patient", name="app_register_patient")
+     * @Route("/register", name="app_register")
      */
-    public function registerPatient(Request $request): Response
+    public function register(Request $request, EntityManagerInterface $em): Response
     {
-        $patient = new Patient();
-        $form = $this->createForm(PatientFormType::class, $patient);
+        $form = $this->createForm(RegistrationFormType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->registerUser($form, $patient);
+            $data = $form->getData();
 
-            return $this->redirectToRoute('app_home');
-        }
+            $user = $data['identity'] === 1 ? new Patient() : new Doctor();
 
-        return $this->render('registration/register_patient.html.twig', [
-            'registrationForm' => $form->createView(),
-        ]);
-    }
+            $user->setEmail($data['email']);
+            $user->setPassword(
+                $this->passwordHasher->hashPassword(
+                    $user,
+                    $form->get('password')->getData()
+                )
+            );
 
-    /**
-     * @Route("/doctor", name="app_register_doctor")
-     */
-    public function registerDoctor(Request $request): Response
-    {
-        $doctor = new Doctor();
-        $form = $this->createForm(DoctorFormType::class, $doctor);
-        $form->handleRequest($request);
+            $em->persist($user);
+            $em->flush();
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->registerUser($form, $doctor);
-
-            return $this->redirectToRoute('app_home');
-        }
-
-        return $this->render('registration/register_doctor.html.twig', [
-            'registrationForm' => $form->createView(),
-        ]);
-    }
-
-    public function registerUser(FormInterface $form, User $user): void
-    {
-        $user->setPassword(
-            $this->passwordHasher->hashPassword(
+            // generate a signed url and email it to the user
+            $this->emailVerifier->sendEmailConfirmation(
+                'app_verify_email',
                 $user,
-                $form->get('password')->getData()
-            )
-        );
+                (new TemplatedEmail())
+                    ->from(new Address('contact@kivid.fr', '"Kivid Contact"'))
+                    ->to($user->getEmail())
+                    ->subject('Veuillez confirmer votre email')
+                    ->htmlTemplate('registration/confirmation_email.html.twig')
+            );
 
-        if ($user instanceof Patient) {
-            $user->setRoles(['ROLE_USER', 'ROLE_PATIENT']);
+            return $this->redirectToRoute('app_home');
         }
 
-        if ($user instanceof Doctor) {
-            $user->setRoles(['ROLE_USER', 'ROLE_DOCTOR']);
-        }
-
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->persist($user);
-        $entityManager->flush();
-
-        // generate a signed url and email it to the user
-        $this->emailVerifier->sendEmailConfirmation(
-            'app_register_verify_email',
-            $user,
-            (new TemplatedEmail())
-                ->from(new Address('contact@kivid.fr', '"Kivid Contact"'))
-                ->to($user->getEmail())
-                ->subject('Veuillez confirmer votre email')
-                ->htmlTemplate('registration/confirmation_email.html.twig')
-        );
+        return $this->render('registration/register.html.twig', [
+            'registrationForm' => $form->createView(),
+        ]);
     }
 
     /**
-     * @Route("/verify/email", name="app_register_verify_email")
+     * @Route("/verify/email", name="app_verify_email")
      */
     public function verifyUserEmail(Request $request): Response
     {
-        // $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
         // validate email confirmation link, sets User::isVerified=true and persists
         try {

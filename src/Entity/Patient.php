@@ -14,7 +14,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 class Patient extends User
 {
     /**
-     * @ORM\Column(type="datetime_immutable")
+     * @ORM\Column(type="datetime_immutable", nullable=true)
      */
     private $birthdate;
 
@@ -25,7 +25,7 @@ class Patient extends User
 
     public function __construct()
     {
-        parent::__construct();
+        parent::__construct(['ROLE_PATIENT']);
         $this->doctors = new ArrayCollection();
     }
 

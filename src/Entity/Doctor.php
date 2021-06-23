@@ -19,7 +19,7 @@ class Doctor extends User
     private $description;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $city;
 
@@ -40,7 +40,7 @@ class Doctor extends User
 
     public function __construct()
     {
-        parent::__construct();
+        parent::__construct(['ROLE_DOCTOR']);
         $this->patients = new ArrayCollection();
     }
 
