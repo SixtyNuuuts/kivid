@@ -6,13 +6,16 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class HomeController extends AbstractController
+/**
+ * @Route("/kine")
+ */
+class DoctorController extends AbstractController
 {
     /**
-     * @Route("/", name="app_home")
+     * @Route("/", name="app_doctor_dashboard")
      */
-    public function index(): Response
+    public function dashboard(): Response
     {
-        return $this->render('home/index.html.twig');
+        return $this->render('doctor/dashboard.html.twig');
     }
 }

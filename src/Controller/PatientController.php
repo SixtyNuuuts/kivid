@@ -16,8 +16,6 @@ class PatientController extends AbstractController
      */
     public function dashboard(): Response
     {
-        return $this->render('patient/dashboard.html.twig', [
-            'controller_name' => 'PatientController',
-        ]);
+        return $this->render('patient/dashboard.html.twig');
     }
 }
