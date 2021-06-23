@@ -27,16 +27,18 @@ Ensuite, dans l'ordre taper les commandes dans votre terminal :
 
 - 4 ``docker-compose up -d`` afin de lancer l'ensemble des conteneurs docker (BDD + Mailer).
 
-- 5 ``symfony serve -d`` afin de lancer le serveur symfony.
+- 5 ``symfony console doctrine:migrations:migrate`` afin d'exécuter l'ensemble des migrations en base de donnée.
+
+- 6 ``symfony serve -d`` afin de lancer le serveur symfony.
 
 Vous pouvez maintenant accéder à l'application : ``https://127.0.0.1:8000``
 
 
 ### Analyse du code
 
-- 1 ``php vendor/bin/phpcs -p --standard=PSR2 ./src`` pour analyser les fichiers PHP, Javascript, CSS afin de détecter des violations définies par le standard PSR2.
+- 1 ``php vendor/bin/phpcs -p --standard=PSR12 --ignore=./src/Kernel.php ./src`` pour analyser les fichiers PHP, Javascript, CSS afin de détecter des violations définies par le standard PSR2.
 
-- 2 ``php vendor/bin/phpcbf -p --standard=PSR2 ./src`` pour corriger au maximum les erreurs détectées par phpcs.
+- 2 ``php vendor/bin/phpcbf -p --standard=PSR12 --ignore=./src/Kernel.php ./src`` pour corriger au maximum les erreurs détectées par phpcs.
 
 - 3 ``php vendor/bin/phpstan analyse`` pour une analyse statique du code.
 

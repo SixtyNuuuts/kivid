@@ -27,7 +27,7 @@ php-cs:
 php-stan:
   stage: CodingStandards
   script:
-    - twig-lint lint ./templates
+    - phpstan analyse ./src
   allow_failure: false
 
 twig-lint:
