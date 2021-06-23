@@ -4,7 +4,7 @@
 
 {% block body %}
 {% for rubrique, messages in app.flashes %}
-    {% for message in message %}
+    {% for message in messages %}
         <div> {{ rubrique }} :  {{ message }}</div>
     {% endfor %}
 {% endfor %}
