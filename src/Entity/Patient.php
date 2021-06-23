@@ -25,12 +25,8 @@ class Patient extends User
 
     public function __construct()
     {
+        parent::__construct();
         $this->doctors = new ArrayCollection();
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getBirthdate(): ?\DateTimeImmutable

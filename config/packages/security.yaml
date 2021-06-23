@@ -1,5 +1,5 @@
 security:
-    encoders:
+    password_hashers:
         App\Entity\User:
             algorithm: auto
 
@@ -8,10 +8,18 @@ security:
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
         # used to reload user from session & other features (e.g. switch_user)
-        app_user_provider:
+        patient:
             entity:
-                class: App\Entity\User
+                class: App\Entity\Patient
                 property: email
+        doctor:
+            entity:
+                class: App\Entity\Doctor
+                property: email
+        app_user_provider:
+            chain:
+                providers: ['patient', 'doctor']
+
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
