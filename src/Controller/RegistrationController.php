@@ -62,6 +62,8 @@ class RegistrationController extends AbstractController
                     ->htmlTemplate('registration/confirmation_email.html.twig')
             );
 
+            $this->addFlash('success', 'Nous vous avons envoyé un email contenant un lien de confirmation');
+
             return $this->redirectToRoute('app_home');
         }
 
@@ -88,6 +90,10 @@ class RegistrationController extends AbstractController
 
         $this->addFlash('success', 'Votre adresse e-mail a été vérifiée.');
 
-        return $this->redirectToRoute('app_home');
+        if ($this->isGranted('ROLE_DOCTOR')) {
+            return $this->redirectToRoute('app_doctor_dashboard');
+        }
+
+        return $this->redirectToRoute('app_patient_dashboard');
     }
 }

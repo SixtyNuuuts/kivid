@@ -28,6 +28,6 @@ class SecurityController extends AbstractController
      */
     public function logout()
     {
-        // This method can be blank
+        throw new \LogicException('This method can be blank.');
     }
 }
