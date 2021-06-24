@@ -32,7 +32,7 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
     public function authenticate(Request $request): PassportInterface
     {
         /** @var array */
-        $loginForm = $request->request->get('login_form', '');
+        $loginForm = $request->request->get('login_form');
 
         $email = $loginForm['email'];
 
