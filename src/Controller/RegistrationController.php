@@ -43,7 +43,7 @@ class RegistrationController extends AbstractController
 
             $user->setEmail($data['email']);
             $user->setPassword(
-                $passwordHasher->hashPassword($user, $data['password'])
+                $passwordHasher->hashPassword($user, $data['plainPassword'])
             );
 
             $em->persist($user);
