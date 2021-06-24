@@ -36,7 +36,7 @@ Vous pouvez maintenant accéder à l'application : ``https://127.0.0.1:8000``
 
 ### Analyse du code
 
-- 1 ``php vendor/bin/phpcs -p --standard=PSR12 --ignore=./src/Kernel.php ./src`` pour analyser les fichiers PHP, Javascript, CSS afin de détecter des violations définies par le standard PSR2.
+- 1 ``php vendor/bin/phpcs -p --standard=PSR12 --ignore=./src/Kernel.php ./src`` pour analyser les fichiers PHP, Javascript, CSS afin de détecter des violations définies par le standard PSR12.
 
 - 2 ``php vendor/bin/phpcbf -p --standard=PSR12 --ignore=./src/Kernel.php ./src`` pour corriger au maximum les erreurs détectées par phpcs.
 
