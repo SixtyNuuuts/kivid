@@ -2,10 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\ResetPasswordRequestRepository;
+use App\Entity\Doctor;
+use App\Entity\Patient;
 use Doctrine\ORM\Mapping as ORM;
-use SymfonyCasts\Bundle\ResetPassword\Model\ResetPasswordRequestInterface;
+use App\Repository\ResetPasswordRequestRepository;
 use SymfonyCasts\Bundle\ResetPassword\Model\ResetPasswordRequestTrait;
+use SymfonyCasts\Bundle\ResetPassword\Model\ResetPasswordRequestInterface;
 
 /**
  * @ORM\Entity(repositoryClass=ResetPasswordRequestRepository::class)
@@ -22,27 +24,28 @@ class ResetPasswordRequest implements ResetPasswordRequestInterface
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class)
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $user;
-
-    /**
      * @ORM\ManyToOne(targetEntity=Patient::class)
      * @ORM\JoinColumn(nullable=true)
      */
-    // private $patient;
+    private $patient;
 
     /**
      * @ORM\ManyToOne(targetEntity=Doctor::class)
      * @ORM\JoinColumn(nullable=true)
      */
-    // private $docor;
+    private $doctor;
 
 
     public function __construct(object $user, \DateTimeInterface $expiresAt, string $selector, string $hashedToken)
     {
-        $this->user = $user;
+        if ($user instanceof Patient) {
+            $this->patient = $user;
+        }
+
+        if ($user instanceof Doctor) {
+            $this->doctor = $user;
+        }
+
         $this->initialize($expiresAt, $selector, $hashedToken);
     }
 
@@ -53,6 +56,6 @@ class ResetPasswordRequest implements ResetPasswordRequestInterface
 
     public function getUser(): object
     {
-        return $this->user;
+        return $this->patient ?? $this->doctor;
     }
 }

@@ -32,7 +32,6 @@ class RegistrationFormType extends AbstractType
                 ],
             ])
             ->add('plainPassword', RepeatedType::class, [
-                'mapped' => false,
                 'type' => PasswordType::class,
                 // 'options' => ['attr' => ['class' => 'password-field']],
                 'first_options' => [
@@ -56,7 +55,7 @@ class RegistrationFormType extends AbstractType
                 ],
                 'invalid_message' => 'Les champs de mot de passe doivent correspondre.',
             ])
-            ->add('identity', ChoiceType::class, [
+            ->add('userType', ChoiceType::class, [
                 'label' => 'Vous êtes un : ',
                 'choices' => [
                     'Patient' => 1,
