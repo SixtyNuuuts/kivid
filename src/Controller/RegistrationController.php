@@ -39,11 +39,11 @@ class RegistrationController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
 
-            $user = $data['identity'] === 1 ? new Patient() : new Doctor();
+            $user = $data['userType'] === 1 ? new Patient() : new Doctor();
 
             $user->setEmail($data['email']);
             $user->setPassword(
-                $passwordHasher->hashPassword($user, $data['password'])
+                $passwordHasher->hashPassword($user, $data['plainPassword'])
             );
 
             $em->persist($user);
