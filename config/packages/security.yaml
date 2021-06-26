@@ -18,7 +18,7 @@ security:
                 property: email
         app_user_provider:
             chain:
-                providers: ['patient', 'doctor']
+                providers: ["patient", "doctor"]
 
     firewalls:
         dev:
@@ -27,14 +27,24 @@ security:
         main:
             lazy: true
             provider: app_user_provider
-            custom_authenticator: App\Security\LoginFormAuthenticator
+            entry_point: App\Security\LoginFormAuthenticator
+            custom_authenticator:
+                - App\Security\LoginFormAuthenticator
+            guard:
+                authenticators:
+                    - App\Security\GoogleAuthenticator
+                    # - App\Security\FacebookAuthenticator
             logout:
                 path: app_logout
                 target: app_home
+            # remember_me:
+            #     secret: '%kernel.secret%'
+            #     lifetime: 604800 # 1 week in seconds
+            #     path: /
+            #     samesite: strict
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication
-
             # https://symfony.com/doc/current/security/impersonating_user.html
             # switch_user: true
 
