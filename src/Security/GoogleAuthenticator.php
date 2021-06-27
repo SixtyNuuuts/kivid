@@ -25,10 +25,10 @@ class GoogleAuthenticator extends AbstractSocialAuthenticator
             throw new NotVerifiedEmailException();
         }
 
-        /** @var PatientRepository */
+        /** @var PatientRepository $patientRepository*/
         $patientRepository = $this->em->getRepository(Patient::class);
 
-        /** @var DoctorRepository */
+        /** @var DoctorRepository $doctorRepository*/
         $doctorRepository = $this->em->getRepository(Doctor::class);
 
         $user = $patientRepository->findForOauth('google', $googleUser->getId(), $googleUser->getEmail())

@@ -5,25 +5,24 @@ namespace App\Security;
 use App\Entity\User;
 use App\Entity\Doctor;
 use Doctrine\ORM\EntityManagerInterface;
-use League\OAuth2\Client\Token\AccessToken;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
-use KnpU\OAuth2ClientBundle\Client\OAuth2Client;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
-use League\OAuth2\Client\Token\AccessTokenInterface;
 use App\Security\Exception\UserAuthenticatedException;
 use App\Security\Exception\UserOauthNotFoundException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use KnpU\OAuth2ClientBundle\Security\Authenticator\SocialAuthenticator;
+use KnpU\OAuth2ClientBundle\Security\Authenticator\OAuth2Authenticator;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
+use Symfony\Component\Security\Http\Authenticator\Passport\PassportInterface;
+use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-abstract class AbstractSocialAuthenticator extends SocialAuthenticator
+abstract class AbstractSocialAuthenticator extends OAuth2Authenticator
 {
     use TargetPathTrait;
 
@@ -50,40 +49,34 @@ abstract class AbstractSocialAuthenticator extends SocialAuthenticator
         if ('' === $this->serviceName) {
             throw new \Exception("Vous devez définir une propriété \$serviceName (par exemple 'google', 'facebook')");
         }
-
+        
         return 'app_oauth_check' === $request->attributes->get('_route') && $request->get('service') === $this->serviceName;
     }
-
-    public function start(Request $request, AuthenticationException $authException = null): RedirectResponse
+    
+    public function authenticate(Request $request): PassportInterface
     {
-        return new RedirectResponse($this->urlGenerator->generate('app_login'));
-    }
+        $client = $this->clientRegistry->getClient($this->serviceName);
+        $accessToken = $this->fetchAccessToken($client);
+        
+        return new SelfValidatingPassport(
+            new UserBadge($accessToken, function () use ($accessToken, $client) {
+                $resourceOwner = $client->fetchUserFromToken($accessToken);
 
-    public function getCredentials(Request $request): AccessTokenInterface
-    {
-        return $this->fetchAccessToken($this->getClient());
-    }
+                $user = $this->getCurrentUser();
 
-    /**
-     * @param AccessToken $credentials
-     */
-    public function getUser($credentials, UserProviderInterface $userProvider): ?User
-    {
-        $resourceOwner = $this->getResourceOwnerFromCredentials($credentials);
-
-        $user = $this->getCurrentUser();
-
-        if ($user) {
-            throw new UserAuthenticatedException($user, $resourceOwner);
-        }
-
-        $user = $this->getUserFromResourceOwner($resourceOwner);
-
-        if (null === $user) {
-            throw new UserOauthNotFoundException($resourceOwner);
-        }
-
-        return $user;
+                if ($user) {
+                    throw new UserAuthenticatedException($user, $resourceOwner);
+                }
+        
+                $user = $this->getUserFromResourceOwner($resourceOwner);
+        
+                if (!$user) {
+                    throw new UserOauthNotFoundException($resourceOwner);
+                }
+        
+                return $user;
+            })
+        );
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): RedirectResponse
@@ -93,8 +86,14 @@ abstract class AbstractSocialAuthenticator extends SocialAuthenticator
         }
 
         if ($exception instanceof UserAuthenticatedException) {
-            return new RedirectResponse($this->urlGenerator->generate('app_home'));
-            // return new RedirectResponse($this->urlGenerator->generate('app_user_edit'));
+            /** @var User $user*/
+            $user = $exception->getUser();
+
+            if ($user instanceof Doctor) {
+                return new RedirectResponse($this->urlGenerator->generate('app_doctor_dashboard', ['id' => $user->getId()]));
+            }
+
+            return new RedirectResponse($this->urlGenerator->generate('app_patient_dashboard', ['id' => $user->getId()]));
         }
 
         if ($request->hasSession()) {
@@ -109,32 +108,19 @@ abstract class AbstractSocialAuthenticator extends SocialAuthenticator
         if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
             return new RedirectResponse($targetPath);
         }
-
+        /** @var User $user*/
         $user = $token->getUser();
 
         if ($user instanceof Doctor) {
-            return new RedirectResponse($this->urlGenerator->generate('app_doctor_dashboard'));
+            return new RedirectResponse($this->urlGenerator->generate('app_doctor_dashboard', ['id' => $user->getId()]));
         }
 
-        return new RedirectResponse($this->urlGenerator->generate('app_patient_dashboard'));
-    }
-
-    protected function getResourceOwnerFromCredentials(AccessToken $credentials): ResourceOwnerInterface
-    {
-        return $this->getClient()->fetchUserFromToken($credentials);
+        return new RedirectResponse($this->urlGenerator->generate('app_patient_dashboard', ['id' => $user->getId()]));
     }
 
     protected function getUserFromResourceOwner(ResourceOwnerInterface $resourceOwner): ?User
     {
         return null;
-    }
-
-    protected function getClient(): OAuth2Client
-    {
-        /** @var OAuth2Client $client */
-        $client = $this->clientRegistry->getClient($this->serviceName);
-
-        return $client;
     }
 
     public function getCurrentUser(): ?User
@@ -144,6 +130,7 @@ abstract class AbstractSocialAuthenticator extends SocialAuthenticator
         }
 
         $user = $token->getUser();
+        
         if (!\is_object($user)) {
             return null;
         }

@@ -89,9 +89,9 @@ class RegistrationController extends AbstractController
         $this->addFlash('success', 'Votre adresse e-mail a été vérifiée.');
 
         if ($this->isGranted('ROLE_DOCTOR')) {
-            return $this->redirectToRoute('app_doctor_dashboard');
+            return $this->redirectToRoute('app_doctor_dashboard', ['id' => $this->getUser()->getId()]);
         }
 
-        return $this->redirectToRoute('app_patient_dashboard');
+        return $this->redirectToRoute('app_patient_dashboard', ['id' => $this->getUser()->getId()]);
     }
 }

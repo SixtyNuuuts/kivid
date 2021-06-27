@@ -27,13 +27,10 @@ security:
         main:
             lazy: true
             provider: app_user_provider
-            entry_point: App\Security\LoginFormAuthenticator
             custom_authenticator:
                 - App\Security\LoginFormAuthenticator
-            guard:
-                authenticators:
-                    - App\Security\GoogleAuthenticator
-                    # - App\Security\FacebookAuthenticator
+                - App\Security\GoogleAuthenticator
+                - App\Security\FacebookAuthenticator
             logout:
                 path: app_logout
                 target: app_home

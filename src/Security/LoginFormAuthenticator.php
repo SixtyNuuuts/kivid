@@ -54,13 +54,14 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
             return new RedirectResponse($targetPath);
         }
 
+        /** @var User $user*/
         $user = $token->getUser();
 
         if ($user instanceof Doctor) {
-            return new RedirectResponse($this->urlGenerator->generate('app_doctor_dashboard'));
+            return new RedirectResponse($this->urlGenerator->generate('app_doctor_dashboard', ['id' => $user->getId()]));
         }
 
-        return new RedirectResponse($this->urlGenerator->generate('app_patient_dashboard'));
+        return new RedirectResponse($this->urlGenerator->generate('app_patient_dashboard', ['id' => $user->getId()]));
     }
 
     protected function getLoginUrl(Request $request): string

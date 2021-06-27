@@ -18,11 +18,11 @@ class SecurityController extends AbstractController
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
         if ($this->getUser() instanceof Patient) {
-            return $this->redirectToRoute('app_patient_dashboard');
+            return $this->redirectToRoute('app_patient_dashboard', ['id' => $this->getUser()->getId()]);
         }
 
         if ($this->getUser() instanceof Doctor) {
-            return $this->redirectToRoute('app_doctor_dashboard');
+            return $this->redirectToRoute('app_doctor_dashboard', ['id' => $this->getUser()->getId()]);
         }
 
         $form = $this->createForm(LoginFormType::class, ['email' => $authenticationUtils->getLastUsername()]);
