@@ -16,6 +16,7 @@ class DoctorController extends AbstractController
     /**
      * @Route("/{id}", name="app_doctor_dashboard")
      * @isGranted("ROLE_DOCTOR", message="Vous n'avez pas le droit d'accéder à cette zone")
+     * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
     public function dashboard(Doctor $doctor): Response
     {
