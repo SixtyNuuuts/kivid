@@ -15,7 +15,7 @@ class GoogleAuthenticator extends AbstractSocialAuthenticator
 {
     protected $serviceName = 'google';
 
-    public function getUserFromResourceOwner(ResourceOwnerInterface $googleUser): ?User
+    public function getUserFromResourceOwner(ResourceOwnerInterface $googleUser, string $userType): ?User
     {
         if (!($googleUser instanceof GoogleUser)) {
             throw new \RuntimeException('Expecting GoogleUser as the first parameter');
@@ -50,7 +50,7 @@ class GoogleAuthenticator extends AbstractSocialAuthenticator
         }
 
         if (!$user) {
-            $user = new Patient();
+            $user = 'doctor' === $userType ? new Doctor() : new Patient();
             $user->setGoogleId($googleUser->getId())
                  ->setEmail($googleUser->getEmail())
                  ->setFirstname($googleUser->getFirstName())

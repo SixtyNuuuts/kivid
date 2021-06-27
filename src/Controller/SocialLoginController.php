@@ -2,12 +2,13 @@
 
 namespace App\Controller;
 
-use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * @Route("/oauth")
@@ -26,13 +27,17 @@ class SocialLoginController extends AbstractController
     }
 
     /**
-     * @Route("/connect/{service}", name="app_oauth_connect")
+     * @Route("/connect/{userType}/{service}", name="app_oauth_connect")
      */
-    public function connect(string $service): RedirectResponse
+    public function connect(string $userType, string $service): RedirectResponse
     {
         $this->ensureServiceAccepted($service);
 
-        return $this->clientRegistry->getClient($service)->redirect(self::SCOPES[$service], ['a' => 1]);
+        $randomState = bin2hex(random_bytes(32 / 2));
+        $stateArray = ['userType' => $userType, 'randomState' => $randomState];
+        $stateString = $this->base64UrlEncode(json_encode($stateArray));
+
+        return $this->clientRegistry->getClient($service)->redirect(self::SCOPES[$service], ['state' => $stateString]);
     }
 
     /**
@@ -48,5 +53,10 @@ class SocialLoginController extends AbstractController
         if (!in_array($service, array_keys(self::SCOPES))) {
             throw new AccessDeniedException();
         }
+    }
+
+    private function base64UrlEncode($inputStr)
+    {
+        return strtr(base64_encode($inputStr), '+/=', '-_,');
     }
 }

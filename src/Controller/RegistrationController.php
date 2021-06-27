@@ -40,7 +40,7 @@ class RegistrationController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
 
-            $user = $data['userType'] === 1 ? new Patient() : new Doctor();
+            $user = 'doctor' === $data['userType'] ? new Doctor() : new Patient();
 
             $user->setEmail($data['email']);
             $user->setPassword(

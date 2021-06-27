@@ -58,9 +58,10 @@ abstract class AbstractSocialAuthenticator extends OAuth2Authenticator
     {
         $client = $this->clientRegistry->getClient($this->serviceName);
         $accessToken = $this->fetchAccessToken($client);
+        $userType = json_decode($this->base64UrlDecode($request->get('state')))->userType;
 
         return new SelfValidatingPassport(
-            new UserBadge($accessToken, function () use ($accessToken, $client) {
+            new UserBadge($accessToken, function () use ($accessToken, $client, $userType) {
                 $resourceOwner = $client->fetchUserFromToken($accessToken);
 
                 $user = $this->getCurrentUser();
@@ -69,7 +70,7 @@ abstract class AbstractSocialAuthenticator extends OAuth2Authenticator
                     throw new UserAuthenticatedException($user, $resourceOwner);
                 }
 
-                $user = $this->getUserFromResourceOwner($resourceOwner);
+                $user = $this->getUserFromResourceOwner($resourceOwner, $userType);
 
                 if (!$user) {
                     throw new UserOauthNotFoundException($resourceOwner);
@@ -130,12 +131,12 @@ abstract class AbstractSocialAuthenticator extends OAuth2Authenticator
         );
     }
 
-    protected function getUserFromResourceOwner(ResourceOwnerInterface $resourceOwner): ?User
+    protected function getUserFromResourceOwner(ResourceOwnerInterface $resourceOwner, string $userType): ?User
     {
         return null;
     }
 
-    public function getCurrentUser(): ?User
+    private function getCurrentUser(): ?User
     {
         if (!$token = $this->tokenStorage->getToken()) {
             return null;
@@ -152,5 +153,10 @@ abstract class AbstractSocialAuthenticator extends OAuth2Authenticator
         }
 
         return $user;
+    }
+
+    private function base64UrlDecode($inputStr)
+    {
+        return base64_decode(strtr($inputStr, '-_,', '+/='));
     }
 }
