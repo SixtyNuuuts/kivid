@@ -20,7 +20,7 @@ class GoogleAuthenticator extends AbstractSocialAuthenticator
         if (!($googleUser instanceof GoogleUser)) {
             throw new \RuntimeException('Expecting GoogleUser as the first parameter');
         }
-        
+
         if (true !== ($googleUser->toArray()['email_verified'] ?? null)) {
             throw new NotVerifiedEmailException();
         }
@@ -57,7 +57,7 @@ class GoogleAuthenticator extends AbstractSocialAuthenticator
                  ->setLastname($googleUser->getLastName())
                  ->setAvatarUrl($googleUser->getAvatar())
             ;
-            
+
             $this->em->persist($user);
         }
 

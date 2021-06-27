@@ -19,16 +19,16 @@ class FacebookAuthenticator extends AbstractSocialAuthenticator
         if (!($facebookUser instanceof FacebookUser)) {
             throw new \RuntimeException('Expecting FacebookClient as the first parameter');
         }
-        
+
         /** @var PatientRepository $patientRepository*/
         $patientRepository = $this->em->getRepository(Patient::class);
 
         /** @var DoctorRepository $doctorRepository*/
         $doctorRepository = $this->em->getRepository(Doctor::class);
-        
+
         $user = $patientRepository->findForOauth('facebook', $facebookUser->getId(), $facebookUser->getEmail())
                 ?? $doctorRepository->findForOauth('facebook', $facebookUser->getId(), $facebookUser->getEmail());
-        
+
         if ($user) {
             if (!$user->getFacebookId()) {
                 $user->setFacebookId($facebookUser->getId());
@@ -52,7 +52,7 @@ class FacebookAuthenticator extends AbstractSocialAuthenticator
                  ->setLastname($facebookUser->getLastName())
                  ->setAvatarUrl($facebookUser->getPictureUrl())
             ;
-            
+
             $this->em->persist($user);
         }
 

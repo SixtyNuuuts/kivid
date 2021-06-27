@@ -49,15 +49,16 @@ abstract class AbstractSocialAuthenticator extends OAuth2Authenticator
         if ('' === $this->serviceName) {
             throw new \Exception("Vous devez définir une propriété \$serviceName (par exemple 'google', 'facebook')");
         }
-        
-        return 'app_oauth_check' === $request->attributes->get('_route') && $request->get('service') === $this->serviceName;
+
+        return 'app_oauth_check' === $request->attributes->get('_route')
+             && $request->get('service') === $this->serviceName;
     }
-    
+
     public function authenticate(Request $request): PassportInterface
     {
         $client = $this->clientRegistry->getClient($this->serviceName);
         $accessToken = $this->fetchAccessToken($client);
-        
+
         return new SelfValidatingPassport(
             new UserBadge($accessToken, function () use ($accessToken, $client) {
                 $resourceOwner = $client->fetchUserFromToken($accessToken);
@@ -67,13 +68,13 @@ abstract class AbstractSocialAuthenticator extends OAuth2Authenticator
                 if ($user) {
                     throw new UserAuthenticatedException($user, $resourceOwner);
                 }
-        
+
                 $user = $this->getUserFromResourceOwner($resourceOwner);
-        
+
                 if (!$user) {
                     throw new UserOauthNotFoundException($resourceOwner);
                 }
-        
+
                 return $user;
             })
         );
@@ -86,14 +87,18 @@ abstract class AbstractSocialAuthenticator extends OAuth2Authenticator
         }
 
         if ($exception instanceof UserAuthenticatedException) {
-            /** @var User $user*/
+            /** @var User $user */
             $user = $exception->getUser();
 
             if ($user instanceof Doctor) {
-                return new RedirectResponse($this->urlGenerator->generate('app_doctor_dashboard', ['id' => $user->getId()]));
+                return new RedirectResponse(
+                    $this->urlGenerator->generate('app_doctor_dashboard', ['id' => $user->getId()])
+                );
             }
 
-            return new RedirectResponse($this->urlGenerator->generate('app_patient_dashboard', ['id' => $user->getId()]));
+            return new RedirectResponse(
+                $this->urlGenerator->generate('app_patient_dashboard', ['id' => $user->getId()])
+            );
         }
 
         if ($request->hasSession()) {
@@ -103,19 +108,26 @@ abstract class AbstractSocialAuthenticator extends OAuth2Authenticator
         return new RedirectResponse($this->urlGenerator->generate('app_login'));
     }
 
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): RedirectResponse
-    {
+    public function onAuthenticationSuccess(
+        Request $request,
+        TokenInterface $token,
+        string $firewallName
+    ): RedirectResponse {
         if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
             return new RedirectResponse($targetPath);
         }
-        /** @var User $user*/
+        /** @var User $user */
         $user = $token->getUser();
 
         if ($user instanceof Doctor) {
-            return new RedirectResponse($this->urlGenerator->generate('app_doctor_dashboard', ['id' => $user->getId()]));
+            return new RedirectResponse(
+                $this->urlGenerator->generate('app_doctor_dashboard', ['id' => $user->getId()])
+            );
         }
 
-        return new RedirectResponse($this->urlGenerator->generate('app_patient_dashboard', ['id' => $user->getId()]));
+        return new RedirectResponse(
+            $this->urlGenerator->generate('app_patient_dashboard', ['id' => $user->getId()])
+        );
     }
 
     protected function getUserFromResourceOwner(ResourceOwnerInterface $resourceOwner): ?User
@@ -130,7 +142,7 @@ abstract class AbstractSocialAuthenticator extends OAuth2Authenticator
         }
 
         $user = $token->getUser();
-        
+
         if (!\is_object($user)) {
             return null;
         }
