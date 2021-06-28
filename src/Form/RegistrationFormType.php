@@ -58,8 +58,8 @@ class RegistrationFormType extends AbstractType
             ->add('userType', ChoiceType::class, [
                 'label' => 'Vous êtes un : ',
                 'choices' => [
-                    'Patient' => 1,
-                    'Kinésitherapeute' => 2
+                    'Patient' => 'patient',
+                    'Kinésitherapeute' => 'doctor'
                 ],
             ])
             ->add('agreeTerms', CheckboxType::class, [

@@ -3,8 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\Patient;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use App\Repository\FindForOauthTrait;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method Patient|null find($id, $lockMode = null, $lockVersion = null)
@@ -14,6 +15,8 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class PatientRepository extends ServiceEntityRepository
 {
+    use FindForOauthTrait;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Patient::class);

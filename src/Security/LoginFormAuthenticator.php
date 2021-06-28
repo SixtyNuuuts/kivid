@@ -2,6 +2,7 @@
 
 namespace App\Security;
 
+use App\Entity\User;
 use App\Entity\Doctor;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
@@ -23,7 +24,7 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
 
     public const LOGIN_ROUTE = 'app_login';
 
-    private UrlGeneratorInterface $urlGenerator;
+    private $urlGenerator;
 
     public function __construct(UrlGeneratorInterface $urlGenerator)
     {
@@ -54,13 +55,18 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
             return new RedirectResponse($targetPath);
         }
 
+        /** @var User $user */
         $user = $token->getUser();
 
         if ($user instanceof Doctor) {
-            return new RedirectResponse($this->urlGenerator->generate('app_doctor_dashboard'));
+            return new RedirectResponse(
+                $this->urlGenerator->generate('app_doctor_dashboard', ['id' => $user->getId()])
+            );
         }
 
-        return new RedirectResponse($this->urlGenerator->generate('app_patient_dashboard'));
+        return new RedirectResponse(
+            $this->urlGenerator->generate('app_patient_dashboard', ['id' => $user->getId()])
+        );
     }
 
     protected function getLoginUrl(Request $request): string

@@ -6,4 +6,11 @@
 <div>
     <h1>Dashboard Patient</h1>
 </div>
+
+<p>
+    {{ patient.email }}<br>
+    {{ patient.firstname }}<br>
+    {{ patient.lastname }}<br>
+    <img src="{{ patient.avatarUrl }}" alt="avatar" class="avatar">
+</p>
 {% endblock %}

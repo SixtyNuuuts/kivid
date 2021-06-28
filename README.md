@@ -17,7 +17,7 @@ Après avoir cloné le projet avec ``git clone https://gitlab.com/kivid/kivid.gi
 
 Exécutez la commande ``cd kivid`` pour vous rendre dans le dossier depuis le terminal.
 
-Ensuite, dans l'ordre taper les commandes dans votre terminal : 
+Ensuite, dans l'ordre taper les commandes : 
 
 - 1 ``composer install`` afin d'installer toutes les dépendances composer du projet.
 
@@ -29,10 +29,17 @@ Ensuite, dans l'ordre taper les commandes dans votre terminal :
 
 - 5 ``symfony console doctrine:migrations:migrate`` afin d'exécuter l'ensemble des migrations en base de donnée.
 
-- 6 ``symfony serve -d`` afin de lancer le serveur symfony.
+- 6 ``symfony server:ca:install`` pour installer le https sur le serveur.
 
-Vous pouvez maintenant accéder à l'application : ``https://127.0.0.1:8000``
+- 7 ``symfony serve -d`` afin de lancer le serveur symfony.
 
+Vous pouvez maintenant accéder à l'application : ``https://localhost:8000``
+
+### Paramètres Oauth2 (Social Login)
+
+- 1 [Créer une App Oauth2 Google](https://developers.google.com) et ajouter vos clés ID/SECRET dans le fichier ``.env``.
+
+- 2 [Créer une App Oauth2 Facebook](https://developers.facebook.com) et ajouter vos clés ID/SECRET dans le fichier ``.env``.
 
 ### Analyse du code
 

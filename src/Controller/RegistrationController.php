@@ -15,6 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 class RegistrationController extends AbstractController
 {
@@ -39,7 +40,7 @@ class RegistrationController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
 
-            $user = $data['userType'] === 1 ? new Patient() : new Doctor();
+            $user = 'doctor' === $data['userType'] ? new Doctor() : new Patient();
 
             $user->setEmail($data['email']);
             $user->setPassword(
@@ -72,11 +73,10 @@ class RegistrationController extends AbstractController
 
     /**
      * @Route("/verify/email", name="app_verify_email")
+     * @isGranted("IS_AUTHENTICATED_FULLY")
      */
     public function verifyUserEmail(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
         // validate email confirmation link, sets User::isVerified=true and persists
         try {
             $this->emailVerifier->handleEmailConfirmation($request, $this->getUser());
@@ -89,9 +89,9 @@ class RegistrationController extends AbstractController
         $this->addFlash('success', 'Votre adresse e-mail a été vérifiée.');
 
         if ($this->isGranted('ROLE_DOCTOR')) {
-            return $this->redirectToRoute('app_doctor_dashboard');
+            return $this->redirectToRoute('app_doctor_dashboard', ['id' => $this->getUser()->getId()]);
         }
 
-        return $this->redirectToRoute('app_patient_dashboard');
+        return $this->redirectToRoute('app_patient_dashboard', ['id' => $this->getUser()->getId()]);
     }
 }
