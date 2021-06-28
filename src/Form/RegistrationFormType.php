@@ -21,7 +21,11 @@ class RegistrationFormType extends AbstractType
     {
         $builder
             ->add('email', EmailType::class, [
-                'attr' => ['autocomplete' => 'email', 'autofocus' => true],
+                'attr' => [
+                    'autocomplete' => 'email',
+                    'autofocus' => true,
+                    'placeholder' => "email@adresse.com",
+                ],
                 'constraints' => [
                     new NotBlank([
                         'message' => 'Veuillez entrer votre email',
@@ -35,7 +39,10 @@ class RegistrationFormType extends AbstractType
                 'type' => PasswordType::class,
                 // 'options' => ['attr' => ['class' => 'password-field']],
                 'first_options' => [
-                    'attr' => ['autocomplete' => 'new-password'],
+                    'attr' => [
+                        'autocomplete' => 'new-password',
+                        'placeholder' => "************",
+                    ],
                     'constraints' => [
                         new NotBlank([
                             'message' => 'Veuillez entrer un mot de passe',
@@ -50,7 +57,10 @@ class RegistrationFormType extends AbstractType
                     'label' => 'Mot de passe',
                 ],
                 'second_options' => [
-                    'attr' => ['autocomplete' => 'new-password'],
+                    'attr' => [
+                        'autocomplete' => 'new-password',
+                        'placeholder' => "************",
+                    ],
                     'label' => 'Répéter le mot de passe',
                 ],
                 'invalid_message' => 'Les champs de mot de passe doivent correspondre.',
@@ -63,6 +73,7 @@ class RegistrationFormType extends AbstractType
                 ],
             ])
             ->add('agreeTerms', CheckboxType::class, [
+                'label' => 'Accepter les conditions',
                 'mapped' => false,
                 'constraints' => [
                     new IsTrue([

@@ -1,0 +1,8 @@
+{% extends 'base.html.twig' %}
+
+{% block layout %}
+    {% include 'partial/_flash.html.twig' %}
+    {% include 'partial/_navbar.html.twig' %}
+    {% block body %}{% endblock %}
+    {% include 'partial/_footer.html.twig' %}
+{% endblock %}

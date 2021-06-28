@@ -1,0 +1,15 @@
+//
+// footer.scss
+// Theme component
+//
+
+// Brand image
+
+.footer-brand {
+  height: 3em;
+}
+
+.bg-dark .footer-brand {
+  filter: brightness(0) invert(1);
+}
+

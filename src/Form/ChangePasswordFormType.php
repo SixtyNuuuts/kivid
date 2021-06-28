@@ -20,7 +20,10 @@ class ChangePasswordFormType extends AbstractType
                 'type' => PasswordType::class,
                 // 'options' => ['attr' => ['class' => 'password-field']],
                 'first_options' => [
-                    'attr' => ['autocomplete' => 'new-password', 'autofocus' => true],
+                    'attr' => ['autocomplete' => 'new-password',
+                    'autofocus' => true,
+                    'placeholder' => "************",
+                    ],
                     'constraints' => [
                         new NotBlank([
                             'message' => 'Veuillez entrer un mot de passe',
@@ -35,8 +38,12 @@ class ChangePasswordFormType extends AbstractType
                     'label' => 'Mot de passe',
                 ],
                 'second_options' => [
-                    'attr' => ['autocomplete' => 'new-password'],
+                    'attr' => [
+                        'autocomplete' => 'new-password',
+                        'placeholder' => "************",
+                    ],
                     'label' => 'Répéter le mot de passe',
+
                 ],
                 'invalid_message' => 'Les champs de mot de passe doivent correspondre.',
             ])

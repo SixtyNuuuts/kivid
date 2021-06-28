@@ -1,0 +1,91 @@
+// Bootstrap functions
+@import '~bootstrap/scss/functions';
+
+// Theme functions
+@import 'theme/functions';
+
+// Theme variables
+@import 'theme/variables';
+
+// Bootstrap core
+@import '~bootstrap/scss/bootstrap';
+
+// Theme core
+@import 'theme/theme';
+
+// Libs
+@import 'libs';
+
+.user-nav {
+    align-items: flex-end;
+    .user-status {
+        font-size: 0.7em;
+        font-style: italic;
+    }
+    .user-name {
+        color: $primary;
+    }
+}
+
+.divider {
+    display: block;
+    text-align: center;
+    overflow: hidden;
+    white-space: nowrap;
+    margin: 1rem 0;
+  
+    .divider-text:after, .divider-text:before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        border-top: 1px solid #EBE9F1;
+    }
+    .divider-text {
+      position: relative;
+      display: inline-block;
+      font-size: .9375rem;
+      padding: 0 1rem;
+      width: 100%;
+      color: #869AB8;
+    } 
+  }
+  
+  .patient-social-login-block {
+    .divider-text:before {
+      left: 0;
+      width: 39.5%;
+    }
+  
+    .divider-text:after {
+      left: 60%;
+      width: 39.5%;
+    }
+  }
+  
+  .doctor-social-login-block {
+    .divider-text:before {
+      left: 0;
+      width: 29.5%;
+    }
+  
+    .divider-text:after {
+      left: 71%;
+      width: 29.5%;
+    }
+  }
+  
+.btn.facebook {
+    padding: 0.3125rem 0.65rem;
+    background-color: #3B5998;
+    svg {
+      margin-top: -4px;
+    }
+  }
+  
+  .btn.google {
+    padding: 0.3125rem 0.65rem;
+    background-color: #DD4B39;
+    svg {
+      margin-top: -3px;
+    }
+  }

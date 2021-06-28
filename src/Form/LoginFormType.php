@@ -14,10 +14,17 @@ class LoginFormType extends AbstractType
     {
         $builder
             ->add('email', EmailType::class, [
-                'attr' => ['autocomplete' => 'email', 'autofocus' => true],
+                'attr' => [
+                    'autocomplete' => 'email',
+                    'autofocus' => true,
+                    'placeholder' => "email@adresse.com",
+                ],
             ])
             ->add('password', PasswordType::class, [
-                'attr' => ['autocomplete' => 'current-password'],
+                'attr' => [
+                    'autocomplete' => 'current-password',
+                    'placeholder' => "Votre mot de passe"
+                ],
             ])
             // ->add('rememberMe', CheckboxType::class)
         ;

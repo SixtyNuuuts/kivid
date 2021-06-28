@@ -1,11 +1,45 @@
-{% extends 'base.html.twig' %}
+{% extends 'layout/fullpage.html.twig' %}
 
 {% block title %}E-mail de réinitialisation de mot de passe envoyé{% endblock %}
 
 {% block body %}
-    <p>
-        S'il existe un compte correspondant à votre e-mail, un e-mail vient d'être envoyé contenant un lien que vous pouvez utiliser pour réinitialiser votre mot de passe.
-        Ce lien expirera dans {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.
-    </p>
-    <p>Si vous ne recevez pas d'e-mail, veuillez vérifier votre dossier spam ou <a href="{{ path('app_forgot_password_request') }}">réessayer</a>.</p>
+	<!-- CONTENT -->
+	<section>
+		<div class="container d-flex flex-column">
+			<div class="row align-items-center justify-content-center gx-0 min-vh-100">
+				<div
+					class="col-12 col-md-6 col-lg-4 py-8 py-md-11">
+		
+					<!-- Heading -->
+					<h1 class="mb-0 fw-bold">
+						E-mail envoyé !
+					</h1>
+
+					<!-- Text -->
+					<p class="mb-6 text-muted">
+						S'il existe un compte correspondant à votre e-mail, un e-mail vient d'être envoyé contenant un lien que vous pouvez utiliser pour réinitialiser votre mot de passe.
+                        <br>Ce lien expirera dans {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.
+					</p>
+
+					<p class="mb-6 text-muted">Si vous ne recevez pas d'e-mail, veuillez vérifier votre dossier spam ou <a href="{{ path('app_forgot_password_request') }}">réessayer</a>.</p>
+
+					<div class="auth-footer-btn d-flex justify-content-center">
+						<a class="btn btn-google waves-effect waves-float waves-light" href="#"></a>
+					</div>
+				</div>
+				<div
+					class="col-lg-7 offset-lg-1 align-self-stretch d-none d-lg-block">
+					<!-- Image -->
+					<div class="h-100 w-cover bg-cover" style="background-image: url({{ asset('img/covers/cover-14.jpg') }});"></div>
+
+					<!-- Shape -->
+					<div class="shape shape-start shape-fluid-y text-white">
+						<svg viewbox="0 0 100 1544" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h100v386l-50 772v386H0V0z" fill="currentColor"/></svg>
+					</div>
+				</div>
+			</div>
+			<!-- / .row -->
+		</div>
+		<!-- / .container -->
+	</section>
 {% endblock %}
