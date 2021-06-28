@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
@@ -19,7 +18,11 @@ class SocialLoginController extends AbstractController
         'google' => [],
         'facebook' => ['email'],
     ];
-    private ClientRegistry $clientRegistry;
+    private const USER_TYPE = [
+        'patient' => 'patient',
+        'doctor' => 'doctor',
+    ];
+    private $clientRegistry;
 
     public function __construct(ClientRegistry $clientRegistry)
     {
@@ -31,13 +34,13 @@ class SocialLoginController extends AbstractController
      */
     public function connect(string $userType, string $service): RedirectResponse
     {
+        $this->ensureUserTypeAccepted($userType);
         $this->ensureServiceAccepted($service);
 
-        $randomState = bin2hex(random_bytes(32 / 2));
-        $stateArray = ['userType' => $userType, 'randomState' => $randomState];
-        $stateString = $this->base64UrlEncode(json_encode($stateArray));
-
-        return $this->clientRegistry->getClient($service)->redirect(self::SCOPES[$service], ['state' => $stateString]);
+        return $this->clientRegistry->getClient($service)->redirect(
+            self::SCOPES[$service],
+            ['state' => $this->stateStringGeneration($userType)]
+        );
     }
 
     /**
@@ -48,6 +51,13 @@ class SocialLoginController extends AbstractController
         return new Response();
     }
 
+    private function ensureUserTypeAccepted(string $userType): void
+    {
+        if (!in_array($userType, array_keys(self::USER_TYPE))) {
+            throw new AccessDeniedException();
+        }
+    }
+
     private function ensureServiceAccepted(string $service): void
     {
         if (!in_array($service, array_keys(self::SCOPES))) {
@@ -55,8 +65,17 @@ class SocialLoginController extends AbstractController
         }
     }
 
-    private function base64UrlEncode($inputStr)
+    private function base64UrlEncode($inputStr): string
     {
         return strtr(base64_encode($inputStr), '+/=', '-_,');
+    }
+
+    private function stateStringGeneration($userType): string
+    {
+        $randomState = bin2hex(random_bytes(32 / 2));
+        $stateArray = ['userType' => $userType, 'randomState' => $randomState];
+        $stateString = $this->base64UrlEncode(json_encode($stateArray));
+
+        return $stateString;
     }
 }

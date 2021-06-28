@@ -2,12 +2,19 @@ security:
     password_hashers:
         App\Entity\User:
             algorithm: auto
+        Symfony\Component\Security\Core\User\InMemoryUser:
+            algorithm: auto
 
     # https://symfony.com/doc/current/security/experimental_authenticators.html
     enable_authenticator_manager: true
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
         # used to reload user from session & other features (e.g. switch_user)
+        backend_users:
+            memory:
+                users:
+                    kivid-admin@mail.com: { password: '$2y$13$.Sz3REq5YRTGxEcBEvSE0uriYe9e3iChRpPuhGXXxydbwx9M8UKjC', roles: ['ROLE_ADMIN'] }
+                    web2bee-admin@mail.com: { password: '$2y$13$5Zw6GRdYr12qoYTEtLLwaO4RpZyUY7uS6V.671ROrnm7HPLUDsAV.', roles: ['ROLE_ADMIN', 'ROLE_SUPER_ADMIN'] }
         patient:
             entity:
                 class: App\Entity\Patient
@@ -18,7 +25,7 @@ security:
                 property: email
         app_user_provider:
             chain:
-                providers: ["patient", "doctor"]
+                providers: ["patient", "doctor", "backend_users"]
 
     firewalls:
         dev:
