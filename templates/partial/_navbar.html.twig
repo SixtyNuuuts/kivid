@@ -372,7 +372,7 @@
 									<span class="user-status">Admin</span>
 								{% endif %}
 							</div>
-							{% if var is defined and var is not null %} 
+							{% if app.user.avatarUrl is defined and app.user.avatarUrl is not null %} 
 								<span class="avatar avatar-online ms-5">
 									<img class="avatar-img rounded-circle" src="{{ app.user.avatarUrl }}" alt="avatar" height="40" width="40">
 								</span>
