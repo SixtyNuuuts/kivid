@@ -19,6 +19,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 class RegistrationController extends AbstractController
 {
+    use RedirectFromIsGrantedTrait;
+
     private $emailVerifier;
 
     public function __construct(EmailVerifier $emailVerifier)
@@ -88,10 +90,6 @@ class RegistrationController extends AbstractController
 
         $this->addFlash('success', 'Votre adresse e-mail a été vérifiée.');
 
-        if ($this->isGranted('ROLE_DOCTOR')) {
-            return $this->redirectToRoute('app_doctor_dashboard', ['id' => $this->getUser()->getId()]);
-        }
-
-        return $this->redirectToRoute('app_patient_dashboard', ['id' => $this->getUser()->getId()]);
+        return $this->redirectFromIsGranted();
     }
 }

@@ -3,10 +3,9 @@
 namespace App\Security;
 
 use App\Entity\User;
-use App\Entity\Doctor;
+use App\Security\RedirectFromRoleTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -21,6 +20,7 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordC
 class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
 {
     use TargetPathTrait;
+    use RedirectFromRoleTrait;
 
     public const LOGIN_ROUTE = 'app_login';
 
@@ -49,8 +49,11 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
         );
     }
 
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
-    {
+    public function onAuthenticationSuccess(
+        Request $request,
+        TokenInterface $token,
+        string $firewallName
+    ): ?RedirectResponse {
         if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
             return new RedirectResponse($targetPath);
         }
@@ -58,15 +61,7 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
         /** @var User $user */
         $user = $token->getUser();
 
-        if ($user instanceof Doctor) {
-            return new RedirectResponse(
-                $this->urlGenerator->generate('app_doctor_dashboard', ['id' => $user->getId()])
-            );
-        }
-
-        return new RedirectResponse(
-            $this->urlGenerator->generate('app_patient_dashboard', ['id' => $user->getId()])
-        );
+        return $this->redirectFromRole($user);
     }
 
     protected function getLoginUrl(Request $request): string

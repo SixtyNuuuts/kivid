@@ -17,6 +17,10 @@ class PatientVoter extends Voter
     {
         $user = $token->getUser();
 
+        if (in_array('ROLE_ADMIN', $user->getRoles())) {
+            return true;
+        }
+
         if (!$user instanceof Patient) {
             return false;
         }

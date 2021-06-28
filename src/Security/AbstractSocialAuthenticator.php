@@ -3,7 +3,7 @@
 namespace App\Security;
 
 use App\Entity\User;
-use App\Entity\Doctor;
+use App\Security\RedirectFromRoleTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
@@ -25,6 +25,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 abstract class AbstractSocialAuthenticator extends OAuth2Authenticator
 {
     use TargetPathTrait;
+    use RedirectFromRoleTrait;
 
     protected $serviceName = '';
     private $clientRegistry;
@@ -91,15 +92,7 @@ abstract class AbstractSocialAuthenticator extends OAuth2Authenticator
             /** @var User $user */
             $user = $exception->getUser();
 
-            if ($user instanceof Doctor) {
-                return new RedirectResponse(
-                    $this->urlGenerator->generate('app_doctor_dashboard', ['id' => $user->getId()])
-                );
-            }
-
-            return new RedirectResponse(
-                $this->urlGenerator->generate('app_patient_dashboard', ['id' => $user->getId()])
-            );
+            return $this->redirectFromRole($user);
         }
 
         if ($request->hasSession()) {
@@ -120,15 +113,7 @@ abstract class AbstractSocialAuthenticator extends OAuth2Authenticator
         /** @var User $user */
         $user = $token->getUser();
 
-        if ($user instanceof Doctor) {
-            return new RedirectResponse(
-                $this->urlGenerator->generate('app_doctor_dashboard', ['id' => $user->getId()])
-            );
-        }
-
-        return new RedirectResponse(
-            $this->urlGenerator->generate('app_patient_dashboard', ['id' => $user->getId()])
-        );
+        return $this->redirectFromRole($user);
     }
 
     protected function getUserFromResourceOwner(ResourceOwnerInterface $resourceOwner, string $userType): ?User
