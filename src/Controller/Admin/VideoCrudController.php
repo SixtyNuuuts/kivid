@@ -6,6 +6,7 @@ use App\Entity\Video;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 
 class VideoCrudController extends AbstractCrudController
@@ -22,6 +23,7 @@ class VideoCrudController extends AbstractCrudController
             TextField::new('url'),
             ImageField::new('thumbnail_url')->onlyOnIndex(),
             TextEditorField::new('description'),
+            AssociationField::new('tags'),
         ];
     }
 }
