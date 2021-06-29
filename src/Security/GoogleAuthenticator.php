@@ -7,8 +7,9 @@ use App\Entity\Doctor;
 use App\Entity\Patient;
 use App\Repository\DoctorRepository;
 use App\Repository\PatientRepository;
-use App\Security\Exception\NotVerifiedEmailException;
+use Symfony\Component\HttpClient\HttpClient;
 use League\OAuth2\Client\Provider\GoogleUser;
+use App\Security\Exception\NotVerifiedEmailException;
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 
 class GoogleAuthenticator extends AbstractSocialAuthenticator
@@ -33,6 +34,9 @@ class GoogleAuthenticator extends AbstractSocialAuthenticator
 
         $user = $patientRepository->findForOauth('google', $googleUser->getId(), $googleUser->getEmail())
              ?? $doctorRepository->findForOauth('google', $googleUser->getId(), $googleUser->getEmail());
+
+        // requete à l'url de l'image car sans ça prob d'affichage de l'avatar.
+        HttpClient::create()->request('GET', $googleUser->getAvatar());
 
         if ($user) {
             if (!$user->getGoogleId()) {
