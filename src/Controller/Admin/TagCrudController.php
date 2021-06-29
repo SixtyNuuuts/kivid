@@ -8,6 +8,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
 class TagCrudController extends AbstractCrudController
 {
+    use ConfigureActionsTrait;
+
     public static function getEntityFqcn(): string
     {
         return Tag::class;

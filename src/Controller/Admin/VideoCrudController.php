@@ -3,14 +3,17 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Video;
+use App\Controller\Admin\ConfigureActionsTrait;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
 class VideoCrudController extends AbstractCrudController
 {
+    use ConfigureActionsTrait;
+
     public static function getEntityFqcn(): string
     {
         return Video::class;
@@ -21,7 +24,7 @@ class VideoCrudController extends AbstractCrudController
         return [
             TextField::new('name', 'Nom'),
             TextField::new('url'),
-            ImageField::new('thumbnail_url')->onlyOnIndex(),
+            ImageField::new('thumbnail_url')->setTemplatePath('admin/custom_field/image.html.twig')->onlyOnIndex(),
             TextEditorField::new('description'),
             AssociationField::new('tags'),
         ];

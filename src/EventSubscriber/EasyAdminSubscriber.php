@@ -4,6 +4,7 @@ namespace App\EventSubscriber;
 
 use App\Entity\Video;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityUpdatedEvent;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityPersistedEvent;
 
 class EasyAdminSubscriber implements EventSubscriberInterface
@@ -12,13 +13,17 @@ class EasyAdminSubscriber implements EventSubscriberInterface
     {
         return [
             BeforeEntityPersistedEvent::class => ['setVideoThunbnail'],
+            BeforeEntityUpdatedEvent::class => ['setVideoThunbnail'],
         ];
     }
 
-    public function setVideoThunbnail(BeforeEntityPersistedEvent $event)
+    /**
+     * @param BeforeEntityPersistedEvent|BeforeEntityUpdatedEvent $event.
+     */
+    public function setVideoThunbnail($event)
     {
         $entity = $event->getEntityInstance();
-        
+
         if (!($entity instanceof Video)) {
             return;
         }
@@ -26,13 +31,13 @@ class EasyAdminSubscriber implements EventSubscriberInterface
         if (!$entity->getUrl()) {
             return;
         }
-        
+
         $urlParsed = parse_url($entity->getUrl(), PHP_URL_QUERY);
-        
+
         parse_str($urlParsed, $queryParams);
 
         $videoId = $queryParams["v"] ?? '';
-       
+
         $thumbnailUrl = "https://img.youtube.com/vi/{$videoId}/mqdefault.jpg";
 
         $entity->setThumbnailUrl($thumbnailUrl);
