@@ -6,15 +6,15 @@
 // Color variants
 //
 // Using Bootstrap's core alert-variant mixin to generate solid background color + yiq colorized text (and making close/links match those colors)
-.alert {
-  position: absolute;
-  z-index: 1100;
-  width: 100%;
-  box-shadow: $box-shadow-dark-lg;
-  p {
-    margin-bottom: 0;
-  }
-}
+// .alert {
+//   position: absolute;
+//   z-index: 1100;
+//   width: 100%;
+//   box-shadow: $box-shadow-dark-lg;
+//   p {
+//     margin-bottom: 0;
+//   }
+// }
 
 @each $color, $value in $theme-colors {
   .alert-#{$color} {

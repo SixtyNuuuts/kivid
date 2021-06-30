@@ -1,8 +1,9 @@
 {% extends 'base.html.twig' %}
 
 {% block layout %}
-    {% include 'layout/partial/_flash.html.twig' %}
     {% include 'layout/partial/_navbar.html.twig' %}
+    {% include 'layout/partial/_alert-toast.html.twig' %}
     {% block body %}{% endblock %}
+    {% include 'layout/partial/_shape-bottom.html.twig' %}
     {% include 'layout/partial/_footer.html.twig' %}
 {% endblock %}
