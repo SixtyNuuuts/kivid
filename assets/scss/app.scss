@@ -95,3 +95,31 @@
       color: #869AB8;
     }
   }
+
+  .dropdown-menu {
+    i {
+      color: $gray-400;
+      position: relative;
+      top: 1px;
+    }
+  }
+
+ .nav-link.dropdown-toggle {
+    i {
+      color: $gray-500;
+      position: relative;
+      top: 1px;
+    }
+    &:hover {
+      i {
+        color: $primary;
+      }  
+    }
+  }
+
+ .navbar-btn {
+    i {
+      position: relative;
+      top: 1px;
+    }
+  }
