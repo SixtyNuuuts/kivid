@@ -23,6 +23,6 @@ class DobToAge extends AbstractExtension
         $referenceDate = date('01-01-Y');
         $referenceDateTimeObject = new \DateTimeImmutable($referenceDate);
         $diff = $referenceDateTimeObject->diff($date);
-        return $diff->y;
+        return $diff->y . ' ans';
     }
 }
