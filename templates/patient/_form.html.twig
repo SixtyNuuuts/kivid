@@ -1,0 +1,16 @@
+{{ form_start(form, {'action': path(actionRoute, { 'id': patient.id }), 'method': 'POST'}) }}
+    {{ form_row(form.firstname) }}
+    {{ form_row(form.lastname) }}
+    <div id="current-avatar">
+        <div class="d-flex">
+            <div class="avatar avatar-xxl">
+                <img class="avatar-img rounded-circle" src="{{ patient.avatarUrl|default('/img/avatar-default.svg') }}" alt="avatar">
+            </div>
+        </div>
+        {{ form_row(form.avatarFile) }}
+    </div>
+    {{ form_row(form.birthdate) }}
+    <button class="btn w-100 btn-primary mt-3 lift">
+        {{ button_label|default('Enregistrer') }}
+    </button>
+{{ form_end(form) }}
