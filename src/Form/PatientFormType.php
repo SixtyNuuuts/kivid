@@ -17,6 +17,7 @@ class PatientFormType extends AbstractType
         $builder
             ->add('firstname', TextType::class, [
                 'label' => 'Prénom',
+                'required' => false,
                 'attr' => [
                     'autofocus' => true,
                     'placeholder' => "Prénom",
@@ -24,17 +25,19 @@ class PatientFormType extends AbstractType
             ])
             ->add('lastname', TextType::class, [
                 'label' => 'Nom',
+                'required' => false,
                 'attr' => [
                     'placeholder' => "Nom",
                 ],
             ])
             ->add('avatarFile', FileType::class, [
-                'required' => false,
                 'label' => 'Avatar',
+                'required' => false,
                 'mapped' => false
             ])
             ->add('birthdate', BirthdayType::class, [
                 'label' => 'Date de naissance',
+                'required' => false,
                 'placeholder' => [
                     'year' => 'Année', 'month' => 'Mois', 'day' => 'Jour',
                 ],
