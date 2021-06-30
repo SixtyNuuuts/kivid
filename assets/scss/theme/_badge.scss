@@ -113,3 +113,10 @@
     color: color-contrast($value);
   }
 }
+
+@each $color, $value in $theme-colors {
+  .badge.badge-#{$color} {
+    color: color-contrast($value);
+    background-color: $value;
+  }
+}

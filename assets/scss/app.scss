@@ -16,6 +16,10 @@
 // Libs
 @import 'libs';
 
+body {
+  position: relative;
+}
+
 .user-nav {
     align-items: flex-end;
     .user-status {

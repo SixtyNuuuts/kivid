@@ -29,3 +29,12 @@ import './tooltip';
 import './typed';
 // User
 import './user.js';
+
+// Affiche Alerts Toasts
+var toastElList = [].slice.call(document.querySelectorAll('.toast'))
+var toastList = toastElList.map(function (toastEl) {
+    return new Toast(toastEl)
+})
+toastList.forEach(toast => {
+    toast.show()
+});

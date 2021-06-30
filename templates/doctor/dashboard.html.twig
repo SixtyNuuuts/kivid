@@ -3,31 +3,7 @@
 {% block title %}Dashboard Kiné{% endblock %}
 
 {% block body %}
-	<!-- BREADCRUMB -->
-	<nav class="bg-gray-200">
-		<div class="container">
-			<div class="row">
-				<div
-					class="col-12">
-
-					<!-- Breadcrumb -->
-					<ol class="breadcrumb breadcrumb-scroll">
-						<li class="breadcrumb-item">
-							<a href="#!" class="text-gray-700">
-								Kinésithérapeute
-							</a>
-						</li>
-						<li class="breadcrumb-item active" aria-current="page">
-							Dashboard
-						</li>
-					</ol>
-
-				</div>
-			</div>
-			<!-- / .row -->
-		</div>
-		<!-- / .container -->
-	</nav>
+    {% include 'layout/partial/_breadcrumb.html.twig' with { pageName : 'Dashboard'} %}
 
 	<!-- CONTENT -->
 	<section class="pt-6 pt-md-8 pb-8 mb-md-8">
@@ -795,11 +771,4 @@
 		</div>
 		<!-- / .container -->
 	</section>
-
-	<!-- SHAPE -->
-	<div class="position-relative">
-		<div class="shape shape-bottom shape-fluid-x text-gray-200">
-			<svg viewbox="0 0 2880 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 48h2880V0h-720C1442.5 52 720 0 720 0H0v48z" fill="currentColor"/></svg>
-		</div>
-	</div>
 {% endblock %}

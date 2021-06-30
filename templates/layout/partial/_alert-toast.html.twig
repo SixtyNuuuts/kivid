@@ -1,0 +1,26 @@
+  <div class="toast-container position-absolute top-0 end-0 py-5 px-5" style="z-index: 2000;"> 
+    {% for rubrique, messages in app.flashes %}
+      {% for message in messages %}
+        <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+          <div class="toast-header">
+            <div class="badge badge-rounded-circle bg-{{rubrique}}-soft me-3">
+            {% if rubrique == 'success' %}
+              <i class="fe fe-check"></i>
+            </div>
+            <strong class="mb-0 me-auto text-{{rubrique}}">Succès</strong>
+            {% endif %}
+            {% if rubrique == 'danger' %}
+              <i class="fe fe-alert-circle"></i>
+            </div>
+            <strong class="mb-0 me-auto text-{{rubrique}}">Erreur</strong>
+            {% endif %}
+            <small class="text-muted">maintenant</small>
+            <button type="button" class="ms-3 btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+          <div class="toast-body">
+            {{ message }}
+          </div>
+        </div>
+      {% endfor %}
+    {% endfor %}
+  </div>
