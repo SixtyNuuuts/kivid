@@ -1,0 +1,9 @@
+<div class="d-flex flex-center justify-content-center">
+	<span class="badge rounded-pill bg-primary-soft">
+		<span class="h4 text-uppercase">
+			PROFIL
+		</span>
+	</span>
+</div>
+
+{{ include('patient/_form.html.twig', {'button_label': 'Mettre à jour'| upper, 'actionRoute': 'app_patient_edit'}) }}

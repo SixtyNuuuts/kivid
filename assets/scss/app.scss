@@ -16,10 +16,6 @@
 // Libs
 @import 'libs';
 
-body {
-  position: relative;
-}
-
 .user-nav {
     align-items: flex-end;
     .user-status {
@@ -91,5 +87,11 @@ body {
     background-color: #DD4B39;
     svg {
       margin-top: -3px;
+    }
+  }
+
+  form {
+    label {
+      color: #869AB8;
     }
   }
