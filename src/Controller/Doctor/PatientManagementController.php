@@ -49,7 +49,7 @@ class PatientManagementController extends AbstractController
         PatientRepository $patientRepository,
         EntityManagerInterface $em
     ): RedirectResponse {
-        $patient = $patientRepository->findOneById($idPatient);
+        $patient = $patientRepository->findOneBy([ 'id' => $idPatient ]);
 
         if ($doctor->getPatients()->contains($patient)) {
             $this->addFlash('danger', 'Cet utilisateur fait déjà partie de vos patients');
@@ -75,7 +75,7 @@ class PatientManagementController extends AbstractController
         PatientRepository $patientRepository,
         EntityManagerInterface $em
     ): RedirectResponse {
-        $patient = $patientRepository->findOneById($idPatient);
+        $patient = $patientRepository->findOneBy([ 'id' => $idPatient ]);
 
         $doctor->removePatient($patient);
 
