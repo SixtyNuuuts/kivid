@@ -16,6 +16,10 @@
 // Libs
 @import 'libs';
 
+html {
+  scroll-behavior: smooth;
+}
+
 .user-nav {
     align-items: flex-end;
     .user-status {
@@ -123,3 +127,4 @@
       top: 1px;
     }
   }
+

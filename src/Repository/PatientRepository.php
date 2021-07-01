@@ -22,32 +22,55 @@ class PatientRepository extends ServiceEntityRepository
         parent::__construct($registry, Patient::class);
     }
 
-    // /**
-    //  * @return Patient[] Returns an array of Patient objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    // public function findAllWithoutDoctor($doctor)
+    // {
+    //     if (null === $doctor) {
+    //         return null;
+    //     }
+    //     // $qb = $this->createQueryBuilder('p');
+    //     // return $qb->join('p.doctors', 'f')
+    //     // ->where($qb->expr()->neq('f.id', $doctor->getId()))
+    //     // ->getQuery()
+    //     // ->getResult();
+
+    //     return $this->createQueryBuilder('p')
+    //         ->where('p.doctors = :doctor')
+    //         ->setParameter(':doctor', $doctor)
+    //         ->getQuery()
+    //         ->getResult()
+    //     ;
+    // }
+
+
+    /**
+     * Recherche les patients en fonction de searchTerm
+     * @return Patient[]
+     */
+    public function searchWithWords($searchTerm)
     {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10)
+        $qb = $this->createQueryBuilder('p');
+
+        if (null === $searchTerm) {
+            return $qb
+                ->getQuery()
+                ->getResult()
+            ;
+        }
+
+        $searchTermArray = explode(" ", $searchTerm);
+
+        foreach ($searchTermArray as $term) {
+            if ($term) {
+                $qb->where('ILIKE(p.firstname, :searchTerm) = TRUE')
+                ->orWhere('ILIKE(p.lastname, :searchTerm) = TRUE')
+                ->orWhere('ILIKE(p.email, :searchTerm) = TRUE')
+                ->setParameter(':searchTerm', $term);
+            }
+        }
+
+        return $qb
             ->getQuery()
             ->getResult()
         ;
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Patient
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

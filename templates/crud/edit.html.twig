@@ -18,7 +18,7 @@
 
             <!-- Text -->
             <p class="fs-lg text-white-75 mb-0">
-              {{ doctor.email }}
+              {{ user.email }}
             </p>
 
           </div>
@@ -104,7 +104,7 @@
 
               </div>
               <div class="card-body">
-                {{ include('doctor/_form.html.twig', {'button_label': 'Mettre à jour'| upper, 'actionRoute': 'app_doctor_edit'}) }}
+                  {{ include('crud/_form.html.twig', {'button_label': 'Mettre à jour'|upper}) }}
               </div>
             </div>
 

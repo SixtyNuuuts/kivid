@@ -34,7 +34,7 @@ class Patient extends User
         return $this->birthdate;
     }
 
-    public function setBirthdate(\DateTimeImmutable $birthdate): self
+    public function setBirthdate(?\DateTimeImmutable $birthdate): self
     {
         $this->birthdate = $birthdate;
 

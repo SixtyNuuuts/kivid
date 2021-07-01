@@ -19,7 +19,6 @@ class DoctorFormType extends AbstractType
             'label' => 'Prénom',
             'required' => false,
             'attr' => [
-                'autofocus' => true,
                 'placeholder' => "Prénom",
             ],
         ])

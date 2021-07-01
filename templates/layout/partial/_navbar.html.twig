@@ -68,12 +68,8 @@
 								Mes fiches
 							</a>
 							<div class="dropdown-divider mb-3 mt-3"></div>
-							{% if is_granted('ROLE_PATIENT') %}
-							<a class="dropdown-item" href="{{ path('app_patient_edit', {'id':app.user.id}) }}">
-							{% elseif is_granted('ROLE_DOCTOR')%}
-							<a class="dropdown-item" href="{{ path('app_doctor_edit', {'id':app.user.id}) }}">
-							{% endif %}
-							<i class="fe fe-settings"></i>
+							<a class="dropdown-item" href="{{ path('app_user_edit', {'id':app.user.id}) }}">
+								<i class="fe fe-settings"></i>
 								Paramètres
 							</a>
 							{% endif %}
@@ -87,7 +83,7 @@
 					<a class="navbar-btn btn btn btn-outline-primary lift ms-auto" href="#!">
 						<i class="fe fe-shopping-bag"></i> BOUTIQUE
 					</a>
-					<a class="navbar-btn btn btn-primary lift ms-auto" href="{{ path('app_register') }}">
+					<a class="navbar-btn btn btn-primary lift ms-auto" href="{{ path('app_login') }}">
 						SE CONNECTER <i class="fe fe-log-in"></i>
 					</a>
 				{% endif %}
