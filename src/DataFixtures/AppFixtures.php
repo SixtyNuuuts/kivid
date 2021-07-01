@@ -2,7 +2,7 @@
 
 namespace App\DataFixtures;
 
-use Faker\Factory;
+use Faker;
 use App\Entity\Doctor;
 use App\Entity\Patient;
 use Doctrine\Persistence\ObjectManager;
@@ -20,19 +20,19 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager)
     {
-        $faker = Factory::create('fr_FR');
+        $faker = Faker\Factory::create('fr_US');
 
         for ($ki = 0; $ki < rand(1, 15); $ki++) {
             $kine = new Doctor();
 
-            $kine->setCity($faker->city())
-                ->setStreet($faker->streetName())
-                ->setEntityName($faker->company())
+            $kine->setCity($faker->city)
+                ->setStreet($faker->streetName)
+                ->setEntityName($faker->company)
                 ->setDescription($faker->realTextBetween(160, 200, 2))
                 ->setEmail("kine{$ki}@mail.com")
                 ->setPassword($this->passwordHasher->hashPassword($kine, 'password'))
-                ->setFirstname($faker->firstname())
-                ->setLastname($faker->lastname())
+                ->setFirstname($faker->firstName)
+                ->setLastname($faker->lastName)
             ;
 
             $manager->persist($kine);
@@ -45,8 +45,8 @@ class AppFixtures extends Fixture
                     ->addDoctor($kine)
                     ->setEmail("patient{$ki}{$pi}@mail.com")
                     ->setPassword($this->passwordHasher->hashPassword($kine, 'password'))
-                    ->setFirstname($faker->firstname())
-                    ->setLastname($faker->lastname())
+                    ->setFirstname($faker->firstName)
+                    ->setLastname($faker->lastName)
                 ;
 
                 $manager->persist($patient);
