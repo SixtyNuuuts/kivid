@@ -22,21 +22,55 @@ class PatientRepository extends ServiceEntityRepository
         parent::__construct($registry, Patient::class);
     }
 
-    /**
-     * Recherche les patients en fonction du formulaire
-     * @return Patient|null
-     */
-    // public function searchWithWords($words): ?Patient
+    // public function findAllWithoutDoctor($doctor)
     // {
-    //     if (null === $words) {
+    //     if (null === $doctor) {
     //         return null;
     //     }
+    //     // $qb = $this->createQueryBuilder('p');
+    //     // return $qb->join('p.doctors', 'f')
+    //     // ->where($qb->expr()->neq('f.id', $doctor->getId()))
+    //     // ->getQuery()
+    //     // ->getResult();
 
     //     return $this->createQueryBuilder('p')
-    //         ->where('MATCH_AGAINST(p.firstname, p.lastname, p.email) AGAINST (:words boolean)>0')
-    //         ->setParameter('words', $words)
+    //         ->where('p.doctors = :doctor')
+    //         ->setParameter(':doctor', $doctor)
     //         ->getQuery()
     //         ->getResult()
     //     ;
     // }
+
+
+    /**
+     * Recherche les patients en fonction de searchTerm
+     * @return Patient[]
+     */
+    public function searchWithWords($searchTerm)
+    {
+        $qb = $this->createQueryBuilder('p');
+
+        if (null === $searchTerm) {
+            return $qb
+                ->getQuery()
+                ->getResult()
+            ;
+        }
+
+        $searchTermArray = explode(" ", $searchTerm);
+
+        foreach ($searchTermArray as $term) {
+            if ($term) {
+                $qb->where('ILIKE(p.firstname, :searchTerm) = TRUE')
+                ->orWhere('ILIKE(p.lastname, :searchTerm) = TRUE')
+                ->orWhere('ILIKE(p.email, :searchTerm) = TRUE')
+                ->setParameter(':searchTerm', $term);
+            }
+        }
+
+        return $qb
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }

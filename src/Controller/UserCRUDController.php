@@ -64,9 +64,9 @@ class UserCRUDController extends AbstractController
             $this->getDoctrine()->getManager()->flush();
 
             $this->addFlash('success', 'Votre profil a été mis à jour !');
-            
+
             $referer = filter_var($request->headers->get('referer'), FILTER_SANITIZE_URL);
-            
+
             return $this->redirect($referer);
         }
 
