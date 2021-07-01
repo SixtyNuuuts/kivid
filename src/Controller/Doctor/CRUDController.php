@@ -11,9 +11,9 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
- * @Route("/doctor")
+ * @Route("/kine")
  */
-class ManageController extends AbstractController
+class CRUDController extends AbstractController
 {
     /**
      * @Route("/{id}/edit", name="app_doctor_edit", methods={"GET","POST"})

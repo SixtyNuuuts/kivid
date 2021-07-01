@@ -13,7 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 /**
  * @Route("/patient")
  */
-class ManageController extends AbstractController
+class CRUDController extends AbstractController
 {
     /**
      * @Route("/{id}/edit", name="app_patient_edit", methods={"GET","POST"})

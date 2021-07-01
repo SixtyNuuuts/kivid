@@ -127,16 +127,16 @@
 							<div class="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 m-1">
 								<div class="fs-6 fw-boldest text-gray-700">{{ 'âge' | upper }}</div>
 								<div class="fw-bold text-gray-400">
-								{% if patient.birthdate is null %}
-								<div class="badge bg-warning-soft my-1 text-primary" style="white-space: normal;">
-									<div class="badge badge-rounded-circle bg-warning-soft">
-										<i class="fe fe-alert-triangle"></i>
+									{% if patient.birthdate is null %}
+									<div class="badge bg-warning-soft my-1 text-primary" style="white-space: normal;">
+										<div class="badge badge-rounded-circle bg-warning-soft">
+											<i class="fe fe-alert-triangle"></i>
+										</div>
+										Pour vous préscrire les meilleurs programmes, nous avons besoin de connaitre votre âge.
 									</div>
-									Pour vous préscrire les meilleurs programmes, nous avons besoin de connaitre votre âge.
+									{% endif %}
+									{{ patient.birthdate | age }}
 								</div>
-								{% endif %}
-								
-								{{ patient.birthdate | age }}</div>
 							</div>
 							<div class="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 m-1">
 								<div class="fs-6 fw-boldest text-gray-700">{{ 'Kinésitherapeute' | upper }}</div>
@@ -150,12 +150,12 @@
 									</div>
 									{% endif %}
 									{% for doctor in patient.doctors %}
-										<a href="" class="text-gray-400">
-											<div class="badge badge-rounded-circle bg-secondary-soft">
-												<i class="fe fe-user text-muted"></i>
-											</div>
+									<a href="" class="text-gray-400">
+										<div>
+											<div class="badge badge-rounded-circle bg-secondary-soft"><i class="fe fe-user text-muted"></i></div>
 											{{ doctor.firstname }} {{ doctor.lastname }}
-										</a>
+										</div>
+									</a>
 									{% endfor %}
 								</div>
 							</div>

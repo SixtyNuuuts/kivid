@@ -57,7 +57,7 @@
 								Boutique
 							</a>
 							{% elseif is_granted('ROLE_DOCTOR')%}
-							<a class="dropdown-item" href="#!">
+							<a class="dropdown-item" href="{{ path('app_doctor_patients', {'id':app.user.id}) }}">
 								<i class="fe fe-users"></i>
 								Mes patients
 							</a>

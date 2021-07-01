@@ -18,7 +18,6 @@ class DashboardController extends AbstractDashboardController
 {
     /**
      * @Route("/dashboard", name="app_admin_dashboard")
-     * @isGranted("ROLE_ADMIN", message="Vous n'avez pas le droit d'accéder à cette zone")
      */
     public function index(): Response
     {

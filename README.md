@@ -29,9 +29,11 @@ Ensuite, dans l'ordre taper les commandes :
 
 - 5 ``symfony console doctrine:migrations:migrate`` afin d'exécuter l'ensemble des migrations en base de donnée.
 
-- 6 ``symfony server:ca:install`` pour installer le https sur le serveur.
+- 6 ``symfony console doctrine:fixtures:load`` afin d'exécuter les fixtures.
 
-- 7 ``symfony serve -d`` afin de lancer le serveur symfony.
+- 7 ``symfony server:ca:install`` pour installer le https sur le serveur.
+
+- 8 ``symfony serve -d`` afin de lancer le serveur symfony.
 
 Vous pouvez maintenant accéder à l'application : ``https://localhost:8000``
 

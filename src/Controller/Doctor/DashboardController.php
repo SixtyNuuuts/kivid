@@ -15,9 +15,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class DashboardController extends AbstractController
 {
     /**
-     * @Route("/dashboard/{id}", name="app_doctor_dashboard")
-     * @Security("is_granted('ROLE_DOCTOR') or is_granted('ROLE_ADMIN')",
-     *  message="Vous n'avez pas le droit d'accéder à cette zone")
+     * @Route("/{id}/dashboard", name="app_doctor_dashboard")
      * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
     public function dashboard(Doctor $doctor): Response
