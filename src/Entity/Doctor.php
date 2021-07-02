@@ -34,14 +34,14 @@ class Doctor extends User
     private $entityName;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Patient::class, inversedBy="doctors")
+     * @ORM\OneToMany(targetEntity=DoctorPatient::class, mappedBy="doctor", orphanRemoval=true)
      */
-    private $patients;
+    private $doctorPatients;
 
     public function __construct()
     {
         parent::__construct(['ROLE_DOCTOR']);
-        $this->patients = new ArrayCollection();
+        $this->doctorPatients = new ArrayCollection();
     }
 
     public function getDescription(): ?string
@@ -93,25 +93,31 @@ class Doctor extends User
     }
 
     /**
-     * @return Collection|Patient[]
+     * @return Collection|DoctorPatient[]
      */
-    public function getPatients(): Collection
+    public function getDoctorPatients(): Collection
     {
-        return $this->patients;
+        return $this->doctorPatients;
     }
 
-    public function addPatient(Patient $patient): self
+    public function addDoctorPatient(DoctorPatient $doctorPatient): self
     {
-        if (!$this->patients->contains($patient)) {
-            $this->patients[] = $patient;
+        if (!$this->doctorPatients->contains($doctorPatient)) {
+            $this->doctorPatients[] = $doctorPatient;
+            $doctorPatient->setDoctor($this);
         }
 
         return $this;
     }
 
-    public function removePatient(Patient $patient): self
+    public function removeDoctorPatient(DoctorPatient $doctorPatient): self
     {
-        $this->patients->removeElement($patient);
+        if ($this->doctorPatients->removeElement($doctorPatient)) {
+            // set the owning side to null (unless already changed)
+            if ($doctorPatient->getDoctor() === $this) {
+                $doctorPatient->setDoctor(null);
+            }
+        }
 
         return $this;
     }

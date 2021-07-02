@@ -141,7 +141,7 @@
 							<div class="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 m-1">
 								<div class="fs-6 fw-boldest text-gray-700">{{ 'Kinésitherapeute' | upper }}</div>
 								<div class="fw-bold text-gray-400">
-									{% if patient.doctors|length == 0 %}
+									{% if patient.patientDoctors|length == 0 %}
 									<div class="badge my-1 text-gray-600" style="white-space: normal;">
 										<div class="badge badge-rounded-circle">
 											<i class="fe fe-user-x text-muted"></i>
@@ -149,11 +149,11 @@
 										Pour l'instant, aucun Kinésitherapeute ne s'occupe<br> de vous.
 									</div>
 									{% endif %}
-									{% for doctor in patient.doctors %}
+									{% for pd in patient.patientDoctors %}
 									<a href="" class="text-gray-400">
 										<div>
 											<div class="badge badge-rounded-circle bg-secondary-soft"><i class="fe fe-user text-muted"></i></div>
-											{{ doctor.firstname }} {{ doctor.lastname }}
+											{{ pd.doctor.firstname }} {{ pd.doctor.lastname }}
 										</div>
 									</a>
 									{% endfor %}

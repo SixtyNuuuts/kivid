@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Doctor;
 use App\Entity\Patient;
 use App\Repository\FindForOauthTrait;
 use Doctrine\Persistence\ManagerRegistry;
@@ -22,25 +23,23 @@ class PatientRepository extends ServiceEntityRepository
         parent::__construct($registry, Patient::class);
     }
 
-    // public function findAllWithoutDoctor($doctor)
-    // {
-    //     if (null === $doctor) {
-    //         return null;
-    //     }
-    //     // $qb = $this->createQueryBuilder('p');
-    //     // return $qb->join('p.doctors', 'f')
-    //     // ->where($qb->expr()->neq('f.id', $doctor->getId()))
-    //     // ->getQuery()
-    //     // ->getResult();
+    /**
+     * @return Patient[]
+     */
+    public function findAllWithoutDoctor(Doctor $doctor)
+    {
+        $q = $this->getEntityManager()->createQuery(
+            ' select p from App\Entity\Patient p
+                where NOT EXISTS (
+                    select dp from App\Entity\DoctorPatient dp where dp.doctor = :doctor and dp.patient = p.id
+                )
+            '
+        )->setParameters([
+            'doctor' => $doctor
+        ]);
 
-    //     return $this->createQueryBuilder('p')
-    //         ->where('p.doctors = :doctor')
-    //         ->setParameter(':doctor', $doctor)
-    //         ->getQuery()
-    //         ->getResult()
-    //     ;
-    // }
-
+        return $q->getResult();
+    }
 
     /**
      * Recherche les patients en fonction de searchTerm
@@ -49,13 +48,6 @@ class PatientRepository extends ServiceEntityRepository
     public function searchWithWords($searchTerm)
     {
         $qb = $this->createQueryBuilder('p');
-
-        if (null === $searchTerm) {
-            return $qb
-                ->getQuery()
-                ->getResult()
-            ;
-        }
 
         $searchTermArray = explode(" ", $searchTerm);
 

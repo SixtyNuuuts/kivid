@@ -35,28 +35,28 @@
 									Pour l'instant, vous n'avez aucun patient.
 								</div>
 							{% endif %}
-							{% for patient in doctorPatients %}
+							{% for dp in doctorPatients %}
 								<div class="list-group-item">
 									<div class="row align-items-center">
 										<div class="col-auto">
 											<div class="avatar avatar-xl">
-												<img class="avatar-img rounded-circle" src="{{ patient.avatarUrl|default('/img/avatar-default.svg') }}" alt="avatar patient">
+												<img class="avatar-img rounded-circle" src="{{ dp.patient.avatarUrl|default('/img/avatar-default.svg') }}" alt="avatar patient">
 											</div>
 										</div>
 										<div class="col-6 ms-n5">
 											<p class="mb-0">
-												{{ patient.firstname }}
-												{{ patient.lastname }}
+												{{ dp.patient.firstname }}
+												{{ dp.patient.lastname }}
 												-
-												{{ patient.birthdate | age }}
+												{{ dp.patient.birthdate | age }}
 											</p>
 											<p class="d-block small text-truncate text-gray-700">
-												{{ patient.email }}
+												{{ dp.patient.email }}
 											</p>
 										</div>
 										<div class="col-auto ms-auto">
 											<a class="btn btn-sm btn-rounded-circle btn-primary" 
-											href="{{ path('app_doctor_remove_patient', {'id': doctor.id, 'idPatient': patient.id }) }}">
+											href="{{ path('app_doctor_manage_patient', {'id': doctor.id, 'idPatient': dp.patient.id }) }}">
 												<i class="fe fe-trash"></i>
 											</a>
 											</select>
@@ -141,10 +141,16 @@
 											</p>
 										</div>
 										<div class="col-auto ms-auto">
+										{% if patient.hisdoctor(doctor) %}
+											<div class="btn-sm btn-rounded-circle btn-primary-soft">
+												<i class="fe fe-check"></i>
+											</div>
+										{% else %}
 											<a class="btn btn-sm btn-rounded-circle btn-primary" 
-											href="{{ path('app_doctor_add_patient', {'id': doctor.id, 'idPatient': patient.id }) }}">
+												href="{{ path('app_doctor_manage_patient', {'id': doctor.id, 'idPatient': patient.id }) }}">
 												<i class="fe fe-plus"></i>
 											</a>
+										{% endif %}
 										</div>
 									</div>
 								</div>

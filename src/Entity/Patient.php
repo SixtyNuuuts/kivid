@@ -19,14 +19,14 @@ class Patient extends User
     private $birthdate;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Doctor::class, mappedBy="patients")
+     * @ORM\OneToMany(targetEntity=DoctorPatient::class, mappedBy="patient", orphanRemoval=true)
      */
-    private $doctors;
+    private $patientDoctors;
 
     public function __construct()
     {
         parent::__construct(['ROLE_PATIENT']);
-        $this->doctors = new ArrayCollection();
+        $this->patientDoctors = new ArrayCollection();
     }
 
     public function getBirthdate(): ?\DateTimeImmutable
@@ -41,28 +41,41 @@ class Patient extends User
         return $this;
     }
 
-    /**
-     * @return Collection|Doctor[]
-     */
-    public function getDoctors(): Collection
+    public function isHisDoctor(Doctor $doctor)
     {
-        return $this->doctors;
+        foreach ($this->getPatientDoctors() as $dp) {
+            if ($dp->getDoctor() === $doctor) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    public function addDoctor(Doctor $doctor): self
+    /**
+     * @return Collection|DoctorPatient[]
+     */
+    public function getPatientDoctors(): Collection
     {
-        if (!$this->doctors->contains($doctor)) {
-            $this->doctors[] = $doctor;
-            $doctor->addPatient($this);
+        return $this->patientDoctors;
+    }
+
+    public function addPatientDoctor(DoctorPatient $patientDoctor): self
+    {
+        if (!$this->patientDoctors->contains($patientDoctor)) {
+            $this->patientDoctors[] = $patientDoctor;
+            $patientDoctor->setPatient($this);
         }
 
         return $this;
     }
 
-    public function removeDoctor(Doctor $doctor): self
+    public function removePatientDoctor(DoctorPatient $patientDoctor): self
     {
-        if ($this->doctors->removeElement($doctor)) {
-            $doctor->removePatient($this);
+        if ($this->patientDoctors->removeElement($patientDoctor)) {
+            // set the owning side to null (unless already changed)
+            if ($patientDoctor->getPatient() === $this) {
+                $patientDoctor->setPatient(null);
+            }
         }
 
         return $this;

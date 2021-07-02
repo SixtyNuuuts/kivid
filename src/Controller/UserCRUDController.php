@@ -32,13 +32,17 @@ class UserCRUDController extends AbstractController
      */
     public function edit(Request $request, string $userType, int $id, SluggerInterface $slugger): Response
     {
-        $user = $this->patientRepository->findOneById($id);
-        $form = $this->createForm(PatientFormType::class, $user);
+        $repository = $this->patientRepository;
+        $formType = PatientFormType::class;
 
         if ('doctor' === $userType) {
-            $user = $this->doctorRepository->findOneById($id);
-            $form = $this->createForm(DoctorFormType::class, $user);
+            $repository = $this->doctorRepository;
+            $formType = DoctorFormType::class;
         }
+
+        $user = $repository->findOneById($id);
+
+        $form = $this->createForm($formType, $user);
 
         if (!$user) {
             throw new NotFoundResourceException();
