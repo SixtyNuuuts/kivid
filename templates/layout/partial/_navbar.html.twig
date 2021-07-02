@@ -68,7 +68,11 @@
 								Mes fiches
 							</a>
 							<div class="dropdown-divider mb-3 mt-3"></div>
-							<a class="dropdown-item" href="{{ path('app_user_edit', {'id':app.user.id}) }}">
+							{% if is_granted('ROLE_PATIENT') %}
+							<a class="dropdown-item" href="{{ path('app_user_edit', {'id': app.user.id, 'userType': 'patient'}) }}">
+							{% elseif is_granted('ROLE_DOCTOR')%}
+							<a class="dropdown-item" href="{{ path('app_user_edit', {'id': app.user.id, 'userType': 'doctor'}) }}">
+							{% endif %}
 								<i class="fe fe-settings"></i>
 								Paramètres
 							</a>

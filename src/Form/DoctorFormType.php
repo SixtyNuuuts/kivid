@@ -41,7 +41,6 @@ class DoctorFormType extends AbstractType
             'label' => 'Ville',
             'required' => false,
             'attr' => [
-                'autofocus' => true,
                 'placeholder' => "Ville",
             ],
         ])

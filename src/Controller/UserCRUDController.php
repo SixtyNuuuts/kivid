@@ -2,8 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Doctor;
-use App\Entity\Patient;
 use App\Form\DoctorFormType;
 use App\Form\PatientFormType;
 use App\Repository\DoctorRepository;
@@ -30,24 +28,20 @@ class UserCRUDController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/edit", name="app_user_edit", methods={"GET","POST"})
+     * @Route("/{userType}/{id}/edit", name="app_user_edit", methods={"GET","POST"})
      */
-    public function edit(Request $request, int $id, SluggerInterface $slugger): Response
+    public function edit(Request $request, string $userType, int $id, SluggerInterface $slugger): Response
     {
-        $user = $this->patientRepository->findOneById($id) ?? $this->doctorRepository->findOneById($id);
+        $user = $this->patientRepository->findOneById($id);
+        $form = $this->createForm(PatientFormType::class, $user);
 
-        $form = '';
+        if ('doctor' === $userType) {
+            $user = $this->doctorRepository->findOneById($id);
+            $form = $this->createForm(DoctorFormType::class, $user);
+        }
 
         if (!$user) {
             throw new NotFoundResourceException();
-        }
-
-        if ($user instanceof Patient) {
-            $form = $this->createForm(PatientFormType::class, $user);
-        }
-
-        if ($user instanceof Doctor) {
-            $form = $this->createForm(DoctorFormType::class, $user);
         }
 
         $form->handleRequest($request);

@@ -101,7 +101,7 @@
 								</span>
 							</div>
 						</span>
-						<div {{ stimulus_controller('modal-form', { formUrl: path('app_user_edit', { 'id': doctor.id }) } ) }} class="d-flex flex-row-reverse position-absolute w-100">
+						<div {{ stimulus_controller('modal-form', { formUrl: path('app_user_edit', {'id': doctor.id, 'userType': 'doctor'}) } ) }} class="d-flex flex-row-reverse position-absolute w-100">
 							<button class="btn btn-lg btn-rounded-circle btn-primary" data-bs-toggle="modal" data-bs-target="#modal" data-action="modal-form#triggerModal">
 								<i class="fe fe-edit"></i>
 							</button>
