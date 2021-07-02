@@ -23,10 +23,11 @@ class VideoCrudController extends AbstractCrudController
     {
         return [
             TextField::new('name', 'Nom'),
-            TextField::new('url'),
-            ImageField::new('thumbnail_url')->setTemplatePath('admin/custom_field/image.html.twig')->onlyOnIndex(),
+            TextField::new('url', 'Url de la vidéo'),
+            ImageField::new('thumbnail_url', 'Vignette')
+                        ->setTemplatePath('admin/custom_field/image.html.twig')->onlyOnIndex(),
             TextEditorField::new('description'),
-            AssociationField::new('tags'),
+            AssociationField::new('tags', 'Tag(s)'),
         ];
     }
 }

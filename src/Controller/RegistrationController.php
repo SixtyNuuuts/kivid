@@ -36,6 +36,10 @@ class RegistrationController extends AbstractController
         UserPasswordHasherInterface $passwordHasher,
         EntityManagerInterface $em
     ): Response {
+        if ($this->getUser()) {
+            return $this->redirectFromIsGranted();
+        }
+
         $form = $this->createForm(RegistrationFormType::class);
         $form->handleRequest($request);
 

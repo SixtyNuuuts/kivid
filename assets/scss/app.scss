@@ -95,7 +95,7 @@ html {
   }
 
   form {
-    label {
+    label, legend {
       color: #869AB8;
     }
   }
@@ -128,3 +128,6 @@ html {
     }
   }
 
+  #patient_form_birthdate {
+    display: flex;
+  }
