@@ -39,7 +39,7 @@ class PatientManagementController extends AbstractController
             $patients = $this->patientRepository->searchWithWords($form->get('search')->getData());
         }
 
-        return $this->render("doctor/patients_list.html.twig", [
+        return $this->render("doctor/vue_patients_list.html.twig", [
             'searchForm' => $form->createView(),
             'doctor' => $doctor,
             'allPatients' => $patients,
