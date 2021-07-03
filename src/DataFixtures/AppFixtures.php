@@ -4,7 +4,6 @@ namespace App\DataFixtures;
 
 use Faker;
 use App\Entity\Doctor;
-use App\Entity\DoctorPatient;
 use App\Entity\Patient;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -40,12 +39,10 @@ class AppFixtures extends Fixture
 
             for ($pi = 0; $pi < rand(1, 5); $pi++) {
                 $patient = new Patient();
-                $patientDoctor = new DoctorPatient();
-                $patientDoctor->setDoctor($kine);
 
                 $patient
                     ->setBirthdate(\DateTimeImmutable::createFromMutable($faker->dateTimeBetween('-90 years', 'now')))
-                    ->addPatientDoctor($patientDoctor)
+                    ->setDoctor($kine)
                     ->setEmail("patient{$ki}{$pi}@mail.com")
                     ->setPassword($this->passwordHasher->hashPassword($kine, 'password'))
                     ->setFirstname($faker->firstName)
@@ -53,7 +50,6 @@ class AppFixtures extends Fixture
                 ;
 
                 $manager->persist($patient);
-                $manager->persist($patientDoctor);
             }
         }
 

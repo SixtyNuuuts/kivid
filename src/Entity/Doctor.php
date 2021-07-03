@@ -3,10 +3,10 @@
 namespace App\Entity;
 
 use App\Entity\User;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\DoctorRepository;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity(repositoryClass=DoctorRepository::class)
@@ -34,14 +34,14 @@ class Doctor extends User
     private $entityName;
 
     /**
-     * @ORM\OneToMany(targetEntity=DoctorPatient::class, mappedBy="doctor", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Patient::class, mappedBy="doctor")
      */
-    private $doctorPatients;
+    private $patients;
 
     public function __construct()
     {
         parent::__construct(['ROLE_DOCTOR']);
-        $this->doctorPatients = new ArrayCollection();
+        $this->patients = new ArrayCollection();
     }
 
     public function getDescription(): ?string
@@ -93,29 +93,29 @@ class Doctor extends User
     }
 
     /**
-     * @return Collection|DoctorPatient[]
+     * @return Collection|Patient[]
      */
-    public function getDoctorPatients(): Collection
+    public function getPatients(): Collection
     {
-        return $this->doctorPatients;
+        return $this->patients;
     }
 
-    public function addDoctorPatient(DoctorPatient $doctorPatient): self
+    public function addPatient(Patient $patient): self
     {
-        if (!$this->doctorPatients->contains($doctorPatient)) {
-            $this->doctorPatients[] = $doctorPatient;
-            $doctorPatient->setDoctor($this);
+        if (!$this->patients->contains($patient)) {
+            $this->patients[] = $patient;
+            $patient->setDoctor($this);
         }
 
         return $this;
     }
 
-    public function removeDoctorPatient(DoctorPatient $doctorPatient): self
+    public function removePatient(Patient $patient): self
     {
-        if ($this->doctorPatients->removeElement($doctorPatient)) {
+        if ($this->patients->removeElement($patient)) {
             // set the owning side to null (unless already changed)
-            if ($doctorPatient->getDoctor() === $this) {
-                $doctorPatient->setDoctor(null);
+            if ($patient->getDoctor() === $this) {
+                $patient->setDoctor(null);
             }
         }
 

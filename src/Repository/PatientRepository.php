@@ -2,7 +2,6 @@
 
 namespace App\Repository;
 
-use App\Entity\Doctor;
 use App\Entity\Patient;
 use App\Repository\FindForOauthTrait;
 use Doctrine\Persistence\ManagerRegistry;
@@ -24,39 +23,21 @@ class PatientRepository extends ServiceEntityRepository
     }
 
     /**
+     * Recherche les patients en fonction des searchTerms
      * @return Patient[]
      */
-    public function findAllWithoutDoctor(Doctor $doctor)
-    {
-        $q = $this->getEntityManager()->createQuery(
-            ' select p from App\Entity\Patient p
-                where NOT EXISTS (
-                    select dp from App\Entity\DoctorPatient dp where dp.doctor = :doctor and dp.patient = p.id
-                )
-            '
-        )->setParameters([
-            'doctor' => $doctor
-        ]);
-
-        return $q->getResult();
-    }
-
-    /**
-     * Recherche les patients en fonction de searchTerm
-     * @return Patient[]
-     */
-    public function searchWithWords($searchTerm)
+    public function searchWithWords($searchTerms): array
     {
         $qb = $this->createQueryBuilder('p');
 
-        $searchTermArray = explode(" ", $searchTerm);
+        $searchTermsArray = explode(" ", $searchTerms);
 
-        foreach ($searchTermArray as $term) {
+        foreach ($searchTermsArray as $term) {
             if ($term) {
                 $qb->where('ILIKE(p.firstname, :searchTerm) = TRUE')
                 ->orWhere('ILIKE(p.lastname, :searchTerm) = TRUE')
                 ->orWhere('ILIKE(p.email, :searchTerm) = TRUE')
-                ->setParameter(':searchTerm', $term);
+                ->setParameter(':searchTerm', '%' . $term . '%');
             }
         }
 
