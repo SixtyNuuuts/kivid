@@ -3,60 +3,59 @@
 namespace App\Controller\Doctor;
 
 use App\Entity\Doctor;
-use App\Entity\DoctorPatient;
 use App\Form\SearchFormType;
-use App\Repository\DoctorPatientRepository;
 use App\Repository\PatientRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
  * @Route("/kine")
  */
 class PatientManagementController extends AbstractController
 {
+    private $patientRepository;
+
+    public function __construct(PatientRepository $patientRepository)
+    {
+        $this->patientRepository = $patientRepository;
+    }
+
     /**
      * @Route("/{id}/patients", name="app_doctor_patients", methods={"GET","POST"})
      */
-    public function patientsList(Request $request, Doctor $doctor, PatientRepository $patientRepository): Response
+    public function patientList(Request $request, Doctor $doctor): Response
     {
-        $patients = $patientRepository->findAllWithoutDoctor($doctor);
+        $patients = $this->patientRepository->findAll();
 
         $form = $this->createForm(SearchFormType::class);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid() && $form->get('search')->getData()) {
-            $patients = $patientRepository->searchWithWords($form->get('search')->getData());
+            $patients = $this->patientRepository->searchWithWords($form->get('search')->getData());
         }
 
         return $this->render("doctor/patients_list.html.twig", [
             'searchForm' => $form->createView(),
             'doctor' => $doctor,
             'allPatients' => $patients,
-            'doctorPatients' => $doctor->getDoctorPatients(),
+            'doctorPatients' => $doctor->getPatients(),
         ]);
     }
 
     /**
-     * @Route("/{id}/manage/patient/{idPatient}", name="app_doctor_manage_patient", methods={"GET","POST"})
+     * @Route("/{id}/manage/patient/{idPatient}", name="app_doctor_manage_patient", methods={"GET"})
      */
-    public function addPatient(
-        Doctor $doctor,
-        int $idPatient,
-        PatientRepository $patientRepository,
-        DoctorPatientRepository $doctorPatientRepository,
-        EntityManagerInterface $em
-    ): RedirectResponse {
-        $patient = $patientRepository->findOneBy(['id' => $idPatient]);
-        $doctorPatient = $doctorPatientRepository->findOneBy(['doctor' => $doctor, 'patient' => $patient]);
+    public function addPatient(Doctor $doctor, int $idPatient, EntityManagerInterface $em): RedirectResponse
+    {
+        $patient = $this->patientRepository->findOneBy(['id' => $idPatient]);
 
-        if ($doctorPatient) {
-            $doctor->removeDoctorPatient($doctorPatient);
+        if ($doctor->getPatients()->contains($patient)) {
+            $doctor->removePatient($patient);
 
             $em->flush();
 
@@ -65,12 +64,7 @@ class PatientManagementController extends AbstractController
             return $this->redirectToRoute('app_doctor_patients', ['id' => $doctor->getId()]);
         }
 
-        $doctorPatient = new DoctorPatient();
-        $doctorPatient->setPatient($patient);
-
-        $doctor->addDoctorPatient($doctorPatient);
-
-        $em->persist($doctorPatient);
+        $doctor->addPatient($patient);
 
         $em->flush();
 
