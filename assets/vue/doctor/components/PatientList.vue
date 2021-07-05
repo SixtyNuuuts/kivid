@@ -27,7 +27,7 @@
                             )
                         "
                     >
-                        Name
+                        Nom
                     </vs-th>
                     <vs-th
                         sort
