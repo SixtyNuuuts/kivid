@@ -131,3 +131,23 @@ html {
   #patient_form_birthdate {
     display: flex;
   }
+
+  h2 {
+    font-size: 1.7em;
+    margin-bottom: 0.4em;
+    i {
+        color: $primary;
+        font-size: 0.9em;
+        margin-right: 0.1em;
+    }
+}
+
+input[type="search"]::-webkit-search-cancel-button {
+  /* Remove default */
+  -webkit-appearance: none;
+  /*Your new styles */
+  height: 18px;
+  width: 18px;
+  cursor: pointer;
+  background-image: url('../img/icons/x-circle.svg');
+}

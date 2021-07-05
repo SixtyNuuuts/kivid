@@ -9,8 +9,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * @Route("/kine")
@@ -18,10 +19,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class PatientManagementController extends AbstractController
 {
     private $patientRepository;
+    private $serializer;
 
-    public function __construct(PatientRepository $patientRepository)
+    public function __construct(PatientRepository $patientRepository, SerializerInterface $serializer)
     {
         $this->patientRepository = $patientRepository;
+        $this->serializer = $serializer;
     }
 
     /**
@@ -39,7 +42,7 @@ class PatientManagementController extends AbstractController
             $patients = $this->patientRepository->searchWithWords($form->get('search')->getData());
         }
 
-        return $this->render("doctor/vue_patients_list.html.twig", [
+        return $this->render("doctor/patients_list.html.twig", [
             'searchForm' => $form->createView(),
             'doctor' => $doctor,
             'allPatients' => $patients,
@@ -50,7 +53,7 @@ class PatientManagementController extends AbstractController
     /**
      * @Route("/{id}/manage/patient/{idPatient}", name="app_doctor_manage_patient", methods={"GET"})
      */
-    public function addPatient(Doctor $doctor, int $idPatient, EntityManagerInterface $em): RedirectResponse
+    public function addPatient(Doctor $doctor, int $idPatient, EntityManagerInterface $em): JsonResponse
     {
         $patient = $this->patientRepository->findOneBy(['id' => $idPatient]);
 
@@ -61,7 +64,8 @@ class PatientManagementController extends AbstractController
 
             $this->addFlash('success', 'Patient supprimé !');
 
-            return $this->redirectToRoute('app_doctor_patients', ['id' => $doctor->getId()]);
+            return $this->json('Patient supprimé !', 200);
+            // return $this->redirectToRoute('app_doctor_patients', ['id' => $doctor->getId()]);
         }
 
         $doctor->addPatient($patient);
@@ -70,6 +74,23 @@ class PatientManagementController extends AbstractController
 
         $this->addFlash('success', 'Patient ajouté !');
 
-        return $this->redirectToRoute('app_doctor_patients', ['id' => $doctor->getId()]);
+        return $this->json('Patient ajouté !', 200);
+        // return $this->redirectToRoute('app_doctor_patients', ['id' => $doctor->getId()]);
     }
+
+    /**
+     * @Route("/{id}/patients/search/{search}", name="app_doctor_patients_search", methods={"GET"})
+     */
+    // public function searchPatient(Doctor $doctor, string $search): JsonResponse
+    // {
+    //     $patientsFiltered = $this->patientRepository->searchWithWords($search);
+
+    //     $jsonPatientsFiltered = $this->serializer->serialize(
+    //         $patientsFiltered,
+    //         'json',
+    //         ['groups' => 'patient_read']
+    //     );
+
+    //     return $this->json($jsonPatientsFiltered, 200);
+    // }
 }

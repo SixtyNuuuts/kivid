@@ -1,0 +1,9 @@
+{% extends 'layout/main.html.twig' %}
+
+{% block layout %}
+    {{ parent() }}
+
+    <script id="vueData" type="application/json">
+        {% block vueData %}{% endblock %}
+    </script>
+{% endblock %}

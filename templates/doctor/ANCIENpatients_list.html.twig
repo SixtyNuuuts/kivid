@@ -1,0 +1,166 @@
+{% extends 'layout/main.html.twig' %}
+
+{% block title %}Mes Patients
+{% endblock %}
+
+{% block body %}
+	{% include 'layout/partial/_breadcrumb.html.twig' with { pageName : 'Mes Patients'} %}
+
+	<section>
+		<div class="container">
+			<div class="row">
+				<div class="col-12 card card-bleed shadow-light-lg">
+					<div class="card-header">
+						<div class="row align-items-center">
+							<div class="col">
+								<h4 class="mb-0">
+									Mes Patients
+								</h4>
+
+							</div>
+							<div class="col-auto">
+								<a class="btn btn-lg btn-rounded-circle btn-primary" href="#add-patient">
+									<i class="fe fe-plus"></i>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="card-body">
+						<div class="list-group list-group-flush">
+							{% if doctorPatients|length == 0 %}
+								<div class="badge my-1 text-gray-600" style="white-space: normal;">
+									<div class="badge badge-rounded-circle">
+										<i class="fe fe-user-x text-muted"></i>
+									</div>
+									Pour l'instant, vous n'avez aucun patient.
+								</div>
+							{% endif %}
+							{% for patient in doctorPatients %}
+								<div class="list-group-item">
+									<div class="row align-items-center">
+										<div class="col-auto">
+											<div class="avatar avatar-xl">
+												<img class="avatar-img rounded-circle" src="{{ patient.avatarUrl|default('/img/avatar-default.svg') }}" alt="avatar patient">
+											</div>
+										</div>
+										<div class="col-6 ms-n5">
+											<p class="mb-0">
+												{{ patient.firstname }}
+												{{ patient.lastname }}
+												-
+												{{ patient.birthdate | age }}
+											</p>
+											<p class="d-block small text-truncate text-gray-700">
+												{{ patient.email }}
+											</p>
+										</div>
+										<div class="col-auto ms-auto">
+											<a class="btn btn-sm btn-rounded-circle btn-primary" 
+											href="{{ path('app_doctor_manage_patient', {'id': doctor.id, 'idPatient': patient.id }) }}">
+												<i class="fe fe-trash"></i>
+											</a>
+											</select>
+										</div>
+									</div>
+								</div>
+							{% endfor %}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+		<section class="pt-4 pb-6" id="add-patient">
+		<div class="container">
+			<div class="card-header">
+				<div class="row align-items-center">
+					<div class="col">
+						<h4 class="mb-0">
+							Ajouter des Patients
+						</h4>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-12 p-5" style="border-bottom: 1px solid #F1F4F8;">
+					{{ form_start(searchForm, { 'attr': {'class': 'rounded shadow'} }) }}
+					<div class="input-group input-group-lg">
+						<span class="input-group-text border-0 pe-1">
+							<i class="fe fe-search"></i>
+						</span>
+						{{ form_widget(searchForm.search, { 'attr': {'class': 'form-control border-0 px-1', 'placeholder':'Recherchez un patient...'} }) }}
+						<span class="input-group-text border-0 py-0 ps-1 pe-3">
+							<span class="h6 text-uppercase text-muted d-none d-md-block mb-0 me-5">
+								{% if allPatients|length > 1 %}
+									{{ allPatients|length }} patients
+								{% else %}
+									{{ allPatients|length }} patient
+								{% endif %}
+							</span>
+							<button type="submit" class="btn btn-sm btn-primary">
+								Rechercher
+							</button>
+						</span>
+					</div>
+					{{ form_end(searchForm) }}
+				</div>
+			</div>
+		</div>
+		<div class="container">
+			<div class="row">
+				<div class="col-12 card card-bleed shadow-light-lg">
+					<div class="card-body">
+						<div class="list-group list-group-flush">
+							{% if allPatients|length == 0 %}
+								<div class="badge my-1 text-gray-600" style="white-space: normal;">
+									<div class="badge badge-rounded-circle">
+										<i class="fe fe-user-x text-muted"></i>
+									</div>
+									Il n'y a aucun patient.
+								</div>
+							{% endif %}
+							{% for patient in allPatients %}
+								<div class="list-group-item">
+									<div class="row align-items-center">
+										<div class="col-auto">
+											<div class="avatar avatar-xl">
+												<img class="avatar-img rounded-circle" src="{{ patient.avatarUrl|default('/img/avatar-default.svg') }}" alt="avatar patient">
+											</div>
+										</div>
+										<div class="col-6 ms-n5">
+											<p class="mb-0">
+												{{ patient.firstname }}
+												{{ patient.lastname }}
+												{% if patient.birthdate %}
+												- {{ patient.birthdate | age }}
+												{% endif %}
+											</p>
+											<p class="d-block small text-truncate text-gray-700">
+												{{ patient.email }}
+											</p>
+										</div>
+										<div class="col-auto ms-auto">
+										{% if patient.doctor == doctor %}
+											<div class="btn-sm btn-rounded-circle btn-primary-soft">
+												<i class="fe fe-check"></i>
+											</div>
+										{% else %}
+											<a class="btn btn-sm btn-rounded-circle btn-primary" 
+												href="{{ path('app_doctor_manage_patient', {'id': doctor.id, 'idPatient': patient.id }) }}">
+												<i class="fe fe-plus"></i>
+											</a>
+										{% endif %}
+										</div>
+									</div>
+								</div>
+							{% endfor %}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+
+{% endblock %}
