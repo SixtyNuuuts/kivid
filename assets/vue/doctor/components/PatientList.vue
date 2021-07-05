@@ -108,6 +108,14 @@
                     "
                 />
             </template>
+            <template #notFound>
+                <i class="fe fe-cloud-off"></i>
+                Rien trouvé.
+            </template></vs-table
+        >
+    </div>
+</template>
+
         </vs-table>
     </div>
 </template>
@@ -116,12 +124,6 @@ export default {
     name: "PatientList",
     props: {
         patients: Array,
-        // title: String,
-        // likes: Number,
-        // isPublished: Boolean,
-        // patients: Object,
-        // callback: Function,
-        // contactsPromise: Promise, // ou n'importe quel autre constructeur
     },
     data() {
         return {
