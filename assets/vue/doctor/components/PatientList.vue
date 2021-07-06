@@ -96,11 +96,7 @@
                     </vs-td>
                     <vs-td>
                         <div class="d-flex jc-lc">
-                            <vs-button flat @click="removePatient(patient.id)">
-                                <i class="fe fe-user-minus"></i>
-                                Retirer de mes patients
-                            </vs-button>
-
+                            <div v-html="removePatient(patient.id)"></div>
                             <vs-button plain>
                                 <i class="fe fe-file-plus"></i>
                                 Prescrire une fiche
@@ -119,18 +115,24 @@
             </template>
             <template #notFound>
                 <i class="fe fe-user-minus"></i>
-                Aucun patient n'a été trouvé avec "<strong>{{ search }}</strong
-                >",<br /> </template
-        ></vs-table>
+                Aucun patient n'a été trouvé
+                <span v-if="search">
+                    avec "<strong>{{ search }}"</strong></span
+                ></template
+            >
+        </vs-table>
     </div>
 </template>
 
 <script>
+import f from "../../services/function";
+
 export default {
     name: "PatientList",
     props: {
         patients: Array,
         doctor: Object,
+        removePatientForm: String,
     },
     data() {
         return {
@@ -138,38 +140,22 @@ export default {
             allCheck: false,
             page: 1,
             max: 5,
-            active: 0,
             selected: [],
             patientsArray: this.patients,
         };
     },
     methods: {
         removePatient(patientId) {
-            this.axios
-                .get(`/kine/${this.doctor.id}/remove/patient/${patientId}`)
-                .then((response) => {
-                    console.log(response);
-                    document.location.href = `/kine/${this.doctor.id}/patients`;
-                })
-                .catch((error) => {
-                    console.log(error);
-                    this.$vs.notification({
-                        text: `Erreur`,
-                    });
-                });
+            const removePatientFormWithPatientId =
+                this.removePatientForm.replace(
+                    `<input type="hidden" name="patient_id" value="">`,
+                    `<input type="hidden" name="patient_id" value="${patientId}">`
+                );
+
+            return removePatientFormWithPatientId;
         },
         getAge(dateString) {
-            if (!dateString) {
-                return null;
-            }
-            const today = new Date();
-            const birthDate = new Date(dateString);
-            let age = today.getFullYear() - birthDate.getFullYear();
-            const m = today.getMonth() - birthDate.getMonth();
-            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-                age--;
-            }
-            return age;
+            f.generateAgeFromDateOfBirth(dateString);
         },
     },
 };

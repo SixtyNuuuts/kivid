@@ -2,10 +2,15 @@
     <div>
         <AddPatient
             :doctor="doctor"
-            :patients="allPatients"
+            :patients="allPatientsExceptDoctor"
             :createPatientForm="createPatientForm"
+            :addPatientForm="addPatientForm"
         />
-        <PatientList :doctor="doctor" :patients="doctorPatients" />
+        <PatientList
+            :doctor="doctor"
+            :patients="doctorPatients"
+            :removePatientForm="removePatientForm"
+        />
     </div>
 </template>
 
@@ -22,16 +27,35 @@ export default {
     data: () => ({
         doctor: null,
         createPatientForm: null,
+        addPatientForm: null,
+        removePatientForm: null,
         allPatients: null,
-        doctorPatients: null,
     }),
     created() {
         const data = JSON.parse(document.getElementById("vueData").innerHTML);
 
         this.doctor = data.doctor;
         this.createPatientForm = data.createPatientForm;
+        this.addPatientForm = data.addPatientForm;
+        this.removePatientForm = data.removePatientForm;
         this.allPatients = data.allPatients;
-        this.doctorPatients = data.doctorPatients;
+    },
+    computed: {
+        doctorPatients() {
+            return this.allPatients.filter((patient) => {
+                if (patient.doctor) {
+                    return this.doctor.id === patient.doctor.id;
+                }
+            });
+        },
+        allPatientsExceptDoctor() {
+            return this.allPatients.filter((patient) => {
+                return (
+                    !patient.doctor ||
+                    (patient.doctor ? this.doctor.id !== patient.doctor.id : "")
+                );
+            });
+        },
     },
 };
 </script>

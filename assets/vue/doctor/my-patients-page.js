@@ -10,8 +10,6 @@ Vue.use(VueAxios, axios)
 import Vuesax from 'vuesax'
 import './vuesax/custom_variables.css'
 import 'vuesax/dist/vuesax.css'
-import './vuesax/custom_styles.css'
-// import './vuesax/custom_js'
 
 Vue.use(Vuesax, {
     colors: {

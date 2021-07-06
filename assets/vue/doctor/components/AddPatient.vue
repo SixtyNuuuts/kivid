@@ -79,15 +79,7 @@
                                         ans</span
                                     >
                                 </div>
-                                <div>
-                                    <vs-button
-                                        plain
-                                        @click="addPatient(patient.id)"
-                                    >
-                                        <i class="fe fe-user-plus"></i>
-                                        Ajouter à mes patients
-                                    </vs-button>
-                                </div>
+                                <div v-html="addPatient(patient.id)"></div>
                             </div>
                         </div>
                         <div v-else>
@@ -111,11 +103,14 @@
 </template>
 
 <script>
+import f from "../../services/function";
+
 export default {
     name: "AddPatient",
     props: {
         patients: Array,
         createPatientForm: String,
+        addPatientForm: String,
         doctor: Object,
     },
     data: () => ({
@@ -129,35 +124,19 @@ export default {
     }),
     methods: {
         addPatient(patientId) {
-            this.axios
-                .get(`/kine/${this.doctor.id}/add/patient/${patientId}`)
-                .then((response) => {
-                    console.log(response);
-                    document.location.href = `/kine/${this.doctor.id}/patients`;
-                })
-                .catch((error) => {
-                    console.log(error);
-                    this.$vs.notification({
-                        text: `Cet utilisateur fait déjà partie de vos patients`,
-                    });
-                });
+            const addPatientFormWithPatientId = this.addPatientForm.replace(
+                `<input type="hidden" name="patient_id" value="">`,
+                `<input type="hidden" name="patient_id" value="${patientId}">`
+            );
+
+            return addPatientFormWithPatientId;
         },
         boxToggle() {
             this.boxActive = !this.boxActive;
             this.search = "";
         },
         getAge(dateString) {
-            if (!dateString) {
-                return null;
-            }
-            const today = new Date();
-            const birthDate = new Date(dateString);
-            let age = today.getFullYear() - birthDate.getFullYear();
-            const m = today.getMonth() - birthDate.getMonth();
-            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-                age--;
-            }
-            return age;
+            f.generateAgeFromDateOfBirth(dateString);
         },
     },
     computed: {
@@ -282,7 +261,7 @@ h2 {
     }
 
     span.tiret {
-        color: #ffa729;
+        color: $primary;
         margin: 0.5em;
     }
 
