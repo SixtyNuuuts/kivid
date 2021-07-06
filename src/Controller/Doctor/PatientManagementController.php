@@ -3,15 +3,18 @@
 namespace App\Controller\Doctor;
 
 use App\Entity\Doctor;
-use App\Form\SearchFormType;
+use App\Entity\Patient;
+use App\Form\CreatePatientFormType;
 use App\Repository\PatientRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
  * @Route("/kine")
@@ -19,78 +22,121 @@ use Symfony\Component\Serializer\SerializerInterface;
 class PatientManagementController extends AbstractController
 {
     private $patientRepository;
+    private $em;
     private $serializer;
 
-    public function __construct(PatientRepository $patientRepository, SerializerInterface $serializer)
-    {
+    public function __construct(
+        PatientRepository $patientRepository,
+        SerializerInterface $serializer,
+        EntityManagerInterface $em
+    ) {
         $this->patientRepository = $patientRepository;
+        $this->em = $em;
         $this->serializer = $serializer;
     }
 
     /**
-     * @Route("/{id}/patients", name="app_doctor_patients", methods={"GET","POST"})
+     * @Route("/{id}/patients", name="app_doctor_patients", methods={"GET"})
      */
-    public function patientList(Request $request, Doctor $doctor): Response
+    public function patientList(Doctor $doctor): Response
     {
         $patients = $this->patientRepository->findAll();
 
-        $form = $this->createForm(SearchFormType::class);
+        $form = $this->createForm(CreatePatientFormType::class);
 
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid() && $form->get('search')->getData()) {
-            $patients = $this->patientRepository->searchWithWords($form->get('search')->getData());
-        }
-
-        return $this->render("doctor/patients_list.html.twig", [
-            'searchForm' => $form->createView(),
+        $view = $this->renderView('doctor/_form_create_patient.html.twig', [
+            'form' => $form->createView(),
             'doctor' => $doctor,
+        ]);
+
+        return $this->render('doctor/patients_list.html.twig', [
+            'doctor' => $doctor,
+            'createPatientForm' => $view,
             'allPatients' => $patients,
             'doctorPatients' => $doctor->getPatients(),
         ]);
     }
 
     /**
-     * @Route("/{id}/manage/patient/{idPatient}", name="app_doctor_manage_patient", methods={"GET"})
+     * @Route("/{id}/add/patient/{idPatient}", name="app_doctor_add_patient", methods={"GET"})
      */
-    public function addPatient(Doctor $doctor, int $idPatient, EntityManagerInterface $em): JsonResponse
+    public function addPatient(Doctor $doctor, int $idPatient): JsonResponse
+    {
+        $patient = $this->patientRepository->findOneBy(['id' => $idPatient]);
+
+        if ($doctor->getPatients()->contains($patient)) {
+            return $this->json('Cet utilisateur fait déjà partie de vos patients', 300);
+        }
+
+        $doctor->addPatient($patient);
+
+        $this->em->flush();
+
+        $this->addFlash(
+            'success',
+            "{$patient->getFirstname()} {$patient->getLastname()} a bien été ajouté à votre liste !"
+        );
+
+        return $this->json('Patient ajouté !', 200);
+    }
+
+    /**
+     * @Route("/{id}/remove/patient/{idPatient}", name="app_doctor_remove_patient", methods={"GET"})
+     */
+    public function removePatient(Doctor $doctor, int $idPatient): JsonResponse
     {
         $patient = $this->patientRepository->findOneBy(['id' => $idPatient]);
 
         if ($doctor->getPatients()->contains($patient)) {
             $doctor->removePatient($patient);
 
-            $em->flush();
+            $this->em->flush();
 
-            $this->addFlash('success', 'Patient supprimé !');
+            $this->addFlash(
+                'success',
+                "{$patient->getFirstname()} {$patient->getLastname()} a bien été retiré de votre liste !"
+            );
 
-            return $this->json('Patient supprimé !', 200);
-            // return $this->redirectToRoute('app_doctor_patients', ['id' => $doctor->getId()]);
+            return $this->json('Patient retiré de votre liste !', 200);
         }
 
-        $doctor->addPatient($patient);
+        $this->addFlash('danger', 'Erreur : cet utilisateur ne fait pas partie de vos patient.');
 
-        $em->flush();
-
-        $this->addFlash('success', 'Patient ajouté !');
-
-        return $this->json('Patient ajouté !', 200);
-        // return $this->redirectToRoute('app_doctor_patients', ['id' => $doctor->getId()]);
+        return $this->json('Erreur : cet utilisateur ne fait pas partie de vos patient.', 300);
     }
 
     /**
-     * @Route("/{id}/patients/search/{search}", name="app_doctor_patients_search", methods={"GET"})
+     * @Route("/{id}/create/patient", name="app_doctor_create_patient", methods={"POST"})
      */
-    // public function searchPatient(Doctor $doctor, string $search): JsonResponse
-    // {
-    //     $patientsFiltered = $this->patientRepository->searchWithWords($search);
+    public function createPatient(Request $request, Doctor $doctor): RedirectResponse
+    {
+        $form = $this->createForm(CreatePatientFormType::class);
 
-    //     $jsonPatientsFiltered = $this->serializer->serialize(
-    //         $patientsFiltered,
-    //         'json',
-    //         ['groups' => 'patient_read']
-    //     );
+        $form->handleRequest($request);
 
-    //     return $this->json($jsonPatientsFiltered, 200);
-    // }
+        $patient = new Patient();
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+
+            $patient->setFirstname($data['firstname']);
+            $patient->setLastname($data['lastname']);
+            $patient->setEmail($data['email']);
+            $patient->setDoctor($doctor);
+
+            $this->em->persist($patient);
+
+            try {
+                $this->em->flush();
+            } catch (UniqueConstraintViolationException $e) {
+                $this->addFlash('danger', 'Nous n\'avons pas pu créer le patient car son email était déjà utilisé.');
+
+                return $this->redirectToRoute('app_doctor_patients', ['id' => $doctor->getId()]);
+            }
+
+            $this->addFlash('success', 'L`\'utilisateur a été créé et ajouté à vos patients.');
+        }
+
+        return $this->redirectToRoute('app_doctor_patients', ['id' => $doctor->getId()]);
+    }
 }

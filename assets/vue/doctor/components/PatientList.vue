@@ -41,18 +41,19 @@
                     >
                         Email
                     </vs-th>
-                    <vs-th>
-                        <!-- sort
+                    <vs-th
+                        sort
                         @click="
                             patientsArray = $vs.sortData(
                                 $event,
                                 patientsArray,
-                                'id'
+                                'birthdate'
                             )
                         "
                     >
-                        Id -->
+                        Age
                     </vs-th>
+                    <vs-th> </vs-th>
                 </vs-tr>
             </template>
             <template #tbody>
@@ -91,8 +92,16 @@
                         {{ patient.email }}
                     </vs-td>
                     <vs-td>
+                        {{ getAge(patient.birthdate) }}
+                    </vs-td>
+                    <vs-td>
                         <div class="d-flex jc-lc">
-                            <vs-button flat>
+                            <vs-button flat @click="removePatient(patient.id)">
+                                <i class="fe fe-user-minus"></i>
+                                Retirer de mes patients
+                            </vs-button>
+
+                            <vs-button plain>
                                 <i class="fe fe-file-plus"></i>
                                 Prescrire une fiche
                             </vs-button>
@@ -109,21 +118,19 @@
                 />
             </template>
             <template #notFound>
-                <i class="fe fe-cloud-off"></i>
-                Rien trouvé.
-            </template></vs-table
-        >
+                <i class="fe fe-user-minus"></i>
+                Aucun patient n'a été trouvé avec "<strong>{{ search }}</strong
+                >",<br /> </template
+        ></vs-table>
     </div>
 </template>
 
-        </vs-table>
-    </div>
-</template>
 <script>
 export default {
     name: "PatientList",
     props: {
         patients: Array,
+        doctor: Object,
     },
     data() {
         return {
@@ -135,6 +142,35 @@ export default {
             selected: [],
             patientsArray: this.patients,
         };
+    },
+    methods: {
+        removePatient(patientId) {
+            this.axios
+                .get(`/kine/${this.doctor.id}/remove/patient/${patientId}`)
+                .then((response) => {
+                    console.log(response);
+                    document.location.href = `/kine/${this.doctor.id}/patients`;
+                })
+                .catch((error) => {
+                    console.log(error);
+                    this.$vs.notification({
+                        text: `Erreur`,
+                    });
+                });
+        },
+        getAge(dateString) {
+            if (!dateString) {
+                return null;
+            }
+            const today = new Date();
+            const birthDate = new Date(dateString);
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const m = today.getMonth() - birthDate.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            return age;
+        },
     },
 };
 </script>

@@ -25,6 +25,7 @@
 {% block vueData %}
 	{
 		"doctor": {{ doctor|serialize('json', {groups: 'doctor_read'})|raw }},
+		"createPatientForm": {{ createPatientForm|serialize('json')|raw }},
 		"allPatients": {{ allPatients|serialize('json', {groups: 'patient_read'})|raw }},
 		"doctorPatients": {{ doctorPatients|serialize('json', {groups: 'patient_read'})|raw }}
 	}

@@ -1,7 +1,7 @@
 <template>
     <div id="add-patient">
         <div class="header">
-            <h2><i class="fe fe-users"></i>Mes Patients</h2>
+            <h1><i class="fe fe-users"></i>Mes Patients</h1>
             <vs-button
                 circle
                 color="warn"
@@ -12,130 +12,101 @@
                 <i class="fe fe-user-plus"></i> Ajouter un patient
             </vs-button>
         </div>
-        <div>
-            <transition name="height">
-                <div class="add-patient-box" v-if="boxActive">
-                    <h2>Ajouter un patient</h2>
-                    <div class="search">
-                        <vs-input
-                            v-model="search"
-                            type="search"
-                            placeholder="Rechercher un patient"
-                        >
-                            <template #icon>
-                                <i class="fe fe-user-plus"></i>
-                            </template>
-                        </vs-input>
-                        <div v-if="search" class="search-active">
-                            {{ getPatients.length }} patients
+        <vs-dialog v-model="boxActive">
+            <h2><i class="fe fe-search"></i>Rechercher un patient</h2>
+            <div class="add-patient-box">
+                <div class="search">
+                    <vs-input
+                        v-model="search"
+                        type="search"
+                        placeholder="Nom - Prénom - Email"
+                    >
+                        <template #icon>
+                            <i class="fe fe-search"></i>
+                        </template>
+                    </vs-input>
+                    <div v-if="search" class="search-active">
+                        {{ getPatients.length }} patients
+                    </div>
+                </div>
+                <transition name="height">
+                    <div
+                        v-if="search"
+                        class="filtered-patients vs-alert--shadow"
+                    >
+                        <div v-if="getPatients.length">
+                            <div
+                                v-for="(patient, i) in getPatients"
+                                :key="i"
+                                class="patient"
+                            >
+                                <div>
+                                    <vs-avatar
+                                        class="avatar"
+                                        v-if="patient.avatarUrl"
+                                    >
+                                        <img
+                                            :src="patient.avatarUrl"
+                                            alt="avatar"
+                                        />
+                                    </vs-avatar>
+                                    <vs-avatar class="avatar" v-else>
+                                        <img
+                                            :src="'/img/avatar-default.svg'"
+                                            alt="avatar"
+                                        />
+                                    </vs-avatar>
+                                    {{ patient.lastname }}
+                                    {{ patient.firstname }}
+                                    <span
+                                        v-if="
+                                            patient.lastname ||
+                                            patient.firstname
+                                        "
+                                        class="tiret"
+                                    >
+                                        -
+                                    </span>
+                                    {{ patient.email }}
+                                    <span
+                                        v-if="patient.birthdate"
+                                        class="tiret"
+                                    >
+                                        -
+                                    </span>
+                                    {{ getAge(patient.birthdate) }}
+                                    <span v-if="patient.birthdate" class="age">
+                                        ans</span
+                                    >
+                                </div>
+                                <div>
+                                    <vs-button
+                                        plain
+                                        @click="addPatient(patient.id)"
+                                    >
+                                        <i class="fe fe-user-plus"></i>
+                                        Ajouter à mes patients
+                                    </vs-button>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-else>
+                            <p class="no-found">
+                                <i class="fe fe-user-minus"></i>
+                                Aucun patient n'a été trouvé avec "<strong>{{
+                                    search
+                                }}</strong
+                                >",<br />
+                                <em>Créer un patient ci-dessous.</em>
+                            </p>
                         </div>
                     </div>
-                    <transition name="height">
-                        <div
-                            v-if="search"
-                            class="filtered-patients vs-alert--shadow"
-                        >
-                            <div v-if="getPatients.length">
-                                <div
-                                    v-for="(patient, i) in getPatients"
-                                    :key="i"
-                                    class="patient"
-                                >
-                                    <div>
-                                        <vs-avatar
-                                            class="avatar"
-                                            v-if="patient.avatarUrl"
-                                        >
-                                            <img
-                                                :src="patient.avatarUrl"
-                                                alt="avatar"
-                                            />
-                                        </vs-avatar>
-                                        <vs-avatar class="avatar" v-else>
-                                            <img
-                                                :src="'/img/avatar-default.svg'"
-                                                alt="avatar"
-                                            />
-                                        </vs-avatar>
-                                        {{ patient.lastname }}
-                                        {{ patient.firstname }}
-                                        <span
-                                            v-if="
-                                                patient.lastname ||
-                                                patient.firstname
-                                            "
-                                            class="tiret"
-                                        >
-                                            -
-                                        </span>
-                                        {{ patient.email }}
-                                        <span
-                                            v-if="patient.birthdate"
-                                            class="tiret"
-                                        >
-                                            -
-                                        </span>
-                                        {{ getAge(patient.birthdate) }}
-                                        <span
-                                            v-if="patient.birthdate"
-                                            class="age"
-                                        >
-                                            ans</span
-                                        >
-                                    </div>
-                                    <div>
-                                        <vs-button flat>
-                                            <i class="fe fe-file-plus"></i>
-                                            Prescrire une fiche
-                                        </vs-button>
-                                        <vs-button plain>
-                                            <i class="fe fe-file-plus"></i>
-                                            Prescrire une fiche
-                                        </vs-button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div v-else>
-                                <p class="no-found">
-                                    <i class="fe fe-cloud-off"></i>
-                                    Ce patient ne fait pas encore partie de
-                                    Kivid, vous pouvez l'inviter.
-                                </p>
-                                <div class="patient">
-                                    <div>
-                                        <vs-input
-                                            placeholder="Prénom"
-                                            class="input"
-                                            v-model="newPatient.firstname"
-                                        />
-                                        <vs-input
-                                            placeholder="Nom"
-                                            class="input"
-                                            v-model="newPatient.lastname"
-                                        />
-                                        <vs-input
-                                            placeholder="Email"
-                                            class="input"
-                                            v-model="newPatient.email"
-                                        />
-                                    </div>
-                                    <div>
-                                        <vs-button flat>
-                                            <i class="fe fe-file-plus"></i>
-                                            Créer sans prescription
-                                        </vs-button>
-                                        <vs-button plain>
-                                            <i class="fe fe-file-plus"></i>
-                                            Créer
-                                        </vs-button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </transition>
-                </div>
-            </transition>
-        </div>
+                </transition>
+            </div>
+
+            <h2><i class="fe fe-user-plus"></i>Créer un patient</h2>
+            <div v-html="createPatientForm"></div>
+        </vs-dialog>
     </div>
 </template>
 
@@ -144,10 +115,12 @@ export default {
     name: "AddPatient",
     props: {
         patients: Array,
+        createPatientForm: String,
+        doctor: Object,
     },
     data: () => ({
         boxActive: false,
-        search: null,
+        search: "",
         newPatient: {
             firstname: "",
             lastname: "",
@@ -155,9 +128,23 @@ export default {
         },
     }),
     methods: {
+        addPatient(patientId) {
+            this.axios
+                .get(`/kine/${this.doctor.id}/add/patient/${patientId}`)
+                .then((response) => {
+                    console.log(response);
+                    document.location.href = `/kine/${this.doctor.id}/patients`;
+                })
+                .catch((error) => {
+                    console.log(error);
+                    this.$vs.notification({
+                        text: `Cet utilisateur fait déjà partie de vos patients`,
+                    });
+                });
+        },
         boxToggle() {
             this.boxActive = !this.boxActive;
-            this.search = null;
+            this.search = "";
         },
         getAge(dateString) {
             if (!dateString) {
@@ -187,18 +174,24 @@ export default {
 </script>
 
 <style lang="scss"  scoped>
+$primary: #ffab2c;
+
 .header {
     display: flex;
     justify-content: space-between;
     margin-bottom: 0.5em;
 
-    h2 {
+    h1 {
+        font-size: 1.7em;
+        margin-bottom: 0.4em;
         display: flex;
         align-items: center;
         margin-bottom: 0;
 
         i {
-            margin-right: 0.3em;
+            color: $primary;
+            font-size: 0.9em;
+            margin-right: 0.4em;
         }
     }
 
@@ -210,73 +203,69 @@ export default {
     }
 }
 
-.filtered-patients {
-    background-color: white;
-    border-radius: 0 0 12px 12px;
-    position: relative;
-    box-shadow: 0px 4px 15px 0px rgba(51, 34, 9, 0.12);
-    max-height: 18em;
-    overflow: auto;
+h2 {
+    font-size: 1.7rem;
+    text-align: center;
+    margin: 1em;
+    margin-bottom: 0.5em;
+    color: $primary;
+
+    &:first-child {
+        margin-top: 0;
+    }
+
+    i {
+        font-size: 0.9em;
+        margin-right: 0.3em;
+    }
 }
 
 .add-patient-box {
-    background: rgba(255, 171, 44, 0.1);
-    color: #ffab2c;
-    width: 100%;
-    padding: 1.9em;
-    border-radius: 0px 12px 12px 0px;
     position: relative;
-    font-size: 0.9rem;
-    z-index: 10;
-    overflow: hidden;
-    margin-bottom: 1.1em;
+}
 
-    .search {
-        position: relative;
-    }
+.search {
+    position: relative;
+}
 
-    .search-active {
-        content: "sqdqdqds";
-        position: absolute;
-        right: 3em;
-        top: 0.6em;
-    }
+.search-active {
+    position: absolute;
+    right: 3.7em;
+    top: 1em;
+    color: $primary;
+    text-transform: uppercase;
+    font-size: 0.7em;
+}
 
-    &::after {
-        content: "";
-        background: #ffab2c;
-        left: 0px;
-        top: 0px;
-        width: 2px;
-        height: 100%;
-        position: absolute;
-    }
-
-    h2 {
-        font-weight: 600;
-        font-size: 1rem;
-        margin-bottom: 1.1em;
-    }
-
-    ::-webkit-scrollbar {
-        width: 5px;
-        height: 5px;
-        display: block;
-        background: transparent;
-    }
-    ::-webkit-scrollbar-thumb {
-        background: rgba(245, 245, 245, 1);
-        border-radius: 5px;
-    }
+.filtered-patients {
+    position: absolute;
+    background-color: white;
+    border-radius: 0 0 12px 12px;
+    box-shadow: 0px 4px 15px 0px rgba(51, 34, 9, 0.12);
+    max-height: 15em;
+    overflow: auto;
+    z-index: 500;
+    width: 100%;
+}
+::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+    display: block;
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(245, 245, 245, 1);
+    border-radius: 5px;
 }
 
 .patient {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.95em;
+    padding: 0.9em;
     border-bottom: 1px solid #f1f4f8;
     color: #30343a;
+    font-size: 0.8em;
 
     div {
         display: flex;
@@ -303,18 +292,13 @@ export default {
             margin-right: 0.28em;
         }
     }
-
-    .input {
-        margin: 0 0.3em;
-    }
 }
 
 p.no-found {
     text-align: center;
-    margin: 1.4em;
-    margin-bottom: 0;
+    margin: 0.7em;
     color: #a3a5a8;
-
+    font-size: 0.8em;
     i {
         margin-right: 0.3em;
         color: #dce0e5;
@@ -323,7 +307,7 @@ p.no-found {
 
 .height-enter-active,
 .height-leave-active {
-    transition: opacity 0.5s, max-height 0.25s, padding 0.5s, margin-bottom 0.5s;
+    transition: all 0.5s;
 }
 .height-enter,
 .height-leave-to {

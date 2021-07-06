@@ -1,7 +1,11 @@
 <template>
     <div>
-        <AddPatient :patients="allPatients" />
-        <PatientList :patients="doctorPatients" />
+        <AddPatient
+            :doctor="doctor"
+            :patients="allPatients"
+            :createPatientForm="createPatientForm"
+        />
+        <PatientList :doctor="doctor" :patients="doctorPatients" />
     </div>
 </template>
 
@@ -17,17 +21,15 @@ export default {
     },
     data: () => ({
         doctor: null,
+        createPatientForm: null,
         allPatients: null,
         doctorPatients: null,
     }),
     created() {
         const data = JSON.parse(document.getElementById("vueData").innerHTML);
 
-        // this.axios.get("/kine/1/manage/patient/2").then((response) => {
-        //     console.log(response);
-        // });
-
         this.doctor = data.doctor;
+        this.createPatientForm = data.createPatientForm;
         this.allPatients = data.allPatients;
         this.doctorPatients = data.doctorPatients;
     },
