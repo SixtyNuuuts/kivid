@@ -52,7 +52,7 @@
                                     </vs-avatar>
                                     <vs-avatar class="avatar" v-else>
                                         <img
-                                            :src="'/img/avatar-default.svg'"
+                                            src="/img/avatar-default.svg"
                                             alt="avatar"
                                         />
                                     </vs-avatar>
@@ -79,7 +79,33 @@
                                         ans</span
                                     >
                                 </div>
-                                <div v-html="addPatient(patient.id)"></div>
+                                <div
+                                    v-if="patient.doctor"
+                                    class="patient-doctor"
+                                >
+                                    <vs-button flat>
+                                        suivi par
+                                        <em>
+                                            {{ patient.doctor.lastname }}
+                                            {{ patient.doctor.firstname }}
+                                        </em>
+                                        <vs-avatar size="25">
+                                            <img
+                                                :src="
+                                                    patient.doctor.urlAvatar
+                                                        ? patient.doctor
+                                                              .urlAvatar
+                                                        : '/img/avatar-default.svg'
+                                                "
+                                                alt="avatar du kiné"
+                                            />
+                                        </vs-avatar>
+                                    </vs-button>
+                                </div>
+                                <div
+                                    v-else
+                                    v-html="addPatient(patient.id)"
+                                ></div>
                             </div>
                         </div>
                         <div v-else>
@@ -291,7 +317,7 @@ input[type="search"]::-webkit-search-cancel-button {
     color: #30343a;
     font-size: 0.8em;
 
-    div {
+    > div {
         display: flex;
 
         align-items: center;
@@ -308,6 +334,18 @@ input[type="search"]::-webkit-search-cancel-button {
     span.tiret {
         color: $primary;
         margin: 0.5em;
+    }
+
+    .patient-doctor {
+        button {
+            cursor: unset;
+            em {
+                margin-left: 0.2em;
+            }
+            .vs-avatar {
+                margin-left: 0.5em;
+            }
+        }
     }
 
     button {

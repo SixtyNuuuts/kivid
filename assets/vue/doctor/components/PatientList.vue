@@ -78,7 +78,7 @@
                             </vs-avatar>
                             <vs-avatar v-else>
                                 <img
-                                    :src="'/img/avatar-default.svg'"
+                                    src="/img/avatar-default.svg"
                                     alt="avatar"
                                 />
                             </vs-avatar>
@@ -115,12 +115,18 @@
                 />
             </template>
             <template #notFound>
-                <i class="fe fe-user-minus"></i>
-                Aucun patient n'a été trouvé
-                <span v-if="search">
-                    avec "<strong>{{ search }}"</strong></span
-                ></template
-            >
+                <div v-if="search">
+                    <i class="fe fe-user-minus"></i>
+                    Aucun patient n'a été trouvé avec "<strong>{{
+                        search
+                    }}</strong
+                    >"
+                </div>
+                <div v-else>
+                    <i class="fe fe-user-minus"></i>
+                    Vous n'avez aucun patient.
+                </div>
+            </template>
         </vs-table>
     </div>
 </template>
