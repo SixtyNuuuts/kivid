@@ -20,7 +20,7 @@
                     <vs-th
                         sort
                         @click="
-                            patientsArray = $vs.sortData(
+                            patientsArray = sortData(
                                 $event,
                                 patientsArray,
                                 'lastname'
@@ -32,7 +32,7 @@
                     <vs-th
                         sort
                         @click="
-                            patientsArray = $vs.sortData(
+                            patientsArray = sortData(
                                 $event,
                                 patientsArray,
                                 'email'
@@ -44,7 +44,7 @@
                     <vs-th
                         sort
                         @click="
-                            patientsArray = $vs.sortData(
+                            patientsArray = sortData(
                                 $event,
                                 patientsArray,
                                 'birthdate'
@@ -93,6 +93,7 @@
                     </vs-td>
                     <vs-td>
                         {{ getAge(patient.birthdate) }}
+                        <span v-if="patient.birthdate" class="age"> ans</span>
                     </vs-td>
                     <vs-td>
                         <div class="d-flex jc-lc">
@@ -155,13 +156,16 @@ export default {
             return removePatientFormWithPatientId;
         },
         getAge(dateString) {
-            f.generateAgeFromDateOfBirth(dateString);
+            return f.generateAgeFromDateOfBirth(dateString);
+        },
+        sortData(evt, data, sortKey, type) {
+            return f.sortData(evt, data, sortKey, type);
         },
     },
 };
 </script>
 
-<style lang="scss"  scoped>
+<style lang="scss">
 .vs-input {
     width: 100%;
 }

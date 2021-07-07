@@ -14,6 +14,56 @@ export default {
     return age;
   },
 
+  sortData(evt, data, sortKey, type) {
+    data = [].concat(data).sort(returnOriginalIndex);
+    let sortType = type || 'desc';
+    const el = evt.target;
+
+    if (el.dataset["sortType" + sortKey] == 'desc') {
+      sortType = 'asc';
+    } else if (el.dataset["sortType" + sortKey] == 'asc') {
+      sortType = null;
+    }
+
+    if (sortType == 'desc') {
+      data.map(function (item, i) {
+        item["vsOriginalIndex" + sortKey] = i;
+      });
+    }
+
+    el.dataset["sortType" + sortKey] = sortType;
+    el.dataset["sortType"] = sortType;
+    el.dataset["sortKey"] = "sortType" + sortKey;
+    const parent = el.closest('.vs-table__tr');
+    const ths = parent.querySelectorAll('th.sort');
+    ths.forEach(function (th) {
+      if (th != el) {
+        th.dataset.sortType = null;
+        th.dataset[th.dataset["sortKey"]] = null;
+      }
+    });
+
+    function compare(a, b) {
+      let valueA = a[sortKey] !== null ? a[sortKey] : 'z';
+      let valueB = b[sortKey] !== null ? b[sortKey] : 'z';
+
+      if (valueA.toLowerCase() < valueB.toLowerCase()) {
+        return sortType !== 'desc' ? 1 : -1;
+      }
+      if (valueA.toLowerCase() > valueB.toLowerCase()) {
+        return sortType !== 'desc' ? -1 : 1;
+      }
+
+      return 0;
+    }
+
+    function returnOriginalIndex(a, b) {
+      return a["vsOriginalIndex" + sortKey] - b["vsOriginalIndex" + sortKey];
+    }
+
+    return sortType !== null ? [].concat(data).sort(compare) : [].concat(data).sort(returnOriginalIndex);
+  },
+
   // sortedByOrder(array) {
   //   array.sort(function(a, b) {
   //     return a.order - b.order

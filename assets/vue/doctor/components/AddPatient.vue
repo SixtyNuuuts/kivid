@@ -136,13 +136,13 @@ export default {
             this.search = "";
         },
         getAge(dateString) {
-            f.generateAgeFromDateOfBirth(dateString);
+            return f.generateAgeFromDateOfBirth(dateString);
         },
     },
     computed: {
         getPatients() {
             var lowSearch = this.search.toLowerCase();
-            return this.patients.filter(function (patient) {
+            return this.patients.filter((patient) => {
                 return Object.values(patient).some((val) =>
                     String(val).toLowerCase().includes(lowSearch)
                 );
@@ -152,8 +152,42 @@ export default {
 };
 </script>
 
-<style lang="scss"  scoped>
+<style lang="scss">
 $primary: #ffab2c;
+
+.vs-dialog {
+    width: 65vw !important;
+
+    .vs-dialog__content.notFooter {
+        margin-bottom: 0 !important;
+        padding: 2em;
+
+        .vs-input-content {
+            width: 100%;
+            &:first-child:not(:last-child) {
+                margin-right: 0.8em;
+            }
+            .vs-input__icon {
+                height: 39px;
+            }
+            input {
+                margin: 0.5em 0;
+                width: 100%;
+                font-size: 0.88em;
+                &[type="search"] {
+                    margin: 0;
+                }
+                &::placeholder {
+                    font-size: 0.85em;
+                    color: rgb(194, 194, 194);
+                }
+                &:focus {
+                    border-color: #ffab2c;
+                }
+            }
+        }
+    }
+}
 
 .header {
     display: flex;
@@ -214,6 +248,17 @@ h2 {
     color: $primary;
     text-transform: uppercase;
     font-size: 0.7em;
+}
+
+/* Replace cancel btn into search input */
+input[type="search"]::-webkit-search-cancel-button {
+    /* Remove default */
+    -webkit-appearance: none;
+    /*Your new styles */
+    height: 18px;
+    width: 18px;
+    cursor: pointer;
+    background-image: url("../../../img/icons/x-circle.svg");
 }
 
 .filtered-patients {
@@ -281,6 +326,37 @@ p.no-found {
     i {
         margin-right: 0.3em;
         color: #dce0e5;
+    }
+}
+
+form[name="create_patient_form"] {
+    .imputs {
+        display: flex;
+        flex-direction: column;
+        .line {
+            display: flex;
+            flex-direction: column;
+            @media (min-width: 576px) {
+                flex-direction: row;
+            }
+        }
+    }
+    .buttons {
+        display: flex;
+        margin: 0.5em 0;
+
+        button {
+            flex: 1;
+            margin: 0;
+            padding: 0.2em;
+            font-size: 0.9em;
+            &:first-child {
+                margin-right: 0.75em;
+            }
+            i {
+                margin-right: 0.3em;
+            }
+        }
     }
 }
 
