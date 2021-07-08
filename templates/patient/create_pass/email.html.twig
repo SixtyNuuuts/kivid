@@ -1,0 +1,9 @@
+<h1>Bonjour ! Vous avez été ajouté comme patient par {{ doctor.firstname }} {{ doctor.lastname }}</h1>
+
+<p>Si vous êtes en accord avec cette demande, vous pouvez nous rejoindre et créer votre mot de passe en cliquant sur le lien suivant : </p>
+
+<a href="{{ url('app_create_pass', {token: passToken.token}) }}">{{ url('app_create_pass', {token: passToken.token}) }}</a>
+
+<p>Ce lien expirera dans {{ passToken.expirationMessageKey|trans(passToken.expirationMessageData, 'ResetPasswordBundle') }}.</p>
+
+<p>Cordialement</p>

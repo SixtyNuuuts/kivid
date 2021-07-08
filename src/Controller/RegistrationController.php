@@ -6,16 +6,17 @@ use App\Entity\Doctor;
 use App\Entity\Patient;
 use App\Security\EmailVerifier;
 use App\Form\RegistrationFormType;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Mime\Address;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 class RegistrationController extends AbstractController
 {
@@ -54,7 +55,14 @@ class RegistrationController extends AbstractController
             );
 
             $em->persist($user);
-            $em->flush();
+
+            try {
+                $em->flush();
+            } catch (UniqueConstraintViolationException $e) {
+                $this->addFlash('danger', 'Cet email est déjà utilisé par un patient.');
+
+                return $this->redirectToRoute('app_register');
+            }
 
             // generate a signed url and email it to the user
             $this->emailVerifier->sendEmailConfirmation(

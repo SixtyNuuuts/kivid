@@ -1,0 +1,10 @@
+<form method="post" action="{{ path('app_doctor_add_patient', {'id': doctor.id}) }}">
+	<input type="hidden" name="_token" value="{{ csrf_token('add_patient' ~ doctor.id) }}">
+    <input type="hidden" name="patient_id" value="">
+	<button class="vs-button vs-button--null vs-button--size-null vs-button--primary vs-button--default">
+		<div class="vs-button__content">
+			<i class="fe fe-user-plus"></i>
+			Ajouter à mes patients
+		</div>
+	</button>
+</form>

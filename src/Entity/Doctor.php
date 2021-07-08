@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\DoctorRepository;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=DoctorRepository::class)
@@ -15,26 +16,31 @@ class Doctor extends User
 {
     /**
      * @ORM\Column(type="text", nullable=true)
+     * @Groups({"doctor_read"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups("e")
      */
     private $city;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"doctor_read"})
      */
     private $street;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"doctor_read"})
      */
     private $entityName;
 
     /**
      * @ORM\OneToMany(targetEntity=Patient::class, mappedBy="doctor")
+     * @Groups({"doctor_read"})
      */
     private $patients;
 

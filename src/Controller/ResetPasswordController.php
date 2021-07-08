@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\Entity\Doctor;
 use App\Entity\Patient;
 use Symfony\Component\Mime\Address;
-use App\Form\ChangePasswordFormType;
+use App\Form\PasswordFormType;
 use App\Form\EmailFormType;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
@@ -94,7 +94,7 @@ class ResetPasswordController extends AbstractController
         $token = $this->getTokenFromSession();
         if (null === $token) {
             throw $this->createNotFoundException(
-                'Aucun jeton de réinitialisation de mot de passe trouvé dans l\'URL ou dans la session.'
+                'Aucun jeton de réinitialisation de mot de passe n\'a été trouvé dans l\'URL ou dans la session.'
             );
         }
 
@@ -110,7 +110,7 @@ class ResetPasswordController extends AbstractController
         }
 
         // The token is valid; allow the user to change their password.
-        $form = $this->createForm(ChangePasswordFormType::class);
+        $form = $this->createForm(PasswordFormType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -130,7 +130,7 @@ class ResetPasswordController extends AbstractController
             // The session is cleaned up after the password has been changed.
             $this->cleanSessionAfterReset();
 
-            $this->addFlash('success', 'Votre mot de passe a été modifié.');
+            $this->addFlash('success', 'Votre mot de passe a été modifié, connectez-vous.');
 
             return $this->redirectToRoute('app_login');
         }
@@ -153,15 +153,6 @@ class ResetPasswordController extends AbstractController
         try {
             $resetToken = $this->resetPasswordHelper->generateResetToken($user);
         } catch (ResetPasswordExceptionInterface $e) {
-            // If you want to tell the user why a reset email was not sent, uncomment
-            // the lines below and change the redirect to 'app_forgot_password_request'.
-            // Caution: This may reveal if a user is registered or not.
-            //
-            $this->addFlash('danger', sprintf(
-                'Un problème est survenu lors du traitement de votre demande de réinitialisation de mot de passe - %s',
-                $e->getReason()
-            ));
-
             return $this->redirectToRoute('app_check_email');
         }
 

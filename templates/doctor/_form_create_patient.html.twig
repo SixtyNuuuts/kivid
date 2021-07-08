@@ -1,0 +1,47 @@
+{{ form_start(form, {'action': path('app_doctor_create_patient', {'id':doctor.id}), 'method': 'POST'}) }}
+{{ form_errors(form) }}
+<div class="imputs">
+	<div class="line">
+		<div class="vs-input-content">
+			{{ form_widget(form.firstname, {'attr': {'class': 'vs-input vs-input--has-icon','placeholder': 'Prénom'}}) }}
+			{# {{ form_label(form.firstname, 'Prénom', {'label_attr': {'class': 'vs-input__label'}}) }} #}
+			{{ form_errors(form.firstname) }}
+			<span class="vs-input__icon">
+				<i class="fe fe-user"></i>
+			</span>
+		</div>
+		<div class="vs-input-content">
+			{{ form_widget(form.lastname, {'attr': {'class': 'vs-input vs-input--has-icon','placeholder': 'Nom'}}) }}
+			{# {{ form_label(form.lastname, 'Nom', {'label_attr': {'class': 'vs-input__label'}}) }} #}
+			{{ form_errors(form.lastname) }}
+			<span class="vs-input__icon">
+				<i class="fe fe-user"></i>
+			</span>
+		</div>
+	</div>
+	<div class="line">
+		<div class="vs-input-content">
+			{{ form_widget(form.email, {'attr': {'class': 'vs-input vs-input--has-icon','placeholder': 'Email', 'autocomplete': 'email'}}) }}
+			{# {{ form_label(form.email, 'Email', {'label_attr': {'class': 'vs-input__label'}}) }} #}
+			{{ form_errors(form.email) }}
+			<span class="vs-input__icon">
+				@
+			</span>
+		</div>
+	</div>
+</div>
+<div class="buttons">
+	<button class="vs-button vs-button--null vs-button--size-null vs-button--primary vs-button--flat">
+		<div class="vs-button__content">
+			<i class="fe fe-file-minus"></i>
+			Créer sans prescription
+		</div>
+	</button>
+	<button plain="" class="vs-button vs-button--null vs-button--size-null vs-button--primary vs-button--default">
+		<div class="vs-button__content">
+			<i class="fe fe-file-plus"></i>
+			Créer
+		</div>
+	</button>
+</div>
+{{ form_end(form) }}

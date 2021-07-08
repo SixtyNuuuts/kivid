@@ -1,6 +1,6 @@
 {% extends 'layout/fullpage.html.twig' %}
 
-{% block title %}Réinitialisez votre mot de passe{% endblock %}
+{% block title %}Créer votre mot de passe{% endblock %}
 
 {% block body %}
 	<!-- CONTENT -->
@@ -11,18 +11,18 @@
 					class="col-12 col-md-6 col-lg-4 py-8 py-md-11">
 					<!-- Heading -->
 					<h1 class="mb-4 fw-bold">
-						Réinitialisez votre mot de passe
+						Créer votre mot de passe
 					</h1>
 					{% include 'layout/partial/_alert_basic.html.twig' %}
 
 					<!-- Form -->
-                    {{ form_start(resetForm) }}
-                        {{ form_row(resetForm.plainPassword) }}
+                    {{ form_start(createpassForm) }}
+                        {{ form_row(createpassForm.plainPassword) }}
 
                         <button class="mt-4 btn w-100 btn-primary lift" type="submit">
-                            Réinitialiser le mot de passe
+                            Valider
                         </button>
-                    {{ form_end(resetForm) }}
+                    {{ form_end(createpassForm) }}
 
 					<div class="auth-footer-btn d-flex justify-content-center">
 						<a class="btn btn-google waves-effect waves-float waves-light" href="#"></a>

@@ -22,7 +22,7 @@ class AppFixtures extends Fixture
     {
         $faker = Faker\Factory::create('fr_US');
 
-        for ($ki = 0; $ki < rand(1, 15); $ki++) {
+        for ($ki = 0; $ki < rand(1, 5); $ki++) {
             $kine = new Doctor();
 
             $kine->setCity($faker->city)
@@ -37,7 +37,7 @@ class AppFixtures extends Fixture
 
             $manager->persist($kine);
 
-            for ($pi = 0; $pi < rand(1, 5); $pi++) {
+            for ($pi = 0; $pi < rand(1, 50); $pi++) {
                 $patient = new Patient();
 
                 $patient
@@ -47,6 +47,7 @@ class AppFixtures extends Fixture
                     ->setPassword($this->passwordHasher->hashPassword($kine, 'password'))
                     ->setFirstname($faker->firstName)
                     ->setLastname($faker->lastName)
+                    ->setIsVerified($faker->boolean())
                 ;
 
                 $manager->persist($patient);
