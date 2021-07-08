@@ -147,7 +147,7 @@ export default {
             search: "",
             allCheck: false,
             page: 1,
-            max: 5,
+            max: 10,
             selected: [],
             patientsArray: this.patients,
         };
