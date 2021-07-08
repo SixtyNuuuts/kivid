@@ -193,7 +193,7 @@ tr.unverified {
         font-size: 0.6em;
     }
 
-    td:not(:first-child) {
+    td:not(:first-child):not(:last-child) {
         opacity: 0.25;
         pointer-events: none;
     }
