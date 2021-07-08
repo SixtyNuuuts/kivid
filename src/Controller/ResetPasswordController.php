@@ -130,7 +130,7 @@ class ResetPasswordController extends AbstractController
             // The session is cleaned up after the password has been changed.
             $this->cleanSessionAfterReset();
 
-            $this->addFlash('success', 'Votre mot de passe a été modifié.');
+            $this->addFlash('success', 'Votre mot de passe a été modifié, connectez-vous.');
 
             return $this->redirectToRoute('app_login');
         }
@@ -153,15 +153,6 @@ class ResetPasswordController extends AbstractController
         try {
             $resetToken = $this->resetPasswordHelper->generateResetToken($user);
         } catch (ResetPasswordExceptionInterface $e) {
-            // If you want to tell the user why a reset email was not sent, uncomment
-            // the lines below and change the redirect to 'app_forgot_password_request'.
-            // Caution: This may reveal if a user is registered or not.
-            //
-            $this->addFlash('danger', sprintf(
-                'Un problème est survenu lors du traitement de votre demande de réinitialisation de mot de passe - %s',
-                $e->getReason()
-            ));
-
             return $this->redirectToRoute('app_check_email');
         }
 

@@ -9,6 +9,10 @@
 			<div class="row align-items-center justify-content-center gx-0 min-vh-100">
 				<div
 					class="col-12 col-md-6 col-lg-4 py-8 py-md-11">
+					<!-- Heading -->
+					<h1 class="mb-0 fw-bold">
+						Connexion
+					</h1>
 					<!-- Alert -->
 					{% if error %}
 						<div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -17,12 +21,8 @@
 							<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 						</div>
 					{% endif %}
-					{% include 'layout/partial/_alert_basic.html.twig' %}
 
-					<!-- Heading -->
-					<h1 class="mb-0 fw-bold">
-						Connexion
-					</h1>
+					{% include 'layout/partial/_alert_basic.html.twig' %}
 
 					<!-- Text -->
 					<p class="mb-6 text-muted">

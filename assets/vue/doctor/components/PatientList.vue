@@ -67,6 +67,7 @@
                     :data="patient"
                     :is-selected="!!selected.includes(patient)"
                     not-click-selected
+                    :class="{ unverified: !patient.isVerified }"
                 >
                     <vs-td checkbox>
                         <vs-checkbox :val="patient" v-model="selected" />
@@ -174,6 +175,28 @@ export default {
 <style lang="scss">
 .vs-input {
     width: 100%;
+}
+
+tr.unverified {
+    position: relative;
+
+    td:first-child::before {
+        content: "Compte inactif";
+        display: block;
+        position: absolute;
+        top: 37.3%;
+        left: 56px;
+        padding: 0.4em;
+        text-transform: uppercase;
+        background-color: #f1f4f8;
+        z-index: 2;
+        font-size: 0.6em;
+    }
+
+    td:not(:first-child) {
+        opacity: 0.25;
+        pointer-events: none;
+    }
 }
 
 td {

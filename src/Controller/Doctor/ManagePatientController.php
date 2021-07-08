@@ -57,7 +57,7 @@ class ManagePatientController extends AbstractController
      */
     public function patientList(Doctor $doctor): Response
     {
-        $patients = $this->patientRepository->findAll();
+        $patients = $this->patientRepository->findBy([], ['isVerified' => 'DESC']);
 
         $createPatientForm = $this->createForm(CreatePatientFormType::class);
 

@@ -84,7 +84,10 @@ class CreatePasswordController extends AbstractController
             // The session is cleaned up after the password has been created.
             $this->cleanSessionAfterReset();
 
-            $this->addFlash('success', 'Votre mot de passe a été créé.');
+            $this->addFlash(
+                'success',
+                'Votre mot de passe a été créé, vous pouvez vous connecter avec votre email et ce mot de passe.'
+            );
 
             return $this->redirectToRoute('app_login');
         }
