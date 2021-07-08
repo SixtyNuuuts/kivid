@@ -23,6 +23,18 @@
                             patientsArray = sortData(
                                 $event,
                                 patientsArray,
+                                'isVerified'
+                            )
+                        "
+                    >
+                        Statut
+                    </vs-th>
+                    <vs-th
+                        sort
+                        @click="
+                            patientsArray = sortData(
+                                $event,
+                                patientsArray,
                                 'lastname'
                             )
                         "
@@ -71,6 +83,16 @@
                 >
                     <vs-td checkbox>
                         <vs-checkbox :val="patient" v-model="selected" />
+                    </vs-td>
+                    <vs-td class="status">
+                        <div v-if="patient.isVerified">
+                            <div class="icon-active-account"></div>
+                            <p>ACTIF</p>
+                        </div>
+                        <div v-else>
+                            <div class="icon-inactive-account"></div>
+                            <p>INACTIF</p>
+                        </div>
                     </vs-td>
                     <vs-td>
                         <div class="d-flex">
@@ -173,27 +195,50 @@ export default {
 </script>
 
 <style lang="scss">
+$primary: #ffab2c;
+
 .vs-input {
     width: 100%;
+}
+
+td.status {
+    vertical-align: middle;
+    div {
+        display: flex;
+        align-items: center;
+
+        .icon-active-account,
+        .icon-inactive-account {
+            width: 1.1em;
+            height: 1.1em;
+            border-radius: 50%;
+            border: 2px solid #d9e2ef;
+        }
+
+        .icon-active-account {
+            background-color: #42ba96;
+        }
+
+        .icon-inactive-account {
+            width: 1em;
+            height: 1em;
+            border: 3px solid #d9e2ef;
+            background-color: #d9e2ef9e;
+        }
+
+        p {
+            margin: 0;
+            margin-left: 0.4em;
+            color: #abbcd5;
+            font-size: 0.8em;
+        }
+    }
 }
 
 tr.unverified {
     position: relative;
 
-    td:first-child::before {
-        content: "Compte inactif";
-        display: block;
-        position: absolute;
-        top: 37.3%;
-        left: 56px;
-        padding: 0.4em;
-        text-transform: uppercase;
-        background-color: #f1f4f8;
-        z-index: 2;
-        font-size: 0.6em;
-    }
-
-    td:not(:first-child):not(:last-child) {
+    td:not(:first-child):not(:nth-child(2)):not(:last-child) {
         opacity: 0.25;
         pointer-events: none;
     }

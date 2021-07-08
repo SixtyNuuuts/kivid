@@ -47,10 +47,13 @@ export default {
       let valueA = a[sortKey] !== null ? a[sortKey] : 'z';
       let valueB = b[sortKey] !== null ? b[sortKey] : 'z';
 
-      if (valueA.toLowerCase() < valueB.toLowerCase()) {
+      let valueAToLowerCaseOrBool = 'boolean' == typeof valueA ? valueA : valueA.toLowerCase();
+      let valueBToLowerCaseOrBool = 'boolean' == typeof valueB ? valueB : valueB.toLowerCase();
+
+      if (valueAToLowerCaseOrBool < valueBToLowerCaseOrBool) {
         return sortType !== 'desc' ? 1 : -1;
       }
-      if (valueA.toLowerCase() > valueB.toLowerCase()) {
+      if (valueAToLowerCaseOrBool > valueBToLowerCaseOrBool) {
         return sortType !== 'desc' ? -1 : 1;
       }
 
