@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\Entity\Doctor;
 use App\Entity\Patient;
 use Symfony\Component\Mime\Address;
-use App\Form\ChangePasswordFormType;
+use App\Form\PasswordFormType;
 use App\Form\EmailFormType;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
@@ -94,7 +94,7 @@ class ResetPasswordController extends AbstractController
         $token = $this->getTokenFromSession();
         if (null === $token) {
             throw $this->createNotFoundException(
-                'Aucun jeton de réinitialisation de mot de passe trouvé dans l\'URL ou dans la session.'
+                'Aucun jeton de réinitialisation de mot de passe n\'a été trouvé dans l\'URL ou dans la session.'
             );
         }
 
@@ -110,7 +110,7 @@ class ResetPasswordController extends AbstractController
         }
 
         // The token is valid; allow the user to change their password.
-        $form = $this->createForm(ChangePasswordFormType::class);
+        $form = $this->createForm(PasswordFormType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
