@@ -22,6 +22,7 @@ Encore
      */
     .addEntry('app', './assets/app.js')
     .addEntry('my-patients-page', './assets/vue/doctor/my-patients-page.js')
+    .addEntry('my-worksheets-page', './assets/vue/doctor/my-worksheets-page.js')
 
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
     .enableStimulusBridge('./assets/controllers.json')

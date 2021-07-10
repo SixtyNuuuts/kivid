@@ -22,7 +22,7 @@ class Doctor extends User
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups("e")
+     * @Groups({"doctor_read"})
      */
     private $city;
 
@@ -44,10 +44,16 @@ class Doctor extends User
      */
     private $patients;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Prescription::class, mappedBy="doctor")
+     */
+    private $prescriptions;
+
     public function __construct()
     {
         parent::__construct(['ROLE_DOCTOR']);
         $this->patients = new ArrayCollection();
+        $this->prescriptions = new ArrayCollection();
     }
 
     public function getDescription(): ?string
@@ -122,6 +128,36 @@ class Doctor extends User
             // set the owning side to null (unless already changed)
             if ($patient->getDoctor() === $this) {
                 $patient->setDoctor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Prescription[]
+     */
+    public function getPrescriptions(): Collection
+    {
+        return $this->prescriptions;
+    }
+
+    public function addPrescription(Prescription $prescription): self
+    {
+        if (!$this->prescriptions->contains($prescription)) {
+            $this->prescriptions[] = $prescription;
+            $prescription->setDoctor($this);
+        }
+
+        return $this;
+    }
+
+    public function removePrescription(Prescription $prescription): self
+    {
+        if ($this->prescriptions->removeElement($prescription)) {
+            // set the owning side to null (unless already changed)
+            if ($prescription->getDoctor() === $this) {
+                $prescription->setDoctor(null);
             }
         }
 

@@ -2,6 +2,20 @@ html {
     scroll-behavior: smooth;
 }
 
+// COMMON VUE PAGES
+h1 {
+    font-size: 1.7em;
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.3em;
+
+    i {
+        color: $primary;
+        font-size: 0.9em;
+        margin-right: 0.4em;
+    }
+}
+
 // NAV TOPBAR
 .user-nav {
     align-items: flex-end;

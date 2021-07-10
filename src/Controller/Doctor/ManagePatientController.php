@@ -74,7 +74,7 @@ class ManagePatientController extends AbstractController
             'doctor' => $doctor,
         ]);
 
-        return $this->render('doctor/patients_list.html.twig', [
+        return $this->render('doctor/patient_list.html.twig', [
             'doctor' => $doctor,
             'createPatientForm' => $createPatientFormView,
             'addPatientForm' => $addPatientFormView,
@@ -114,7 +114,7 @@ class ManagePatientController extends AbstractController
                 return $this->redirectToRoute('app_doctor_patients', ['id' => $doctor->getId()]);
             }
 
-            return $this->processSendingPasswordEmail($patient, $doctor);
+            return $this->processSendingPasswordCreationEmail($patient, $doctor);
         }
 
         $this->addFlash(
@@ -183,11 +183,11 @@ class ManagePatientController extends AbstractController
         return $this->redirectToRoute('app_doctor_patients', ['id' => $doctor->getId()]);
     }
 
-    private function processSendingPasswordEmail(Patient $patient, Doctor $doctor): RedirectResponse
+    private function processSendingPasswordCreationEmail(Patient $patient, Doctor $doctor): RedirectResponse
     {
         // Le bundle 'ResetPassword' est utilisé pour la génération du token.
         try {
-            $passToken = $this->generateCreatePasswordToken($patient);
+            $passToken = $this->generatePasswordCreationToken($patient);
         } catch (ResetPasswordExceptionInterface $e) {
             $this->addFlash('danger', sprintf(
                 'Un problème est survenu lors de la génération du token de création de mot de passe du patient - %s',
@@ -219,7 +219,7 @@ class ManagePatientController extends AbstractController
         return $this->redirectToRoute('app_doctor_patients', ['id' => $doctor->getId()]);
     }
 
-    public function generateCreatePasswordToken(Patient $patient): ResetPasswordToken
+    public function generatePasswordCreationToken(Patient $patient): ResetPasswordToken
     {
         $this->resetPasswordCleaner->handleGarbageCollection();
 

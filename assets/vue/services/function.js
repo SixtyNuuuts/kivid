@@ -1,5 +1,10 @@
 export default {
 
+  formatDate(datetime) {
+    let date = new Date(Date.parse(datetime));
+    return new Intl.DateTimeFormat('fr-FR').format(date);
+  },
+
   generateAgeFromDateOfBirth(dateString) {
     if (!dateString) {
       return null;
@@ -14,9 +19,9 @@ export default {
     return age;
   },
 
-  sortData(evt, data, sortKey, type) {
+  sortData(evt, data, sortKey) {
     data = [].concat(data).sort(returnOriginalIndex);
-    let sortType = type || 'desc';
+    let sortType = 'desc';
     const el = evt.target;
 
     if (el.dataset["sortType" + sortKey] == 'desc') {
@@ -44,11 +49,21 @@ export default {
     });
 
     function compare(a, b) {
-      let valueA = a[sortKey] !== null ? a[sortKey] : 'z';
-      let valueB = b[sortKey] !== null ? b[sortKey] : 'z';
+      const sortKeySplit = sortKey.split('.');
 
-      let valueAToLowerCaseOrBool = 'boolean' == typeof valueA ? valueA : valueA.toLowerCase();
-      let valueBToLowerCaseOrBool = 'boolean' == typeof valueB ? valueB : valueB.toLowerCase();
+      let valueA = sortKeySplit.length === 2 ? a[sortKeySplit[0]][sortKeySplit[1]] : a[sortKey];
+      let valueB = sortKeySplit.length === 2 ? b[sortKeySplit[0]][sortKeySplit[1]] : b[sortKey];
+
+      if ('exercises' === sortKey) {
+        valueA = valueA.length;
+        valueB = valueB.length;
+      }
+
+      let valueAOrNull = valueA !== null ? valueA : 'z';
+      let valueBOrNull = valueB !== null ? valueB : 'z';
+
+      let valueAToLowerCaseOrBool = ('boolean' == typeof valueAOrNull) || ('number' == typeof valueAOrNull) ? valueAOrNull : valueAOrNull.toLowerCase();
+      let valueBToLowerCaseOrBool = ('boolean' == typeof valueBOrNull) || ('number' == typeof valueBOrNull) ? valueBOrNull : valueBOrNull.toLowerCase();
 
       if (valueAToLowerCaseOrBool < valueBToLowerCaseOrBool) {
         return sortType !== 'desc' ? 1 : -1;
@@ -66,47 +81,5 @@ export default {
 
     return sortType !== null ? [].concat(data).sort(compare) : [].concat(data).sort(returnOriginalIndex);
   },
-
-  // sortedByOrder(array) {
-  //   array.sort(function(a, b) {
-  //     return a.order - b.order
-  //   })
-  //   return array
-  // },
-
-  // sortedByDate(array) {
-  //   array.sort(function(a, b) {
-  //     return new Date(a.release_date) - new Date(b.release_date);
-  //   })
-  //   return array
-  // },
-
-  // sortedByAlphabet(array) {
-  //   array.sort(function(a, b) {
-  //     return a.original_title.localeCompare(b.original_title)
-  //   })
-  //   return array
-  // },
-
-  // sortedByAlphabetPerson(array) {
-  //   array.sort(function(a, b) {
-  //     return a.lastname.localeCompare(b.lastname)
-  //   })
-  //   return array
-  // },
-
-  // sortedByKFOriginalLangFr(array) {
-  //   array.sort(function(a, b) {
-  //     return b.known_for.some((m) => m.original_language == 'fr') - a.known_for.some((m) => m.original_language == 'fr')
-  //   })
-  //   return array
-  // },
-
-  // sortedByAlphabetJobs(array) {
-  //   array.sort(function(a, b) {
-  //     return a.localeCompare(b)
-  //   })
-  //   return array
-  // },
 
 }

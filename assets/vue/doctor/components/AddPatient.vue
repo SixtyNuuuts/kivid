@@ -1,17 +1,15 @@
 <template>
-    <div id="add-patient">
-        <div class="header">
-            <h1><i class="fe fe-users"></i>Mes Patients</h1>
-            <vs-button
-                circle
-                color="warn"
-                gradient
-                :active="boxActive"
-                @click="boxToggle"
-            >
-                <i class="fe fe-user-plus"></i> Ajouter un patient
-            </vs-button>
-        </div>
+    <div>
+        <vs-button
+            circle
+            color="warn"
+            gradient
+            :active="boxActive"
+            @click="boxToggle"
+            class="btn-add-patient"
+        >
+            <i class="fe fe-user-plus"></i> Ajouter un patient
+        </vs-button>
         <vs-dialog v-model="boxActive">
             <h2><i class="fe fe-search"></i>Rechercher un patient</h2>
             <div class="add-patient-box">
@@ -181,6 +179,16 @@ export default {
 <style lang="scss">
 $primary: #ffab2c;
 
+button.btn-add-patient {
+    position: absolute;
+    right: 14px;
+    top: -10px;
+    i {
+        margin-top: -0.1em;
+        margin-right: 0.3em;
+    }
+}
+
 .vs-dialog {
     width: 65vw !important;
 
@@ -208,36 +216,12 @@ $primary: #ffab2c;
                     color: rgb(194, 194, 194);
                 }
                 &:focus {
-                    border-color: #ffab2c;
+                    border: none;
+                    & ~ span {
+                        color: $primary;
+                    }
                 }
             }
-        }
-    }
-}
-
-.header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 0.5em;
-
-    h1 {
-        font-size: 1.7em;
-        margin-bottom: 0.4em;
-        display: flex;
-        align-items: center;
-        margin-bottom: 0;
-
-        i {
-            color: $primary;
-            font-size: 0.9em;
-            margin-right: 0.4em;
-        }
-    }
-
-    button {
-        i {
-            margin-top: -0.1em;
-            margin-right: 0.3em;
         }
     }
 }
