@@ -122,7 +122,7 @@ export default {
                                     type: "addItem",
                                     target: "prescription",
                                     content: {
-                                        class: "btn btn-primaki btn-xs lift",
+                                        class: "btn btn-primaki btn-xs lift lift-btn",
                                         icon: "fe fe-file-plus",
                                         text: "Prescrire",
                                     },
@@ -171,7 +171,7 @@ export default {
                             {
                                 type: "searchItem",
                                 content: {
-                                    class: "btn btn-primaki btn-xs lift",
+                                    class: "btn btn-primaki btn-xs lift lift-btn",
                                     icon: "fe fe-file-plus",
                                     text: "Prescrire",
                                 },

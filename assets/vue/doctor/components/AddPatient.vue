@@ -48,7 +48,7 @@ export default {
                                 type: "addItem",
                                 target: "patient",
                                 content: {
-                                    class: "btn btn-primaki btn-xs lift",
+                                    class: "btn btn-primaki btn-xs lift lift-btn",
                                     icon: "fe fe-user-plus",
                                     text: "Ajouter à mes patients",
                                 },
