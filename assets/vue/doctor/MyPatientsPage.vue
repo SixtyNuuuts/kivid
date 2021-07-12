@@ -8,7 +8,9 @@
         <List
             :items="doctorPatients"
             :config="listConfigPatients"
+            :createItemForm="createPrescriptionForm"
             :removeItemForm="removePatientForm"
+            :doctor="doctor"
         />
     </div>
 </template>
@@ -27,11 +29,42 @@ export default {
         return {
             doctor: null,
             createPatientForm: null,
+            createPrescriptionForm: null,
             addPatientForm: null,
             removePatientForm: null,
             allPatients: null,
             listConfigPatients: {
                 target: "user",
+                searchBoxConfig: {
+                    title: "Rechercher une fiche pour la prescription",
+                    placeholder: "Titre de la fiche",
+                    target: "worksheet",
+                    items: [
+                        {
+                            type: "worksheet",
+                        },
+                        {
+                            type: "actions",
+                            buttons: [
+                                {
+                                    type: "addItem",
+                                    target: "prescription",
+                                    content: {
+                                        class: "btn btn-primaki btn-xs lift",
+                                        icon: "fe fe-file-plus",
+                                        text: "Prescrire",
+                                    },
+                                },
+                            ],
+                        },
+                    ],
+                    notFound: {
+                        search: {
+                            icon: "fe fe-file-minus",
+                            message: "Aucune fiche n'a été trouvée avec ",
+                        },
+                    },
+                },
                 items: [
                     {
                         title: "Statut",
@@ -64,10 +97,9 @@ export default {
                         sortKey: null,
                         buttons: [
                             {
-                                type: "a",
+                                type: "searchItem",
                                 content: {
                                     class: "btn btn-primaki btn-xs lift",
-                                    href: "#!",
                                     icon: "fe fe-file-plus",
                                     text: "Prescrire une fiche",
                                 },
@@ -100,6 +132,7 @@ export default {
 
         this.doctor = data.doctor;
         this.createPatientForm = data.createPatientForm;
+        this.createPrescriptionForm = data.createPrescriptionForm;
         this.addPatientForm = data.addPatientForm;
         this.removePatientForm = data.removePatientForm;
         this.allPatients = data.allPatients;

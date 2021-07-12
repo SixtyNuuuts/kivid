@@ -35,7 +35,7 @@ class Prescription
 
     /**
      * @ORM\ManyToOne(targetEntity=Worksheet::class, inversedBy="prescriptions")
-     * @ORM\JoinColumn(nullable=true)
+     * @ORM\JoinColumn(nullable=false)
      * @Groups({"worksheet_read"})
      */
     private $worksheet;

@@ -67,6 +67,10 @@ class ManagePatientController extends AbstractController
             'doctor' => $doctor,
         ]);
 
+        $createPrescriptionFormView = $this->renderView('doctor/_form_create_prescription.html.twig', [
+            'doctor' => $doctor,
+        ]);
+
         $addPatientFormView = $this->renderView('doctor/_form_add_remove_common.html.twig', [
             'actionRoute' => 'app_doctor_add_patient',
             'tokenName' => 'add_patient',
@@ -83,6 +87,7 @@ class ManagePatientController extends AbstractController
 
         return $this->render('doctor/patient_list.html.twig', [
             'doctor' => $doctor,
+            'createPrescriptionForm' => $createPrescriptionFormView,
             'createPatientForm' => $createPatientFormView,
             'addPatientForm' => $addPatientFormView,
             'removePatientForm' => $removePatientFormView,
@@ -201,7 +206,7 @@ class ManagePatientController extends AbstractController
             $this->patientRepository->findBy(['doctor' => $doctor]),
             200,
             [],
-            ['groups' => 'doctor_read']
+            ['groups' => 'patient_read']
         );
     }
 

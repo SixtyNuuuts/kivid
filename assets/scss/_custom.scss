@@ -102,6 +102,106 @@ h1 {
     }
 }
 
+.vs-dialog-content.action-item-box {
+    .vs-dialog {
+        max-width: 200px;
+
+        .vs-dialog__content.notFooter {
+            padding: 2.1em 1.8em;
+            padding-bottom: 1em;
+
+            .action-item-text {
+                font-size: 0.9em;
+                text-align: center;
+
+                strong {
+                    font-weight: 700;
+                }
+            }
+
+            .action-item-detail {
+                display: flex;
+                justify-content: center;
+                padding: 0.8em 0;
+                border-radius: 0.8em;
+                margin: 1em 0;
+                margin-top: 1.6em;
+                background-color: #fffaf0;
+                position: relative;
+                padding-top: 1.3em;
+                line-height: 1.25;
+                text-align: center;
+
+                &.remove-item {
+                    background-color: #fff4f4;
+                }
+
+                p {
+                    display: flex;
+                    flex-direction: column;
+                    margin-bottom: 0;
+                    align-items: center;
+                    font-size: 0.8em;
+
+                    span {
+                        margin: 0.2em 0;
+                        font-weight: 700;
+                        font-size: 1.2em;
+                    }
+                }
+
+                .action-item-icon {
+                    position: absolute;
+                    top: -0.85em;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    width: 1.8em;
+                    height: 1.8em;
+                    border-radius: 50%;
+                    background-color: $primary;
+
+                    &.remove-item {
+                        background-color: #d60f3a;
+                    }
+
+                    i {
+                        color: white;
+                    }
+                }
+            }
+
+            .action-item-buttons {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+                .vs-button__content {
+                    font-size: 1.1em;
+                }
+            }
+        }
+    }
+}
+
+.md-chip {
+    display: inline-block;
+    background: #e0e0e0;
+    padding: 0 0.7em;
+    border-radius: 0.9em;
+    font-size: 0.7em;
+    margin: 0.3em;
+    text-transform: uppercase;
+    padding-top: 0.3em;
+    &.md-chip-hover:hover {
+        background: #ccc;
+    }
+}
+
+.md-chip-raised {
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.05), 0 1px 5px 0 rgba(0, 0, 0, 0.05), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+}
+
 //BTNVUE
 button.top-absolute {
     position: absolute;

@@ -15,10 +15,20 @@
             </vs-input>
             <div v-if="search" class="search-active">
                 <span v-if="itemsFiltered.length <= 1">
-                    {{ itemsFiltered.length }} {{ configArray.target }}
+                    {{ itemsFiltered.length }}
+                    {{
+                        "worksheet" === configArray.target
+                            ? "fiche"
+                            : configArray.target
+                    }}
                 </span>
                 <span v-else>
-                    {{ itemsFiltered.length }} {{ configArray.target + "s" }}
+                    {{ itemsFiltered.length }}
+                    {{
+                        "worksheet" === configArray.target
+                            ? "fiche" + "s"
+                            : configArray.target + "s"
+                    }}
                 </span>
             </div>
             <transition name="height">
@@ -69,6 +79,22 @@
                                     <span v-if="item.birthdate" class="age">
                                         ans</span
                                     >
+                                </div>
+                                <div
+                                    class="worksheet"
+                                    v-if="'worksheet' === div.type"
+                                >
+                                    {{ item.title }}
+
+                                    <div class="tags" v-if="item.exercisesTags">
+                                        <div
+                                            class="md-chip md-chip-raised"
+                                            v-for="tag in item.exercisesTags"
+                                            :key="tag"
+                                        >
+                                            {{ tag }}
+                                        </div>
+                                    </div>
                                 </div>
                                 <div
                                     v-if="'actions' === div.type"
@@ -187,44 +213,61 @@
                 </div>
             </transition>
         </div>
-        <vs-dialog class="add-item-box" v-model="addItemBox">
+        <vs-dialog class="action-item-box" v-model="addItemBox">
             <div v-if="'patient' === addItemBtnTarget">
-                <p class="add-item-text">
-                    Confirmer l'<strong>ajout</strong> de
-                </p>
+                <p class="action-item-text">Confirmer l'ajout de</p>
 
-                <div class="add-item-detail" v-if="addItemDetail.lastname">
-                    <div class="add-item-icon">
+                <div class="action-item-detail" v-if="addItemDetail.lastname">
+                    <div class="action-item-icon">
                         <i class="fe fe-user-plus"></i>
                     </div>
                     <p>
-                        {{ addItemDetail.lastname }}
-                        {{ addItemDetail.firstname }}
+                        <span>
+                            {{ addItemDetail.lastname }}
+                            {{ addItemDetail.firstname }}
+                        </span>
                     </p>
                 </div>
 
-                <p class="add-item-text">à votre liste.</p>
+                <p class="action-item-text">à votre liste.</p>
             </div>
 
             <div v-if="'prescription' === addItemBtnTarget">
-                <p class="add-item-text">
-                    Confirmer la <strong>prescription</strong>
-                </p>
+                <p class="action-item-text">Confirmer la prescription</p>
 
-                <div class="add-item-detail" v-if="addItemDetail.lastname">
-                    <div class="add-item-icon">
+                <div class="action-item-detail">
+                    <div class="action-item-icon">
                         <i class="fe fe-file-plus"></i>
                     </div>
-                    <p>
-                        {{ targetedItem.title }}
-                        <br />pour
-                        {{ addItemDetail.lastname }}
-                        {{ addItemDetail.firstname }}
-                    </p>
+                    <div v-if="'patient' === configArray.target">
+                        <p>
+                            <span>
+                                {{ targetedItem.title }}
+                            </span>
+                            pour
+                            <span>
+                                {{ addItemDetail.lastname }}
+                                {{ addItemDetail.firstname }}
+                            </span>
+                        </p>
+                    </div>
+
+                    <div v-if="'worksheet' === configArray.target">
+                        <p>
+                            <span>
+                                {{ addItemDetail.title }}
+                            </span>
+                            pour
+                            <span>
+                                {{ targetedItem.lastname }}
+                                {{ targetedItem.firstname }}
+                            </span>
+                        </p>
+                    </div>
                 </div>
             </div>
 
-            <div class="add-item-buttons">
+            <div class="action-item-buttons">
                 <vs-button @click="addItemBox = false" dark transparent>
                     Annuler
                 </vs-button>
@@ -245,7 +288,7 @@ export default {
         config: Object,
         targetedItem: Object,
         addItemForm: String,
-        createTargetedItemForm: String,
+        createItemForm: String,
     },
     directives: {
         ClickOutside,
@@ -286,9 +329,21 @@ export default {
             }
 
             if ("prescription" === this.addItemBtnTarget) {
-                addItemFormWithId = this.createTargetedItemForm.replace(
+                let patientId, worksheetId;
+
+                if ("patient" === this.configArray.target) {
+                    patientId = this.addItemDetail.id;
+                    worksheetId = this.targetedItem.id;
+                }
+
+                if ("worksheet" === this.configArray.target) {
+                    patientId = this.targetedItem.id;
+                    worksheetId = this.addItemDetail.id;
+                }
+
+                addItemFormWithId = this.createItemForm.replace(
                     `<input type="hidden" name="patient_id" value=""><input type="hidden" name="worksheet_id" value="">`,
-                    `<input type="hidden" name="patient_id" value="${this.addItemDetail.id}"><input type="hidden" name="worksheet_id" value="${this.targetedItem.id}">`
+                    `<input type="hidden" name="patient_id" value="${patientId}"><input type="hidden" name="worksheet_id" value="${worksheetId}">`
                 );
             }
 
@@ -357,7 +412,7 @@ input[type="search"] {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.8em 0.9em;
+    padding: 0.8em 1.2em;
     border-bottom: 1px solid #f1f4f8;
     color: #30343a;
     font-size: 0.8em;
@@ -377,6 +432,15 @@ input[type="search"] {
         span.tiret {
             color: $primary;
             margin: 0.5em;
+        }
+    }
+
+    .worksheet {
+        display: flex;
+        align-items: center;
+
+        .tags {
+            margin-left: 1em;
         }
     }
 
@@ -411,68 +475,6 @@ p.no-found {
     i {
         margin-right: 0.3em;
         color: #fdc269;
-    }
-}
-
-.vs-dialog-content.add-item-box {
-    .vs-dialog {
-        max-width: 200px;
-
-        .vs-dialog__content.notFooter {
-            padding: 2.1em 1.8em;
-            padding-bottom: 1em;
-
-            .add-item-text {
-                font-size: 0.9em;
-                text-align: center;
-
-                strong {
-                    font-weight: 700;
-                }
-            }
-
-            .add-item-detail {
-                display: flex;
-                justify-content: center;
-                padding: 0.8em 0;
-                border-radius: 0.8em;
-                background-color: #fffaf0;
-                margin: 1em 0;
-                margin-top: 0.8em;
-
-                p {
-                    display: flex;
-                    margin-bottom: 0;
-                    align-items: center;
-                }
-
-                .add-item-icon {
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    margin-right: 0.6em;
-                    width: 1.9em;
-                    height: 1.9em;
-                    border-radius: 50%;
-                    background-color: $primary;
-
-                    i {
-                        color: white;
-                    }
-                }
-            }
-
-            .add-item-buttons {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-
-                .vs-button__content {
-                    font-size: 1.1em;
-                    font-weight: 700;
-                }
-            }
-        }
     }
 }
 

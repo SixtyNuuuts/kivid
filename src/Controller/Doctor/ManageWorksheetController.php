@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -166,5 +167,18 @@ class ManageWorksheetController extends AbstractController
         );
 
         return $this->redirectToRoute('app_doctor_worksheets', ['id' => $doctor->getId()]);
+    }
+
+    /**
+     * @Route("/{id}/get/worksheets", name="app_doctor_get_worksheets", methods={"GET"})
+     */
+    public function getWorksheets(Doctor $doctor): JsonResponse
+    {
+        return $this->json(
+            $this->worksheetRepository->findDoctorWorksheets($doctor),
+            200,
+            [],
+            ['groups' => 'worksheet_read']
+        );
     }
 }

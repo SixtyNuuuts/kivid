@@ -36,6 +36,7 @@
 
 <script>
 import List from "./components/List.vue";
+import f from "../services/function";
 
 export default {
     name: "MyWorkSheetsPage",
@@ -107,7 +108,7 @@ export default {
             listConfigWorksheets: {
                 target: "worksheet",
                 searchBoxConfig: {
-                    title: "Sélectionner un patient pour la prescription",
+                    title: "Rechercher un patient pour la prescription",
                     placeholder: "Nom - Prénom - Email",
                     target: "patient",
                     items: [
@@ -133,9 +134,6 @@ export default {
                         search: {
                             icon: "fe fe-user-minus",
                             message: "Aucun patient n'a été trouvé avec ",
-                        },
-                        secondLine: {
-                            message: "Créer un patient ci-dessous",
                         },
                     },
                 },
@@ -213,32 +211,21 @@ export default {
     computed: {
         doctorWorksheets() {
             return this.doctorPrescriptions.reduce((r, prescription) => {
-                const worksheetIsAlreadyIncluded = r.filter(
-                    (w) => w.id === prescription.worksheet.id
-                );
+                if (prescription.worksheet) {
+                    const worksheetIsAlreadyIncluded = r.filter(
+                        (w) => w.id === prescription.worksheet.id
+                    );
 
-                if (!worksheetIsAlreadyIncluded.length) {
-                    r.push(prescription.worksheet);
+                    if (!worksheetIsAlreadyIncluded.length) {
+                        r.push(prescription.worksheet);
+                    }
                 }
-
                 return r;
             }, []);
         },
     },
     mounted() {
-        this.doctorWorksheets.map((worksheet) => {
-            return (worksheet.exercisesTags = worksheet.exercises.reduce(
-                (r, exercise) => {
-                    exercise.video.tags.forEach((tag) => {
-                        if (!r.includes(tag.name)) {
-                            r.push(tag.name);
-                        }
-                    });
-                    return r;
-                },
-                []
-            ));
-        });
+        f.generationOfTagsFromExercises(this.doctorWorksheets);
     },
 };
 </script>

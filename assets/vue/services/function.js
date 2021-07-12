@@ -21,6 +21,22 @@ export default {
 
   },
 
+  generationOfTagsFromExercises(doctorWorksheets) {
+    doctorWorksheets.map((worksheet) => {
+      return (worksheet.exercisesTags = worksheet.exercises.reduce(
+        (r, exercise) => {
+          exercise.video.tags.forEach((tag) => {
+            if (!r.includes(tag.name)) {
+              r.push(tag.name);
+            }
+          });
+          return r;
+        },
+        []
+      ));
+    });
+  },
+
   formatDate(datetime) {
     let date = new Date(Date.parse(datetime));
     return new Intl.DateTimeFormat('fr-FR').format(date);

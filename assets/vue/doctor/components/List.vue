@@ -194,55 +194,61 @@
             <Search
                 :items="searchBoxItems"
                 :config="configArray.searchBoxConfig"
-                :targetedItem="searchBoxSelectedItem"
-                :createTargetedItemForm="createItemForm"
+                :targetedItem="searchBoxItemSelected"
+                :createItemForm="createItemForm"
             />
         </vs-dialog>
-        <vs-dialog class="remove-item-box" v-model="removeItemBox">
-            <p class="remove-item-text">
-                Confirmer la <strong>suppression</strong> de
-            </p>
+        <vs-dialog class="action-item-box" v-model="removeItemBox">
+            <p class="action-item-text">Confirmer la suppression de</p>
 
             <div v-if="'user' === configArray.target">
-                <div class="remove-item-detail">
-                    <div class="remove-item-icon">
+                <div class="action-item-detail remove-item">
+                    <div class="action-item-icon remove-item">
                         <i class="fe fe-user-minus"></i>
                     </div>
                     <p>
-                        {{ removeItemDetail.lastname }}
-                        {{ removeItemDetail.firstname }}
+                        <span>
+                            {{ removeItemDetail.lastname }}
+                            {{ removeItemDetail.firstname }}
+                        </span>
                     </p>
                 </div>
 
-                <p class="remove-item-text">de votre liste.</p>
+                <p class="action-item-text">de votre liste.</p>
             </div>
 
             <div v-if="'prescription' === configArray.target">
-                <div class="remove-item-detail">
-                    <div class="remove-item-icon">
+                <div class="action-item-detail remove-item">
+                    <div class="action-item-icon remove-item">
                         <i class="fe fe-trash"></i>
                     </div>
                     <p>
-                        {{ removeItemDetail.worksheet.title }}
-                        <br />pour
-                        {{ removeItemDetail.patient.lastname }}
-                        {{ removeItemDetail.patient.firstname }}
+                        <span>
+                            {{ removeItemDetail.worksheet.title }}
+                        </span>
+                        pour
+                        <span>
+                            {{ removeItemDetail.patient.lastname }}
+                            {{ removeItemDetail.patient.firstname }}
+                        </span>
                     </p>
                 </div>
             </div>
 
             <div v-if="'worksheet' === configArray.target">
-                <div class="remove-item-detail">
-                    <div class="remove-item-icon">
+                <div class="action-item-detail remove-item">
+                    <div class="action-item-icon remove-item">
                         <i class="fe fe-trash"></i>
                     </div>
                     <p>
-                        {{ removeItemDetail.title }}
+                        <span>
+                            {{ removeItemDetail.title }}
+                        </span>
                     </p>
                 </div>
             </div>
 
-            <div class="remove-item-buttons">
+            <div class="action-item-buttons">
                 <vs-button @click="removeItemBox = false" dark transparent>
                     Annuler
                 </vs-button>
@@ -279,7 +285,7 @@ export default {
             configArray: this.config,
             searchBox: false,
             searchBoxItems: null,
-            searchBoxSelectedItem: null,
+            searchBoxItemSelected: null,
             patients: null,
             removeItemBox: false,
             removeItemDetail: { worksheet: {}, patient: {} },
@@ -296,7 +302,7 @@ export default {
             return f.generateAgeFromDateOfBirth(dateString);
         },
         searchBoxToggle(item) {
-            this.searchBoxSelectedItem = item;
+            this.searchBoxItemSelected = item;
             return (this.searchBox = !this.searchBox);
         },
         removeItem(item) {
@@ -327,6 +333,19 @@ export default {
                 .get(`/kine/${this.doctor.id}/get/patients`)
                 .then((response) => {
                     this.searchBoxItems = response.data;
+                });
+        }
+        if (
+            !this.searchBoxItems &&
+            this.doctor &&
+            this.configArray.searchBoxConfig &&
+            "worksheet" === this.configArray.searchBoxConfig.target
+        ) {
+            this.axios
+                .get(`/kine/${this.doctor.id}/get/worksheets`)
+                .then((response) => {
+                    this.searchBoxItems = response.data;
+                    f.generationOfTagsFromExercises(this.searchBoxItems);
                 });
         }
     },
@@ -436,25 +455,6 @@ td {
         }
     }
 
-    .md-chip {
-        display: inline-block;
-        background: #e0e0e0;
-        padding: 0 0.7em;
-        border-radius: 0.9em;
-        font-size: 0.7em;
-        margin: 0 0.3em;
-        text-transform: uppercase;
-        padding-top: 0.3em;
-        &.md-chip-hover:hover {
-            background: #ccc;
-        }
-    }
-
-    .md-chip-raised {
-        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.05),
-            0 1px 5px 0 rgba(0, 0, 0, 0.05), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
-    }
-
     .progress {
         width: 100%;
         max-width: 260px;
@@ -481,69 +481,6 @@ td {
         position: relative;
         top: 0.05em;
         color: #d2d2d2;
-    }
-}
-
-.vs-dialog-content.remove-item-box {
-    .vs-dialog {
-        max-width: 200px;
-
-        .vs-dialog__content.notFooter {
-            padding: 2.1em 1.8em;
-            padding-bottom: 1em;
-
-            .remove-item-text {
-                font-size: 0.9em;
-                text-align: center;
-
-                strong {
-                    font-weight: 700;
-                }
-            }
-
-            .remove-item-detail {
-                display: flex;
-                justify-content: center;
-                padding: 0.8em 0;
-                border-radius: 0.8em;
-                background-color: #fff4f4;
-                margin: 1em 0;
-                margin-top: 0.8em;
-
-                p {
-                    display: flex;
-                    margin-bottom: 0;
-                    align-items: center;
-                    max-width: 80%;
-                }
-
-                .remove-item-icon {
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    margin-right: 0.6em;
-                    width: 1.9em;
-                    height: 1.9em;
-                    border-radius: 50%;
-                    background-color: #d60f3a;
-
-                    i {
-                        color: white;
-                    }
-                }
-            }
-
-            .remove-item-buttons {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-
-                .vs-button__content {
-                    font-size: 1.1em;
-                    font-weight: 700;
-                }
-            }
-        }
     }
 }
 </style>
