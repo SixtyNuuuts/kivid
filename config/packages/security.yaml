@@ -13,8 +13,16 @@ security:
         backend_users:
             memory:
                 users:
-                    kivid-admin@mail.com: { password: '$2y$13$.Sz3REq5YRTGxEcBEvSE0uriYe9e3iChRpPuhGXXxydbwx9M8UKjC', roles: ['ROLE_ADMIN'] }
-                    web2bee-admin@mail.com: { password: '$2y$13$5Zw6GRdYr12qoYTEtLLwaO4RpZyUY7uS6V.671ROrnm7HPLUDsAV.', roles: ['ROLE_ADMIN', 'ROLE_SUPER_ADMIN'] }
+                    kivid-admin@mail.com:
+                        {
+                            password: "$2y$13$.Sz3REq5YRTGxEcBEvSE0uriYe9e3iChRpPuhGXXxydbwx9M8UKjC",
+                            roles: ["ROLE_ADMIN"],
+                        }
+                    web2bee-admin@mail.com:
+                        {
+                            password: "$2y$13$5Zw6GRdYr12qoYTEtLLwaO4RpZyUY7uS6V.671ROrnm7HPLUDsAV.",
+                            roles: ["ROLE_ADMIN", "ROLE_SUPER_ADMIN"],
+                        }
         patient:
             entity:
                 class: App\Entity\Patient
@@ -46,7 +54,6 @@ security:
             #     lifetime: 604800 # 1 week in seconds
             #     path: /
             #     samesite: strict
-
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication
             # https://symfony.com/doc/current/security/impersonating_user.html
@@ -56,5 +63,5 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }
-        - { path: ^/patient, roles: [ROLE_PATIENT, ROLE_ADMIN]}
-        - { path: ^/kine, roles: [ROLE_DOCTOR, ROLE_ADMIN]}
+        - { path: ^/patient, roles: [ROLE_PATIENT, ROLE_ADMIN, ROLE_DOCTOR] }
+        - { path: ^/kine, roles: [ROLE_DOCTOR, ROLE_ADMIN] }

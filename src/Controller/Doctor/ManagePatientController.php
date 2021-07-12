@@ -14,6 +14,7 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\ResetPasswordRequestRepository;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use SymfonyCasts\Bundle\ResetPassword\Model\ResetPasswordToken;
@@ -66,11 +67,17 @@ class ManagePatientController extends AbstractController
             'doctor' => $doctor,
         ]);
 
-        $addPatientFormView = $this->renderView('doctor/_form_add_patient.html.twig', [
+        $addPatientFormView = $this->renderView('doctor/_form_add_remove_common.html.twig', [
+            'actionRoute' => 'app_doctor_add_patient',
+            'tokenName' => 'add_patient',
+            'classBtnColor' => 'vs-button--primary',
             'doctor' => $doctor,
         ]);
 
-        $removePatientFormView = $this->renderView('doctor/_form_remove_patient.html.twig', [
+        $removePatientFormView = $this->renderView('doctor/_form_add_remove_common.html.twig', [
+            'actionRoute' => 'app_doctor_remove_patient',
+            'tokenName' => 'remove_patient',
+            'classBtnColor' => 'vs-button--danger',
             'doctor' => $doctor,
         ]);
 
@@ -131,7 +138,7 @@ class ManagePatientController extends AbstractController
     public function addPatient(Request $request, Doctor $doctor): RedirectResponse
     {
         if ($this->isCsrfTokenValid('add_patient' . $doctor->getId(), $request->request->get('_token'))) {
-            $patient = $this->patientRepository->findOneBy(['id' => $request->request->get('patient_id')]);
+            $patient = $this->patientRepository->findOneBy(['id' => $request->request->get('_id')]);
 
             $doctor->addPatient($patient);
 
@@ -139,7 +146,8 @@ class ManagePatientController extends AbstractController
 
             $this->addFlash(
                 'success',
-                "{$patient->getFirstname()} {$patient->getLastname()} a bien été ajouté à votre liste !"
+                "<strong>{$patient->getFirstname()} {$patient->getLastname()}</strong> 
+                a bien été ajouté à votre liste."
             );
 
             return $this->redirectToRoute('app_doctor_patients', ['id' => $doctor->getId()]);
@@ -159,7 +167,7 @@ class ManagePatientController extends AbstractController
     public function removePatient(Request $request, Doctor $doctor): RedirectResponse
     {
         if ($this->isCsrfTokenValid('remove_patient' . $doctor->getId(), $request->request->get('_token'))) {
-            $patient = $this->patientRepository->findOneBy(['id' => $request->request->get('patient_id')]);
+            $patient = $this->patientRepository->findOneBy(['id' => $request->request->get('_id')]);
 
             if ($doctor->getPatients()->contains($patient)) {
                 $doctor->removePatient($patient);
@@ -168,7 +176,8 @@ class ManagePatientController extends AbstractController
 
                 $this->addFlash(
                     'success',
-                    "{$patient->getFirstname()} {$patient->getLastname()} a bien été retiré de votre liste !"
+                    "<strong>{$patient->getFirstname()} {$patient->getLastname()}</strong> 
+                    a bien été retiré de votre liste."
                 );
 
                 return $this->redirectToRoute('app_doctor_patients', ['id' => $doctor->getId()]);
@@ -181,6 +190,19 @@ class ManagePatientController extends AbstractController
         );
 
         return $this->redirectToRoute('app_doctor_patients', ['id' => $doctor->getId()]);
+    }
+
+    /**
+     * @Route("/{id}/get/patients", name="app_doctor_get_patients", methods={"GET"})
+     */
+    public function getPatients(Doctor $doctor): JsonResponse
+    {
+        return $this->json(
+            $this->patientRepository->findBy(['doctor' => $doctor]),
+            200,
+            [],
+            ['groups' => 'doctor_read']
+        );
     }
 
     private function processSendingPasswordCreationEmail(Patient $patient, Doctor $doctor): RedirectResponse
@@ -212,7 +234,8 @@ class ManagePatientController extends AbstractController
 
         $this->addFlash(
             'success',
-            "{$patient->getFirstname()} {$patient->getLastname()} a été créé et ajouté à vos patients, 
+            "<strong>{$patient->getFirstname()} {$patient->getLastname()}</strong> 
+            a été créé et ajouté à vos patients, 
             Nous lui avons envoyé un email pour qu'il valide son inscription."
         );
 

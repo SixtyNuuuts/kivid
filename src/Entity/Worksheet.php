@@ -47,6 +47,7 @@ class Worksheet
 
     /**
      * @ORM\OneToMany(targetEntity=Prescription::class, mappedBy="worksheet")
+     * @ORM\JoinColumn(nullable=true)
      */
     private $prescriptions;
 

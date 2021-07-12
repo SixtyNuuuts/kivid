@@ -2,7 +2,7 @@
     {% for rubrique, messages in app.flashes %}
       {% for message in messages %}
         <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-          <div class="toast-header">
+          <div class="toast-header toast-header-{{rubrique}}">
             <div class="badge badge-rounded-circle bg-{{rubrique}}-soft me-3">
             {% if rubrique == 'success' %}
               <i class="fe fe-check"></i>
@@ -18,7 +18,7 @@
             <button type="button" class="ms-3 btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
           </div>
           <div class="toast-body">
-            {{ message }}
+            {{ message|raw }}
           </div>
         </div>
       {% endfor %}

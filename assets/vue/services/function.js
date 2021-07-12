@@ -1,5 +1,26 @@
 export default {
 
+  setLoaderToBtnValidationForm() {
+    setTimeout(() => {
+      const btnsValidForm =
+        document.querySelectorAll(".valid-form-btn");
+      btnsValidForm.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const loadingDiv = document.createElement("div");
+
+          loadingDiv.classList.add("vs-button__loading");
+
+          btn.appendChild(loadingDiv);
+
+          setTimeout(() => {
+            btn.removeChild(loadingDiv);
+          }, 3000);
+        });
+      });
+    }, 500);
+
+  },
+
   formatDate(datetime) {
     let date = new Date(Date.parse(datetime));
     return new Intl.DateTimeFormat('fr-FR').format(date);

@@ -1,124 +1,14 @@
 <template>
     <div>
-        <vs-button
-            circle
-            color="warn"
-            gradient
-            :active="boxActive"
-            @click="boxToggle"
-            class="btn-add-patient"
-        >
+        <vs-button @click="boxToggle" class="btn-segondaki top-absolute">
             <i class="fe fe-user-plus"></i> Ajouter un patient
         </vs-button>
         <vs-dialog v-model="boxActive">
-            <h2><i class="fe fe-search"></i>Rechercher un patient</h2>
-            <div class="add-patient-box">
-                <div class="search">
-                    <vs-input
-                        v-model="search"
-                        type="search"
-                        placeholder="Nom - Prénom - Email"
-                    >
-                        <template #icon>
-                            <i class="fe fe-search"></i>
-                        </template>
-                    </vs-input>
-                    <div v-if="search" class="search-active">
-                        {{ getPatients.length }} patients
-                    </div>
-                </div>
-                <transition name="height">
-                    <div
-                        v-if="search"
-                        class="filtered-patients vs-alert--shadow"
-                    >
-                        <div v-if="getPatients.length">
-                            <div
-                                v-for="(patient, i) in getPatients"
-                                :key="i"
-                                class="patient"
-                            >
-                                <div>
-                                    <vs-avatar
-                                        class="avatar"
-                                        v-if="patient.avatarUrl"
-                                    >
-                                        <img
-                                            :src="patient.avatarUrl"
-                                            alt="avatar"
-                                        />
-                                    </vs-avatar>
-                                    <vs-avatar class="avatar" v-else>
-                                        <img
-                                            src="/img/avatar-default.svg"
-                                            alt="avatar"
-                                        />
-                                    </vs-avatar>
-                                    {{ patient.lastname }}
-                                    {{ patient.firstname }}
-                                    <span
-                                        v-if="
-                                            patient.lastname ||
-                                            patient.firstname
-                                        "
-                                        class="tiret"
-                                    >
-                                        -
-                                    </span>
-                                    {{ patient.email }}
-                                    <span
-                                        v-if="patient.birthdate"
-                                        class="tiret"
-                                    >
-                                        -
-                                    </span>
-                                    {{ getAge(patient.birthdate) }}
-                                    <span v-if="patient.birthdate" class="age">
-                                        ans</span
-                                    >
-                                </div>
-                                <div
-                                    v-if="patient.doctor"
-                                    class="patient-doctor"
-                                >
-                                    <vs-button flat>
-                                        suivi par
-                                        <em>
-                                            {{ patient.doctor.lastname }}
-                                            {{ patient.doctor.firstname }}
-                                        </em>
-                                        <vs-avatar size="25">
-                                            <img
-                                                :src="
-                                                    patient.doctor.urlAvatar
-                                                        ? patient.doctor
-                                                              .urlAvatar
-                                                        : '/img/avatar-default.svg'
-                                                "
-                                                alt="avatar du kiné"
-                                            />
-                                        </vs-avatar>
-                                    </vs-button>
-                                </div>
-                                <div
-                                    v-else
-                                    v-html="addPatient(patient.id)"
-                                ></div>
-                            </div>
-                        </div>
-                        <div v-else>
-                            <p class="no-found">
-                                <i class="fe fe-user-minus"></i>
-                                Aucun patient n'a été trouvé avec "<strong>{{
-                                    search
-                                }}</strong
-                                >",<br />
-                                <em>Créer un patient ci-dessous.</em>
-                            </p>
-                        </div>
-                    </div>
-                </transition>
-            </div>
+            <Search
+                :items="patients"
+                :config="searchConfigPatients"
+                :addItemForm="addPatientForm"
+            />
 
             <h2><i class="fe fe-user-plus"></i>Créer un patient</h2>
             <div v-html="createPatientForm"></div>
@@ -128,49 +18,62 @@
 
 <script>
 import f from "../../services/function";
+import Search from "./Search.vue";
 
 export default {
     name: "AddPatient",
+    components: {
+        Search,
+    },
     props: {
         patients: Array,
         createPatientForm: String,
         addPatientForm: String,
-        doctor: Object,
     },
-    data: () => ({
-        boxActive: false,
-        search: "",
-        newPatient: {
-            firstname: "",
-            lastname: "",
-            email: "",
-        },
-    }),
+    data() {
+        return {
+            boxActive: false,
+            searchConfigPatients: {
+                title: "Rechercher un patient",
+                placeholder: "Nom - Prénom - Email",
+                target: "patient",
+                items: [
+                    {
+                        type: "user",
+                    },
+                    {
+                        type: "actions",
+                        buttons: [
+                            {
+                                type: "addItem",
+                                target: "patient",
+                                content: {
+                                    class: "btn btn-primaki btn-xs lift",
+                                    icon: "fe fe-user-plus",
+                                    text: "Ajouter à mes patients",
+                                },
+                            },
+                        ],
+                    },
+                ],
+                notFound: {
+                    search: {
+                        icon: "fe fe-user-minus",
+                        message: "Aucun patient n'a été trouvé avec ",
+                    },
+                    secondLine: {
+                        message: "Créer un patient ci-dessous",
+                    },
+                },
+            },
+        };
+    },
     methods: {
-        addPatient(patientId) {
-            const addPatientFormWithPatientId = this.addPatientForm.replace(
-                `<input type="hidden" name="patient_id" value="">`,
-                `<input type="hidden" name="patient_id" value="${patientId}">`
-            );
-
-            return addPatientFormWithPatientId;
-        },
         boxToggle() {
+            // pour un loader sur les btns de la modale
+            f.setLoaderToBtnValidationForm();
+
             this.boxActive = !this.boxActive;
-            this.search = "";
-        },
-        getAge(dateString) {
-            return f.generateAgeFromDateOfBirth(dateString);
-        },
-    },
-    computed: {
-        getPatients() {
-            var lowSearch = this.search.toLowerCase();
-            return this.patients.filter((patient) => {
-                return Object.values(patient).some((val) =>
-                    String(val).toLowerCase().includes(lowSearch)
-                );
-            });
         },
     },
 };
@@ -179,182 +82,11 @@ export default {
 <style lang="scss">
 $primary: #ffab2c;
 
-button.btn-add-patient {
-    position: absolute;
-    right: 14px;
-    top: -10px;
-    i {
-        margin-top: -0.1em;
-        margin-right: 0.3em;
-    }
-}
-
-.vs-dialog {
-    width: 65vw !important;
-
-    .vs-dialog__content.notFooter {
-        margin-bottom: 0 !important;
-        padding: 2em;
-
-        .vs-input-content {
-            width: 100%;
-            &:first-child:not(:last-child) {
-                margin-right: 0.8em;
-            }
-            .vs-input__icon {
-                height: 39px;
-            }
-            input {
-                margin: 0.5em 0;
-                width: 100%;
-                font-size: 0.88em;
-                &[type="search"] {
-                    margin: 0;
-                }
-                &::placeholder {
-                    font-size: 0.85em;
-                    color: rgb(194, 194, 194);
-                }
-                &:focus {
-                    border: none;
-                    & ~ span {
-                        color: $primary;
-                    }
-                }
-            }
-        }
-    }
-}
-
-h2 {
-    font-size: 1.7rem;
-    text-align: center;
-    margin: 1em;
-    margin-bottom: 0.5em;
-    color: $primary;
-
-    &:first-child {
-        margin-top: 0;
-    }
-
-    i {
-        font-size: 0.9em;
-        margin-right: 0.3em;
-    }
-}
-
-.add-patient-box {
-    position: relative;
-}
-
-.search {
-    position: relative;
-}
-
-.search-active {
-    position: absolute;
-    right: 3.7em;
-    top: 1em;
-    color: $primary;
-    text-transform: uppercase;
-    font-size: 0.7em;
-}
-
-/* Replace cancel btn into search input */
-input[type="search"]::-webkit-search-cancel-button {
-    /* Remove default */
-    -webkit-appearance: none;
-    /*Your new styles */
-    height: 18px;
-    width: 18px;
-    cursor: pointer;
-    background-image: url("../../../img/icons/x-circle.svg");
-}
-
-.filtered-patients {
-    position: absolute;
-    background-color: white;
-    border-radius: 0 0 12px 12px;
-    box-shadow: 0px 4px 15px 0px rgba(51, 34, 9, 0.12);
-    max-height: 15em;
-    overflow: auto;
-    z-index: 500;
-    width: 100%;
-}
-::-webkit-scrollbar {
-    width: 5px;
-    height: 5px;
-    display: block;
-    background: transparent;
-}
-::-webkit-scrollbar-thumb {
-    background: rgba(245, 245, 245, 1);
-    border-radius: 5px;
-}
-
-.patient {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.9em;
-    border-bottom: 1px solid #f1f4f8;
-    color: #30343a;
-    font-size: 0.8em;
-
-    > div {
-        display: flex;
-
-        align-items: center;
-    }
-
-    .avatar {
-        margin-right: 0.6em;
-    }
-
-    span.age {
-        margin-left: 0.25em;
-    }
-
-    span.tiret {
-        color: $primary;
-        margin: 0.5em;
-    }
-
-    .patient-doctor {
-        button {
-            cursor: unset;
-            em {
-                margin-left: 0.2em;
-            }
-            .vs-avatar {
-                margin-left: 0.5em;
-            }
-        }
-    }
-
-    button {
-        i {
-            margin-top: -0.15em;
-            margin-right: 0.28em;
-        }
-    }
-}
-
-p.no-found {
-    text-align: center;
-    margin: 0.7em;
-    color: #a3a5a8;
-    font-size: 0.8em;
-    i {
-        margin-right: 0.3em;
-        color: #dce0e5;
-    }
-}
-
 form[name="create_patient_form"] {
     .imputs {
         display: flex;
         flex-direction: column;
+
         .line {
             display: flex;
             flex-direction: column;
@@ -366,6 +98,7 @@ form[name="create_patient_form"] {
     .buttons {
         display: flex;
         margin: 0.5em 0;
+        line-height: 1.1;
 
         button {
             flex: 1;
@@ -380,18 +113,5 @@ form[name="create_patient_form"] {
             }
         }
     }
-}
-
-.height-enter-active,
-.height-leave-active {
-    transition: all 0.5s;
-}
-.height-enter,
-.height-leave-to {
-    margin-bottom: 0;
-    padding: 0;
-    max-height: 0;
-    overflow: hidden;
-    opacity: 0;
 }
 </style>

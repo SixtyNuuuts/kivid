@@ -1,0 +1,9 @@
+<form method="post" action="{{ path('app_doctor_create_prescription', {'id': doctor.id}) }}">
+	<input type="hidden" name="_token" value="{{ csrf_token('create_prescription' ~ doctor.id) }}">
+    <input type="hidden" name="patient_id" value=""><input type="hidden" name="worksheet_id" value="">
+	<button class="valid-form-btn vs-button vs-button--null vs-button--size-null vs-button--primary vs-button--transparent">
+		<div class="vs-button__content">
+			Confirmer
+		</div>
+	</button>
+</form>
