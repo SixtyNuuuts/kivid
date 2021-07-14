@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div data-app>
         <AddPatient
             :patients="allPatientsExceptDoctor"
             :createPatientForm="createPatientForm"
@@ -35,6 +35,8 @@ export default {
             allPatients: null,
             listConfigPatients: {
                 target: "user",
+                searchPlaceholder:
+                    "Filtres : Nom - Prénom - Email - Année de naissance - Activité...",
                 searchBoxConfig: {
                     title: "Rechercher une fiche pour la prescription",
                     placeholder: "Titre de la fiche",

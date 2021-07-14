@@ -9,9 +9,6 @@
                 :config="searchConfigPatients"
                 :addItemForm="addPatientForm"
             />
-
-            <h2><i class="fe fe-user-plus"></i>Créer un patient</h2>
-            <div v-html="createPatientForm"></div>
         </vs-dialog>
     </div>
 </template>

@@ -26,7 +26,7 @@ class CRUDController extends AbstractController
     }
 
     /**
-     * @Route("/{userType}/{id}/edit", name="app_user_edit", methods={"POST"})
+     * @Route("/{userType}/{id}/edit", name="app_user_edit", methods={"GET", "POST"})
      */
     public function edit(Request $request, string $userType, int $id, SluggerInterface $slugger): Response
     {
@@ -63,14 +63,10 @@ class CRUDController extends AbstractController
 
             $this->addFlash('success', 'Votre profil a été mis à jour !');
 
-            $referer = filter_var($request->headers->get('referer'), FILTER_SANITIZE_URL);
-
-            return $this->redirect($referer);
+            return $this->redirectToRoute('app_user_edit', ['userType' => $userType, 'id' => $user->getId()]);
         }
 
-        $template = $request->query->get('fetch') ? 'modal_edit' : 'edit';
-
-        return $this->render("crud/{$template}.html.twig", [
+        return $this->render("crud/edit.html.twig", [
             'user' => $user,
             'form' => $form->createView(),
         ]);

@@ -14,9 +14,7 @@
 	{{ encore_entry_script_tags('my-worksheets-page') }}
 {% endblock %}
 
-{% block body %}
-	{% include 'layout/partial/_breadcrumb.html.twig' with { pageName : 'Mes Fiches'} %}
-    
+{% block body %}    
 	<div class="container my-8">
 		<h1><i class="fe fe-file-text"></i>Mes Fiches</h1>
 
@@ -29,7 +27,6 @@
 		"doctor": {{ doctor|serialize('json', {'groups': 'doctor_read'})|raw }},
 		"doctorPrescriptions": {{ doctorPrescriptions|serialize('json', {'groups': 'worksheet_read'})|raw }},
 		"createPrescriptionForm": {{ createPrescriptionForm|serialize('json')|raw }},
-		"removePrescriptionForm": {{ removePrescriptionForm|serialize('json')|raw }},
 		"removeWorksheetForm": {{ removeWorksheetForm|serialize('json')|raw }}
 	}
 {% endblock %}

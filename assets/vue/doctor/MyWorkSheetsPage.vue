@@ -1,26 +1,32 @@
 <template>
-    <div>
+    <div data-app>
+        <AddWorksheet />
         <vs-navbar center-collapsed v-model="active">
-            <vs-navbar-item
-                :active="active == 'prescription'"
-                id="prescription"
-            >
-                Prescriptions
-            </vs-navbar-item>
             <vs-navbar-item :active="active == 'worksheet'" id="worksheet">
                 Fiches
+            </vs-navbar-item>
+            <vs-navbar-item
+                :active="active == 'worksheet-template'"
+                id="worksheet-template"
+            >
+                Modèles de Fiche
             </vs-navbar-item>
         </vs-navbar>
         <div>
             <transition name="fade" mode="out-in">
-                <div v-if="active == 'prescription'" key="prescription">
+                <div v-if="active == 'worksheet'" key="worksheet">
                     <List
-                        :items="doctorPrescriptions"
-                        :config="listConfigPrescriptions"
-                        :removeItemForm="removePrescriptionForm"
+                        :items="doctorWorksheets"
+                        :config="listConfigWorksheets"
+                        :createItemForm="createPrescriptionForm"
+                        :removeItemForm="removeWorksheetForm"
+                        :doctor="doctor"
                     />
                 </div>
-                <div v-if="active == 'worksheet'" key="worksheet">
+                <div
+                    v-if="active == 'worksheet-template'"
+                    key="worksheet-template"
+                >
                     <List
                         :items="doctorWorksheets"
                         :config="listConfigWorksheets"
@@ -36,77 +42,26 @@
 
 <script>
 import List from "./components/List.vue";
+import AddWorksheet from "./components/AddWorksheet.vue";
 import f from "../services/function";
 
 export default {
     name: "MyWorkSheetsPage",
     components: {
+        AddWorksheet,
         List,
     },
     data() {
         return {
             doctor: null,
             doctorPrescriptions: null,
-            active: "prescription",
+            active: "worksheet",
             createPrescriptionForm: null,
             removePrescriptionForm: null,
             removeWorksheetForm: null,
-            listConfigPrescriptions: {
-                target: "prescription",
-                items: [
-                    {
-                        title: "Date de presc.",
-                        type: "date",
-                        sort: true,
-                        sortKey: "createdAt",
-                    },
-                    {
-                        title: "Fiche",
-                        type: "title",
-                        sort: true,
-                        sortKey: "worksheet.title",
-                    },
-                    {
-                        title: "Patient",
-                        type: "user",
-                        sort: true,
-                        sortKey: "patient.lastname",
-                    },
-                    {
-                        title: "Progression",
-                        type: "progression",
-                        sort: true,
-                        sortKey: "progression",
-                    },
-                    {
-                        title: null,
-                        type: "actions",
-                        sort: false,
-                        sortKey: null,
-                        buttons: [
-                            {
-                                type: "removeItem",
-                                content: {
-                                    icon: "fe fe-trash",
-                                    tooltip: "Supprimer la prescription",
-                                },
-                            },
-                        ],
-                    },
-                ],
-                notFound: {
-                    search: {
-                        icon: "fe fe-file-minus",
-                        message: "Aucune prescription n'a été trouvée avec ",
-                    },
-                    noData: {
-                        icon: "fe fe-file-minus",
-                        message: "Vous n'avez aucune prescription",
-                    },
-                },
-            },
             listConfigWorksheets: {
                 target: "worksheet",
+                searchPlaceholder: "Filtre : Titre de la fiche...",
                 searchBoxConfig: {
                     title: "Rechercher un patient pour la prescription",
                     placeholder: "Nom - Prénom - Email",
@@ -139,7 +94,7 @@ export default {
                 },
                 items: [
                     {
-                        title: "Date de créa.",
+                        title: "Date de création",
                         type: "date",
                         sort: true,
                         sortKey: "createdAt",
@@ -205,7 +160,6 @@ export default {
         this.doctor = data.doctor;
         this.doctorPrescriptions = data.doctorPrescriptions;
         this.createPrescriptionForm = data.createPrescriptionForm;
-        this.removePrescriptionForm = data.removePrescriptionForm;
         this.removeWorksheetForm = data.removeWorksheetForm;
     },
     computed: {
@@ -223,9 +177,6 @@ export default {
                 return r;
             }, []);
         },
-    },
-    mounted() {
-        f.generationOfTagsFromExercises(this.doctorWorksheets);
     },
 };
 </script>

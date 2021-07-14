@@ -52,13 +52,6 @@ class ManageWorksheetController extends AbstractController
             'doctor' => $doctor,
         ]);
 
-        $removePrescriptionFormView = $this->renderView('doctor/_form_add_remove_common.html.twig', [
-            'actionRoute' => 'app_doctor_remove_prescription',
-            'tokenName' => 'remove_prescription',
-            'classBtnColor' => 'vs-button--danger',
-            'doctor' => $doctor,
-        ]);
-
         $removeWorksheetFormView = $this->renderView('doctor/_form_add_remove_common.html.twig', [
             'actionRoute' => 'app_doctor_remove_worksheet',
             'tokenName' => 'remove_worksheet',
@@ -70,7 +63,6 @@ class ManageWorksheetController extends AbstractController
             'doctor' => $doctor,
             'doctorPrescriptions' => $doctorPrescriptions,
             'createPrescriptionForm' => $createPrescriptionFormView,
-            'removePrescriptionForm' => $removePrescriptionFormView,
             'removeWorksheetForm' => $removeWorksheetFormView,
         ]);
     }

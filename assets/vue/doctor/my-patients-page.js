@@ -11,6 +11,9 @@ import Vuesax from 'vuesax'
 import './vuesax/custom_variables.css'
 import 'vuesax/dist/vuesax.css'
 
+// Vuetify (UX lib)
+import vuetify from '../plugins/vuetify.js' // path to vuetify export
+
 Vue.use(Vuesax, {
     colors: {
         primary: '#ffab2c',
@@ -22,5 +25,6 @@ Vue.use(Vuesax, {
 })
 
 new Vue({
+    vuetify,
     render: h => h(MyPatientsPage)
 }).$mount('#vue')

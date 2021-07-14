@@ -213,6 +213,10 @@
                 </div>
             </transition>
         </div>
+
+        <h2><i class="fe fe-user-plus"></i>Créer un patient</h2>
+        <div v-html="createPatientForm"></div>
+
         <vs-dialog class="action-item-box" v-model="addItemBox">
             <div v-if="'patient' === addItemBtnTarget">
                 <p class="action-item-text">Confirmer l'ajout de</p>
@@ -289,6 +293,7 @@ export default {
         targetedItem: Object,
         addItemForm: String,
         createItemForm: String,
+        createPatientForm: String,
     },
     directives: {
         ClickOutside,

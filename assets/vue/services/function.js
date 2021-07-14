@@ -21,8 +21,8 @@ export default {
 
   },
 
-  generationOfTagsFromExercises(doctorWorksheets) {
-    doctorWorksheets.map((worksheet) => {
+  generationTagsFromExercises(doctorWorksheets) {
+    return doctorWorksheets.map((worksheet) => {
       return (worksheet.exercisesTags = worksheet.exercises.reduce(
         (r, exercise) => {
           exercise.video.tags.forEach((tag) => {
@@ -35,6 +35,17 @@ export default {
         []
       ));
     });
+  },
+
+  getTagsFromAll(exercisesTags) {
+    return exercisesTags.reduce((r, exercise) => {
+      exercise.forEach((tag) => {
+        if (!r.includes(tag)) {
+          r.push(tag);
+        }
+      });
+      return r;
+    }, []);
   },
 
   formatDate(datetime) {
@@ -54,6 +65,51 @@ export default {
       age--;
     }
     return age;
+  },
+
+  getSearch(data, search) {
+    if (search === void 0) {
+      search = '';
+    }
+
+    function flattenDeep(val) {
+      return Object.values(val || []).reduce(function (acc, val) {
+        return typeof val === 'object' ? acc.concat(flattenDeep(val)) : acc.concat(val);
+      }, []);
+    }
+
+    function getValues(obj) {
+      const searchFields = ["title", "firstname", "lastname"]
+
+      const objFilteredBySearchField = Object.keys(obj).reduce((r, key) => {
+        if (searchFields.includes(key)) {
+          r[key] = obj[key];
+        }
+        return r;
+      }, {});
+
+      return flattenDeep(objFilteredBySearchField).filter(function (item) {
+        return typeof item === 'string' || typeof item === 'number';
+      });
+    }
+
+    function normalize(text) {
+      return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    }
+
+    const searchTerms = search.replace(/\s+/g, ' ').split(' ').map(t => normalize(t)).filter(t => t != "")
+
+    // var searchNormalize = normalize(search);
+    return data.filter(function (item) {
+      let result = true;
+      searchTerms.forEach(term => {
+        if (!normalize(getValues(item).toString()).includes(term)) {
+          result = false;
+        }
+      });
+
+      return result;
+    });
   },
 
   sortData(evt, data, sortKey) {

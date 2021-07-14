@@ -1,22 +1,53 @@
 <template>
     <div>
-        <vs-table v-model="selected">
+        <vs-table>
             <template #header>
-                <vs-input v-model="search" border placeholder="Filtrer" />
+                <div class="search-bloc">
+                    <v-text-field
+                        :label="configArray.searchPlaceholder"
+                        solo
+                        v-model="search"
+                        class="search-text"
+                    ></v-text-field>
+
+                    <div
+                        v-if="'worksheet' === configArray.target"
+                        class="search-chips"
+                    >
+                        <v-combobox
+                            v-model="tagsSelected"
+                            :items="tagsFromAll"
+                            chips
+                            small-chipss
+                            label="Mots-clés"
+                            multiple
+                            color="primary"
+                            solo
+                        >
+                            <template
+                                v-slot:selection="{
+                                    attrs,
+                                    item,
+                                    select,
+                                    selected,
+                                }"
+                            >
+                                <v-chip
+                                    v-bind="attrs"
+                                    :input-value="selected"
+                                    close
+                                    @click="select"
+                                    @click:close="removeChips(item)"
+                                >
+                                    <strong>{{ item }}</strong>
+                                </v-chip>
+                            </template>
+                        </v-combobox>
+                    </div>
+                </div>
             </template>
             <template #thead>
                 <vs-tr>
-                    <vs-th>
-                        <vs-checkbox
-                            :indeterminate="
-                                selected.length == itemsArray.length
-                            "
-                            v-model="allCheck"
-                            @change="
-                                selected = $vs.checkAll(selected, itemsArray)
-                            "
-                        />
-                    </vs-th>
                     <vs-th
                         v-for="(th, i) in configArray.items"
                         :key="i"
@@ -40,19 +71,12 @@
                 <vs-tr
                     :key="i"
                     v-for="(item, i) in $vs.getPage(
-                        $vs.getSearch(itemsArray, search),
+                        getSearch(itemsArray, search),
                         page,
                         max
                     )"
-                    :data="item"
-                    :is-selected="!!selected.includes(item)"
-                    not-click-selected
                     :class="{ unverified: false === item.isVerified }"
                 >
-                    <vs-td checkbox>
-                        <vs-checkbox :val="item" v-model="selected" />
-                    </vs-td>
-
                     <vs-td
                         v-for="(td, i) in configArray.items"
                         :key="i"
@@ -90,22 +114,13 @@
                                     {{ item.lastname }}
                                     {{ item.firstname }}
                                 </p>
-                                <p v-if="'prescription' === configArray.target">
-                                    {{ item.patient.lastname }}
-                                    {{ item.patient.firstname }}
-                                </p>
                             </div>
                         </div>
                         <div v-if="'email' === td.type">
                             {{ item.email }}
                         </div>
                         <div v-if="'title' === td.type">
-                            <div v-if="'worksheet' === configArray.target">
-                                {{ item.title }}
-                            </div>
-                            <div v-if="'prescription' === configArray.target">
-                                {{ item.worksheet.title }}
-                            </div>
+                            {{ item.title }}
                         </div>
                         <div v-if="'birthdate' === td.type">
                             {{ getAge(item.birthdate) }}
@@ -277,10 +292,10 @@ export default {
     data() {
         return {
             search: "",
-            allCheck: false,
+            tagsSelected: [],
+            tagsFromAll: [],
             page: 1,
             max: 10,
-            selected: [],
             itemsArray: this.items,
             configArray: this.config,
             searchBox: false,
@@ -294,6 +309,25 @@ export default {
     methods: {
         sortData(evt, data, sortKey, type) {
             return f.sortData(evt, data, sortKey, type);
+        },
+        getSearch(data, search) {
+            let itemsFiltered = f.getSearch(data, search);
+
+            if (this.tagsSelected.length > 0) {
+                return itemsFiltered.filter((item) => {
+                    let result = false;
+                    if (item.exercisesTags) {
+                        item.exercisesTags.forEach((tag) => {
+                            if (this.tagsSelected.includes(tag)) {
+                                result = true;
+                            }
+                        });
+                    }
+                    return result;
+                });
+            }
+
+            return itemsFiltered;
         },
         formatDate(datetime) {
             return f.formatDate(datetime);
@@ -321,6 +355,10 @@ export default {
 
             return removeItemFormWithId;
         },
+        removeChips(item) {
+            this.tagsSelected.splice(this.tagsSelected.indexOf(item), 1);
+            this.tagsSelected = [...this.tagsSelected];
+        },
     },
     created() {
         if (
@@ -345,8 +383,17 @@ export default {
                 .get(`/kine/${this.doctor.id}/get/worksheets`)
                 .then((response) => {
                     this.searchBoxItems = response.data;
-                    f.generationOfTagsFromExercises(this.searchBoxItems);
+                    f.generationTagsFromExercises(this.searchBoxItems);
                 });
+        }
+    },
+    mounted() {
+        if ("worksheet" === this.configArray.target) {
+            const tagsFromExercises = f.generationTagsFromExercises(
+                this.itemsArray
+            );
+
+            this.tagsFromAll = f.getTagsFromAll(tagsFromExercises);
         }
     },
 };
@@ -354,9 +401,81 @@ export default {
 
 <style lang="scss">
 $primary: #ffab2c;
+.v-input {
+    max-width: none !important;
+    border-radius: 1.2em;
+}
+.v-text-field.v-text-field--solo:not(.v-text-field--solo-flat)
+    > .v-input__control
+    > .v-input__slot {
+    box-shadow: inset 0 3px 1px -2px rgb(0 0 0 / 20%),
+        0 2px 2px 0 rgb(0 0 0 / 14%), 0 1px 5px 0 rgb(0 0 0 / 12%);
+}
+.theme--light.v-list {
+    background: #fff;
+    color: $primary;
+}
 
-.vs-input {
+.v-text-field__slot {
+    padding: 0.62em !important;
+}
+
+.v-select__slot {
+    padding: 0.3em;
+    position: relative;
+    align-items: center;
+    display: flex;
+    max-width: 100%;
+    min-width: 0;
     width: 100%;
+}
+
+.v-input {
+    max-width: 45%;
+}
+
+.theme--light.v-input,
+.theme--light.v-input input,
+.theme--light.v-input textarea {
+    color: $primary;
+}
+
+.theme--light.v-chip:not(.v-chip--active) {
+    background: $primary;
+    color: white;
+
+    svg {
+        color: white;
+    }
+}
+.v-chip.v-size--default {
+    border-radius: 16px;
+    font-size: 9.8px;
+    height: 25px;
+    margin: 3px 5px;
+    text-transform: uppercase;
+}
+
+.search-bloc {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: -1.4em;
+
+    .search-text {
+        margin-right: 0;
+        flex: 4;
+    }
+
+    .search-chips {
+        flex: 3;
+    }
+
+    @media (min-width: 576px) {
+        flex-direction: row;
+        .search-text {
+            margin-right: 1em;
+        }
+    }
 }
 
 tr.unverified {
@@ -366,6 +485,11 @@ tr.unverified {
         opacity: 0.25;
         pointer-events: none;
     }
+}
+
+th:first-child,
+td:first-child {
+    padding-left: 1.5em;
 }
 
 th.tags {
