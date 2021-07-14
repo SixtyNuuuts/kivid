@@ -6,21 +6,16 @@ use App\Entity\Patient;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 class CreatePatientFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('firstname', TextType::class, [
-                'required' => false,
-            ])
-            ->add('lastname', TextType::class, [
-                'required' => false,
-            ])
-            ->add('email', EmailType::class)
+            ->add('firstname', HiddenType::class)
+            ->add('lastname', HiddenType::class)
+            ->add('email', HiddenType::class)
         ;
     }
 

@@ -41,6 +41,11 @@ class AppFixtures extends Fixture
             'Réhabilitation',
         ];
 
+        $gender = [
+            'male',
+            'female',
+        ];
+
         foreach ($tagNames as $tagName) {
             $tag = new Tag();
             $tag->setName($tagName);
@@ -102,7 +107,9 @@ class AppFixtures extends Fixture
                 ->setPassword($this->passwordHasher->hashPassword($kine, 'password'))
                 ->setFirstname($faker->firstName)
                 ->setLastname($faker->lastName)
+                ->setGender($gender[array_rand($gender)]);
             ;
+
 
             $manager->persist($kine);
 
@@ -117,6 +124,7 @@ class AppFixtures extends Fixture
                     ->setFirstname($faker->firstName)
                     ->setLastname($faker->lastName)
                     ->setIsVerified($faker->boolean())
+                    ->setGender($gender[array_rand($gender)]);
                 ;
 
                 $prescription = new Prescription();

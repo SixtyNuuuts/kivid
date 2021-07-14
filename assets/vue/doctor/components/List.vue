@@ -150,8 +150,9 @@
                             <div v-for="(btn, i) in td.buttons" :key="i">
                                 <div v-if="'a' === btn.type">
                                     <a
+                                        v-if="'prescription' === btn.target"
                                         :class="btn.content.class"
-                                        :href="btn.content.href"
+                                        :href="'fiches/' + item.id"
                                     >
                                         <i :class="btn.content.icon"></i>
                                         {{ btn.content.text }}
@@ -159,6 +160,27 @@
                                 </div>
                                 <div v-if="'searchItem' === btn.type">
                                     <a
+                                        v-if="prescribedPatient"
+                                        :class="btn.content.class"
+                                        class="btn-avatar"
+                                        @click="prescriptionForPatient(item)"
+                                    >
+                                        <vs-avatar circle size="25">
+                                            <img
+                                                :src="
+                                                    prescribedPatient.urlAvatar
+                                                        ? prescribedPatient.urlAvatar
+                                                        : '/img/avatar-default.svg'
+                                                "
+                                                alt="avatar du patient"
+                                            />
+                                        </vs-avatar>
+                                        <span>
+                                            {{ btn.content.text }}
+                                        </span>
+                                    </a>
+                                    <a
+                                        v-else
                                         :class="btn.content.class"
                                         @click="searchBoxToggle(item)"
                                     >
@@ -210,6 +232,7 @@
                 :items="searchBoxItems"
                 :config="configArray.searchBoxConfig"
                 :targetedItem="searchBoxItemSelected"
+                :btnAddItemForm="btnAddItemForm"
                 :createItemForm="createItemForm"
             />
         </vs-dialog>
@@ -223,6 +246,11 @@
                     </div>
                     <p>
                         <span>
+                            {{
+                                "male" === removeItemDetail.gender
+                                    ? "M."
+                                    : "Mme"
+                            }}
                             {{ removeItemDetail.lastname }}
                             {{ removeItemDetail.firstname }}
                         </span>
@@ -243,6 +271,11 @@
                         </span>
                         pour
                         <span>
+                            {{
+                                "male" === removeItemDetail.gender
+                                    ? "M."
+                                    : "Mme"
+                            }}
                             {{ removeItemDetail.patient.lastname }}
                             {{ removeItemDetail.patient.firstname }}
                         </span>
@@ -286,8 +319,10 @@ export default {
         items: Array,
         config: Object,
         createItemForm: String,
-        removeItemForm: String,
+        btnAddItemForm: String,
+        btnRemoveItemForm: String,
         doctor: Object,
+        prescribedPatient: Object,
     },
     data() {
         return {
@@ -335,6 +370,9 @@ export default {
         getAge(dateString) {
             return f.generateAgeFromDateOfBirth(dateString);
         },
+        prescriptionForPatient(fiche) {
+            console.log("prescription de la fiche " + fiche.title);
+        },
         searchBoxToggle(item) {
             this.searchBoxItemSelected = item;
             return (this.searchBox = !this.searchBox);
@@ -348,12 +386,12 @@ export default {
             return (this.removeItemBox = !this.removeItemBox);
         },
         validRemoveItem() {
-            const removeItemFormWithId = this.removeItemForm.replace(
+            const btnRemoveItemFormWithId = this.btnRemoveItemForm.replace(
                 `<input type="hidden" name="_id" value="">`,
                 `<input type="hidden" name="_id" value="${this.removeItemDetail.id}">`
             );
 
-            return removeItemFormWithId;
+            return btnRemoveItemFormWithId;
         },
         removeChips(item) {
             this.tagsSelected.splice(this.tagsSelected.indexOf(item), 1);
@@ -405,11 +443,15 @@ $primary: #ffab2c;
     max-width: none !important;
     border-radius: 1.2em;
 }
+.theme--light.v-label {
+    color: rgba(0, 0, 0, 0.3);
+}
 .v-text-field.v-text-field--solo:not(.v-text-field--solo-flat)
     > .v-input__control
     > .v-input__slot {
-    box-shadow: inset 0 3px 1px -2px rgb(0 0 0 / 20%),
-        0 2px 2px 0 rgb(0 0 0 / 14%), 0 1px 5px 0 rgb(0 0 0 / 12%);
+    box-shadow: inset 0 3px 1px -2px rgb(17, 17, 37, 0.1),
+        0 2px 2px 0 rgb(17, 17, 37, 0.05), 0 1px 5px 0 rgba(17, 17, 37, 0.05);
+    background-color: #e9edf4;
 }
 .theme--light.v-list {
     background: #fff;
@@ -438,6 +480,21 @@ $primary: #ffab2c;
 .theme--light.v-input input,
 .theme--light.v-input textarea {
     color: $primary;
+}
+.v-list-item {
+    min-height: 36px;
+}
+.v-menu__content {
+    border-radius: 1.2em !important;
+}
+.v-input--selection-controls__input {
+    width: 16px;
+}
+.v-simple-checkbox {
+    margin-top: 4px;
+}
+.v-list-item__action {
+    margin: 0;
 }
 
 .theme--light.v-chip:not(.v-chip--active) {

@@ -116,6 +116,13 @@
                                                         suivi par
                                                         <em>
                                                             {{
+                                                                "male" ==
+                                                                item.doctor
+                                                                    .gender
+                                                                    ? "M."
+                                                                    : "Mme"
+                                                            }}
+                                                            {{
                                                                 item.doctor
                                                                     .lastname
                                                             }}
@@ -190,6 +197,30 @@
                                                     </a>
                                                 </div>
                                             </div>
+                                            <div
+                                                v-if="
+                                                    'patient-with-prescription' ===
+                                                        btn.target ||
+                                                    'patient-without-prescription' ===
+                                                        btn.target
+                                                "
+                                            >
+                                                <div>
+                                                    <a
+                                                        :class="
+                                                            btn.content.class
+                                                        "
+                                                        @click="creatItem()"
+                                                    >
+                                                        <i
+                                                            :class="
+                                                                btn.content.icon
+                                                            "
+                                                        ></i>
+                                                        {{ btn.content.text }}
+                                                    </a>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -214,8 +245,97 @@
             </transition>
         </div>
 
-        <h2><i class="fe fe-user-plus"></i>Créer un patient</h2>
-        <div v-html="createPatientForm"></div>
+        <h2 v-if="configArray.createItem">
+            <i class="fe fe-user-plus"></i>{{ configArray.createItem.title }}
+        </h2>
+
+        <div v-if="configArray.createItem">
+            <div
+                v-if="'patient' === configArray.createItem.target"
+                class="imputs create-patient-form"
+            >
+                <div class="line">
+                    <div class="vs-input-content">
+                        <input
+                            v-model="newUserForCreate.firstname"
+                            type="text"
+                            class="vs-input vs-input--has-icon form-control"
+                            placeholder="Prénom"
+                        />
+
+                        <span class="vs-input__icon">
+                            <i class="fe fe-user"></i>
+                        </span>
+                    </div>
+                    <div class="vs-input-content">
+                        <input
+                            v-model="newUserForCreate.lastname"
+                            type="text"
+                            class="vs-input vs-input--has-icon form-control"
+                            placeholder="Nom"
+                        />
+
+                        <span class="vs-input__icon">
+                            <i class="fe fe-user"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="line">
+                    <div class="vs-input-content">
+                        <input
+                            v-model="newUserForCreate.email"
+                            type="email"
+                            required="required"
+                            class="vs-input vs-input--has-icon form-control"
+                            placeholder="Email"
+                            autocomplete="email"
+                            @keyup="validateUserEmail"
+                        />
+
+                        <transition name="fade">
+                            <div
+                                v-if="validateUserMessage.email"
+                                class="validate-email-mess"
+                            >
+                                {{ validateUserMessage.email }}
+                            </div>
+                        </transition>
+
+                        <span
+                            class="vs-input__icon"
+                            :class="{ 'data-error': validateUserMessage.email }"
+                            >@</span
+                        >
+                    </div>
+                </div>
+                <div class="line mt-2">
+                    <div
+                        v-for="(btn, i) in configArray.createItem.buttons"
+                        :key="i"
+                    >
+                        <transition name="fade">
+                            <div
+                                class="button"
+                                :class="{
+                                    disabled:
+                                        validateUserMessage.email ||
+                                        !newUserForCreate.email,
+                                }"
+                                v-if="'createItem' === btn.type"
+                            >
+                                <vs-button
+                                    :class="btn.content.class"
+                                    @click="createItem(btn.target)"
+                                >
+                                    <i :class="btn.content.icon"></i>
+                                    {{ btn.content.text }}
+                                </vs-button>
+                            </div>
+                        </transition>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <vs-dialog class="action-item-box" v-model="addItemBox">
             <div v-if="'patient' === addItemBtnTarget">
@@ -227,6 +347,7 @@
                     </div>
                     <p>
                         <span>
+                            {{ "male" === addItemDetail.gender ? "M." : "Mme" }}
                             {{ addItemDetail.lastname }}
                             {{ addItemDetail.firstname }}
                         </span>
@@ -250,6 +371,11 @@
                             </span>
                             pour
                             <span>
+                                {{
+                                    "male" === addItemDetail.gender
+                                        ? "M."
+                                        : "Mme"
+                                }}
                                 {{ addItemDetail.lastname }}
                                 {{ addItemDetail.firstname }}
                             </span>
@@ -263,6 +389,11 @@
                             </span>
                             pour
                             <span>
+                                {{
+                                    "male" === targetedItem.gender
+                                        ? "M."
+                                        : "Mme"
+                                }}
                                 {{ targetedItem.lastname }}
                                 {{ targetedItem.firstname }}
                             </span>
@@ -278,6 +409,39 @@
                 <div v-html="validAddItem()"></div>
             </div>
         </vs-dialog>
+
+        <vs-dialog class="action-item-box" v-model="createItemBox">
+            <div>
+                <p class="action-item-text">Confirmer la création du patient</p>
+
+                <div class="action-item-detail">
+                    <div class="action-item-icon">
+                        <i class="fe fe-user-plus"></i>
+                    </div>
+                    <p>
+                        <span
+                            v-if="
+                                newUserForCreate.lastname ||
+                                newUserForCreate.firstname
+                            "
+                        >
+                            {{ newUserForCreate.lastname }}
+                            {{ newUserForCreate.firstname }}
+                        </span>
+                        <span>
+                            {{ newUserForCreate.email }}
+                        </span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="action-item-buttons">
+                <vs-button @click="addItemBox = false" dark transparent>
+                    Annuler
+                </vs-button>
+                <div v-html="validCreatePatientForm()"></div>
+            </div>
+        </vs-dialog>
     </div>
 </template>
 
@@ -291,9 +455,9 @@ export default {
         items: Array,
         config: Object,
         targetedItem: Object,
-        addItemForm: String,
+        btnAddItemForm: String,
+        btnAddItemForm: String,
         createItemForm: String,
-        createPatientForm: String,
     },
     directives: {
         ClickOutside,
@@ -303,8 +467,17 @@ export default {
             search: "",
             configArray: this.config,
             addItemBox: false,
+            createItemBox: false,
             addItemDetail: {},
             addItemBtnTarget: null,
+            newUserForCreate: {
+                firstname: null,
+                lastname: null,
+                email: null,
+            },
+            validateUserMessage: {
+                email: null,
+            },
         };
     },
     methods: {
@@ -323,11 +496,36 @@ export default {
 
             return (this.addItemBox = !this.addItemBox);
         },
+        validateUserEmail() {
+            this.validateUserMessage.email = "";
+
+            const re =
+                /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+            if (!re.test(String(this.newUserForCreate.email).toLowerCase())) {
+                this.validateUserMessage.email =
+                    "Merci d'entrer un email valide.";
+            }
+        },
+        createItem() {
+            // pour un loader sur le btn "confirmer" de la modale
+            f.setLoaderToBtnValidationForm();
+
+            return (this.createItemBox = !this.createItemBox);
+        },
+        validCreatePatientForm() {
+            let btnCreateItemFormWithPatient = this.createItemForm.replace(
+                `<input type="hidden" id="create_patient_form_firstname" name="create_patient_form[firstname]" /><input type="hidden" id="create_patient_form_lastname" name="create_patient_form[lastname]" /><input type="hidden" id="create_patient_form_email" name="create_patient_form[email]" />`,
+                `<input type="hidden" value="${this.newUserForCreate.firstname}" id="create_patient_form_firstname" name="create_patient_form[firstname]" /><input type="hidden" value="${this.newUserForCreate.lastname}" id="create_patient_form_lastname" name="create_patient_form[lastname]" /><input type="hidden" value="${this.newUserForCreate.email}" id="create_patient_form_email" name="create_patient_form[email]" />`
+            );
+
+            return btnCreateItemFormWithPatient;
+        },
         validAddItem() {
-            let addItemFormWithId = "";
+            let btnAddItemFormWithId = "";
 
             if ("patient" === this.addItemBtnTarget) {
-                addItemFormWithId = this.addItemForm.replace(
+                btnAddItemFormWithId = this.btnAddItemForm.replace(
                     `<input type="hidden" name="_id" value="">`,
                     `<input type="hidden" name="_id" value="${this.addItemDetail.id}">`
                 );
@@ -346,13 +544,13 @@ export default {
                     worksheetId = this.addItemDetail.id;
                 }
 
-                addItemFormWithId = this.createItemForm.replace(
+                btnAddItemFormWithId = this.btnAddItemForm.replace(
                     `<input type="hidden" name="patient_id" value=""><input type="hidden" name="worksheet_id" value="">`,
                     `<input type="hidden" name="patient_id" value="${patientId}"><input type="hidden" name="worksheet_id" value="${worksheetId}">`
                 );
             }
 
-            return addItemFormWithId;
+            return btnAddItemFormWithId;
         },
     },
     computed: {
@@ -422,6 +620,14 @@ input[type="search"] {
     color: #30343a;
     font-size: 0.8em;
 
+    > div:first-child {
+        max-width: 60%;
+        overflow: hidden;
+        @media (min-width: 500px) {
+            max-width: 75%;
+        }
+    }
+
     .user {
         display: flex;
         align-items: center;
@@ -480,6 +686,60 @@ p.no-found {
     i {
         margin-right: 0.3em;
         color: #fdc269;
+    }
+}
+
+.imputs.create-patient-form {
+    display: flex;
+    flex-direction: column;
+
+    .line {
+        display: flex;
+        flex-direction: column;
+        div {
+            width: 100%;
+        }
+
+        @media (min-width: 576px) {
+            flex-direction: row;
+        }
+
+        .validate-email-mess {
+            position: absolute;
+            bottom: -5px;
+            right: 9px;
+            width: initial;
+            font-size: 0.45em;
+            background-color: white;
+            border: 1px solid #df4759;
+            border-radius: 1.7em;
+            padding: 0.2em 0.9em;
+            color: #df4759;
+            text-transform: uppercase;
+            z-index: 100;
+        }
+    }
+
+    .button {
+        display: flex;
+        margin: 0.5em 0;
+        line-height: 1.1;
+        justify-content: flex-end;
+        &.disabled {
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        button {
+            flex: 1;
+            margin: 0;
+            padding: 0.2em;
+            font-size: 0.9em;
+
+            i {
+                margin-right: 0.3em;
+            }
+        }
     }
 }
 

@@ -1,6 +1,17 @@
 <template>
     <div>
-        <vs-button @click="boxToggle" class="btn-segondaki top-absolute">
+        <vs-button
+            @click="boxToggle"
+            class="btn-segondaki top-absolute btn-add-worksheet"
+            v-if="prescribedPatient"
+        >
+            <i class="fe fe-file-plus"></i> Prescrire une nouvelle fiche
+        </vs-button>
+        <vs-button
+            @click="boxToggle"
+            class="btn-segondaki top-absolute btn-add-worksheet"
+            v-else
+        >
             <i class="fe fe-file-plus"></i> Ajouter une fiche
         </vs-button>
         <vs-dialog v-model="boxActive"> </vs-dialog>
@@ -12,6 +23,9 @@ import f from "../../services/function";
 
 export default {
     name: "AddWorksheet",
+    props: {
+        prescribedPatient: Object,
+    },
     data() {
         return {
             boxActive: false,

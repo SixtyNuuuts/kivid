@@ -1,7 +1,7 @@
 <template>
     <div data-app>
-        <AddWorksheet />
-        <vs-navbar center-collapsed v-model="active">
+        <AddWorksheet :prescribedPatient="prescribedPatient" />
+        <vs-navbar v-if="!prescribedPatient" center-collapsed v-model="active">
             <vs-navbar-item :active="active == 'worksheet'" id="worksheet">
                 Fiches
             </vs-navbar-item>
@@ -16,11 +16,13 @@
             <transition name="fade" mode="out-in">
                 <div v-if="active == 'worksheet'" key="worksheet">
                     <List
+                        :doctor="doctor"
+                        :prescribedPatient="prescribedPatient"
                         :items="doctorWorksheets"
                         :config="listConfigWorksheets"
-                        :createItemForm="createPrescriptionForm"
-                        :removeItemForm="removeWorksheetForm"
-                        :doctor="doctor"
+                        :createItemForm="createPatientForm"
+                        :btnAddItemForm="btnAddPrescriptionForm"
+                        :btnRemoveItemForm="btnRemoveWorksheetForm"
                     />
                 </div>
                 <div
@@ -28,11 +30,13 @@
                     key="worksheet-template"
                 >
                     <List
+                        :doctor="doctor"
+                        :prescribedPatient="prescribedPatient"
                         :items="doctorWorksheets"
                         :config="listConfigWorksheets"
-                        :createItemForm="createPrescriptionForm"
-                        :removeItemForm="removeWorksheetForm"
-                        :doctor="doctor"
+                        :createItemForm="createPatientForm"
+                        :btnAddItemForm="btnAddPrescriptionForm"
+                        :btnRemoveItemForm="btnRemoveWorksheetForm"
                     />
                 </div>
             </transition>
@@ -55,15 +59,15 @@ export default {
         return {
             doctor: null,
             doctorPrescriptions: null,
+            prescribedPatient: null,
             active: "worksheet",
-            createPrescriptionForm: null,
-            removePrescriptionForm: null,
-            removeWorksheetForm: null,
+            btnAddPrescriptionForm: null,
+            btnRemoveWorksheetForm: null,
             listConfigWorksheets: {
                 target: "worksheet",
-                searchPlaceholder: "Filtre : Titre de la fiche...",
+                searchPlaceholder: "Filtrer par titre",
                 searchBoxConfig: {
-                    title: "Rechercher un patient pour la prescription",
+                    title: "Rechercher un patient",
                     placeholder: "Nom - Prénom - Email",
                     target: "patient",
                     items: [
@@ -85,6 +89,21 @@ export default {
                             ],
                         },
                     ],
+                    createItem: {
+                        title: "Créer un patient",
+                        target: "patient",
+                        buttons: [
+                            {
+                                type: "createItem",
+                                target: "patient-with-prescription",
+                                content: {
+                                    class: "valid-form-btn vs-button btn-primaki vs-button--default",
+                                    icon: "fe fe-file-plus",
+                                    text: "Créer et Prescrire",
+                                },
+                            },
+                        ],
+                    },
                     notFound: {
                         search: {
                             icon: "fe fe-user-minus",
@@ -100,7 +119,7 @@ export default {
                         sortKey: "createdAt",
                     },
                     {
-                        title: "Nom",
+                        title: "Titre",
                         type: "title",
                         sort: true,
                         sortKey: "title",
@@ -158,9 +177,11 @@ export default {
         const data = JSON.parse(document.getElementById("vueData").innerHTML);
 
         this.doctor = data.doctor;
+        this.prescribedPatient = data.prescribedPatient;
+        this.createPatientForm = data.createPatientForm;
         this.doctorPrescriptions = data.doctorPrescriptions;
-        this.createPrescriptionForm = data.createPrescriptionForm;
-        this.removeWorksheetForm = data.removeWorksheetForm;
+        this.btnAddPrescriptionForm = data.btnAddPrescriptionForm;
+        this.btnRemoveWorksheetForm = data.btnRemoveWorksheetForm;
     },
     computed: {
         doctorWorksheets() {
@@ -192,14 +213,5 @@ $primary: #ffab2c;
     .vs-navbar__line {
         background-color: $primary;
     }
-}
-
-.fade-enter-active,
-.fade-leave-active {
-    transition: all 0.3s;
-}
-.fade-enter,
-.fade-leave-to {
-    opacity: 0;
 }
 </style>

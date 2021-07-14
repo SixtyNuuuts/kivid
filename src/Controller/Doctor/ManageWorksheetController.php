@@ -4,6 +4,7 @@ namespace App\Controller\Doctor;
 
 use App\Entity\Doctor;
 use App\Entity\Prescription;
+use App\Form\CreatePatientFormType;
 use App\Repository\PatientRepository;
 use App\Repository\WorksheetRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -42,17 +43,30 @@ class ManageWorksheetController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/fiches", name="app_doctor_worksheets", methods={"GET"})
+     * @Route("/{id}/fiches/{prescriptionForPatientId}", name="app_doctor_worksheets", methods={"GET"})
      */
-    public function worksheetList(Doctor $doctor): Response
+    public function worksheetList(Doctor $doctor, int $prescriptionForPatientId = null): Response
     {
+        $prescribedPatient = null;
+
+        if ($prescriptionForPatientId) {
+            $prescribedPatient = $this->patientRepository->findOneById($prescriptionForPatientId);
+        }
+
         $doctorPrescriptions = $this->prescriptionRepository->findBy(['doctor' => $doctor]);
 
-        $createPrescriptionFormView = $this->renderView('doctor/_form_create_prescription.html.twig', [
+        $createPatientForm = $this->createForm(CreatePatientFormType::class);
+
+        $createPatientFormView = $this->renderView('doctor/_form_create_patient.html.twig', [
+            'form' => $createPatientForm->createView(),
             'doctor' => $doctor,
         ]);
 
-        $removeWorksheetFormView = $this->renderView('doctor/_form_add_remove_common.html.twig', [
+        $btnAddPrescriptionFormView = $this->renderView('doctor/_form_create_prescription.html.twig', [
+            'doctor' => $doctor,
+        ]);
+
+        $btnRemoveWorksheetFormView = $this->renderView('doctor/_form_add_remove_common.html.twig', [
             'actionRoute' => 'app_doctor_remove_worksheet',
             'tokenName' => 'remove_worksheet',
             'classBtnColor' => 'vs-button--danger',
@@ -60,10 +74,12 @@ class ManageWorksheetController extends AbstractController
         ]);
 
         return $this->render('doctor/worksheet_list.html.twig', [
+            'prescribedPatient' => $prescribedPatient,
             'doctor' => $doctor,
+            'createPatientForm' => $createPatientFormView,
             'doctorPrescriptions' => $doctorPrescriptions,
-            'createPrescriptionForm' => $createPrescriptionFormView,
-            'removeWorksheetForm' => $removeWorksheetFormView,
+            'btnAddPrescriptionForm' => $btnAddPrescriptionFormView,
+            'btnRemoveWorksheetForm' => $btnRemoveWorksheetFormView,
         ]);
     }
 
@@ -87,10 +103,12 @@ class ManageWorksheetController extends AbstractController
 
             $this->em->flush();
 
+            $gender = 'male' === $patient->getGender() ? 'M.' : 'Mme';
+
             $this->addFlash(
                 'success',
                 "La fiche <strong>{$worksheet->getTitle()}</strong> 
-                a bien été prescrite à <strong>{$patient->getFirstname()} {$patient->getLastname()}</strong>."
+                a bien été prescrite à <strong>{$gender} {$patient->getFirstname()} {$patient->getLastname()}</strong>."
             );
 
             return $this->redirectToRoute('app_doctor_worksheets', ['id' => $doctor->getId()]);

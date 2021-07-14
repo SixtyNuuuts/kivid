@@ -79,6 +79,12 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $facebookId;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"patient_read", "doctor_read", "worksheet_read"})
+     */
+    private $gender;
+
     public function __construct(array $roles)
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -266,5 +272,17 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getUsername(): string
     {
         return (string) $this->email;
+    }
+
+    public function getGender(): ?string
+    {
+        return $this->gender;
+    }
+
+    public function setGender(?string $gender): self
+    {
+        $this->gender = $gender;
+
+        return $this;
     }
 }

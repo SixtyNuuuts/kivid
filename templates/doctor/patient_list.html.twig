@@ -24,11 +24,12 @@
 
 {% block vueData %}
 	{
+		"addPatient": {{ addPatient|serialize('json')|raw }},
 		"doctor": {{ doctor|serialize('json', {'groups': 'doctor_read'})|raw }},
-		"createPrescriptionForm": {{ createPrescriptionForm|serialize('json')|raw }},
+		"btnAddPrescriptionForm": {{ btnAddPrescriptionForm|serialize('json')|raw }},
 		"createPatientForm": {{ createPatientForm|serialize('json')|raw }},
-		"addPatientForm": {{ addPatientForm|serialize('json')|raw }},
-		"removePatientForm": {{ removePatientForm|serialize('json')|raw }},
+		"btnAddPatientForm": {{ btnAddPatientForm|serialize('json')|raw }},
+		"btnRemovePatientForm": {{ btnRemovePatientForm|serialize('json')|raw }},
 		"allPatients": {{ allPatients|serialize('json', {'groups': 'patient_read'})|raw }}
 	}
 {% endblock %}

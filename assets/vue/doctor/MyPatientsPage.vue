@@ -1,15 +1,16 @@
 <template>
     <div data-app>
         <AddPatient
+            :addPatient="addPatient"
             :patients="allPatientsExceptDoctor"
             :createPatientForm="createPatientForm"
-            :addPatientForm="addPatientForm"
+            :btnAddPatientForm="btnAddPatientForm"
         />
         <List
             :items="doctorPatients"
             :config="listConfigPatients"
-            :createItemForm="createPrescriptionForm"
-            :removeItemForm="removePatientForm"
+            :btnAddItemForm="btnAddPrescriptionForm"
+            :btnRemoveItemForm="btnRemovePatientForm"
             :doctor="doctor"
         />
     </div>
@@ -27,16 +28,16 @@ export default {
     },
     data() {
         return {
+            addPatient: null,
             doctor: null,
             createPatientForm: null,
-            createPrescriptionForm: null,
-            addPatientForm: null,
-            removePatientForm: null,
+            btnAddPrescriptionForm: null,
+            btnAddPatientForm: null,
+            btnRemovePatientForm: null,
             allPatients: null,
             listConfigPatients: {
                 target: "user",
-                searchPlaceholder:
-                    "Filtres : Nom - Prénom - Email - Année de naissance - Activité...",
+                searchPlaceholder: "Filtrer par le nom et/ou prénom",
                 searchBoxConfig: {
                     title: "Rechercher une fiche pour la prescription",
                     placeholder: "Titre de la fiche",
@@ -99,7 +100,8 @@ export default {
                         sortKey: null,
                         buttons: [
                             {
-                                type: "searchItem",
+                                type: "a",
+                                target: "prescription",
                                 content: {
                                     class: "btn btn-primaki btn-xs lift lift-btn",
                                     icon: "fe fe-file-plus",
@@ -132,11 +134,12 @@ export default {
     created() {
         const data = JSON.parse(document.getElementById("vueData").innerHTML);
 
+        this.addPatient = data.addPatient;
         this.doctor = data.doctor;
         this.createPatientForm = data.createPatientForm;
-        this.createPrescriptionForm = data.createPrescriptionForm;
-        this.addPatientForm = data.addPatientForm;
-        this.removePatientForm = data.removePatientForm;
+        this.btnAddPrescriptionForm = data.btnAddPrescriptionForm;
+        this.btnAddPatientForm = data.btnAddPatientForm;
+        this.btnRemovePatientForm = data.btnRemovePatientForm;
         this.allPatients = data.allPatients;
     },
     computed: {

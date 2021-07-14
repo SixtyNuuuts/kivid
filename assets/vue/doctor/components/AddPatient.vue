@@ -7,7 +7,8 @@
             <Search
                 :items="patients"
                 :config="searchConfigPatients"
-                :addItemForm="addPatientForm"
+                :btnAddItemForm="btnAddPatientForm"
+                :createItemForm="createPatientForm"
             />
         </vs-dialog>
     </div>
@@ -23,9 +24,15 @@ export default {
         Search,
     },
     props: {
+        addPatient: String,
         patients: Array,
         createPatientForm: String,
-        addPatientForm: String,
+        btnAddPatientForm: String,
+    },
+    created() {
+        if ("add" === this.addPatient) {
+            this.boxActive = true;
+        }
     },
     data() {
         return {
@@ -53,6 +60,30 @@ export default {
                         ],
                     },
                 ],
+                createItem: {
+                    title: "Créer un patient",
+                    target: "patient",
+                    buttons: [
+                        {
+                            type: "createItem",
+                            target: "patient-without-prescription",
+                            content: {
+                                class: "valid-form-btn vs-button btn-segondaki vs-button vs-button--default me-2",
+                                icon: "fe fe-file-minus",
+                                text: "Créer sans prescription",
+                            },
+                        },
+                        {
+                            type: "createItem",
+                            target: "patient-with-prescription",
+                            content: {
+                                class: "valid-form-btn vs-button btn-primaki vs-button vs-button--default",
+                                icon: "fe fe-file-plus",
+                                text: "Créer",
+                            },
+                        },
+                    ],
+                },
                 notFound: {
                     search: {
                         icon: "fe fe-user-minus",
@@ -78,37 +109,4 @@ export default {
 
 <style lang="scss">
 $primary: #ffab2c;
-
-form[name="create_patient_form"] {
-    .imputs {
-        display: flex;
-        flex-direction: column;
-
-        .line {
-            display: flex;
-            flex-direction: column;
-            @media (min-width: 576px) {
-                flex-direction: row;
-            }
-        }
-    }
-    .buttons {
-        display: flex;
-        margin: 0.5em 0;
-        line-height: 1.1;
-
-        button {
-            flex: 1;
-            margin: 0;
-            padding: 0.2em;
-            font-size: 0.9em;
-            &:first-child {
-                margin-right: 0.75em;
-            }
-            i {
-                margin-right: 0.3em;
-            }
-        }
-    }
-}
 </style>

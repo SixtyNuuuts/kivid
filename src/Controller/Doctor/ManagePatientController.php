@@ -54,9 +54,9 @@ class ManagePatientController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/patients", name="app_doctor_patients", methods={"GET"})
+     * @Route("/{id}/patients/{add}", name="app_doctor_patients", methods={"GET"})
      */
-    public function patientList(Doctor $doctor): Response
+    public function patientList(Doctor $doctor, string $add = ""): Response
     {
         $patients = $this->patientRepository->findBy([], ['isVerified' => 'DESC']);
 
@@ -67,31 +67,32 @@ class ManagePatientController extends AbstractController
             'doctor' => $doctor,
         ]);
 
-        $createPrescriptionFormView = $this->renderView('doctor/_form_create_prescription.html.twig', [
-            'doctor' => $doctor,
-        ]);
-
-        $addPatientFormView = $this->renderView('doctor/_form_add_remove_common.html.twig', [
+        $btnAddPatientFormView = $this->renderView('doctor/_form_add_remove_common.html.twig', [
             'actionRoute' => 'app_doctor_add_patient',
             'tokenName' => 'add_patient',
             'classBtnColor' => 'vs-button--primary',
             'doctor' => $doctor,
         ]);
 
-        $removePatientFormView = $this->renderView('doctor/_form_add_remove_common.html.twig', [
+        $btnRemovePatientFormView = $this->renderView('doctor/_form_add_remove_common.html.twig', [
             'actionRoute' => 'app_doctor_remove_patient',
             'tokenName' => 'remove_patient',
             'classBtnColor' => 'vs-button--danger',
             'doctor' => $doctor,
         ]);
 
-        return $this->render('doctor/patient_list.html.twig', [
+        $btnAddPrescriptionFormView = $this->renderView('doctor/_form_create_prescription.html.twig', [
             'doctor' => $doctor,
-            'createPrescriptionForm' => $createPrescriptionFormView,
-            'createPatientForm' => $createPatientFormView,
-            'addPatientForm' => $addPatientFormView,
-            'removePatientForm' => $removePatientFormView,
+        ]);
+
+        return $this->render('doctor/patient_list.html.twig', [
+            'addPatient' => $add,
+            'doctor' => $doctor,
             'allPatients' => $patients,
+            'createPatientForm' => $createPatientFormView,
+            'btnAddPatientForm' => $btnAddPatientFormView,
+            'btnRemovePatientForm' => $btnRemovePatientFormView,
+            'btnAddPrescriptionForm' => $btnAddPrescriptionFormView,
         ]);
     }
 
@@ -149,9 +150,11 @@ class ManagePatientController extends AbstractController
 
             $this->em->flush();
 
+            $gender = 'male' === $patient->getGender() ? 'M.' : 'Mme';
+
             $this->addFlash(
                 'success',
-                "<strong>{$patient->getFirstname()} {$patient->getLastname()}</strong> 
+                "<strong>{$gender} {$patient->getFirstname()} {$patient->getLastname()}</strong> 
                 a bien été ajouté à votre liste."
             );
 
@@ -179,9 +182,11 @@ class ManagePatientController extends AbstractController
 
                 $this->em->flush();
 
+                $gender = 'male' === $patient->getGender() ? 'M.' : 'Mme';
+
                 $this->addFlash(
                     'success',
-                    "<strong>{$patient->getFirstname()} {$patient->getLastname()}</strong> 
+                    "<strong>{$gender} {$patient->getFirstname()} {$patient->getLastname()}</strong> 
                     a bien été retiré de votre liste."
                 );
 
