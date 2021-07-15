@@ -72,14 +72,47 @@ h1 {
         margin-right: 0.4em;
     }
 }
+h2.subtitle {
+    font-size: 1.5rem;
+    text-align: left;
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+    color: $primary;
+
+    i {
+        font-size: 0.9em;
+        margin-right: 0.3em;
+    }
+}
+
 .vs-avatar {
     background: transparent !important;
 }
 .vs-dialog-content {
     background: rgba(0, 0, 0, 0.5) !important;
 
+    &.large {
+        .vs-dialog {
+            @media (min-width: 650px) {
+                width: 100vw !important;
+            }
+
+            @media (min-width: 1370px) {
+                width: 80vw !important;
+            }
+        }
+    }
+
     .vs-dialog {
         width: 100% !important;
+
+        .vs-dialog__content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 9em;
+        }
+
         @media (min-width: 650px) {
             width: 55vw !important;
         }
@@ -278,6 +311,12 @@ button.top-absolute {
     background: #fff2de;
     color: $primary;
     border-radius: 1.3em;
+    line-height: 1.1;
+
+    &.big {
+        padding: 0.61em 0.95em;
+        font-size: 1em;
+    }
 
     &:hover {
         background: linear-gradient(289deg, #fbcc52f5, #ffb049 50%, #ffa71a 100%);

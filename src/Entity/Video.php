@@ -17,37 +17,37 @@ class Video
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"worksheet_read"})
+     * @Groups({"worksheet_read", "video_read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"worksheet_read"})
+     * @Groups({"worksheet_read", "video_read"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"worksheet_read"})
+     * @Groups({"worksheet_read", "video_read"})
      */
     private $url;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"worksheet_read"})
+     * @Groups({"worksheet_read", "video_read"})
      */
     private $thumbnailUrl;
 
     /**
      * @ORM\Column(type="text", nullable=true)
-     * @Groups({"worksheet_read"})
+     * @Groups({"worksheet_read", "video_read"})
      */
     private $description;
 
     /**
      * @ORM\ManyToMany(targetEntity=Tag::class, inversedBy="videos")
-     * @Groups({"worksheet_read"})
+     * @Groups({"worksheet_read", "video_read"})
      */
     private $tags;
 

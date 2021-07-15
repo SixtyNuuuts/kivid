@@ -38,36 +38,6 @@ export default {
             listConfigPatients: {
                 target: "user",
                 searchPlaceholder: "Filtrer par le nom et/ou prénom",
-                searchBoxConfig: {
-                    title: "Rechercher une fiche pour la prescription",
-                    placeholder: "Titre de la fiche",
-                    target: "worksheet",
-                    items: [
-                        {
-                            type: "worksheet",
-                        },
-                        {
-                            type: "actions",
-                            buttons: [
-                                {
-                                    type: "addItem",
-                                    target: "prescription",
-                                    content: {
-                                        class: "btn btn-primaki btn-xs lift lift-btn",
-                                        icon: "fe fe-file-plus",
-                                        text: "Prescrire",
-                                    },
-                                },
-                            ],
-                        },
-                    ],
-                    notFound: {
-                        search: {
-                            icon: "fe fe-file-minus",
-                            message: "Aucune fiche n'a été trouvée avec ",
-                        },
-                    },
-                },
                 items: [
                     {
                         title: "Statut",

@@ -23,7 +23,7 @@ class Tag
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"worksheet_read"})
+     * @Groups({"worksheet_read", "video_read"})
      */
     private $name;
 

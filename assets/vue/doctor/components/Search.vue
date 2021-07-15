@@ -17,7 +17,8 @@
                 <span v-if="itemsFiltered.length <= 1">
                     {{ itemsFiltered.length }}
                     {{
-                        "worksheet" === configArray.target
+                        "worksheet" === configArray.target ||
+                        "worksheet-prescribed-patient" === configArray.target
                             ? "fiche"
                             : configArray.target
                     }}
@@ -25,7 +26,8 @@
                 <span v-else>
                     {{ itemsFiltered.length }}
                     {{
-                        "worksheet" === configArray.target
+                        "worksheet" === configArray.target ||
+                        "worksheet-prescribed-patient" === configArray.target
                             ? "fiche" + "s"
                             : configArray.target + "s"
                     }}
@@ -423,6 +425,30 @@
                             </span>
                         </p>
                     </div>
+                    <div
+                        v-if="
+                            'worksheet-prescribed-patient' ===
+                            configArray.target
+                        "
+                    >
+                        <p>
+                            <span>
+                                {{ addItemDetail.title }}
+                            </span>
+                            pour
+                            <span>
+                                {{
+                                    prescribedPatient.gender
+                                        ? "male" === addItemDetail.gender
+                                            ? "M."
+                                            : "Mme"
+                                        : ""
+                                }}
+                                {{ prescribedPatient.lastname }}
+                                {{ prescribedPatient.firstname }}
+                            </span>
+                        </p>
+                    </div>
                 </div>
             </div>
 
@@ -482,6 +508,7 @@ export default {
         btnAddItemForm: String,
         btnAddItemForm: String,
         createItemForm: String,
+        prescribedPatient: Object,
     },
     directives: {
         ClickOutside,
@@ -539,29 +566,33 @@ export default {
             return (this.createItemBox = !this.createItemBox);
         },
         validCreatePatientForm() {
-            let btnCreateItemFormWithPatient = this.createItemForm
-                .replace(
-                    `id="create_patient_form_firstname"`,
-                    `id="create_patient_form_firstname" value="${this.newUserForCreate.firstname}"`
-                )
-                .replace(
-                    `id="create_patient_form_lastname"`,
-                    `id="create_patient_form_lastname" value="${this.newUserForCreate.lastname}"`
-                )
-                .replace(
-                    `id="create_patient_form_gender"`,
-                    `id="create_patient_form_gender" value="${
-                        this.newUserForCreate.gender
-                            ? "1" === this.newUserForCreate.gender
-                                ? "male"
-                                : "female"
-                            : ""
-                    }"`
-                )
-                .replace(
-                    `id="create_patient_form_email"`,
-                    `id="create_patient_form_email" value="${this.newUserForCreate.email}"`
-                );
+            let btnCreateItemFormWithPatient = "";
+
+            if (this.configArray.createItem) {
+                btnCreateItemFormWithPatient = this.createItemForm
+                    .replace(
+                        `id="create_patient_form_firstname"`,
+                        `id="create_patient_form_firstname" value="${this.newUserForCreate.firstname}"`
+                    )
+                    .replace(
+                        `id="create_patient_form_lastname"`,
+                        `id="create_patient_form_lastname" value="${this.newUserForCreate.lastname}"`
+                    )
+                    .replace(
+                        `id="create_patient_form_gender"`,
+                        `id="create_patient_form_gender" value="${
+                            this.newUserForCreate.gender
+                                ? "1" === this.newUserForCreate.gender
+                                    ? "male"
+                                    : "female"
+                                : ""
+                        }"`
+                    )
+                    .replace(
+                        `id="create_patient_form_email"`,
+                        `id="create_patient_form_email" value="${this.newUserForCreate.email}"`
+                    );
+            }
 
             return btnCreateItemFormWithPatient;
         },
@@ -575,24 +606,24 @@ export default {
                 );
             }
 
-            if ("prescription" === this.addItemBtnTarget) {
-                let patientId, worksheetId;
+            // if ("prescription" === this.addItemBtnTarget) {
+            //     let patientId, worksheetId;
 
-                if ("patient" === this.configArray.target) {
-                    patientId = this.addItemDetail.id;
-                    worksheetId = this.targetedItem.id;
-                }
+            //     if ("patient" === this.configArray.target) {
+            //         patientId = this.addItemDetail.id;
+            //         worksheetId = this.targetedItem.id;
+            //     }
 
-                if ("worksheet" === this.configArray.target) {
-                    patientId = this.targetedItem.id;
-                    worksheetId = this.addItemDetail.id;
-                }
+            //     if ("worksheet" === this.configArray.target) {
+            //         patientId = this.targetedItem.id;
+            //         worksheetId = this.addItemDetail.id;
+            //     }
 
-                btnAddItemFormWithId = this.btnAddItemForm.replace(
-                    `<input type="hidden" name="patient_id" value=""><input type="hidden" name="worksheet_id" value="">`,
-                    `<input type="hidden" name="patient_id" value="${patientId}"><input type="hidden" name="worksheet_id" value="${worksheetId}">`
-                );
-            }
+            //     btnAddItemFormWithId = this.btnAddItemForm.replace(
+            //         `<input type="hidden" name="patient_id" value=""><input type="hidden" name="worksheet_id" value="">`,
+            //         `<input type="hidden" name="patient_id" value="${patientId}"><input type="hidden" name="worksheet_id" value="${worksheetId}">`
+            //     );
+            // }
 
             return btnAddItemFormWithId;
         },

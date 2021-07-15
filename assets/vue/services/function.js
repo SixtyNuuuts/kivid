@@ -21,6 +21,17 @@ export default {
 
   },
 
+  getAllVideoTags(videos) {
+    return videos.reduce((r, video) => {
+      video.tags.forEach((tag) => {
+        if (!r.includes(tag.name)) {
+          r.push(tag.name);
+        }
+      });
+      return r;
+    }, []);
+  },
+
   generationTagsFromExercises(doctorWorksheets) {
     return doctorWorksheets.map((worksheet) => {
       return (worksheet.exercisesTags = worksheet.exercises.reduce(
@@ -79,7 +90,7 @@ export default {
     }
 
     function getValues(obj) {
-      const searchFields = ["title", "firstname", "lastname"]
+      const searchFields = ["title", "firstname", "lastname", "name"]
 
       const objFilteredBySearchField = Object.keys(obj).reduce((r, key) => {
         if (searchFields.includes(key)) {
@@ -110,6 +121,13 @@ export default {
 
       return result;
     });
+  },
+
+  sortedByPosition(array) {
+    array.sort(function (a, b) {
+      return a.position - b.position
+    })
+    return array
   },
 
   sortData(evt, data, sortKey) {

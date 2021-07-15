@@ -1,0 +1,31 @@
+{% extends 'layout/vue.html.twig' %}
+
+{% block title %}Mes Fiches
+{% endblock %}
+
+{% block stylesheets %}
+	{{ parent() }}
+
+	{{ encore_entry_link_tags('create-worksheet-page') }}
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+
+	{{ encore_entry_script_tags('create-worksheet-page') }}
+{% endblock %}
+
+{% block body %}
+	<div class="container my-8">
+		<h1><i class="fe fe-file-plus"></i>Création d'une fiche</h1>
+
+		<div id="vue"></div>
+	</div>
+{% endblock %}
+
+{% block vueData %}
+	{
+		"doctor": {{ doctor|serialize('json', {'groups': 'doctor_read'})|raw }},
+		"createWorksheetForm": {{ createWorksheetForm|serialize('json')|raw }}
+	}
+{% endblock %}

@@ -1,0 +1,416 @@
+<template>
+    <div data-app>
+        <h2 class="subtitle">
+            <i class="fe fe-youtube"></i>Selectionnez des vidéos
+        </h2>
+        <List
+            :items="videosArray"
+            :config="listConfigVideo"
+            @add-video="addVideoToExercisesSelected"
+        />
+
+        <h2 class="subtitle">
+            <i class="fe fe-file-text mt-2"></i>Configuration de la fiche
+        </h2>
+
+        <div class="vs-input-content">
+            <input
+                v-model="worksheet.title"
+                type="text"
+                class="vs-input vs-input--has-icon form-control"
+                placeholder="Titre de la fiche"
+            />
+        </div>
+
+        <div class="vs-input-content my-3">
+            <textarea
+                v-model="worksheet.description"
+                class="vs-input vs-input--has-icon form-control"
+                placeholder="Description de la fiche"
+            />
+        </div>
+
+        <transition name="fade">
+            <div v-if="exercisesSelected.length > 0">
+                <h4 class="sub-subtitle">
+                    <i class="fe fe-file-plus mt-2"></i>Configurer vos exercices
+                </h4>
+                <div
+                    class="accordion shadow-light-lg mb-5 mb-md-6"
+                    id="ExerciseAccordion"
+                >
+                    <div
+                        class="accordion-item"
+                        v-for="(exercise, i) in getExercisesSelected"
+                        :key="i"
+                    >
+                        <vs-button
+                            circle
+                            icon
+                            class="btn-delete-exercise"
+                            @click="removeExercise(exercise)"
+                        >
+                            <i class="fe fe-trash-2"></i>
+                        </vs-button>
+
+                        <div
+                            class="accordion-button"
+                            role="button"
+                            data-bs-toggle="collapse"
+                            :data-bs-target="`#exercise${i}`"
+                            aria-expanded="true"
+                        >
+                            <input
+                                v-model="exercise.position"
+                                type="text"
+                                class="
+                                    vs-input vs-input--has-icon
+                                    form-control
+                                    position
+                                "
+                            />
+
+                            <img
+                                :src="exercise.video.thumbnailUrl"
+                                width="80px"
+                                alt="vignette de la vidéo"
+                            />
+
+                            <span class="m-4" id="ExerciseHeading">
+                                {{ exercise.video.name }}
+                            </span>
+
+                            <div class="text-muted ms-auto">
+                                <!-- Text -->
+                                <span class="fs-sm me-4 d-none d-md-inline">
+                                    <span
+                                        v-for="tag in exercise.video.tags"
+                                        :key="tag.name"
+                                    >
+                                        {{ tag.name }}
+                                    </span>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div
+                            class="accordion-collapse collapse show"
+                            :id="`exercise${i}`"
+                            aria-labelledby="ExerciseHeading"
+                            data-bs-parent="#ExerciseAccordion"
+                            style=""
+                        >
+                            <div class="accordion-body">
+                                <!-- Text -->
+                                <p class="text-gray-700">
+                                    {{ exercise.video.description }}
+                                </p>
+                            </div>
+                            <div class="line exercise">
+                                <div class="vs-input-content">
+                                    <input
+                                        v-model="exercise.numberOfRepetitions"
+                                        type="number"
+                                        class="
+                                            vs-input vs-input--has-icon
+                                            form-control
+                                        "
+                                        placeholder="Nb de Répétitions"
+                                    />
+
+                                    <span class="vs-input__icon">
+                                        <i class="fe fe-activity"></i>
+                                    </span>
+                                </div>
+                                <div class="vs-input-content">
+                                    <input
+                                        v-model="exercise.numberOfSeries"
+                                        type="number"
+                                        class="
+                                            vs-input vs-input--has-icon
+                                            form-control
+                                        "
+                                        placeholder="Nb de Séries"
+                                    />
+
+                                    <span class="vs-input__icon">
+                                        <i class="fe fe-activity"></i>
+                                    </span>
+                                </div>
+                                <div class="vs-input-content">
+                                    <input
+                                        v-model="exercise.option"
+                                        type="text"
+                                        class="
+                                            vs-input vs-input--has-icon
+                                            form-control
+                                        "
+                                        placeholder="Option"
+                                    />
+
+                                    <span class="vs-input__icon">
+                                        <i class="fe fe-activity"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="line mt-2">
+                    <div class="button d-flex flex-row-reverse">
+                        <vs-button
+                            class="btn btn-primaki btn-xs lift lift-btn"
+                            @click="createWorksheet()"
+                        >
+                            <i class="fe fe-file-plus me-2"></i>
+                            Créer la fiche
+                        </vs-button>
+                    </div>
+                </div>
+            </div>
+        </transition>
+        <vs-dialog class="action-item-box" v-model="createWorksheetBox">
+            <p class="action-item-text">Confirmer la création</p>
+
+            <div class="action-item-detail">
+                <div class="action-item-icon">
+                    <i class="fe fe-file-plus"></i>
+                </div>
+                <p>
+                    <span>
+                        {{ worksheet.title }}
+                    </span>
+                </p>
+            </div>
+
+            <div class="action-item-buttons">
+                <vs-button @click="createWorksheetBox = false" dark transparent>
+                    Annuler
+                </vs-button>
+                <!-- <div v-html="validCreateWorksheet()"></div> -->
+                <button
+                    class="
+                        valid-form-btn
+                        vs-button
+                        vs-button--null
+                        vs-button--size-null
+                        vs-button--primary
+                        vs-button--transparent
+                    "
+                    @click="validCreateWorksheet()"
+                >
+                    <div class="vs-button__content">Confirmer</div>
+                </button>
+            </div>
+        </vs-dialog>
+    </div>
+</template>
+
+<script>
+import List from "./components/List.vue";
+import f from "../services/function";
+
+export default {
+    name: "CreateWorksheet",
+    components: {
+        List,
+    },
+    data() {
+        return {
+            positionIncr: 0,
+            videos: [],
+            doctor: null,
+            createWorksheetForm: null,
+            worksheet: {
+                title: "",
+                description: "",
+            },
+            createWorksheetBox: false,
+            exercisesSelected: [],
+            listConfigVideo: {
+                target: "video",
+                nbItemsPerPage: 5,
+                searchPlaceholder: "Filtrer par Nom",
+                items: [
+                    {
+                        title: "Vignette",
+                        type: "thumbnail",
+                        sort: false,
+                        sortKey: null,
+                    },
+                    {
+                        title: "Nom",
+                        type: "name",
+                        sort: true,
+                        sortKey: "name",
+                    },
+                    {
+                        title: "Mots-Clés",
+                        type: "video-tags",
+                        sort: false,
+                        sortKey: null,
+                    },
+                    {
+                        title: null,
+                        type: "actions",
+                        sort: false,
+                        sortKey: null,
+                        buttons: [
+                            {
+                                type: "addVideo",
+                                content: {
+                                    class: "btn btn-primaki btn-xs lift lift-btn white-space-no-wrap",
+                                    icon: "fe fe-youtube",
+                                    text: "Ajouter la vidéo",
+                                },
+                            },
+                        ],
+                    },
+                ],
+                notFound: {
+                    search: {
+                        icon: "fe fe-file-minus",
+                        message: "Aucune vidéo n'a été trouvée avec ",
+                    },
+                    noData: {
+                        icon: "fe fe-file-minus",
+                        message: "Vous n'avez aucune vidéo",
+                    },
+                },
+            },
+        };
+    },
+    computed: {
+        videosArray() {
+            return this.videos;
+        },
+        getExercisesSelected() {
+            return f.sortedByPosition(this.exercisesSelected);
+        },
+    },
+    methods: {
+        createWorksheet() {
+            f.setLoaderToBtnValidationForm();
+
+            return (this.createWorksheetBox = !this.createWorksheetBox);
+        },
+        validCreateWorksheet() {
+            this.axios
+                .post(
+                    `/kine/${this.doctor.id}/create/worksheet`,
+                    this.exercisesSelected
+                )
+                .then((response) => console.log(response));
+
+            // let btnCreateWorksheetFormWithData = this.createWorksheetForm
+            //     .replace(
+            //         `id="create_worksheet_form_title"`,
+            //         `id="create_worksheet_form_title" value="${this.worksheet.title}"`
+            //     )
+            //     .replace(
+            //         `id="create_worksheet_form_description"`,
+            //         `id="create_worksheet_form_description" value="${this.worksheet.description}"`
+            //     )
+            //     .replace(
+            //         `id="create_worksheet_form_exercises"`,
+            //         `id="create_worksheet_form_exercises" value="${JSON.stringify(
+            //             {
+            //                 worksheet: {
+            //                     title: "",
+            //                     description: "",
+            //                 },
+            //             }
+            //         )}"`
+            //     );
+
+            // return btnCreateWorksheetFormWithData;
+        },
+
+        addVideoToExercisesSelected(video) {
+            const exercise = {
+                position: this.positionIncr++,
+                numberOfRepetitions: null,
+                numberOfSeries: null,
+                option: null,
+                video: video,
+            };
+            this.exercisesSelected.push(exercise);
+        },
+        removeExercise(exercise) {
+            this.exercisesSelected.splice(
+                this.exercisesSelected.indexOf(exercise),
+                1
+            );
+        },
+    },
+    created() {
+        const data = JSON.parse(document.getElementById("vueData").innerHTML);
+
+        this.createWorksheetForm = data.createWorksheetForm;
+        this.doctor = data.doctor;
+
+        this.axios.get(`/videos`).then((response) => {
+            this.videos = response.data;
+        });
+    },
+};
+</script>
+
+<style lang="scss">
+$primary: #ffab2c;
+
+.line.exercise {
+    display: flex;
+    justify-content: space-between;
+    margin: 1em;
+}
+
+.btn-delete-exercise {
+    background-color: $primary;
+    position: absolute;
+    z-index: 1000;
+    top: 0;
+    right: 0;
+}
+.accordion-body {
+    padding: 0 1em;
+}
+.position.vs-input {
+    width: 40px;
+    padding-left: 10px;
+    border-radius: 5px !important;
+    margin-right: 10px;
+    &:focus {
+        padding-left: 10px !important;
+    }
+}
+h4.sub-subtitle {
+    color: #5b77a0;
+    font-size: 1em;
+    margin-top: 1.7em;
+
+    i {
+        margin-right: 0.4em;
+    }
+}
+
+.white-space-no-wrap {
+    white-space: nowrap;
+}
+
+.accordion-item {
+    position: relative;
+    span.fs-sm.me-4 {
+        display: flex !important;
+        flex-direction: column;
+        font-size: 0.85em !important;
+    }
+}
+
+.vs-input-content {
+    input,
+    textarea {
+        width: 100%;
+    }
+}
+</style>

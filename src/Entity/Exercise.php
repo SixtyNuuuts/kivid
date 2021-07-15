@@ -55,6 +55,11 @@ class Exercise
      */
     private $createdAt;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $position;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -149,6 +154,18 @@ class Exercise
     public function setCreatedAt(\DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getPosition(): ?int
+    {
+        return $this->position;
+    }
+
+    public function setPosition(?int $position): self
+    {
+        $this->position = $position;
 
         return $this;
     }

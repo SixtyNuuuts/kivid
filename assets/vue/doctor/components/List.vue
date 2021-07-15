@@ -1,28 +1,37 @@
 <template>
     <div>
-        <vs-table>
+        <vs-table :ref="'loading'">
             <template #header>
                 <div class="search-bloc">
                     <v-text-field
                         :label="configArray.searchPlaceholder"
                         solo
                         v-model="search"
+                        @keyup="page = 1"
                         class="search-text"
                     ></v-text-field>
 
                     <div
-                        v-if="'worksheet' === configArray.target"
+                        v-if="
+                            'worksheet' === configArray.target ||
+                            'video' === configArray.target
+                        "
                         class="search-chips"
                     >
                         <v-combobox
                             v-model="tagsSelected"
-                            :items="tagsFromAll"
+                            :items="
+                                'worksheet' === configArray.target
+                                    ? tagsFromAll
+                                    : getAllVideoTags
+                            "
                             chips
                             small-chipss
                             label="Mots-clés"
                             multiple
                             color="primary"
                             solo
+                            @change="page = 1"
                         >
                             <template
                                 v-slot:selection="{
@@ -52,7 +61,10 @@
                         v-for="(th, i) in configArray.items"
                         :key="i"
                         :sort="th.sort"
-                        :class="{ tags: 'exercises-tags' === th.type }"
+                        :class="{
+                            tags: 'exercises-tags' === th.type,
+                            thumbnail: 'thumbnail' === th.type,
+                        }"
                         @click="
                             th.sort
                                 ? (itemsArray = sortData(
@@ -82,6 +94,13 @@
                         :key="i"
                         :class="{ status: td.type === 'status' }"
                     >
+                        <div v-if="'thumbnail' === td.type">
+                            <img
+                                :src="item.thumbnailUrl"
+                                width="50px"
+                                alt="vignette de la vidéo"
+                            />
+                        </div>
                         <div v-if="'status' === td.type">
                             <div v-if="item.isVerified">
                                 <div class="icon-active-account"></div>
@@ -122,12 +141,24 @@
                         <div v-if="'title' === td.type">
                             {{ item.title }}
                         </div>
+                        <div v-if="'name' === td.type">
+                            {{ item.name }}
+                        </div>
                         <div v-if="'birthdate' === td.type">
                             {{ getAge(item.birthdate) }}
                             <span v-if="item.birthdate" class="age"> ans</span>
                         </div>
                         <div v-if="'exercises-count' === td.type">
                             {{ item.exercises.length }}
+                        </div>
+                        <div v-if="'video-tags' === td.type">
+                            <div
+                                class="md-chip md-chip-raised"
+                                v-for="tag in item.tags"
+                                :key="tag.name"
+                            >
+                                {{ tag.name }}
+                            </div>
                         </div>
                         <div v-if="'exercises-tags' === td.type">
                             <div
@@ -153,6 +184,15 @@
                                         v-if="'prescription' === btn.target"
                                         :class="btn.content.class"
                                         :href="`/kine/${doctor.id}/fiches/${item.id}`"
+                                    >
+                                        <i :class="btn.content.icon"></i>
+                                        {{ btn.content.text }}
+                                    </a>
+                                </div>
+                                <div v-if="'addVideo' === btn.type">
+                                    <a
+                                        :class="btn.content.class"
+                                        @click="addVideo(item)"
                                     >
                                         <i :class="btn.content.icon"></i>
                                         {{ btn.content.text }}
@@ -209,9 +249,7 @@
             <template #footer>
                 <vs-pagination
                     v-model="page"
-                    :length="
-                        $vs.getLength($vs.getSearch(itemsArray, search), max)
-                    "
+                    :length="$vs.getLength(getSearch(itemsArray, search), max)"
                 />
             </template>
             <template #notFound>
@@ -331,11 +369,11 @@ export default {
     data() {
         return {
             search: "",
+            loading: null,
             tagsSelected: [],
             tagsFromAll: [],
             page: 1,
             max: 10,
-            itemsArray: this.items,
             configArray: this.config,
             searchBox: false,
             searchBoxItems: null,
@@ -345,23 +383,49 @@ export default {
             removeItemDetail: { worksheet: {}, patient: {} },
         };
     },
+    computed: {
+        itemsArray() {
+            if (this.items.length > 0 && this.loading) {
+                this.loading.close();
+            }
+            return this.items;
+        },
+        getAllVideoTags() {
+            return f.getAllVideoTags(this.itemsArray);
+        },
+    },
     methods: {
         sortData(evt, data, sortKey, type) {
             return f.sortData(evt, data, sortKey, type);
         },
         getSearch(data, search) {
             let itemsFiltered = f.getSearch(data, search);
+            // this.page = 1;
 
             if (this.tagsSelected.length > 0) {
                 return itemsFiltered.filter((item) => {
                     let result = false;
-                    if (item.exercisesTags) {
-                        item.exercisesTags.forEach((tag) => {
-                            if (this.tagsSelected.includes(tag)) {
-                                result = true;
-                            }
-                        });
+
+                    if ("worksheet" === this.configArray.target) {
+                        if (item.exercisesTags) {
+                            item.exercisesTags.forEach((tag) => {
+                                if (this.tagsSelected.includes(tag)) {
+                                    result = true;
+                                }
+                            });
+                        }
                     }
+
+                    if ("video" === this.configArray.target) {
+                        if (item.tags) {
+                            item.tags.forEach((tag) => {
+                                if (this.tagsSelected.includes(tag.name)) {
+                                    result = true;
+                                }
+                            });
+                        }
+                    }
+
                     return result;
                 });
             }
@@ -381,6 +445,9 @@ export default {
             this.searchBoxItemSelected = item;
             return (this.searchBox = !this.searchBox);
         },
+        addVideo(video) {
+            this.$emit("add-video", video);
+        },
         removeItem(item) {
             this.removeItemDetail = item;
 
@@ -390,10 +457,14 @@ export default {
             return (this.removeItemBox = !this.removeItemBox);
         },
         validRemoveItem() {
-            const btnRemoveItemFormWithId = this.btnRemoveItemForm.replace(
-                `<input type="hidden" name="_id" value="">`,
-                `<input type="hidden" name="_id" value="${this.removeItemDetail.id}">`
-            );
+            let btnRemoveItemFormWithId = "";
+
+            if (this.btnRemoveItemForm) {
+                btnRemoveItemFormWithId = this.btnRemoveItemForm.replace(
+                    `<input type="hidden" name="_id" value="">`,
+                    `<input type="hidden" name="_id" value="${this.removeItemDetail.id}">`
+                );
+            }
 
             return btnRemoveItemFormWithId;
         },
@@ -403,6 +474,9 @@ export default {
         },
     },
     created() {
+        if (this.configArray.nbItemsPerPage) {
+            this.max = this.configArray.nbItemsPerPage;
+        }
         if (
             !this.searchBoxItems &&
             this.doctor &&
@@ -430,6 +504,12 @@ export default {
         }
     },
     mounted() {
+        this.loading = this.$vs.loading({
+            target: this.$refs["loading"],
+            text: "chargement",
+            type: "border",
+        });
+
         if ("worksheet" === this.configArray.target) {
             const tagsFromExercises = f.generationTagsFromExercises(
                 this.itemsArray
@@ -443,6 +523,17 @@ export default {
 
 <style lang="scss">
 $primary: #ffab2c;
+
+.vs-table-content.loading {
+    background-color: $primary;
+    &::after {
+    }
+}
+
+.vs-table__th.max-width {
+    max-width: 100px !important;
+}
+
 .v-input {
     max-width: none !important;
     border-radius: 1.2em;
@@ -555,6 +646,11 @@ td:first-child {
 
 th.tags {
     cursor: initial;
+}
+
+th.thumbnail {
+    cursor: initial;
+    max-width: 70px;
 }
 
 td.status {

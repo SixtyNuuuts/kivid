@@ -1,6 +1,10 @@
 <template>
     <div data-app>
-        <AddWorksheet :prescribedPatient="prescribedPatient" />
+        <AddWorksheet
+            :doctor="doctor"
+            :prescribedPatient="prescribedPatient"
+            :worksheets="doctorWorksheets"
+        />
         <vs-navbar v-if="!prescribedPatient" center-collapsed v-model="active">
             <vs-navbar-item :active="active == 'worksheet'" id="worksheet">
                 Fiches

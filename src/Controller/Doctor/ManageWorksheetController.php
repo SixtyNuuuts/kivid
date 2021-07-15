@@ -5,6 +5,7 @@ namespace App\Controller\Doctor;
 use App\Entity\Doctor;
 use App\Entity\Prescription;
 use App\Form\CreatePatientFormType;
+use App\Form\CreateWorksheetFormType;
 use App\Repository\PatientRepository;
 use App\Repository\WorksheetRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -150,6 +151,43 @@ class ManageWorksheetController extends AbstractController
         );
 
         return $this->redirectToRoute('app_doctor_worksheets', ['id' => $doctor->getId()]);
+    }
+
+    /**
+     * @Route("/{id}/create/worksheet", name="app_doctor_create_worksheet", methods={"GET", "POST"})
+     */
+    public function createWorksheet(Request $request, Doctor $doctor): Response
+    {
+        $createWorksheetForm = $this->createForm(CreateWorksheetFormType::class);
+
+        $createWorksheetForm->handleRequest($request);
+
+        if ($createWorksheetForm->isSubmitted() && $createWorksheetForm->isValid()) {
+            $data = $createWorksheetForm->getData();
+            dd($request);
+
+            // $patient = new Patient();
+            // $patient->setFirstname($data['firstname']);
+            // $patient->setLastname($data['lastname']);
+            // $patient->setGender($data['gender']);
+            // $patient->setEmail($data['email']);
+            // $patient->setDoctor($doctor);
+
+            // $this->em->persist($patient);
+
+            // return $this->redirectToRoute('app_doctor_patients', ['id' => $doctor->getId()]);
+        }
+
+
+        $createWorksheetView = $this->renderView('doctor/_form_create_worksheet.html.twig', [
+            'form' => $createWorksheetForm->createView(),
+            'doctor' => $doctor,
+        ]);
+
+        return $this->render('doctor/create_worksheet_page.html.twig', [
+            'doctor' => $doctor,
+            'createWorksheetForm' => $createWorksheetView,
+        ]);
     }
 
     /**
