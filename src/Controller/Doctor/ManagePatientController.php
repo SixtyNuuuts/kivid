@@ -111,6 +111,7 @@ class ManagePatientController extends AbstractController
             $patient = new Patient();
             $patient->setFirstname($data['firstname']);
             $patient->setLastname($data['lastname']);
+            $patient->setGender($data['gender']);
             $patient->setEmail($data['email']);
             $patient->setDoctor($doctor);
 
@@ -150,7 +151,7 @@ class ManagePatientController extends AbstractController
 
             $this->em->flush();
 
-            $gender = 'male' === $patient->getGender() ? 'M.' : 'Mme';
+            $gender = $patient->getGender() ? ("male" === $patient->getGender() ? 'M.' : 'Mme') : '';
 
             $this->addFlash(
                 'success',
@@ -182,7 +183,7 @@ class ManagePatientController extends AbstractController
 
                 $this->em->flush();
 
-                $gender = 'male' === $patient->getGender() ? 'M.' : 'Mme';
+                $gender = $patient->getGender() ? ("male" === $patient->getGender() ? 'M.' : 'Mme') : '';
 
                 $this->addFlash(
                     'success',

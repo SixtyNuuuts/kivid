@@ -15,6 +15,7 @@ class CreatePatientFormType extends AbstractType
         $builder
             ->add('firstname', HiddenType::class)
             ->add('lastname', HiddenType::class)
+            ->add('gender', HiddenType::class)
             ->add('email', HiddenType::class)
         ;
     }

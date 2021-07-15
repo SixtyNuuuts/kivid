@@ -8,7 +8,7 @@
 		<div class="container">
 			<div class="row">
 				<div class="col-12 col-md-8">
-					<div class="card card-border border-primary-desat shadow-lg mb-6 mb-md-8 mb-lg-0 lift lift-lg">
+					<div class="card card-border border-primary-desat shadow-lg mb-6 mb-md-8 mb-lg-0 lift lift-lg pb-5">
 						<div class="d-flex flex-center justify-content-center mt-5">
 							<span class="badge rounded-pill bg-dark-soft h6 text-uppercase">
 								{{ 'profil' | upper }}
@@ -34,12 +34,10 @@
 									{{ doctor.email }}
 								</p>
 								{% if doctor.city %}
-									<p class="text-center d-block small text-truncate text-gray-700" href="#!">
-										<div class="d-flex align-items-center flex-column border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 m-5">
-											<div class="fs-6 fw-boldest text-gray-700">{{ 'Ville' | upper }}</div>
-											<div class="fw-bold text-gray-400">{{ doctor.city }}</div>
-										</div>
-									</p>
+									<div class="d-flex align-items-center flex-column border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 mx-5 mt-3">
+										<div class="fs-6 fw-boldest text-gray-700">{{ 'Ville' | upper }}</div>
+										<div class="fw-bold text-gray-400">{{ doctor.city }}</div>
+									</div>
 								{% endif %}
 							</div>
 						</div>

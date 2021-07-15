@@ -116,11 +116,15 @@
                                                         suivi par
                                                         <em>
                                                             {{
-                                                                "male" ==
                                                                 item.doctor
                                                                     .gender
-                                                                    ? "M."
-                                                                    : "Mme"
+                                                                    ? "male" ===
+                                                                      item
+                                                                          .doctor
+                                                                          .gender
+                                                                        ? "M."
+                                                                        : "Mme"
+                                                                    : ""
                                                             }}
                                                             {{
                                                                 item.doctor
@@ -138,10 +142,10 @@
                                                             <img
                                                                 :src="
                                                                     item.doctor
-                                                                        .urlAvatar
+                                                                        .avatarUrl
                                                                         ? item
                                                                               .doctor
-                                                                              .urlAvatar
+                                                                              .avatarUrl
                                                                         : '/img/avatar-default.svg'
                                                                 "
                                                                 alt="avatar du kiné"
@@ -281,6 +285,15 @@
                     </div>
                 </div>
                 <div class="line">
+                    <div class="vs-input-content select-civ">
+                        <vs-select
+                            placeholder="Civilité"
+                            v-model="newUserForCreate.gender"
+                        >
+                            <vs-option label="M." value="1">M.</vs-option>
+                            <vs-option label="Mme" value="2">Mme</vs-option>
+                        </vs-select>
+                    </div>
                     <div class="vs-input-content">
                         <input
                             v-model="newUserForCreate.email"
@@ -297,6 +310,7 @@
                                 v-if="validateUserMessage.email"
                                 class="validate-email-mess"
                             >
+                                <i class="fe fe-alert-triangle"></i>
                                 {{ validateUserMessage.email }}
                             </div>
                         </transition>
@@ -347,7 +361,13 @@
                     </div>
                     <p>
                         <span>
-                            {{ "male" === addItemDetail.gender ? "M." : "Mme" }}
+                            {{
+                                addItemDetail.gender
+                                    ? "male" === addItemDetail.gender
+                                        ? "M."
+                                        : "Mme"
+                                    : ""
+                            }}
                             {{ addItemDetail.lastname }}
                             {{ addItemDetail.firstname }}
                         </span>
@@ -372,9 +392,11 @@
                             pour
                             <span>
                                 {{
-                                    "male" === addItemDetail.gender
-                                        ? "M."
-                                        : "Mme"
+                                    addItemDetail.gender
+                                        ? "male" === addItemDetail.gender
+                                            ? "M."
+                                            : "Mme"
+                                        : ""
                                 }}
                                 {{ addItemDetail.lastname }}
                                 {{ addItemDetail.firstname }}
@@ -390,9 +412,11 @@
                             pour
                             <span>
                                 {{
-                                    "male" === targetedItem.gender
-                                        ? "M."
-                                        : "Mme"
+                                    targetedItem.gender
+                                        ? "male" === addItemDetail.gender
+                                            ? "M."
+                                            : "Mme"
+                                        : ""
                                 }}
                                 {{ targetedItem.lastname }}
                                 {{ targetedItem.firstname }}
@@ -474,6 +498,7 @@ export default {
                 firstname: null,
                 lastname: null,
                 email: null,
+                gender: "",
             },
             validateUserMessage: {
                 email: null,
@@ -514,10 +539,29 @@ export default {
             return (this.createItemBox = !this.createItemBox);
         },
         validCreatePatientForm() {
-            let btnCreateItemFormWithPatient = this.createItemForm.replace(
-                `<input type="hidden" id="create_patient_form_firstname" name="create_patient_form[firstname]" /><input type="hidden" id="create_patient_form_lastname" name="create_patient_form[lastname]" /><input type="hidden" id="create_patient_form_email" name="create_patient_form[email]" />`,
-                `<input type="hidden" value="${this.newUserForCreate.firstname}" id="create_patient_form_firstname" name="create_patient_form[firstname]" /><input type="hidden" value="${this.newUserForCreate.lastname}" id="create_patient_form_lastname" name="create_patient_form[lastname]" /><input type="hidden" value="${this.newUserForCreate.email}" id="create_patient_form_email" name="create_patient_form[email]" />`
-            );
+            let btnCreateItemFormWithPatient = this.createItemForm
+                .replace(
+                    `id="create_patient_form_firstname"`,
+                    `id="create_patient_form_firstname" value="${this.newUserForCreate.firstname}"`
+                )
+                .replace(
+                    `id="create_patient_form_lastname"`,
+                    `id="create_patient_form_lastname" value="${this.newUserForCreate.lastname}"`
+                )
+                .replace(
+                    `id="create_patient_form_gender"`,
+                    `id="create_patient_form_gender" value="${
+                        this.newUserForCreate.gender
+                            ? "1" === this.newUserForCreate.gender
+                                ? "male"
+                                : "female"
+                            : ""
+                    }"`
+                )
+                .replace(
+                    `id="create_patient_form_email"`,
+                    `id="create_patient_form_email" value="${this.newUserForCreate.email}"`
+                );
 
             return btnCreateItemFormWithPatient;
         },
@@ -704,7 +748,18 @@ p.no-found {
             flex-direction: row;
         }
 
+        .select-civ {
+            max-width: none;
+            @media (min-width: 576px) {
+                max-width: 5em;
+            }
+        }
+
+        .vs-select-content {
+            max-width: none;
+        }
         .validate-email-mess {
+            display: flex;
             position: absolute;
             bottom: -5px;
             right: 9px;
@@ -717,6 +772,12 @@ p.no-found {
             color: #df4759;
             text-transform: uppercase;
             z-index: 100;
+            padding-top: 2px;
+
+            i {
+                margin-right: 2px;
+                margin-top: 2px;
+            }
         }
     }
 

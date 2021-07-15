@@ -29,7 +29,7 @@ export default {
         createPatientForm: String,
         btnAddPatientForm: String,
     },
-    created() {
+    mounted() {
         if ("add" === this.addPatient) {
             this.boxActive = true;
         }

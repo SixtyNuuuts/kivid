@@ -9,7 +9,7 @@
                 :active="active == 'worksheet-template'"
                 id="worksheet-template"
             >
-                Modèles de Fiche
+                Modèles
             </vs-navbar-item>
         </vs-navbar>
         <div>

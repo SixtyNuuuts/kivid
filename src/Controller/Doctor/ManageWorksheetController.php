@@ -103,7 +103,7 @@ class ManageWorksheetController extends AbstractController
 
             $this->em->flush();
 
-            $gender = 'male' === $patient->getGender() ? 'M.' : 'Mme';
+            $gender = $patient->getGender() ? ("male" === $patient->getGender() ? 'M.' : 'Mme') : '';
 
             $this->addFlash(
                 'success',

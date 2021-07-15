@@ -39,7 +39,7 @@ html {
     display: flex;
     align-items: center;
     span {
-        margin-left: -0.3em;
+        margin-left: -0.45em;
     }
 }
 
@@ -50,11 +50,19 @@ h1 {
     margin-bottom: 0.3em;
 
     &.prescription {
+        margin-bottom: 0.7em;
         font-size: 1.3em;
         color: rgb(14, 14, 22);
 
-        span {
-            margin-left: 0.4em;
+        .prescri-for {
+            font-size: 0.48em;
+            color: gray;
+            margin-bottom: 0.3em;
+            background-color: #ebeff5 !important;
+        }
+
+        .prescri-name {
+            color: black;
         }
     }
 
@@ -324,6 +332,10 @@ button.top-absolute {
 
 .navbar-light .navbar-nav .nav-link {
     font-size: 0.9em;
+}
+
+.navbar-light .navbar-nav .nav-link {
+    color: #738eb6;
 }
 
 .navbar-light .navbar-nav .show > .nav-link,

@@ -152,7 +152,7 @@
                                     <a
                                         v-if="'prescription' === btn.target"
                                         :class="btn.content.class"
-                                        :href="'fiches/' + item.id"
+                                        :href="`/kine/${doctor.id}/fiches/${item.id}`"
                                     >
                                         <i :class="btn.content.icon"></i>
                                         {{ btn.content.text }}
@@ -168,8 +168,8 @@
                                         <vs-avatar circle size="25">
                                             <img
                                                 :src="
-                                                    prescribedPatient.urlAvatar
-                                                        ? prescribedPatient.urlAvatar
+                                                    prescribedPatient.avatarUrl
+                                                        ? prescribedPatient.avatarUrl
                                                         : '/img/avatar-default.svg'
                                                 "
                                                 alt="avatar du patient"
@@ -247,9 +247,11 @@
                     <p>
                         <span>
                             {{
-                                "male" === removeItemDetail.gender
-                                    ? "M."
-                                    : "Mme"
+                                removeItemDetail.gender
+                                    ? "male" === removeItemDetail.gender
+                                        ? "M."
+                                        : "Mme"
+                                    : ""
                             }}
                             {{ removeItemDetail.lastname }}
                             {{ removeItemDetail.firstname }}
@@ -272,9 +274,11 @@
                         pour
                         <span>
                             {{
-                                "male" === removeItemDetail.gender
-                                    ? "M."
-                                    : "Mme"
+                                removeItemDetail.gender
+                                    ? "male" === removeItemDetail.gender
+                                        ? "M."
+                                        : "Mme"
+                                    : ""
                             }}
                             {{ removeItemDetail.patient.lastname }}
                             {{ removeItemDetail.patient.firstname }}

@@ -8,6 +8,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\BirthdayType;
 
 class PatientFormType extends AbstractType
@@ -15,6 +16,15 @@ class PatientFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('gender', ChoiceType::class, [
+                'label' => 'Civilité',
+                'required' => false,
+                'choices' => [
+                    '------' => '',
+                    'M.' => 'male',
+                    'Mme' => 'female'
+                ],
+            ])
             ->add('firstname', TextType::class, [
                 'label' => 'Prénom',
                 'required' => false,

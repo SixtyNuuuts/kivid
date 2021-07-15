@@ -20,14 +20,24 @@
 		{% if prescribedPatient %}
 			<h1 class="prescription">
 				<div class="avatar avatar-md me-3">
-					<img class="avatar-img rounded-circle" src="{{ user.avatarUrl|default('/img/avatar-default.svg') }}" alt="avatar">
+					<img class="avatar-img rounded-circle" src="{{ prescribedPatient.avatarUrl|default('/img/avatar-default.svg') }}" alt="avatar">
 				</div>
-				Prescription pour 
-				<span>
-				{{ 'male' == prescribedPatient.gender ? 'M.' : 'Mme' }}
-				{{ prescribedPatient.firstname }}
-				{{ prescribedPatient.lastname }}
-				</span>
+				<div>
+					<span class="badge rounded-pill bg-dark-soft h6 text-uppercase prescri-for">
+						Prescription pour
+					</span>
+					<div class="prescri-name">
+					{{
+						prescribedPatient.gender
+							? "male" == prescribedPatient.gender
+								? "M."
+								: "Mme"
+							: ""
+					}}
+					{{ prescribedPatient.firstname }}
+					{{ prescribedPatient.lastname }}
+					</div>
+				</div>
 			</h1>
 		{% else %}
 			<h1>
