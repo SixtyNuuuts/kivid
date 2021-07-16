@@ -1,9 +1,6 @@
 <template>
     <div>
-        <vs-table
-            :ref="'loading'"
-            :class="{ 'videos-lib': 'video' === configArray.target }"
-        >
+        <vs-table :class="{ 'videos-lib': 'video' === configArray.target }">
             <template #header>
                 <div class="search-bloc">
                     <v-text-field
@@ -25,7 +22,7 @@
                             v-model="tagsSelected"
                             :items="
                                 'worksheet' === configArray.target
-                                    ? tagsFromAll
+                                    ? tagsFromAllArray
                                     : getAllVideoTags
                             "
                             chips
@@ -69,6 +66,7 @@
                                 'exercises-tags' === th.type ||
                                 'video-tags' === th.type,
                             thumbnail: 'thumbnail' === th.type,
+                            date: 'date' === th.type,
                         }"
                         @click="
                             th.sort
@@ -372,13 +370,12 @@ export default {
         btnRemoveItemForm: String,
         doctor: Object,
         prescribedPatient: Object,
+        tagsFromAll: Array,
     },
     data() {
         return {
             search: "",
-            loading: null,
             tagsSelected: [],
-            tagsFromAll: [],
             page: 1,
             max: 10,
             configArray: this.config,
@@ -397,11 +394,6 @@ export default {
     computed: {
         itemsListArray: {
             get() {
-                if (this.items.length > 0 && this.loading) {
-                    this.loading.close();
-                    this.loading = null;
-                }
-
                 let il;
                 if (!this.itemsList.length) {
                     il = this.items;
@@ -414,6 +406,9 @@ export default {
             set(newItemsList) {
                 this.itemsList = newItemsList;
             },
+        },
+        tagsFromAllArray() {
+            return this.tagsFromAll;
         },
         getAllVideoTags() {
             return f.getAllVideoTags(this.itemsListArray);
@@ -526,21 +521,6 @@ export default {
                     this.searchBoxItems = response.data;
                     f.generationTagsFromExercises(this.searchBoxItems);
                 });
-        }
-    },
-    mounted() {
-        this.loading = this.$vs.loading({
-            target: this.$refs["loading"],
-            text: "chargement",
-            type: "border",
-        });
-
-        if ("worksheet" === this.configArray.target) {
-            const tagsFromExercises = f.generationTagsFromExercises(
-                this.itemsListArray
-            );
-
-            this.tagsFromAll = f.getTagsFromAll(tagsFromExercises);
         }
     },
 };
@@ -741,6 +721,10 @@ th.tags {
 th.thumbnail {
     cursor: initial;
     max-width: 70px;
+}
+
+th.date {
+    max-width: 130px;
 }
 
 td.status {

@@ -25,7 +25,7 @@
 
 {% block vueData %}
 	{
-		"doctor": {{ doctor|serialize('json', {'groups': 'doctor_read'})|raw }},
-		"createWorksheetForm": {{ createWorksheetForm|serialize('json')|raw }}
+		"doctor": {{ doctor|serialize('json', {'groups': 'doctor_read'})|raw }}
+		{# "createWorksheetForm": {{ createWorksheetForm|serialize('json')|raw }} #}
 	}
 {% endblock %}

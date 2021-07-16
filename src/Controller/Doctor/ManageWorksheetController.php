@@ -3,13 +3,17 @@
 namespace App\Controller\Doctor;
 
 use App\Entity\Doctor;
+use App\Entity\Exercise;
 use App\Entity\Prescription;
+use App\Entity\Video;
+use App\Entity\Worksheet;
 use App\Form\CreatePatientFormType;
 use App\Form\CreateWorksheetFormType;
 use App\Repository\PatientRepository;
 use App\Repository\WorksheetRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\PrescriptionRepository;
+use App\Repository\VideoRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,6 +21,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * @Route("/kine")
@@ -26,20 +31,26 @@ class ManageWorksheetController extends AbstractController
     private $worksheetRepository;
     private $patientRepository;
     private $prescriptionRepository;
+    private $videoRepository;
     private $mailer;
+    private $serializer;
     private $em;
 
     public function __construct(
         PatientRepository $patientRepository,
         PrescriptionRepository $prescriptionRepository,
         WorksheetRepository $worksheetRepository,
+        VideoRepository $videoRepository,
         MailerInterface $mailer,
+        SerializerInterface $serializerInterface,
         EntityManagerInterface $em
     ) {
         $this->patientRepository = $patientRepository;
         $this->prescriptionRepository = $prescriptionRepository;
         $this->worksheetRepository = $worksheetRepository;
+        $this->videoRepository = $videoRepository;
         $this->mailer = $mailer;
+        $this->serializer = $serializerInterface;
         $this->em = $em;
     }
 
@@ -158,35 +169,55 @@ class ManageWorksheetController extends AbstractController
      */
     public function createWorksheet(Request $request, Doctor $doctor): Response
     {
-        $createWorksheetForm = $this->createForm(CreateWorksheetFormType::class);
+        // $createWorksheetForm = $this->createForm(CreateWorksheetFormType::class);
 
-        $createWorksheetForm->handleRequest($request);
+        if ($request->isMethod('post')) {
+            // $test = $this->serializer->deserialize($request->getContent(), 'null', 'json');
+            $worksheetData = json_decode($request->getContent());
 
-        if ($createWorksheetForm->isSubmitted() && $createWorksheetForm->isValid()) {
-            $data = $createWorksheetForm->getData();
-            dd($request);
+            $worksheet = new Worksheet();
+            $worksheet->setTitle($worksheetData->title)
+                      ->setDescription($worksheetData->description)
+                      ->setDoctor($doctor);
 
-            // $patient = new Patient();
-            // $patient->setFirstname($data['firstname']);
-            // $patient->setLastname($data['lastname']);
-            // $patient->setGender($data['gender']);
-            // $patient->setEmail($data['email']);
-            // $patient->setDoctor($doctor);
+            foreach ($worksheetData->exercises as $exerciseData) {
+                $exercise = new Exercise();
+                $exercise->setNumberOfRepetitions($exerciseData->numberOfRepetitions)
+                         ->setNumberOfSeries($exerciseData->numberOfSeries)
+                         ->setOption($exerciseData->option)
+                         ->setPosition($exerciseData->position);
 
-            // $this->em->persist($patient);
+                $video = $this->videoRepository->findOneById($exerciseData->video->id);
+                $exercise->setVideo($video);
 
-            // return $this->redirectToRoute('app_doctor_patients', ['id' => $doctor->getId()]);
+                $worksheet->addExercise($exercise);
+
+                $this->em->persist($exercise);
+            }
+
+            $this->em->persist($worksheet);
+
+            $this->em->flush();
+
+            $this->addFlash(
+                'success',
+                "La Fiche <strong>{$worksheet->getTitle()}</strong> a bien été créée."
+            );
+
+            return $this->json(
+                'fiche créée',
+                200,
+            );
         }
 
-
-        $createWorksheetView = $this->renderView('doctor/_form_create_worksheet.html.twig', [
-            'form' => $createWorksheetForm->createView(),
-            'doctor' => $doctor,
-        ]);
+        // $createWorksheetView = $this->renderView('doctor/_form_create_worksheet.html.twig', [
+        //     'form' => $createWorksheetForm->createView(),
+        //     'doctor' => $doctor,
+        // ]);
 
         return $this->render('doctor/create_worksheet_page.html.twig', [
             'doctor' => $doctor,
-            'createWorksheetForm' => $createWorksheetView,
+            // 'createWorksheetForm' => $createWorksheetView,
         ]);
     }
 
@@ -217,13 +248,23 @@ class ManageWorksheetController extends AbstractController
         return $this->redirectToRoute('app_doctor_worksheets', ['id' => $doctor->getId()]);
     }
 
+    // public function getWorksheets(Doctor $doctor): JsonResponse
+    // {
+    //     return $this->json(
+    //         $this->worksheetRepository->findDoctorWorksheets($doctor),
+    //         200,
+    //         [],
+    //         ['groups' => 'worksheet_read']
+    //     );
+    // }
+
     /**
      * @Route("/{id}/get/worksheets", name="app_doctor_get_worksheets", methods={"GET"})
      */
     public function getWorksheets(Doctor $doctor): JsonResponse
     {
         return $this->json(
-            $this->worksheetRepository->findDoctorWorksheets($doctor),
+            $this->worksheetRepository->findBy(['doctor' => $doctor]),
             200,
             [],
             ['groups' => 'worksheet_read']

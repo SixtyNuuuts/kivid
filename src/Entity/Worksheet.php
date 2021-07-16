@@ -50,6 +50,11 @@ class Worksheet
      */
     private $prescriptions;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Doctor::class, inversedBy="worksheets")
+     */
+    private $doctor;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -148,6 +153,23 @@ class Worksheet
                 $prescription->setWorksheet(null);
             }
         }
+
+        return $this;
+    }
+
+    public function __toString()
+    {
+        return $this->getTitle();
+    }
+
+    public function getDoctor(): ?Doctor
+    {
+        return $this->doctor;
+    }
+
+    public function setDoctor(?Doctor $doctor): self
+    {
+        $this->doctor = $doctor;
 
         return $this;
     }

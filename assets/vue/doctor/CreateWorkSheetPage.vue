@@ -4,6 +4,7 @@
             <i class="fe fe-youtube"></i>Selectionnez des vidéos
         </h2>
         <List
+            :ref="'loading'"
             :items="videosArray"
             :config="listConfigVideo"
             @add-video="addVideoToExercisesSelected"
@@ -225,6 +226,7 @@ export default {
                 title: "",
                 description: "",
             },
+            loading: null,
             createWorksheetBox: false,
             exercisesSelected: [],
             listConfigVideo: {
@@ -298,9 +300,16 @@ export default {
             this.axios
                 .post(
                     `/kine/${this.doctor.id}/create/worksheet`,
-                    this.exercisesSelected
+                    JSON.stringify({
+                        title: this.worksheet.title,
+                        description: this.worksheet.description,
+                        exercises: this.exercisesSelected,
+                    })
                 )
-                .then((response) => console.log(response));
+                .then((response) => {
+                    document.location.href = `/kine/${this.doctor.id}/fiches`;
+                    console.log(response.data);
+                });
 
             // let btnCreateWorksheetFormWithData = this.createWorksheetForm
             //     .replace(
@@ -349,9 +358,24 @@ export default {
         this.createWorksheetForm = data.createWorksheetForm;
         this.doctor = data.doctor;
 
-        this.axios.get(`/videos`).then((response) => {
-            this.videos = response.data;
+        this.loading = this.$vs.loading({
+            target: this.$refs["loading"],
+            text: "chargement",
+            type: "border",
         });
+
+        this.axios
+            .get(`/videos`)
+            .then((response) => {
+                this.videos = response.data;
+                this.loading.close();
+                this.loading = null;
+            })
+            .catch((error) => {
+                console.log(error);
+                this.loading.close();
+                this.loading = null;
+            });
     },
 };
 </script>
@@ -363,6 +387,10 @@ $primary: #ffab2c;
     display: flex;
     justify-content: space-between;
     margin: 1em;
+    .vs-input-content {
+        margin: 0 0.5em;
+        flex: 1;
+    }
 }
 
 .btn-delete-exercise {
@@ -374,6 +402,7 @@ $primary: #ffab2c;
 }
 .accordion-body {
     padding: 0 1em;
+    font-size: 0.85em;
 }
 .position.vs-input {
     width: 40px;

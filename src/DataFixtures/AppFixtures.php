@@ -53,7 +53,7 @@ class AppFixtures extends Fixture
             $tagArray[] = $tag;
         };
 
-        for ($wi = 0; $wi < rand(8, 18); $wi++) {
+        for ($wi = 0; $wi < rand(50, 60); $wi++) {
             $worksheet = new Worksheet();
 
             $worksheet
@@ -110,6 +110,9 @@ class AppFixtures extends Fixture
                 ->setGender($gender[array_rand($gender)]);
             ;
 
+            for ($wii = 0; $wii < 5; $wii++) {
+                $kine->addWorksheet($worksheetArray[array_rand($worksheetArray)]);
+            }
 
             $manager->persist($kine);
 

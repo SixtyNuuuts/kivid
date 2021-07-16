@@ -3,7 +3,7 @@
         <AddWorksheet
             :doctor="doctor"
             :prescribedPatient="prescribedPatient"
-            :worksheets="doctorWorksheets"
+            :worksheets="doctorWorksheetsArray"
         />
         <vs-navbar v-if="!prescribedPatient" center-collapsed v-model="active">
             <vs-navbar-item :active="active == 'worksheet'" id="worksheet">
@@ -22,7 +22,8 @@
                     <List
                         :doctor="doctor"
                         :prescribedPatient="prescribedPatient"
-                        :items="doctorWorksheets"
+                        :items="doctorWorksheetsArray"
+                        :tagsFromAll="tagsFromAll"
                         :config="listConfigWorksheets"
                         :createItemForm="createPatientForm"
                         :btnAddItemForm="btnAddPrescriptionForm"
@@ -36,7 +37,8 @@
                     <List
                         :doctor="doctor"
                         :prescribedPatient="prescribedPatient"
-                        :items="doctorWorksheets"
+                        :items="doctorWorksheetsArray"
+                        :tagsFromAll="tagsFromAll"
                         :config="listConfigWorksheets"
                         :createItemForm="createPatientForm"
                         :btnAddItemForm="btnAddPrescriptionForm"
@@ -67,6 +69,9 @@ export default {
             active: "worksheet",
             btnAddPrescriptionForm: null,
             btnRemoveWorksheetForm: null,
+            doctorWorksheets: [],
+            loading: null,
+            tagsFromExercises: [],
             listConfigWorksheets: {
                 target: "worksheet",
                 searchPlaceholder: "Filtrer par titre",
@@ -186,21 +191,36 @@ export default {
         this.doctorPrescriptions = data.doctorPrescriptions;
         this.btnAddPrescriptionForm = data.btnAddPrescriptionForm;
         this.btnRemoveWorksheetForm = data.btnRemoveWorksheetForm;
+
+        this.loading = this.$vs.loading({
+            target: this.$refs["loading"],
+            text: "chargement",
+            type: "border",
+        });
+
+        this.axios
+            .get(`/kine/${this.doctor.id}/get/worksheets`)
+            .then((response) => {
+                this.doctorWorksheets = response.data;
+                this.tagsFromExercises = f.generationTagsFromExercises(
+                    this.doctorWorksheets
+                );
+
+                this.loading.close();
+                this.loading = null;
+            })
+            .catch((error) => {
+                console.log(error);
+                this.loading.close();
+                this.loading = null;
+            });
     },
     computed: {
-        doctorWorksheets() {
-            return this.doctorPrescriptions.reduce((r, prescription) => {
-                if (prescription.worksheet) {
-                    const worksheetIsAlreadyIncluded = r.filter(
-                        (w) => w.id === prescription.worksheet.id
-                    );
-
-                    if (!worksheetIsAlreadyIncluded.length) {
-                        r.push(prescription.worksheet);
-                    }
-                }
-                return r;
-            }, []);
+        tagsFromAll() {
+            return f.getTagsFromAll(this.tagsFromExercises);
+        },
+        doctorWorksheetsArray() {
+            return this.doctorWorksheets;
         },
     },
 };
