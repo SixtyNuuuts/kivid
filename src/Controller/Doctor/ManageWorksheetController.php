@@ -2,26 +2,27 @@
 
 namespace App\Controller\Doctor;
 
-use App\Entity\Doctor;
-use App\Entity\Exercise;
-use App\Entity\Prescription;
 use App\Entity\Video;
+use App\Entity\Doctor;
+use App\Entity\Patient;
+use App\Entity\Exercise;
 use App\Entity\Worksheet;
+use App\Entity\Prescription;
 use App\Form\CreatePatientFormType;
+use App\Repository\VideoRepository;
 use App\Form\CreateWorksheetFormType;
 use App\Repository\PatientRepository;
 use App\Repository\WorksheetRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\PrescriptionRepository;
-use App\Repository\VideoRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * @Route("/kine")
@@ -55,16 +56,10 @@ class ManageWorksheetController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/fiches/{prescriptionForPatientId}", name="app_doctor_worksheets", methods={"GET"})
+     * @Route("/{id}/fiches/{prescribedPatient}", name="app_doctor_worksheets", methods={"GET"})
      */
-    public function worksheetList(Doctor $doctor, int $prescriptionForPatientId = null): Response
+    public function worksheetList(Doctor $doctor, Patient $prescribedPatient = null): Response
     {
-        $prescribedPatient = null;
-
-        if ($prescriptionForPatientId) {
-            $prescribedPatient = $this->patientRepository->findOneById($prescriptionForPatientId);
-        }
-
         $doctorPrescriptions = $this->prescriptionRepository->findBy(['doctor' => $doctor]);
 
         $createPatientForm = $this->createForm(CreatePatientFormType::class);
@@ -165,9 +160,9 @@ class ManageWorksheetController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/create/worksheet", name="app_doctor_create_worksheet", methods={"GET", "POST"})
+     * @Route("/{id}/create/worksheet/{worksheetTemplate}/{prescribedPatient}", name="app_doctor_create_worksheet", methods={"GET", "POST"})
      */
-    public function createWorksheet(Request $request, Doctor $doctor): Response
+    public function createWorksheet(Request $request, Doctor $doctor, Worksheet $worksheetTemplate = null, Patient $prescribedPatient = null): Response
     {
         // $createWorksheetForm = $this->createForm(CreateWorksheetFormType::class);
 
@@ -197,8 +192,28 @@ class ManageWorksheetController extends AbstractController
 
             $this->em->persist($worksheet);
 
-            $this->em->flush();
+            if ($prescribedPatient) {
+                $prescription = new Prescription();
 
+                $prescription->setDoctor($doctor)
+                         ->setPatient($prescribedPatient)
+                         ->setWorksheet($worksheet)
+                ;
+                $this->em->persist($prescription);
+            }
+
+            $this->em->flush();
+            
+            if ($prescribedPatient) {
+                $gender = $prescribedPatient->getGender() ? ("male" === $prescribedPatient->getGender() ? 'M.' : 'Mme') : '';
+    
+                $this->addFlash(
+                    'success',
+                    "La Fiche <strong>{$worksheet->getTitle()}</strong> a bien été créée et prescrite à 
+                    <strong>{$gender} {$prescribedPatient->getFirstname()} {$prescribedPatient->getLastname()}</strong>."
+                );
+            }
+    
             $this->addFlash(
                 'success',
                 "La Fiche <strong>{$worksheet->getTitle()}</strong> a bien été créée."
@@ -217,6 +232,8 @@ class ManageWorksheetController extends AbstractController
 
         return $this->render('doctor/create_worksheet_page.html.twig', [
             'doctor' => $doctor,
+            'worksheetTemplate' => $worksheetTemplate,
+            'prescribedPatient' => $prescribedPatient,
             // 'createWorksheetForm' => $createWorksheetView,
         ]);
     }
@@ -247,16 +264,6 @@ class ManageWorksheetController extends AbstractController
 
         return $this->redirectToRoute('app_doctor_worksheets', ['id' => $doctor->getId()]);
     }
-
-    // public function getWorksheets(Doctor $doctor): JsonResponse
-    // {
-    //     return $this->json(
-    //         $this->worksheetRepository->findDoctorWorksheets($doctor),
-    //         200,
-    //         [],
-    //         ['groups' => 'worksheet_read']
-    //     );
-    // }
 
     /**
      * @Route("/{id}/get/worksheets", name="app_doctor_get_worksheets", methods={"GET"})

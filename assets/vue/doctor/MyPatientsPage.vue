@@ -1,6 +1,7 @@
 <template>
     <div data-app>
         <AddPatient
+            :doctor="doctor"
             :addPatient="addPatient"
             :patients="allPatientsExceptDoctor"
             :createPatientForm="createPatientForm"

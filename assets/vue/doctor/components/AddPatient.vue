@@ -5,6 +5,7 @@
         </vs-button>
         <vs-dialog v-model="boxActive">
             <Search
+                :doctor="doctor"
                 :items="patients"
                 :config="searchConfigPatients"
                 :btnAddItemForm="btnAddPatientForm"
@@ -24,6 +25,7 @@ export default {
         Search,
     },
     props: {
+        doctor: Object,
         addPatient: String,
         patients: Array,
         createPatientForm: String,

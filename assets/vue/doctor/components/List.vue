@@ -272,6 +272,7 @@
         </vs-table>
         <vs-dialog v-if="configArray.searchBoxConfig" v-model="searchBox">
             <Search
+                :doctor="doctor"
                 :items="searchBoxItems"
                 :config="configArray.searchBoxConfig"
                 :targetedItem="searchBoxItemSelected"
@@ -363,6 +364,7 @@ export default {
         Search,
     },
     props: {
+        doctor: Object,
         items: Array,
         config: Object,
         createItemForm: String,
@@ -459,7 +461,9 @@ export default {
             return f.generateAgeFromDateOfBirth(dateString);
         },
         prescriptionForPatient(fiche) {
-            console.log("prescription de la fiche " + fiche.title);
+            const idPatient = this.prescribedPatient.id;
+            const idWorksheet = fiche.id;
+            document.location.href = `/kine/${this.doctor.id}/create/worksheet/${idWorksheet}/${idPatient}`;
         },
         searchBoxToggle(item) {
             this.searchBoxItemSelected = item;

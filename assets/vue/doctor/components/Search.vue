@@ -18,7 +18,7 @@
                     {{ itemsFiltered.length }}
                     {{
                         "worksheet" === configArray.target ||
-                        "worksheet-prescribed-patient" === configArray.target
+                        "worksheet-template" === configArray.target
                             ? "fiche"
                             : configArray.target
                     }}
@@ -27,7 +27,7 @@
                     {{ itemsFiltered.length }}
                     {{
                         "worksheet" === configArray.target ||
-                        "worksheet-prescribed-patient" === configArray.target
+                        "worksheet-template" === configArray.target
                             ? "fiche" + "s"
                             : configArray.target + "s"
                     }}
@@ -188,9 +188,8 @@
                                                             btn.content.class
                                                         "
                                                         @click="
-                                                            addItem(
-                                                                item,
-                                                                btn.target
+                                                            addPrescription(
+                                                                item
                                                             )
                                                         "
                                                     >
@@ -425,12 +424,7 @@
                             </span>
                         </p>
                     </div>
-                    <div
-                        v-if="
-                            'worksheet-prescribed-patient' ===
-                            configArray.target
-                        "
-                    >
+                    <div v-if="'worksheet-template' === configArray.target">
                         <p>
                             <span>
                                 {{ addItemDetail.title }}
@@ -502,6 +496,7 @@ import f from "../../services/function";
 export default {
     name: "Search",
     props: {
+        doctor: Object,
         items: Array,
         config: Object,
         targetedItem: Object,
@@ -538,6 +533,18 @@ export default {
         },
         getAge(dateString) {
             return f.generateAgeFromDateOfBirth(dateString);
+        },
+        addPrescription(item) {
+            if ("patient" === this.configArray.target) {
+                const idPatient = item.id;
+                const idWorksheet = this.targetedItem.id;
+                document.location.href = `/kine/${this.doctor.id}/create/worksheet/${idWorksheet}/${idPatient}`;
+            }
+
+            if ("worksheet-template" === this.configArray.target) {
+                const idWorksheet = item.id;
+                document.location.href = `/kine/${this.doctor.id}/create/worksheet/${idWorksheet}`;
+            }
         },
         addItem(item, btnTarget) {
             this.addItemDetail = item;
@@ -681,7 +688,7 @@ input[type="search"] {
     box-shadow: 0px 4px 15px 0px rgba(51, 34, 9, 0.12);
     max-height: 15.5em;
     overflow: auto;
-    z-index: 500;
+    z-index: 1000;
     width: 100%;
     line-height: 1.3;
 }

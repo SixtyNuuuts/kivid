@@ -38,6 +38,7 @@
                     </a>
                 </div>
                 <Search
+                    :doctor="doctor"
                     v-if="'template' === createWorksheetChoice"
                     key="template"
                     :items="worksheets"
@@ -70,7 +71,7 @@ export default {
             searchConfigWorksheet: {
                 title: "Rechercher un modèle de fiche",
                 placeholder: "Titre de la fiche",
-                target: "worksheet-prescribed-patient",
+                target: "worksheet-template",
                 items: [
                     {
                         type: "worksheet",
@@ -84,7 +85,7 @@ export default {
                                 content: {
                                     class: "btn btn-primaki btn-xs lift lift-btn",
                                     icon: "fe fe-file-plus",
-                                    text: "Prescrire",
+                                    text: "Créer d'après cette fiche",
                                 },
                             },
                         ],

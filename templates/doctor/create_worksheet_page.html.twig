@@ -24,8 +24,11 @@
 {% endblock %}
 
 {% block vueData %}
-	{
-		"doctor": {{ doctor|serialize('json', {'groups': 'doctor_read'})|raw }}
+	{	
+		"doctor": {{ doctor|serialize('json', {'groups': 'doctor_read'})|raw }},
+		"prescribedPatient": {{ prescribedPatient|serialize('json', {'groups': 'patient_read'})|raw }},
+		"worksheetTemplate": {{ worksheetTemplate|serialize('json', {'groups': 'worksheet_read'})|raw }}
+
 		{# "createWorksheetForm": {{ createWorksheetForm|serialize('json')|raw }} #}
 	}
 {% endblock %}

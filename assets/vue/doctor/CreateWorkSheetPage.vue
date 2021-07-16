@@ -164,7 +164,10 @@
                             @click="createWorksheet()"
                         >
                             <i class="fe fe-file-plus me-2"></i>
-                            Créer la fiche
+                            <span v-if="prescribedPatient">
+                                Créer et Prescrire la fiche
+                            </span>
+                            <span v-else> Créer la fiche </span>
                         </vs-button>
                     </div>
                 </div>
@@ -177,7 +180,24 @@
                 <div class="action-item-icon">
                     <i class="fe fe-file-plus"></i>
                 </div>
-                <p>
+                <p v-if="prescribedPatient">
+                    <span>
+                        {{ worksheet.title }}
+                    </span>
+                    pour
+                    <span>
+                        {{
+                            prescribedPatient.gender
+                                ? "male" === prescribedPatient.gender
+                                    ? "M."
+                                    : "Mme"
+                                : ""
+                        }}
+                        {{ prescribedPatient.lastname }}
+                        {{ prescribedPatient.firstname }}
+                    </span>
+                </p>
+                <p v-else>
                     <span>
                         {{ worksheet.title }}
                     </span>
@@ -229,6 +249,8 @@ export default {
             loading: null,
             createWorksheetBox: false,
             exercisesSelected: [],
+            worksheetTemplate: null,
+            prescribedPatient: null,
             listConfigVideo: {
                 target: "video",
                 nbItemsPerPage: 10,
@@ -297,19 +319,37 @@ export default {
             return (this.createWorksheetBox = !this.createWorksheetBox);
         },
         validCreateWorksheet() {
-            this.axios
-                .post(
-                    `/kine/${this.doctor.id}/create/worksheet`,
-                    JSON.stringify({
-                        title: this.worksheet.title,
-                        description: this.worksheet.description,
-                        exercises: this.exercisesSelected,
+            if (this.prescribedPatient) {
+                this.axios
+                    .post(
+                        `/kine/${this.doctor.id}/create/worksheet/${this.worksheetTemplate.id}/${this.prescribedPatient.id}`,
+                        JSON.stringify({
+                            title: this.worksheet.title,
+                            description: this.worksheet.description,
+                            exercises: this.exercisesSelected,
+                        })
+                    )
+                    .then((response) => {
+                        document.location.href = `/kine/${this.doctor.id}/fiches`;
+                        console.log(response.data);
                     })
-                )
-                .then((response) => {
-                    document.location.href = `/kine/${this.doctor.id}/fiches`;
-                    console.log(response.data);
-                });
+                    .catch((error) => console.log(error));
+            } else {
+                this.axios
+                    .post(
+                        `/kine/${this.doctor.id}/create/worksheet/${this.worksheetTemplate.id}`,
+                        JSON.stringify({
+                            title: this.worksheet.title,
+                            description: this.worksheet.description,
+                            exercises: this.exercisesSelected,
+                        })
+                    )
+                    .then((response) => {
+                        document.location.href = `/kine/${this.doctor.id}/fiches`;
+                        console.log(response.data);
+                    })
+                    .catch((error) => console.log(error));
+            }
 
             // let btnCreateWorksheetFormWithData = this.createWorksheetForm
             //     .replace(
@@ -355,8 +395,19 @@ export default {
     created() {
         const data = JSON.parse(document.getElementById("vueData").innerHTML);
 
+        this.worksheetTemplate = data.worksheetTemplate;
         this.createWorksheetForm = data.createWorksheetForm;
         this.doctor = data.doctor;
+        this.prescribedPatient = data.prescribedPatient;
+
+        if (this.worksheetTemplate) {
+            this.worksheet = {
+                title: this.worksheetTemplate.title,
+                description: this.worksheetTemplate.description,
+            };
+
+            this.exercisesSelected = this.worksheetTemplate.exercises;
+        }
 
         this.loading = this.$vs.loading({
             target: this.$refs["loading"],
