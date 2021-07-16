@@ -229,7 +229,7 @@ export default {
             exercisesSelected: [],
             listConfigVideo: {
                 target: "video",
-                nbItemsPerPage: 5,
+                nbItemsPerPage: 10,
                 searchPlaceholder: "Filtrer par Nom",
                 items: [
                     {

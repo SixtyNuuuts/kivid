@@ -1,6 +1,9 @@
 <template>
     <div>
-        <vs-table :ref="'loading'">
+        <vs-table
+            :ref="'loading'"
+            :class="{ 'videos-lib': 'video' === configArray.target }"
+        >
             <template #header>
                 <div class="search-bloc">
                     <v-text-field
@@ -62,14 +65,16 @@
                         :key="i"
                         :sort="th.sort"
                         :class="{
-                            tags: 'exercises-tags' === th.type,
+                            tags:
+                                'exercises-tags' === th.type ||
+                                'video-tags' === th.type,
                             thumbnail: 'thumbnail' === th.type,
                         }"
                         @click="
                             th.sort
-                                ? (itemsArray = sortData(
+                                ? (itemsListArray = sortData(
                                       $event,
-                                      itemsArray,
+                                      itemsListArray,
                                       th.sortKey
                                   ))
                                 : false
@@ -83,7 +88,7 @@
                 <vs-tr
                     :key="i"
                     v-for="(item, i) in $vs.getPage(
-                        getSearch(itemsArray, search),
+                        getSearch(itemsListArray, search),
                         page,
                         max
                     )"
@@ -97,7 +102,7 @@
                         <div v-if="'thumbnail' === td.type">
                             <img
                                 :src="item.thumbnailUrl"
-                                width="50px"
+                                width="65%"
                                 alt="vignette de la vidéo"
                             />
                         </div>
@@ -151,7 +156,7 @@
                         <div v-if="'exercises-count' === td.type">
                             {{ item.exercises.length }}
                         </div>
-                        <div v-if="'video-tags' === td.type">
+                        <div v-if="'video-tags' === td.type" class="chips-list">
                             <div
                                 class="md-chip md-chip-raised"
                                 v-for="tag in item.tags"
@@ -249,7 +254,9 @@
             <template #footer>
                 <vs-pagination
                     v-model="page"
-                    :length="$vs.getLength(getSearch(itemsArray, search), max)"
+                    :length="
+                        $vs.getLength(getSearch(itemsListArray, search), max)
+                    "
                 />
             </template>
             <template #notFound>
@@ -381,17 +388,35 @@ export default {
             patients: null,
             removeItemBox: false,
             removeItemDetail: { worksheet: {}, patient: {} },
+            itemsList: this.items,
         };
     },
+    watch: {
+        itemsList(newitemsList, olditemsList) {},
+    },
     computed: {
-        itemsArray() {
-            if (this.items.length > 0 && this.loading) {
-                this.loading.close();
-            }
-            return this.items;
+        itemsListArray: {
+            get() {
+                if (this.items.length > 0 && this.loading) {
+                    this.loading.close();
+                    this.loading = null;
+                }
+
+                let il;
+                if (!this.itemsList.length) {
+                    il = this.items;
+                } else {
+                    il = this.itemsList;
+                }
+
+                return il;
+            },
+            set(newItemsList) {
+                this.itemsList = newItemsList;
+            },
         },
         getAllVideoTags() {
-            return f.getAllVideoTags(this.itemsArray);
+            return f.getAllVideoTags(this.itemsListArray);
         },
     },
     methods: {
@@ -512,7 +537,7 @@ export default {
 
         if ("worksheet" === this.configArray.target) {
             const tagsFromExercises = f.generationTagsFromExercises(
-                this.itemsArray
+                this.itemsListArray
             );
 
             this.tagsFromAll = f.getTagsFromAll(tagsFromExercises);
@@ -524,9 +549,74 @@ export default {
 <style lang="scss">
 $primary: #ffab2c;
 
-.vs-table-content.loading {
-    background-color: $primary;
-    &::after {
+.vs-table-content.videos-lib {
+    table {
+        display: block;
+        .vs-table__thead {
+            display: block;
+            .vs-table__tr {
+                display: flex;
+                padding: 0;
+                justify-content: space-between;
+                .vs-table__th {
+                    flex: 1 !important;
+
+                    &.thumbnail,
+                    &.tags {
+                        display: none;
+                    }
+                }
+            }
+        }
+        .vs-table__tbody {
+            display: flex;
+            flex-wrap: wrap;
+
+            .vs-table__tr {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                max-width: 20%;
+                justify-content: space-between;
+                padding: 1.5em 0;
+
+                .vs-table__td {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    width: 100%;
+                    text-align: center;
+                    line-height: 1.2;
+                    padding: 0.3em 0;
+
+                    div {
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+                        width: 100%;
+                    }
+
+                    .chips-list {
+                        display: flex;
+                        flex-direction: row;
+                        flex-wrap: wrap;
+
+                        .md-chip.md-chip-raised {
+                            font-size: 0.5em;
+                            width: initial;
+                        }
+                    }
+
+                    .btn-primaki {
+                        margin-top: 0.7em;
+                        font-size: 0.8em;
+                    }
+                }
+            }
+        }
     }
 }
 
