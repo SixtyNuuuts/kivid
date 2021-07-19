@@ -94,9 +94,9 @@
                         unverified: false === item.isVerified,
                         'video-selected':
                             $parent.$parent.$parent &&
-                            $parent.$parent.$parent.exercisesSelected.filter(
-                                (e) => item.id === e.video.id
-                            ).length,
+                            $parent.$parent.$parent.videosSelected.includes(
+                                item
+                            ),
                     }"
                 >
                     <vs-td
@@ -205,15 +205,15 @@
                                     <a
                                         v-if="
                                             $parent.$parent.$parent &&
-                                            !$parent.$parent.$parent.exercisesSelected.filter(
-                                                (e) => item.id === e.video.id
-                                            ).length
+                                            !$parent.$parent.$parent.videosSelected.includes(
+                                                item
+                                            )
                                         "
                                         :class="btn.content.class"
                                         @click="addVideo(item)"
                                     >
                                         <i :class="btn.content.icon"></i>
-                                        {{ btn.content.text }}
+                                        Sélectionner
                                     </a>
                                     <a
                                         v-else
@@ -221,7 +221,7 @@
                                         @click="removeVideo(item)"
                                     >
                                         <i class="fe fe-x"></i>
-                                        Retirer des vidéos
+                                        Retirer de la selection
                                     </a>
                                 </div>
                                 <div v-if="'searchItem' === btn.type">

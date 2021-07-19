@@ -1,5 +1,5 @@
 <template>
-    <div data-app>
+    <div>
         <AddPatient
             :doctor="doctor"
             :addPatient="addPatient"

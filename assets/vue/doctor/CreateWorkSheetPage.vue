@@ -1,5 +1,5 @@
 <template>
-    <div data-app>
+    <div>
         <vs-button @click="boxToggle" class="btn-segondaki top-absolute">
             <i class="fe fe-youtube"></i> Ajouter une vidéo
         </vs-button>
@@ -12,14 +12,14 @@
                 :ref="'loading'"
                 :items="videosArray"
                 :config="listConfigVideo"
-                @add-video="addVideoToExercisesSelected"
+                @add-video="addVideo"
                 @remove-video="removeVideo"
             />
             <vs-button
-                @click="boxToggle"
+                @click="validSelecVideo"
                 class="btn btn-segondaki valid-vid lift lift-btn"
             >
-                <i class="fe fe-youtube"></i> Valider
+                <i class="fe fe-youtube"></i> valider la sélection
             </vs-button>
         </v-dialog>
 
@@ -252,6 +252,7 @@ export default {
             },
             loading: null,
             createWorksheetBox: false,
+            videosSelected: [],
             exercisesSelected: [],
             worksheetTemplate: null,
             prescribedPatient: null,
@@ -373,25 +374,31 @@ export default {
                     .catch((error) => console.log(error));
             }
         },
-        addVideoToExercisesSelected(video) {
-            const exercise = {
-                position: 0,
-                numberOfRepetitions: null,
-                numberOfSeries: null,
-                option: null,
-                video: video,
-            };
-            this.exercisesSelected.push(exercise);
+        validSelecVideo() {
+            this.videosSelected.forEach((v) => {
+                const exercise = {
+                    position: 0,
+                    numberOfRepetitions: null,
+                    numberOfSeries: null,
+                    option: null,
+                    video: v,
+                };
+
+                if (
+                    !this.exercisesSelected.filter((e) => e.video.id === v.id)
+                        .length
+                ) {
+                    this.exercisesSelected.push(exercise);
+                }
+            });
+            this.videosSelected = [];
+            this.boxActive = !this.boxActive;
+        },
+        addVideo(video) {
+            this.videosSelected.push(video);
         },
         removeVideo(video) {
-            this.exercisesSelected.splice(
-                this.exercisesSelected.indexOf(
-                    this.exercisesSelected.filter(
-                        (e) => video.id === e.video.id
-                    )[0]
-                ),
-                1
-            );
+            this.videosSelected.splice(this.videosSelected.indexOf(video), 1);
         },
         removeExercise(exercise) {
             this.exercisesSelected.splice(

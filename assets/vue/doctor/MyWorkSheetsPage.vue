@@ -1,5 +1,5 @@
 <template>
-    <div data-app>
+    <div>
         <AddWorksheet
             :doctor="doctor"
             :prescribedPatient="prescribedPatient"
