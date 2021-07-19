@@ -90,7 +90,14 @@
                         page,
                         max
                     )"
-                    :class="{ unverified: false === item.isVerified }"
+                    :class="{
+                        unverified: false === item.isVerified,
+                        'video-selected':
+                            $parent.$parent.$parent &&
+                            $parent.$parent.$parent.exercisesSelected.filter(
+                                (e) => item.id === e.video.id
+                            ).length,
+                    }"
                 >
                     <vs-td
                         v-for="(td, i) in configArray.items"
@@ -98,11 +105,13 @@
                         :class="{ status: td.type === 'status' }"
                     >
                         <div v-if="'thumbnail' === td.type">
-                            <img
-                                :src="item.thumbnailUrl"
-                                width="65%"
-                                alt="vignette de la vidéo"
-                            />
+                            <a :href="item.url" target="_blank">
+                                <img
+                                    :src="item.thumbnailUrl"
+                                    width="65%"
+                                    alt="vignette de la vidéo"
+                                />
+                            </a>
                         </div>
                         <div v-if="'status' === td.type">
                             <div v-if="item.isVerified">
@@ -194,11 +203,25 @@
                                 </div>
                                 <div v-if="'addVideo' === btn.type">
                                     <a
+                                        v-if="
+                                            $parent.$parent.$parent &&
+                                            !$parent.$parent.$parent.exercisesSelected.filter(
+                                                (e) => item.id === e.video.id
+                                            ).length
+                                        "
                                         :class="btn.content.class"
                                         @click="addVideo(item)"
                                     >
                                         <i :class="btn.content.icon"></i>
                                         {{ btn.content.text }}
+                                    </a>
+                                    <a
+                                        v-else
+                                        :class="btn.content.class"
+                                        @click="removeVideo(item)"
+                                    >
+                                        <i class="fe fe-x"></i>
+                                        Retirer des vidéos
                                     </a>
                                 </div>
                                 <div v-if="'searchItem' === btn.type">
@@ -472,6 +495,9 @@ export default {
         addVideo(video) {
             this.$emit("add-video", video);
         },
+        removeVideo(video) {
+            this.$emit("remove-video", video);
+        },
         removeItem(item) {
             this.removeItemDetail = item;
 
@@ -534,6 +560,17 @@ export default {
 $primary: #ffab2c;
 
 .vs-table-content.videos-lib {
+    border-radius: 0;
+
+    .vs-table {
+        overflow: visible;
+    }
+    .vs-table__tr:hover .vs-table__td {
+        background: none;
+    }
+    .vs-table__header {
+        border-radius: 0;
+    }
     table {
         display: block;
         .vs-table__thead {
@@ -563,7 +600,7 @@ $primary: #ffab2c;
                 align-items: center;
                 max-width: 20%;
                 justify-content: space-between;
-                padding: 1.5em 0;
+                padding: 0.5em 0;
 
                 .vs-table__td {
                     display: flex;
@@ -704,6 +741,41 @@ $primary: #ffab2c;
     }
 }
 
+.video-selected {
+    background-color: #fffbda;
+    position: relative;
+
+    &::after {
+        z-index: 100;
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        content: "";
+        font-family: "Feather" !important;
+        font-style: normal;
+        font-weight: normal;
+        font-variant: normal;
+        text-transform: none;
+        line-height: 1;
+        -webkit-font-smoothing: antialiased;
+        background-color: #f9fbfd;
+        padding: 0.3em;
+        font-size: 1.1em;
+        border-radius: 50%;
+        color: $primary;
+        border: 2px solid $primary;
+        box-shadow: 0 0.3rem 0.5rem rgb(134 134 135 / 46%) !important;
+    }
+
+    .vs-button.btn-primaki,
+    .btn-primaki {
+        color: $primary;
+        background: white;
+        border-color: $primary !important;
+        border: 2px solid $primary;
+        box-shadow: 0 0.3rem 0.5rem rgb(134 134 135 / 46%) !important;
+    }
+}
 tr.unverified {
     position: relative;
 

@@ -1,20 +1,29 @@
 <template>
     <div data-app>
-        <h2 class="subtitle">
-            <i class="fe fe-youtube"></i>Selectionnez des vidéos
-        </h2>
-        <List
-            :ref="'loading'"
-            :items="videosArray"
-            :config="listConfigVideo"
-            @add-video="addVideoToExercisesSelected"
-        />
+        <vs-button @click="boxToggle" class="btn-segondaki top-absolute">
+            <i class="fe fe-youtube"></i> Ajouter une vidéo
+        </vs-button>
 
-        <h2 class="subtitle">
-            <i class="fe fe-file-text mt-2"></i>Configuration de la fiche
-        </h2>
+        <v-dialog v-model="boxActive" width="1000">
+            <h2 class="subtitle">
+                <i class="fe fe-youtube"></i>Selectionnez des vidéos
+            </h2>
+            <List
+                :ref="'loading'"
+                :items="videosArray"
+                :config="listConfigVideo"
+                @add-video="addVideoToExercisesSelected"
+                @remove-video="removeVideo"
+            />
+            <vs-button
+                @click="boxToggle"
+                class="btn btn-segondaki valid-vid lift lift-btn"
+            >
+                <i class="fe fe-youtube"></i> Valider
+            </vs-button>
+        </v-dialog>
 
-        <div class="vs-input-content">
+        <div class="vs-input-content new-worksheet-inputs">
             <input
                 v-model="worksheet.title"
                 type="text"
@@ -23,7 +32,7 @@
             />
         </div>
 
-        <div class="vs-input-content my-3">
+        <div class="vs-input-content my-3 new-worksheet-inputs">
             <textarea
                 v-model="worksheet.description"
                 class="vs-input vs-input--has-icon form-control"
@@ -54,13 +63,7 @@
                             <i class="fe fe-trash-2"></i>
                         </vs-button>
 
-                        <div
-                            class="accordion-button"
-                            role="button"
-                            data-bs-toggle="collapse"
-                            :data-bs-target="`#exercise${i}`"
-                            aria-expanded="true"
-                        >
+                        <div class="accordion-button">
                             <input
                                 v-model="exercise.position"
                                 type="text"
@@ -70,14 +73,15 @@
                                     position
                                 "
                             />
+                            <a :href="exercise.video.url" target="_blank">
+                                <img
+                                    :src="exercise.video.thumbnailUrl"
+                                    width="80px"
+                                    alt="vignette de la vidéo"
+                                />
+                            </a>
 
-                            <img
-                                :src="exercise.video.thumbnailUrl"
-                                width="80px"
-                                alt="vignette de la vidéo"
-                            />
-
-                            <span class="m-4" id="ExerciseHeading">
+                            <span class="m-4">
                                 {{ exercise.video.name }}
                             </span>
 
@@ -94,18 +98,13 @@
                             </div>
                         </div>
 
-                        <div
-                            class="accordion-collapse collapse show"
-                            :id="`exercise${i}`"
-                            aria-labelledby="ExerciseHeading"
-                            data-bs-parent="#ExerciseAccordion"
-                            style=""
-                        >
+                        <div class="accordion-collapse">
                             <div class="accordion-body">
                                 <!-- Text -->
-                                <p class="text-gray-700">
-                                    {{ exercise.video.description }}
-                                </p>
+                                <p
+                                    class="text-gray-700"
+                                    v-html="exercise.video.description"
+                                ></p>
                             </div>
                             <div class="line exercise">
                                 <div class="vs-input-content">
@@ -171,6 +170,10 @@
                         </vs-button>
                     </div>
                 </div>
+            </div>
+            <div v-else class="no-videos">
+                <i class="fe fe-youtube"></i> Cette fiche ne contient pas de
+                vidéo.
             </div>
         </transition>
         <vs-dialog class="action-item-box" v-model="createWorksheetBox">
@@ -238,6 +241,7 @@ export default {
     },
     data() {
         return {
+            boxActive: false,
             positionIncr: 0,
             videos: [],
             doctor: null,
@@ -313,6 +317,9 @@ export default {
         },
     },
     methods: {
+        boxToggle() {
+            this.boxActive = !this.boxActive;
+        },
         createWorksheet() {
             f.setLoaderToBtnValidationForm();
 
@@ -334,7 +341,7 @@ export default {
                         console.log(response.data);
                     })
                     .catch((error) => console.log(error));
-            } else {
+            } else if (this.worksheetTemplate) {
                 this.axios
                     .post(
                         `/kine/${this.doctor.id}/create/worksheet/${this.worksheetTemplate.id}`,
@@ -349,41 +356,42 @@ export default {
                         console.log(response.data);
                     })
                     .catch((error) => console.log(error));
+            } else {
+                this.axios
+                    .post(
+                        `/kine/${this.doctor.id}/create/worksheet`,
+                        JSON.stringify({
+                            title: this.worksheet.title,
+                            description: this.worksheet.description,
+                            exercises: this.exercisesSelected,
+                        })
+                    )
+                    .then((response) => {
+                        document.location.href = `/kine/${this.doctor.id}/fiches`;
+                        console.log(response.data);
+                    })
+                    .catch((error) => console.log(error));
             }
-
-            // let btnCreateWorksheetFormWithData = this.createWorksheetForm
-            //     .replace(
-            //         `id="create_worksheet_form_title"`,
-            //         `id="create_worksheet_form_title" value="${this.worksheet.title}"`
-            //     )
-            //     .replace(
-            //         `id="create_worksheet_form_description"`,
-            //         `id="create_worksheet_form_description" value="${this.worksheet.description}"`
-            //     )
-            //     .replace(
-            //         `id="create_worksheet_form_exercises"`,
-            //         `id="create_worksheet_form_exercises" value="${JSON.stringify(
-            //             {
-            //                 worksheet: {
-            //                     title: "",
-            //                     description: "",
-            //                 },
-            //             }
-            //         )}"`
-            //     );
-
-            // return btnCreateWorksheetFormWithData;
         },
-
         addVideoToExercisesSelected(video) {
             const exercise = {
-                position: this.positionIncr++,
+                position: 0,
                 numberOfRepetitions: null,
                 numberOfSeries: null,
                 option: null,
                 video: video,
             };
             this.exercisesSelected.push(exercise);
+        },
+        removeVideo(video) {
+            this.exercisesSelected.splice(
+                this.exercisesSelected.indexOf(
+                    this.exercisesSelected.filter(
+                        (e) => video.id === e.video.id
+                    )[0]
+                ),
+                1
+            );
         },
         removeExercise(exercise) {
             this.exercisesSelected.splice(
@@ -406,7 +414,15 @@ export default {
                 description: this.worksheetTemplate.description,
             };
 
-            this.exercisesSelected = this.worksheetTemplate.exercises;
+            const newWorksheetTemplateExercises =
+                this.worksheetTemplate.exercises.map((exercise, i) => {
+                    return {
+                        ...exercise,
+                        position: this.worksheetTemplate.exercises.length - i,
+                    };
+                });
+
+            this.exercisesSelected = newWorksheetTemplateExercises;
         }
 
         this.loading = this.$vs.loading({
@@ -433,6 +449,41 @@ export default {
 
 <style lang="scss">
 $primary: #ffab2c;
+.new-worksheet-inputs {
+    input,
+    textarea,
+    input:focus,
+    textarea:focus {
+        padding-left: 1em !important;
+    }
+}
+
+.no-videos {
+    text-align: center;
+    background-color: #ffffff;
+    padding: 2em;
+    border: 1px solid #d9e2ef;
+    border-radius: 0.5em;
+    color: #a0b3d0;
+}
+
+.v-overlay {
+}
+
+.valid-vid {
+    width: 40%;
+    margin: 1em auto;
+    padding: 0.2em 0 !important;
+}
+
+.v-dialog.v-dialog--active {
+    background-color: white;
+    border-radius: 1.3em;
+    overflow: visible;
+    h2.subtitle {
+        text-align: center;
+    }
+}
 
 .line.exercise {
     display: flex;
@@ -447,7 +498,7 @@ $primary: #ffab2c;
 .btn-delete-exercise {
     background-color: $primary;
     position: absolute;
-    z-index: 1000;
+    z-index: 10;
     top: 0;
     right: 0;
 }
@@ -456,7 +507,7 @@ $primary: #ffab2c;
     font-size: 0.85em;
 }
 .position.vs-input {
-    width: 40px;
+    width: 50px;
     padding-left: 10px;
     border-radius: 5px !important;
     margin-right: 10px;
@@ -484,6 +535,9 @@ h4.sub-subtitle {
         display: flex !important;
         flex-direction: column;
         font-size: 0.85em !important;
+    }
+    p {
+        margin: 1em;
     }
 }
 
