@@ -1,9 +1,0 @@
-<form method="post" action="{{ path(actionRoute, {'id': doctor.id}) }}">
-	<input type="hidden" name="_token" value="{{ csrf_token(tokenName ~ doctor.id) }}">
-    <input type="hidden" name="_id" value="">
-	<button class="valid-form-btn vs-button vs-button--null vs-button--size-null {{ classBtnColor }} vs-button--transparent">
-		<div class="vs-button__content">
-			Confirmer
-		</div>
-	</button>
-</form>

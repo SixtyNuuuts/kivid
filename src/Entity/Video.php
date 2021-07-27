@@ -61,6 +61,12 @@ class Video
      */
     private $createdAt;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"worksheet_read", "video_read"})
+     */
+    private $youtubeId;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -183,6 +189,18 @@ class Video
     public function setCreatedAt(\DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getYoutubeId(): ?string
+    {
+        return $this->youtubeId;
+    }
+
+    public function setYoutubeId(?string $youtubeId): self
+    {
+        $this->youtubeId = $youtubeId;
 
         return $this;
     }

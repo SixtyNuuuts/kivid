@@ -17,9 +17,9 @@ class VideoController extends AbstractController
     }
 
     /**
-     * @Route("/videos", name="app_video_get_all", methods={"GET"})
+     * @Route("/get/videos", name="app_get_videos", methods={"GET"})
      */
-    public function getAll(): JsonResponse
+    public function getVideos(): JsonResponse
     {
         return $this->json($this->videoRepository->findAll(), 200, [], ['groups' => 'video_read']);
     }

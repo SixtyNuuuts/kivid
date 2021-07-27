@@ -15,40 +15,39 @@ class Prescription
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"worksheet_read"})
+     * @Groups({"prescription_read"})
      */
     private $id;
 
     /**
      * @ORM\ManyToOne(targetEntity=Patient::class, inversedBy="prescriptions")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"worksheet_read"})
+     * @Groups({"prescription_read"})
      */
     private $patient;
 
     /**
      * @ORM\ManyToOne(targetEntity=Doctor::class, inversedBy="prescriptions")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"worksheet_read"})
      */
     private $doctor;
 
     /**
      * @ORM\ManyToOne(targetEntity=Worksheet::class, inversedBy="prescriptions")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"worksheet_read"})
+     * @Groups({"prescription_read"})
      */
     private $worksheet;
 
     /**
      * @ORM\Column(type="datetime_immutable")
-     * @Groups({"worksheet_read"})
+     * @Groups({"prescription_read"})
      */
     private $createdAt;
 
     /**
      * @ORM\Column(type="integer")
-     * @Groups({"worksheet_read"})
+     * @Groups({"prescription_read"})
      */
     private $progression;
 

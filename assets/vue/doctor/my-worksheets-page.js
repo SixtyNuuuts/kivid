@@ -8,11 +8,6 @@ Vue.use(VueAxios, axios)
 
 // Vuesax (UX lib)
 import Vuesax from 'vuesax'
-import './vuesax/custom_variables.css'
-import 'vuesax/dist/vuesax.css'
-
-// Vuetify (UX lib)
-import vuetify from '../plugins/vuetify.js' // path to vuetify export
 
 Vue.use(Vuesax, {
     colors: {
@@ -25,6 +20,5 @@ Vue.use(Vuesax, {
 })
 
 new Vue({
-    vuetify,
     render: h => h(MyWorkSheetsPage)
 }).$mount('#vue')

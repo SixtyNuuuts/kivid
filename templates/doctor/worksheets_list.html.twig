@@ -6,17 +6,17 @@
 {% block stylesheets %}
 	{{ parent() }}
 
-	{{ encore_entry_link_tags('create-worksheet-page') }}
+	{{ encore_entry_link_tags('my-worksheets-page') }}
 {% endblock %}
 
 {% block javascripts %}
 	{{ parent() }}
 
-	{{ encore_entry_script_tags('create-worksheet-page') }}
+	{{ encore_entry_script_tags('my-worksheets-page') }}
 {% endblock %}
 
 {% block body %}
-	<div class="container create-worksheet my-8">
+	<div class="container my-8">
 		{% if patientForPrescription %}
 			<h1 class="prescription">
 				<div class="avatar avatar-md me-3">
@@ -24,7 +24,7 @@
 				</div>
 				<div>
 					<span class="badge rounded-pill bg-dark-soft h6 text-uppercase prescri-for">
-						Création de la fiche pour
+						Prescription pour
 					</span>
 					<div class="prescri-name">
 					{{
@@ -39,24 +39,22 @@
 					</div>
 				</div>
 			</h1>
-		{% elseif action == 'creation'%}
-			<h1 class="long"><i class="fe fe-file-plus"></i>Création d'un modèle de fiche</h1>
-		{% elseif action == 'modification' %}
-			<h1 class="long"><i class="fe fe-file-plus"></i>Modification d'un modèle de fiche</h1>
+		{% else %}
+			<h1>
+				<i class="fe fe-file-text"></i>Mes Fiches</h1>
 		{% endif %}
 
 		<div id="vue"></div>
 	</div>
 {% endblock %}
-
 {% block vueData %}
-	{	
+	{
 		"doctor": {{ doctor|serialize('json', {'groups': 'doctor_read'})|raw }},
-		"action": {{ action|serialize('json')|raw }},
+		"list": {{ list|serialize('json')|raw }},
 		"patientForPrescription": {{ patientForPrescription|serialize('json', {'groups': 'patient_read'})|raw }},
-		"worksheetTemplate": {{ worksheetTemplate|serialize('json', {'groups': 'worksheet_read'})|raw }},
-		"csrfTokenCreateWorksheet": {{ csrf_token('create_worksheet' ~ doctor.id)|serialize('json')|raw }},
-		"csrfTokenEditWorksheetTemplate": {{ csrf_token('edit_worksheet_template' ~ doctor.id)|serialize('json')|raw }},
+		"csrfTokenRemovePrescription": {{ csrf_token('remove_prescription' ~ doctor.id)|serialize('json')|raw }},
+		"csrfTokenRemoveWorksheetTemplate": {{ csrf_token('remove_worksheet_template' ~ doctor.id)|serialize('json')|raw }},
+		"csrfTokenCreatePatient": {{ csrf_token('create_patient' ~ doctor.id)|serialize('json')|raw }},
 		"csrfTokenCreatePrescription": {{ csrf_token('create_prescription' ~ doctor.id)|serialize('json')|raw }}
 	}
 {% endblock %}

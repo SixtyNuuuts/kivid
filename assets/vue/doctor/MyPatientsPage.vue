@@ -1,137 +1,69 @@
 <template>
-    <div>
-        <AddPatient
+    <div id="vue">
+        <PatientsList
             :doctor="doctor"
-            :addPatient="addPatient"
-            :patients="allPatientsExceptDoctor"
-            :createPatientForm="createPatientForm"
-            :btnAddPatientForm="btnAddPatientForm"
-        />
-        <List
-            :items="doctorPatients"
-            :config="listConfigPatients"
-            :btnAddItemForm="btnAddPrescriptionForm"
-            :btnRemoveItemForm="btnRemovePatientForm"
-            :doctor="doctor"
+            :trigerAddPatient="trigerAddPatient"
+            :doctorPatients="doctorPatients"
+            :csrfTokenAddPatient="csrfTokenAddPatient"
+            :csrfTokenRemovePatient="csrfTokenRemovePatient"
+            :csrfTokenCreatePatient="csrfTokenCreatePatient"
         />
     </div>
 </template>
 
 <script>
-import AddPatient from "./components/AddPatient.vue";
-import List from "./components/List.vue";
+import PatientsList from "./components/PatientsList.vue";
 
 export default {
     name: "MyPatientsPage",
     components: {
-        AddPatient,
-        List,
+        PatientsList,
     },
     data() {
         return {
-            addPatient: null,
-            doctor: null,
-            createPatientForm: null,
-            btnAddPrescriptionForm: null,
-            btnAddPatientForm: null,
-            btnRemovePatientForm: null,
-            allPatients: null,
-            listConfigPatients: {
-                target: "user",
-                searchPlaceholder: "Filtrer par le nom et/ou prénom",
-                items: [
-                    {
-                        title: "Statut",
-                        type: "status",
-                        sort: true,
-                        sortKey: "isVerified",
-                    },
-                    {
-                        title: "Nom",
-                        type: "user",
-                        sort: true,
-                        sortKey: "lastname",
-                    },
-                    {
-                        title: "Email",
-                        type: "email",
-                        sort: true,
-                        sortKey: "email",
-                    },
-                    {
-                        title: "Age",
-                        type: "birthdate",
-                        sort: true,
-                        sortKey: "birthdate",
-                    },
-                    {
-                        title: null,
-                        type: "actions",
-                        sort: false,
-                        sortKey: null,
-                        buttons: [
-                            {
-                                type: "a",
-                                target: "prescription",
-                                content: {
-                                    class: "btn btn-primaki btn-xs lift lift-btn",
-                                    icon: "fe fe-file-plus",
-                                    text: "Prescrire une fiche",
-                                },
-                            },
-                            {
-                                type: "removeItem",
-                                content: {
-                                    icon: "fe fe-user-minus",
-                                    tooltip: "Retirer de mes patients",
-                                },
-                            },
-                        ],
-                    },
-                ],
-                notFound: {
-                    search: {
-                        icon: "fe fe-user-minus",
-                        message: "Aucun patient n'a été trouvé avec ",
-                    },
-                    noData: {
-                        icon: "fe fe-user-minus",
-                        message: "Vous n'avez aucun patient",
-                    },
-                },
+            playerVars: {
+                rel: 0,
+                showinfo: 0,
+                ecver: 2,
+                modestbranding: 1,
             },
+            trigerAddPatient: false,
+            loadingDoctorPatientsList: null,
+            doctor: null,
+            doctorPatients: [],
+            csrfTokenAddPatient: null,
+            csrfTokenRemovePatient: null,
+            csrfTokenCreatePatient: null,
         };
     },
     created() {
         const data = JSON.parse(document.getElementById("vueData").innerHTML);
 
-        this.addPatient = data.addPatient;
         this.doctor = data.doctor;
-        this.createPatientForm = data.createPatientForm;
-        this.btnAddPrescriptionForm = data.btnAddPrescriptionForm;
-        this.btnAddPatientForm = data.btnAddPatientForm;
-        this.btnRemovePatientForm = data.btnRemovePatientForm;
-        this.allPatients = data.allPatients;
-    },
-    computed: {
-        doctorPatients() {
-            return this.allPatients.filter((patient) => {
-                if (patient.doctor) {
-                    return this.doctor.id === patient.doctor.id;
-                }
+        this.trigerAddPatient =
+            data.triger === "triger-add-patient" ? true : false;
+        this.csrfTokenAddPatient = data.csrfTokenAddPatient;
+        this.csrfTokenRemovePatient = data.csrfTokenRemovePatient;
+        this.csrfTokenCreatePatient = data.csrfTokenCreatePatient;
+
+        this.loadingDoctorPatientsList = this.$vs.loading({
+            text: "chargement",
+            type: "border",
+        });
+
+        this.axios
+            .get(`/kine/${this.doctor.id}/get/patients`)
+            .then((response) => {
+                this.doctorPatients = response.data;
+
+                this.loadingDoctorPatientsList.close();
+                this.loadingDoctorPatientsList = null;
+            })
+            .catch((error) => {
+                console.log(error);
+                this.loadingDoctorPatientsList.close();
+                this.loadingDoctorPatientsList = null;
             });
-        },
-        allPatientsExceptDoctor() {
-            return this.allPatients.filter((patient) => {
-                return (
-                    !patient.doctor ||
-                    (patient.doctor ? this.doctor.id !== patient.doctor.id : "")
-                );
-            });
-        },
     },
 };
 </script>
-
-<style lang="scss">
-</style>

@@ -27,7 +27,7 @@ class AppFixtures extends Fixture
     {
         $faker = Faker\Factory::create('fr_FR');
 
-        $worksheetArray = [];
+        $worksheetTemplateArray = [];
 
         $tagArray = [];
 
@@ -39,6 +39,22 @@ class AppFixtures extends Fixture
             'Récupération',
             'Rééducation',
             'Réhabilitation',
+        ];
+
+        $partOfBody = [
+            'Genou',
+            'Cheville',
+            'Hanche',
+            'Epaule',
+            'Dos',
+        ];
+
+        $videosId = [
+            '5ijJ0ofOrE4',
+            'UaU62T7v7Bk',
+            'vHUOZ5Ee_ak',
+            'dm_Ec0egqJY',
+            'FQ8ynzO8S7M',
         ];
 
         $gender = [
@@ -53,30 +69,47 @@ class AppFixtures extends Fixture
             $tagArray[] = $tag;
         };
 
-        for ($wi = 0; $wi < rand(50, 60); $wi++) {
-            $worksheet = new Worksheet();
+        $worksheetTempleateCreator = new Doctor();
 
-            $worksheet
+        $worksheetTempleateCreator->setEmail("kine-creator@mail.com")
+            ->setPassword($this->passwordHasher->hashPassword($worksheetTempleateCreator, 'password'))
+            ->setFirstname($faker->firstName)
+            ->setLastname($faker->lastName)
+            ->setGender($gender[array_rand($gender)]);
+        ;
+
+        $manager->persist($worksheetTempleateCreator);
+
+        for ($wi = 0; $wi < rand(130, 150); $wi++) {
+            $worksheetTemplate = new Worksheet();
+
+            $worksheetTemplate
                 ->setTitle($faker->sentence(4))
                 ->setDescription($faker->text())
                 ->setCreatedAt(\DateTimeImmutable::createFromMutable($faker->dateTimeBetween()))
+                ->setDoctor($worksheetTempleateCreator)
+                ->setPartOfBody($partOfBody[array_rand($partOfBody)])
+                ->setIsTemplate(true)
             ;
 
             $randomTags = array_rand($tagArray, rand(2, 3));
 
-            for ($ei = 0; $ei < rand(8, 15); $ei++) {
+            for ($ei = 0; $ei < rand(5, 8); $ei++) {
                 $exercise = new Exercise();
 
                 $exercise->setNumberOfRepetitions(rand(8, 15))
                          ->setNumberOfSeries(rand(3, 6))
+                         ->setPosition($ei)
                 ;
 
                 $video = new Video();
+                $videoId = $videosId[array_rand($videosId)];
 
                 $video->setName($faker->sentence(3))
                     ->setDescription($faker->text())
-                    ->setUrl($faker->imageUrl(640, 480, 'animals', true))
-                    ->setThumbnailUrl($faker->imageUrl(640, 480, 'animals', true))
+                    ->setUrl("https://www.youtube.com/watch?v={$videoId}")
+                    ->setYoutubeId($videoId)
+                    ->setThumbnailUrl("https://img.youtube.com/vi/{$videoId}/mqdefault.jpg")
                 ;
 
                 foreach ($randomTags as $randomTagId) {
@@ -88,12 +121,12 @@ class AppFixtures extends Fixture
                 $manager->persist($video);
                 $manager->persist($exercise);
 
-                $worksheet->addExercise($exercise);
+                $worksheetTemplate->addExercise($exercise);
             }
 
-            $worksheetArray[] = $worksheet;
+            $worksheetTemplateArray[] = $worksheetTemplate;
 
-            $manager->persist($worksheet);
+            $manager->persist($worksheetTemplate);
         }
 
         for ($ki = 0; $ki < rand(4, 8); $ki++) {
@@ -111,7 +144,7 @@ class AppFixtures extends Fixture
             ;
 
             for ($wii = 0; $wii < 5; $wii++) {
-                $kine->addWorksheet($worksheetArray[array_rand($worksheetArray)]);
+                $kine->addWorksheet($worksheetTemplateArray[array_rand($worksheetTemplateArray)]);
             }
 
             $manager->persist($kine);
@@ -132,10 +165,10 @@ class AppFixtures extends Fixture
 
                 $prescription = new Prescription();
                 $prescription->setPatient($patient)
-                             ->setDoctor($kine)
-                             ->setWorksheet($worksheetArray[array_rand($worksheetArray)])
-                             ->setProgression(rand(5, 100))
-                             ->setCreatedAt(\DateTimeImmutable::createFromMutable($faker->dateTimeBetween()))
+                    ->setDoctor($kine)
+                    ->setWorksheet($worksheetTemplateArray[array_rand($worksheetTemplateArray)]->setIsTemplate(false))
+                    ->setProgression(rand(5, 100))
+                    ->setCreatedAt(\DateTimeImmutable::createFromMutable($faker->dateTimeBetween()))
                 ;
 
                 $patient->addPrescription($prescription);

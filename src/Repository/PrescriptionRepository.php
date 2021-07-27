@@ -19,20 +19,4 @@ class PrescriptionRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Prescription::class);
     }
-
-    // /**
-    //  * @return Prescription[]
-    //  */
-    // public function findAllByDoctor(Doctor $doctor): array
-    // {
-    //     if (null === $doctor) {
-    //         return null;
-    //     }
-
-    //     return $this->getEntityManager()->createQueryBuilder()
-    //         ->addSelect('p.patient', 'p.worksheet')
-    //         ->from('App\Entity\Prescription', 'p')
-    //         ->getQuery()
-    //         ->getResult();
-    // }
 }

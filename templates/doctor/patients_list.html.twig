@@ -24,12 +24,10 @@
 
 {% block vueData %}
 	{
-		"addPatient": {{ addPatient|serialize('json')|raw }},
 		"doctor": {{ doctor|serialize('json', {'groups': 'doctor_read'})|raw }},
-		"btnAddPrescriptionForm": {{ btnAddPrescriptionForm|serialize('json')|raw }},
-		"createPatientForm": {{ createPatientForm|serialize('json')|raw }},
-		"btnAddPatientForm": {{ btnAddPatientForm|serialize('json')|raw }},
-		"btnRemovePatientForm": {{ btnRemovePatientForm|serialize('json')|raw }},
-		"allPatients": {{ allPatients|serialize('json', {'groups': 'patient_read'})|raw }}
+		"triger": {{ triger|serialize('json')|raw }},
+		"csrfTokenAddPatient": {{ csrf_token('add_patient' ~ doctor.id)|serialize('json')|raw }},
+		"csrfTokenRemovePatient": {{ csrf_token('remove_patient' ~ doctor.id)|serialize('json')|raw }},
+		"csrfTokenCreatePatient": {{ csrf_token('create_patient' ~ doctor.id)|serialize('json')|raw }}
 	}
 {% endblock %}

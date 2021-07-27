@@ -1,27 +1,6 @@
 export default {
 
-  setLoaderToBtnValidationForm() {
-    setTimeout(() => {
-      const btnsValidForm =
-        document.querySelectorAll(".valid-form-btn");
-      btnsValidForm.forEach((btn) => {
-        btn.addEventListener("click", () => {
-          const loadingDiv = document.createElement("div");
-
-          loadingDiv.classList.add("vs-button__loading");
-
-          btn.appendChild(loadingDiv);
-
-          setTimeout(() => {
-            btn.removeChild(loadingDiv);
-          }, 3000);
-        });
-      });
-    }, 500);
-
-  },
-
-  getAllVideoTags(videos) {
+  getTagsFromAllVideos(videos) {
     return videos.reduce((r, video) => {
       video.tags.forEach((tag) => {
         if (!r.includes(tag.name)) {
@@ -32,8 +11,19 @@ export default {
     }, []);
   },
 
-  generationTagsFromExercises(doctorWorksheets) {
-    return doctorWorksheets.map((worksheet) => {
+  getTagsFromAll(tagsFromExercises) {
+    return tagsFromExercises.reduce((r, exercise) => {
+      exercise.forEach((tag) => {
+        if (!r.includes(tag)) {
+          r.push(tag);
+        }
+      });
+      return r;
+    }, []);
+  },
+
+  generateTagsFromExercises(worksheets) {
+    return worksheets.map((worksheet) => {
       return (worksheet.exercisesTags = worksheet.exercises.reduce(
         (r, exercise) => {
           exercise.video.tags.forEach((tag) => {
@@ -46,17 +36,6 @@ export default {
         []
       ));
     });
-  },
-
-  getTagsFromAll(exercisesTags) {
-    return exercisesTags.reduce((r, exercise) => {
-      exercise.forEach((tag) => {
-        if (!r.includes(tag)) {
-          r.push(tag);
-        }
-      });
-      return r;
-    }, []);
   },
 
   formatDate(datetime) {
@@ -78,6 +57,52 @@ export default {
     return age;
   },
 
+  sortedByPosition(array) {
+    array.sort(function (a, b) {
+      return a.position - b.position
+    })
+    return array
+  },
+
+  // Vuesax functions
+
+  getPage(data, page, maxItems) {
+    if (maxItems === void 0) {
+      maxItems = 5;
+    }
+
+    var max = Math.ceil(page * maxItems);
+    var min = max - maxItems;
+    var items = [];
+    data.forEach(function (item, index) {
+      if (index >= min && index < max) {
+        items.push(item);
+      }
+    });
+    return items;
+  },
+
+  getLength(data, maxItems) {
+    if (maxItems === void 0) {
+      maxItems = 5;
+    }
+
+    var length = Math.ceil(data.length / maxItems);
+    return length;
+  },
+
+  checkAll(selected, data) {
+    if (selected.length !== data.length) {
+      selected = [];
+      data.forEach(function (item) {
+        selected.push(item);
+      });
+      return selected;
+    } else {
+      return [];
+    }
+  },
+
   getSearch(data, search) {
     if (search === void 0) {
       search = '';
@@ -90,7 +115,7 @@ export default {
     }
 
     function getValues(obj) {
-      const searchFields = ["title", "firstname", "lastname", "name"]
+      const searchFields = ["firstname", "lastname", "email", "title", "name", "worksheet", "patient", "doctor"]
 
       const objFilteredBySearchField = Object.keys(obj).reduce((r, key) => {
         if (searchFields.includes(key)) {
@@ -123,13 +148,6 @@ export default {
     });
   },
 
-  sortedByPosition(array) {
-    array.sort(function (a, b) {
-      return a.position - b.position
-    })
-    return array
-  },
-
   sortData(evt, data, sortKey) {
     data = [].concat(data).sort(returnOriginalIndex);
     let sortType = 'desc';
@@ -160,10 +178,23 @@ export default {
     });
 
     function compare(a, b) {
-      const sortKeySplit = sortKey.split('.');
+      let sortKeyA = sortKey;
+      let sortKeyB = sortKey;
+      let sortKeySplitA = sortKey.split('.');
+      let sortKeySplitB = sortKey.split('.');
 
-      let valueA = sortKeySplit.length === 2 ? a[sortKeySplit[0]][sortKeySplit[1]] : a[sortKey];
-      let valueB = sortKeySplit.length === 2 ? b[sortKeySplit[0]][sortKeySplit[1]] : b[sortKey];
+      if (sortKeySplitA.length === 2 && a[sortKeySplitA[0]] === null) {
+        sortKeySplitA = [sortKeySplitA[0]];
+        sortKeyA = sortKeySplitA[0];
+      }
+
+      if (sortKeySplitB.length === 2 && b[sortKeySplitB[0]] === null) {
+        sortKeySplitB = [sortKeySplitB[0]];
+        sortKeyB = sortKeySplitB[0];
+      }
+
+      let valueA = sortKeySplitA.length === 2 ? a[sortKeySplitA[0]][sortKeySplitA[1]] : a[sortKeyA];
+      let valueB = sortKeySplitB.length === 2 ? b[sortKeySplitB[0]][sortKeySplitB[1]] : b[sortKeyB];
 
       if ('exercises' === sortKey) {
         valueA = valueA.length;

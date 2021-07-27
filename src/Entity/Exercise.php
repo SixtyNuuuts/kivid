@@ -57,6 +57,7 @@ class Exercise
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"worksheet_read"})
      */
     private $position;
 

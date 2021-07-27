@@ -8,9 +8,7 @@ use App\Entity\Patient;
 use App\Entity\Exercise;
 use App\Entity\Worksheet;
 use App\Entity\Prescription;
-use App\Form\CreatePatientFormType;
 use App\Repository\VideoRepository;
-use App\Form\CreateWorksheetFormType;
 use App\Repository\PatientRepository;
 use App\Repository\WorksheetRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -56,225 +54,220 @@ class ManageWorksheetController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/fiches/{prescribedPatient}", name="app_doctor_worksheets", methods={"GET"})
+     * @Route("/{id}/fiches/{list}/{patientForPrescription}", name="app_doctor_worksheets", methods={"GET"})
      */
-    public function worksheetList(Doctor $doctor, Patient $prescribedPatient = null): Response
+    public function worksheetList(
+        Doctor $doctor,
+        string $list = 'prescriptions',
+        Patient $patientForPrescription = null
+    ): Response {
+        return $this->render('doctor/worksheets_list.html.twig', [
+            'list' => $list,
+            'patientForPrescription' => $patientForPrescription,
+            'doctor' => $doctor,
+        ]);
+    }
+
+    /**
+     * @Route("/{id}/fiche/{action}/{worksheetTemplate}/{patientForPrescription}",
+     * name="app_doctor_worksheet_creation", methods={"GET"})
+     */
+    public function worksheetCreation(
+        Doctor $doctor,
+        string $action,
+        Worksheet $worksheetTemplate = null,
+        Patient $patientForPrescription = null
+    ): Response {
+        return $this->render('doctor/create_worksheet_page.html.twig', [
+            'doctor' => $doctor,
+            'action' => $action,
+            'patientForPrescription' => $patientForPrescription,
+            'worksheetTemplate' => $worksheetTemplate,
+        ]);
+    }
+
+    /**
+     * @Route("/{id}/create/worksheet", name="app_doctor_create_worksheet", methods={"POST"})
+     */
+    public function createWorksheet(Request $request, Doctor $doctor): JsonResponse
     {
-        $doctorPrescriptions = $this->prescriptionRepository->findBy(['doctor' => $doctor]);
+        if ($request->isMethod('post')) {
+            $data = json_decode($request->getContent());
 
-        $createPatientForm = $this->createForm(CreatePatientFormType::class);
+            if ($this->isCsrfTokenValid('create_worksheet' . $doctor->getId(), $data->_token)) {
+                $worksheet = new Worksheet();
+                $worksheet->setTitle($data->title)
+                  ->setDescription($data->description)
+                  ->setPartOfBody($data->partOfBody)
+                  ->setIsTemplate($data->isTemplate)
+                  ->setDoctor($doctor);
 
-        $createPatientFormView = $this->renderView('doctor/_form_create_patient.html.twig', [
-            'form' => $createPatientForm->createView(),
-            'doctor' => $doctor,
-        ]);
+                foreach ($data->exercises as $dataExercise) {
+                    $exercise = new Exercise();
+                    $exercise->setNumberOfRepetitions($dataExercise->numberOfRepetitions)
+                     ->setNumberOfSeries($dataExercise->numberOfSeries)
+                     ->setOption($dataExercise->option)
+                     ->setPosition($dataExercise->position);
 
-        $btnAddPrescriptionFormView = $this->renderView('doctor/_form_create_prescription.html.twig', [
-            'doctor' => $doctor,
-        ]);
+                    $video = $this->videoRepository->findOneById($dataExercise->video->id);
+                    $exercise->setVideo($video);
 
-        $btnRemoveWorksheetFormView = $this->renderView('doctor/_form_add_remove_common.html.twig', [
-            'actionRoute' => 'app_doctor_remove_worksheet',
-            'tokenName' => 'remove_worksheet',
-            'classBtnColor' => 'vs-button--danger',
-            'doctor' => $doctor,
-        ]);
+                    $worksheet->addExercise($exercise);
 
-        return $this->render('doctor/worksheet_list.html.twig', [
-            'prescribedPatient' => $prescribedPatient,
-            'doctor' => $doctor,
-            'createPatientForm' => $createPatientFormView,
-            'doctorPrescriptions' => $doctorPrescriptions,
-            'btnAddPrescriptionForm' => $btnAddPrescriptionFormView,
-            'btnRemoveWorksheetForm' => $btnRemoveWorksheetFormView,
-        ]);
+                    $this->em->persist($exercise);
+                }
+
+                $this->em->persist($worksheet);
+
+                $this->em->flush();
+
+                return $this->json(
+                    [
+                        "message" => "La fiche <strong>{$worksheet->getTitle()}</strong> a été créée",
+                        "worksheet" => $worksheet
+                    ],
+                    200,
+                    [],
+                    ['groups' => 'worksheet_read']
+                );
+            }
+        }
+
+        return $this->json(
+            'Nous n\'avons pas pu créer la fiche, veuillez réessayer ultérieurement.',
+            500,
+        );
+    }
+
+    /**
+     * @Route("/{id}/edit/worksheet-template", name="app_doctor_edit_worksheet_template", methods={"POST"})
+     */
+    public function editWorksheetTemplate(Request $request, Doctor $doctor): JsonResponse
+    {
+        if ($request->isMethod('post')) {
+            $data = json_decode($request->getContent());
+
+            if ($this->isCsrfTokenValid('edit_worksheet_template' . $doctor->getId(), $data->_token)) {
+                $worksheet = $this->worksheetRepository->findOneBy(['id' => $data->worksheetId]);
+
+                $worksheet->setTitle($data->title)
+                  ->setDescription($data->description)
+                  ->setPartOfBody($data->partOfBody);
+
+
+                foreach ($worksheet->getExercises() as $exercise) {
+                    $worksheet->removeExercise($exercise);
+                }
+
+                foreach ($data->exercises as $dataExercise) {
+                    $exercise = new Exercise();
+                    $exercise->setNumberOfRepetitions($dataExercise->numberOfRepetitions)
+                     ->setNumberOfSeries($dataExercise->numberOfSeries)
+                     ->setOption($dataExercise->option)
+                     ->setPosition($dataExercise->position);
+
+                    $video = $this->videoRepository->findOneById($dataExercise->video->id);
+                    $exercise->setVideo($video);
+
+                    $worksheet->addExercise($exercise);
+
+                    $this->em->persist($exercise);
+                }
+
+                $this->em->flush();
+
+                return $this->json(
+                    "Le modèle de fiche a bien été modifié",
+                    200,
+                );
+            }
+        }
+
+        return $this->json(
+            'Nous n\'avons pas pu modifier le modèle de fiche, veuillez réessayer ultérieurement.',
+            500,
+        );
     }
 
     /**
      * @Route("/{id}/create/prescription", name="app_doctor_create_prescription", methods={"POST"})
      */
-    public function createPrescription(Request $request, Doctor $doctor): RedirectResponse
+    public function createPrescription(Request $request, Doctor $doctor): JsonResponse
     {
-        if ($this->isCsrfTokenValid('create_prescription' . $doctor->getId(), $request->request->get('_token'))) {
-            $patient = $this->patientRepository->findOneBy(['id' => $request->request->get('patient_id')]);
-            $worksheet = $this->worksheetRepository->findOneBy(['id' => $request->request->get('worksheet_id')]);
-
-            $prescription = new Prescription();
-
-            $prescription->setDoctor($doctor)
-                         ->setPatient($patient)
-                         ->setWorksheet($worksheet)
-            ;
-
-            $this->em->persist($prescription);
-
-            $this->em->flush();
-
-            $gender = $patient->getGender() ? ("male" === $patient->getGender() ? 'M.' : 'Mme') : '';
-
-            $this->addFlash(
-                'success',
-                "La fiche <strong>{$worksheet->getTitle()}</strong> 
-                a bien été prescrite à <strong>{$gender} {$patient->getFirstname()} {$patient->getLastname()}</strong>."
-            );
-
-            return $this->redirectToRoute('app_doctor_worksheets', ['id' => $doctor->getId()]);
-        }
-
-        $this->addFlash(
-            'danger',
-            'Erreur : Nous n\'avons pas pu créer la prescription, veuillez réessayer ultérieurement.'
-        );
-
-        return $this->redirectToRoute('app_doctor_worksheets', ['id' => $doctor->getId()]);
-    }
-
-    /**
-     * @Route("/{id}/remove/prescription", name="app_doctor_remove_prescription", methods={"POST"})
-     */
-    public function removePrescription(Request $request, Doctor $doctor): RedirectResponse
-    {
-        if ($this->isCsrfTokenValid('remove_prescription' . $doctor->getId(), $request->request->get('_token'))) {
-            $prescription = $this->prescriptionRepository->findOneBy(['id' => $request->request->get('_id')]);
-
-            if ($doctor->getPrescriptions()->contains($prescription)) {
-                $this->em->remove($prescription);
-
-                $this->em->flush();
-
-                $this->addFlash(
-                    'success',
-                    "La prescription a bien été supprimée."
-                );
-
-                return $this->redirectToRoute('app_doctor_worksheets', ['id' => $doctor->getId()]);
-            }
-        }
-
-        $this->addFlash(
-            'danger',
-            'Erreur : Nous n\'avons pas pu supprimer la prescription, veuillez réessayer ultérieurement.'
-        );
-
-        return $this->redirectToRoute('app_doctor_worksheets', ['id' => $doctor->getId()]);
-    }
-
-    /**
-     * @Route("/{id}/create/worksheet/{worksheetTemplate}/{prescribedPatient}", name="app_doctor_create_worksheet", methods={"GET", "POST"})
-     */
-    public function createWorksheet(Request $request, Doctor $doctor, Worksheet $worksheetTemplate = null, Patient $prescribedPatient = null): Response
-    {
-        // $createWorksheetForm = $this->createForm(CreateWorksheetFormType::class);
-
         if ($request->isMethod('post')) {
-            // $test = $this->serializer->deserialize($request->getContent(), 'null', 'json');
-            $worksheetData = json_decode($request->getContent());
+            $data = json_decode($request->getContent());
 
-            $worksheet = new Worksheet();
-            $worksheet->setTitle($worksheetData->title)
-                      ->setDescription($worksheetData->description)
-                      ->setDoctor($doctor);
+            if ($this->isCsrfTokenValid('create_prescription' . $doctor->getId(), $data->_token)) {
+                $patient = $this->patientRepository->findOneBy(['id' => $data->patientId]);
+                $worksheet = $this->worksheetRepository->findOneBy(['id' => $data->worksheetId]);
 
-            foreach ($worksheetData->exercises as $exerciseData) {
-                $exercise = new Exercise();
-                $exercise->setNumberOfRepetitions($exerciseData->numberOfRepetitions)
-                         ->setNumberOfSeries($exerciseData->numberOfSeries)
-                         ->setOption($exerciseData->option)
-                         ->setPosition($exerciseData->position);
-
-                $video = $this->videoRepository->findOneById($exerciseData->video->id);
-                $exercise->setVideo($video);
-
-                $worksheet->addExercise($exercise);
-
-                $this->em->persist($exercise);
-            }
-
-            $this->em->persist($worksheet);
-
-            if ($prescribedPatient) {
                 $prescription = new Prescription();
 
                 $prescription->setDoctor($doctor)
-                         ->setPatient($prescribedPatient)
-                         ->setWorksheet($worksheet)
+                             ->setPatient($patient)
+                             ->setWorksheet($worksheet)
                 ;
-                $this->em->persist($prescription);
-            }
 
-            $this->em->flush();
-            
-            if ($prescribedPatient) {
-                $gender = $prescribedPatient->getGender() ? ("male" === $prescribedPatient->getGender() ? 'M.' : 'Mme') : '';
-    
-                $this->addFlash(
-                    'success',
-                    "La Fiche <strong>{$worksheet->getTitle()}</strong> a bien été créée et prescrite à 
-                    <strong>{$gender} {$prescribedPatient->getFirstname()} {$prescribedPatient->getLastname()}</strong>."
+                $this->em->persist($prescription);
+
+                $this->em->flush();
+
+                $gender = $patient->getGender() ? ("male" === $patient->getGender() ? 'M.' : 'Mme') : '';
+
+                return $this->json(
+                    "La fiche <strong>{$worksheet->getTitle()}</strong> a bien été prescrite à 
+                    <strong>{$gender} {$patient->getFirstname()} {$patient->getLastname()}</strong>.",
+                    200,
                 );
             }
-    
-            $this->addFlash(
-                'success',
-                "La Fiche <strong>{$worksheet->getTitle()}</strong> a bien été créée."
-            );
-
-            return $this->json(
-                'fiche créée',
-                200,
-            );
         }
 
-        // $createWorksheetView = $this->renderView('doctor/_form_create_worksheet.html.twig', [
-        //     'form' => $createWorksheetForm->createView(),
-        //     'doctor' => $doctor,
-        // ]);
-
-        return $this->render('doctor/create_worksheet_page.html.twig', [
-            'doctor' => $doctor,
-            'worksheetTemplate' => $worksheetTemplate,
-            'prescribedPatient' => $prescribedPatient,
-            // 'createWorksheetForm' => $createWorksheetView,
-        ]);
-    }
-
-    /**
-     * @Route("/{id}/remove/worksheet", name="app_doctor_remove_worksheet", methods={"POST"})
-     */
-    public function removeWorksheet(Request $request, Doctor $doctor): RedirectResponse
-    {
-        if ($this->isCsrfTokenValid('remove_worksheet' . $doctor->getId(), $request->request->get('_token'))) {
-            $worksheet = $this->worksheetRepository->findOneBy(['id' => $request->request->get('_id')]);
-            $this->em->remove($worksheet);
-
-            $this->em->flush();
-
-            $this->addFlash(
-                'success',
-                "La Fiche a bien été supprimée."
-            );
-
-            return $this->redirectToRoute('app_doctor_worksheets', ['id' => $doctor->getId()]);
-        }
-
-        $this->addFlash(
-            'danger',
-            'Erreur : Nous n\'avons pas pu supprimer la fiche, veuillez réessayer ultérieurement.'
+        return $this->json(
+            'Nous n\'avons pas pu prescrire la fiche, veuillez réessayer ultérieurement.',
+            500,
         );
-
-        return $this->redirectToRoute('app_doctor_worksheets', ['id' => $doctor->getId()]);
     }
 
     /**
-     * @Route("/{id}/get/worksheets", name="app_doctor_get_worksheets", methods={"GET"})
+     * @Route("/{id}/remove/worksheet-template", name="app_doctor_remove_worksheet_template", methods={"POST"})
      */
-    public function getWorksheets(Doctor $doctor): JsonResponse
+    public function removeWorksheetTemplate(Request $request, Doctor $doctor): JsonResponse
+    {
+        if ($request->isMethod('post')) {
+            $data = json_decode($request->getContent());
+
+            if ($this->isCsrfTokenValid('remove_worksheet_template' . $doctor->getId(), $data->_token)) {
+                $worksheetTemplate = $this->worksheetRepository->findOneBy(['id' => $data->worksheetTemplate_id]);
+
+                if ($worksheetTemplate->getDoctor() === $doctor) {
+                    $this->em->remove($worksheetTemplate);
+
+                    $this->em->flush();
+
+                    return $this->json(
+                        'Le modèle de fiche a bien été supprimé',
+                        200,
+                    );
+                }
+            }
+        }
+
+        return $this->json(
+            'Nous n\'avons pas pu supprimer le modèle de fiche, veuillez réessayer ultérieurement.',
+            500,
+        );
+    }
+
+    /**
+     * @Route("/{id}/get/prescriptions", name="app_doctor_get_prescriptions", methods={"GET"})
+     */
+    public function getPrescriptions(Doctor $doctor): JsonResponse
     {
         return $this->json(
-            $this->worksheetRepository->findBy(['doctor' => $doctor]),
+            $this->prescriptionRepository->findBy(['doctor' => $doctor]),
             200,
             [],
-            ['groups' => 'worksheet_read']
+            ['groups' => 'prescription_read']
         );
     }
 }

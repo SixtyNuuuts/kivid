@@ -17,13 +17,13 @@ class Worksheet
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"worksheet_read"})
+     * @Groups({"worksheet_read", "prescription_read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"worksheet_read"})
+     * @Groups({"worksheet_read", "prescription_read"})
      */
     private $title;
 
@@ -52,8 +52,20 @@ class Worksheet
 
     /**
      * @ORM\ManyToOne(targetEntity=Doctor::class, inversedBy="worksheets")
+     * @Groups({"worksheet_read"})
      */
     private $doctor;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"worksheet_read"})
+     */
+    private $partOfBody;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $isTemplate;
 
     public function __construct()
     {
@@ -170,6 +182,30 @@ class Worksheet
     public function setDoctor(?Doctor $doctor): self
     {
         $this->doctor = $doctor;
+
+        return $this;
+    }
+
+    public function getIsTemplate(): ?bool
+    {
+        return $this->isTemplate;
+    }
+
+    public function setIsTemplate(?bool $isTemplate): self
+    {
+        $this->isTemplate = $isTemplate;
+
+        return $this;
+    }
+
+    public function getPartOfBody(): ?string
+    {
+        return $this->partOfBody;
+    }
+
+    public function setPartOfBody(?string $partOfBody): self
+    {
+        $this->partOfBody = $partOfBody;
 
         return $this;
     }
