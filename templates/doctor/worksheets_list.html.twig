@@ -1,0 +1,60 @@
+{% extends 'layout/vue.html.twig' %}
+
+{% block title %}Mes Fiches
+{% endblock %}
+
+{% block stylesheets %}
+	{{ parent() }}
+
+	{{ encore_entry_link_tags('my-worksheets-page') }}
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+
+	{{ encore_entry_script_tags('my-worksheets-page') }}
+{% endblock %}
+
+{% block body %}
+	<div class="container my-8">
+		{% if patientForPrescription %}
+			<h1 class="prescription">
+				<div class="avatar avatar-md me-3">
+					<img class="avatar-img rounded-circle" src="{{ patientForPrescription.avatarUrl|default('/img/avatar-default.svg') }}" alt="avatar">
+				</div>
+				<div>
+					<span class="badge rounded-pill bg-dark-soft h6 text-uppercase prescri-for">
+						Prescription pour
+					</span>
+					<div class="prescri-name">
+					{{
+						patientForPrescription.gender
+							? "male" == patientForPrescription.gender
+								? "M."
+								: "Mme"
+							: ""
+					}}
+					{{ patientForPrescription.firstname }}
+					{{ patientForPrescription.lastname }}
+					</div>
+				</div>
+			</h1>
+		{% else %}
+			<h1>
+				<i class="fe fe-file-text"></i>Mes Fiches</h1>
+		{% endif %}
+
+		<div id="vue"></div>
+	</div>
+{% endblock %}
+{% block vueData %}
+	{
+		"doctor": {{ doctor|serialize('json', {'groups': 'doctor_read'})|raw }},
+		"list": {{ list|serialize('json')|raw }},
+		"patientForPrescription": {{ patientForPrescription|serialize('json', {'groups': 'patient_read'})|raw }},
+		"csrfTokenRemovePrescription": {{ csrf_token('remove_prescription' ~ doctor.id)|serialize('json')|raw }},
+		"csrfTokenRemoveWorksheetTemplate": {{ csrf_token('remove_worksheet_template' ~ doctor.id)|serialize('json')|raw }},
+		"csrfTokenCreatePatient": {{ csrf_token('create_patient' ~ doctor.id)|serialize('json')|raw }},
+		"csrfTokenCreatePrescription": {{ csrf_token('create_prescription' ~ doctor.id)|serialize('json')|raw }}
+	}
+{% endblock %}

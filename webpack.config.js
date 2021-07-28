@@ -22,9 +22,11 @@ Encore
      */
     .addEntry('app', './assets/app.js')
     .addEntry('my-patients-page', './assets/vue/doctor/my-patients-page.js')
+    .addEntry('my-worksheets-page', './assets/vue/doctor/my-worksheets-page.js')
+    .addEntry('create-worksheet-page', './assets/vue/doctor/create-worksheet-page.js')
 
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
-    .enableStimulusBridge('./assets/controllers.json')
+    // .enableStimulusBridge('./assets/controllers.json')
 
     // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
     .splitEntryChunks()

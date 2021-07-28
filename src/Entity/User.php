@@ -18,13 +18,13 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"patient_read", "doctor_read"})
+     * @Groups({"patient_read", "doctor_read", "prescription_read", "worksheet_read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
-     * @Groups({"patient_read", "doctor_read"})
+     * @Groups({"patient_read", "doctor_read", "prescription_read"})
      */
     private $email;
 
@@ -46,20 +46,20 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient_read", "doctor_read"})
+     * @Groups({"patient_read", "doctor_read", "prescription_read", "worksheet_read"})
      */
     private $firstname;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient_read", "doctor_read"})
+     * @Groups({"patient_read", "doctor_read", "prescription_read", "worksheet_read"})
 
      */
     private $lastname;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient_read", "doctor_read"})
+     * @Groups({"patient_read", "doctor_read", "prescription_read", "worksheet_read"})
      */
     private $avatarUrl;
 
@@ -78,6 +78,12 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="string", nullable=true)
      */
     private $facebookId;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"patient_read", "doctor_read", "worksheet_read"})
+     */
+    private $gender;
 
     public function __construct(array $roles)
     {
@@ -266,5 +272,17 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getUsername(): string
     {
         return (string) $this->email;
+    }
+
+    public function getGender(): ?string
+    {
+        return $this->gender;
+    }
+
+    public function setGender(?string $gender): self
+    {
+        $this->gender = $gender;
+
+        return $this;
     }
 }

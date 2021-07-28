@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\VideoRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -16,37 +17,61 @@ class Video
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"worksheet_read", "video_read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"worksheet_read", "video_read"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"worksheet_read", "video_read"})
      */
     private $url;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"worksheet_read", "video_read"})
      */
     private $thumbnailUrl;
 
     /**
      * @ORM\Column(type="text", nullable=true)
+     * @Groups({"worksheet_read", "video_read"})
      */
     private $description;
 
     /**
      * @ORM\ManyToMany(targetEntity=Tag::class, inversedBy="videos")
+     * @Groups({"worksheet_read", "video_read"})
      */
     private $tags;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Exercise::class, mappedBy="video")
+     */
+    private $exercises;
+
+    /**
+     * @ORM\Column(type="datetime_immutable")
+     */
+    private $createdAt;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"worksheet_read", "video_read"})
+     */
+    private $youtubeId;
+
     public function __construct()
     {
+        $this->createdAt = new \DateTimeImmutable();
         $this->tags = new ArrayCollection();
+        $this->exercises = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -122,6 +147,60 @@ class Video
     public function removeTag(Tag $tag): self
     {
         $this->tags->removeElement($tag);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Exercise[]
+     */
+    public function getExercises(): Collection
+    {
+        return $this->exercises;
+    }
+
+    public function addExercise(Exercise $exercise): self
+    {
+        if (!$this->exercises->contains($exercise)) {
+            $this->exercises[] = $exercise;
+            $exercise->setVideo($this);
+        }
+
+        return $this;
+    }
+
+    public function removeExercise(Exercise $exercise): self
+    {
+        if ($this->exercises->removeElement($exercise)) {
+            // set the owning side to null (unless already changed)
+            if ($exercise->getVideo() === $this) {
+                $exercise->setVideo(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getYoutubeId(): ?string
+    {
+        return $this->youtubeId;
+    }
+
+    public function setYoutubeId(?string $youtubeId): self
+    {
+        $this->youtubeId = $youtubeId;
 
         return $this;
     }

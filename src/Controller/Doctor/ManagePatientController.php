@@ -4,7 +4,6 @@ namespace App\Controller\Doctor;
 
 use App\Entity\Doctor;
 use App\Entity\Patient;
-use App\Form\CreatePatientFormType;
 use Symfony\Component\Mime\Address;
 use App\Repository\PatientRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -14,7 +13,7 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\ResetPasswordRequestRepository;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use SymfonyCasts\Bundle\ResetPassword\Model\ResetPasswordToken;
 use SymfonyCasts\Bundle\ResetPassword\Util\ResetPasswordCleaner;
@@ -53,148 +52,140 @@ class ManagePatientController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/patients", name="app_doctor_patients", methods={"GET"})
+     * @Route("/{id}/patients/{trigger}", name="app_doctor_patients", methods={"GET"})
      */
-    public function patientList(Doctor $doctor): Response
+    public function patientsList(Doctor $doctor, string $trigger = ""): Response
     {
-        $patients = $this->patientRepository->findBy([], ['isVerified' => 'DESC']);
-
-        $createPatientForm = $this->createForm(CreatePatientFormType::class);
-
-        $createPatientFormView = $this->renderView('doctor/_form_create_patient.html.twig', [
-            'form' => $createPatientForm->createView(),
-            'doctor' => $doctor,
-        ]);
-
-        $addPatientFormView = $this->renderView('doctor/_form_add_patient.html.twig', [
-            'doctor' => $doctor,
-        ]);
-
-        $removePatientFormView = $this->renderView('doctor/_form_remove_patient.html.twig', [
-            'doctor' => $doctor,
-        ]);
-
         return $this->render('doctor/patients_list.html.twig', [
             'doctor' => $doctor,
-            'createPatientForm' => $createPatientFormView,
-            'addPatientForm' => $addPatientFormView,
-            'removePatientForm' => $removePatientFormView,
-            'allPatients' => $patients,
+            'trigger' => $trigger,
         ]);
+    }
+
+    /**
+     * @Route("/{id}/get/patients", name="app_doctor_get_patients", methods={"GET"})
+     */
+    public function getPatients(Doctor $doctor): JsonResponse
+    {
+        return $this->json(
+            $this->patientRepository->findBy(['doctor' => $doctor]),
+            200,
+            [],
+            ['groups' => 'patient_read']
+        );
     }
 
     /**
      * @Route("/{id}/create/patient", name="app_doctor_create_patient", methods={"POST"})
      */
-    public function createPatient(Request $request, Doctor $doctor): RedirectResponse
+    public function createPatient(Request $request, Doctor $doctor): JsonResponse
     {
-        $form = $this->createForm(CreatePatientFormType::class);
+        if ($request->isMethod('post')) {
+            $data = json_decode($request->getContent());
 
-        $form->handleRequest($request);
+            if ($this->isCsrfTokenValid('create_patient' . $doctor->getId(), $data->_token)) {
+                $patient = new Patient();
+                $patient->setFirstname($data->firstname);
+                $patient->setLastname($data->lastname);
+                $patient->setGender($data->gender);
+                $patient->setEmail($data->email);
+                $patient->setDoctor($doctor);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
+                $this->em->persist($patient);
 
-            $patient = new Patient();
-            $patient->setFirstname($data['firstname']);
-            $patient->setLastname($data['lastname']);
-            $patient->setEmail($data['email']);
-            $patient->setDoctor($doctor);
+                try {
+                    $this->em->flush();
+                } catch (UniqueConstraintViolationException $e) {
+                    return $this->json(
+                        'Nous n\'avons pas pu créer le patient, car son email est déjà utilisé par un membre.',
+                        500,
+                    );
+                }
 
-            $this->em->persist($patient);
-
-            try {
-                $this->em->flush();
-            } catch (UniqueConstraintViolationException $e) {
-                $this->addFlash(
-                    'danger',
-                    'Nous n\'avons pas pu créer le patient car son email est déjà utilisé par un membre.'
-                );
-
-                return $this->redirectToRoute('app_doctor_patients', ['id' => $doctor->getId()]);
+                return $this->processSendingPasswordCreationEmail($patient, $doctor);
             }
-
-            return $this->processSendingPasswordEmail($patient, $doctor);
         }
-
-        $this->addFlash(
-            'danger',
-            'Erreur : Nous n\'avons pas pu créer le patient, veuillez réessayer ultérieurement.'
+        return $this->json(
+            'Nous n\'avons pas pu créer le patient, veuillez réessayer ultérieurement.',
+            500,
         );
-
-        return $this->redirectToRoute('app_doctor_patients', ['id' => $doctor->getId()]);
     }
 
     /**
      * @Route("/{id}/add/patient", name="app_doctor_add_patient", methods={"POST"})
      */
-    public function addPatient(Request $request, Doctor $doctor): RedirectResponse
+    public function addPatient(Request $request, Doctor $doctor): JsonResponse
     {
-        if ($this->isCsrfTokenValid('add_patient' . $doctor->getId(), $request->request->get('_token'))) {
-            $patient = $this->patientRepository->findOneBy(['id' => $request->request->get('patient_id')]);
+        if ($request->isMethod('post')) {
+            $data = json_decode($request->getContent());
 
-            $doctor->addPatient($patient);
+            if ($this->isCsrfTokenValid('add_patient' . $doctor->getId(), $data->_token)) {
+                $patient = $this->patientRepository->findOneBy(['id' => $data->patient_id]);
 
-            $this->em->flush();
+                $doctor->addPatient($patient);
 
-            $this->addFlash(
-                'success',
-                "{$patient->getFirstname()} {$patient->getLastname()} a bien été ajouté à votre liste !"
-            );
+                $this->em->flush();
 
-            return $this->redirectToRoute('app_doctor_patients', ['id' => $doctor->getId()]);
+                $gender = $patient->getGender() ? ("male" === $patient->getGender() ? 'M.' : 'Mme') : '';
+
+                return $this->json(
+                    "<strong>{$gender} {$patient->getFirstname()} {$patient->getLastname()}</strong> 
+                     a bien été ajouté à votre liste.",
+                    200,
+                );
+            }
         }
 
-        $this->addFlash(
-            'danger',
-            'Erreur : Nous n\'avons pas pu ajouter le patient à votre liste, veuillez réessayer ultérieurement.'
+        return $this->json(
+            'Nous n\'avons pas pu ajouter le patient à votre liste, veuillez réessayer ultérieurement.',
+            500,
         );
-
-        return $this->redirectToRoute('app_doctor_patients', ['id' => $doctor->getId()]);
     }
 
     /**
      * @Route("/{id}/remove/patient", name="app_doctor_remove_patient", methods={"POST"})
      */
-    public function removePatient(Request $request, Doctor $doctor): RedirectResponse
+    public function removePatient(Request $request, Doctor $doctor): JsonResponse
     {
-        if ($this->isCsrfTokenValid('remove_patient' . $doctor->getId(), $request->request->get('_token'))) {
-            $patient = $this->patientRepository->findOneBy(['id' => $request->request->get('patient_id')]);
+        if ($request->isMethod('post')) {
+            $data = json_decode($request->getContent());
 
-            if ($doctor->getPatients()->contains($patient)) {
-                $doctor->removePatient($patient);
+            if ($this->isCsrfTokenValid('remove_patient' . $doctor->getId(), $data->_token)) {
+                $patient = $this->patientRepository->findOneBy(['id' => $data->patient_id]);
 
-                $this->em->flush();
+                if ($doctor->getPatients()->contains($patient)) {
+                    $doctor->removePatient($patient);
 
-                $this->addFlash(
-                    'success',
-                    "{$patient->getFirstname()} {$patient->getLastname()} a bien été retiré de votre liste !"
-                );
+                    $this->em->flush();
 
-                return $this->redirectToRoute('app_doctor_patients', ['id' => $doctor->getId()]);
+                    $gender = $patient->getGender() ? ("male" === $patient->getGender() ? 'M.' : 'Mme') : '';
+
+                    return $this->json(
+                        "<strong>{$gender} {$patient->getFirstname()} {$patient->getLastname()}</strong> 
+                        a bien été retiré de votre liste.",
+                        200,
+                    );
+                }
             }
         }
 
-        $this->addFlash(
-            'danger',
-            'Erreur : Nous n\'avons pas pu retirer le patient de votre liste, veuillez réessayer ultérieurement.'
+        return $this->json(
+            'Nous n\'avons pas pu retirer le patient de votre liste, veuillez réessayer ultérieurement.',
+            500,
         );
-
-        return $this->redirectToRoute('app_doctor_patients', ['id' => $doctor->getId()]);
     }
 
-    private function processSendingPasswordEmail(Patient $patient, Doctor $doctor): RedirectResponse
+    private function processSendingPasswordCreationEmail(Patient $patient, Doctor $doctor): JsonResponse
     {
         // Le bundle 'ResetPassword' est utilisé pour la génération du token.
         try {
-            $passToken = $this->generateCreatePasswordToken($patient);
+            $passToken = $this->generatePasswordCreationToken($patient);
         } catch (ResetPasswordExceptionInterface $e) {
-            $this->addFlash('danger', sprintf(
-                'Un problème est survenu lors de la génération du token de création de mot de passe du patient - %s',
-                $e->getReason()
-            ));
-
-            return $this->redirectToRoute('app_doctor_patients', ['id' => $doctor->getId()]);
+            return $this->json(
+                "Un problème est survenu lors de la génération du token de création de mot 
+                de passe du patient {$e->getReason()}",
+                500,
+            );
         }
 
         $email = (new TemplatedEmail())
@@ -210,16 +201,17 @@ class ManagePatientController extends AbstractController
 
         $this->mailer->send($email);
 
-        $this->addFlash(
-            'success',
-            "{$patient->getFirstname()} {$patient->getLastname()} a été créé et ajouté à vos patients, 
-            Nous lui avons envoyé un email pour qu'il valide son inscription."
+        return $this->json(
+            ["message" => "<strong>{$patient->getFirstname()} {$patient->getLastname()}</strong> 
+            a été créé et ajouté à vos patients, 
+            Nous lui avons envoyé un email pour qu'il valide son inscription.", "patient" => $patient],
+            200,
+            [],
+            ['groups' => 'patient_read']
         );
-
-        return $this->redirectToRoute('app_doctor_patients', ['id' => $doctor->getId()]);
     }
 
-    public function generateCreatePasswordToken(Patient $patient): ResetPasswordToken
+    public function generatePasswordCreationToken(Patient $patient): ResetPasswordToken
     {
         $this->resetPasswordCleaner->handleGarbageCollection();
 

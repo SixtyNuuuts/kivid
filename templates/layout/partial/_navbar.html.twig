@@ -1,33 +1,69 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-white">
-	<div
-		class="container">
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow">
+	<div class="container">
 
-		<!-- Brand -->
 		<a class="navbar-brand" href="{{ path('app_home') }}">
 			<img src="{{ asset('img/brand.svg') }}" class="navbar-brand-img" alt="...">
 		</a>
 
-		<!-- Toggler -->
 		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		</button>
 
-		<!-- Collapse -->
-		<div
-			class="collapse navbar-collapse" id="navbarCollapse">
+		<div class="collapse navbar-collapse" id="navbarCollapse">
 
-			<!-- Toggler -->
 			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
 				<i class="fe fe-x"></i>
 			</button>
 
-			<!-- Navigation -->
 			<ul class="navbar-nav ms-auto">
 				{% if app.user %}
+					<li class="nav-item d-flex align-items-center">
+						{% if is_granted('ROLE_PATIENT') %}
+							<a class="nav-link {% if app.request.get('_route') == 'app_doctor_dashboard' %}active{% endif %}" href="{{ path('app_patient_dashboard', {'id':app.user.id}) }}">
+						{% elseif is_granted('ROLE_DOCTOR')%}
+							<a class="nav-link {% if app.request.get('_route') == 'app_doctor_dashboard' %}active{% endif %}" href="{{ path('app_doctor_dashboard', {'id':app.user.id}) }}">
+						{% elseif is_granted('ROLE_ADMIN')%}
+							<a class="nav-link" href="{{ path('app_admin_dashboard') }}">
+						{% endif %}
+								<i class="fe fe-layout"></i>
+								Tableau de bord
+							</a>
+					</li>
+					{% if is_granted('ROLE_PATIENT') or is_granted('ROLE_DOCTOR')%}
+						<li class="nav-item d-flex align-items-center">
+						{% if is_granted('ROLE_PATIENT') %}
+							<a class="nav-link" href="#!">
+							{# <a class="nav-link  {% if app.request.get('_route') == 'app_patient_worksheets' %}active{% endif %}" href="{{ path('app_patient_worksheets', {'id':app.user.id}) }}"> #}
+						{% elseif is_granted('ROLE_DOCTOR')%}
+							<a class="nav-link  {% if app.request.get('_route') == 'app_doctor_worksheets' %}active{% endif %}" href="{{ path('app_doctor_worksheets', {'id':app.user.id}) }}">
+						{% endif %}
+								<i class="fe fe-file-text"></i>
+								Mes fiches
+							</a>
+						</li>
+					{% endif %}
+					{% if is_granted('ROLE_PATIENT') %}
+						<li class="nav-item d-flex align-items-center">
+							<a class="nav-link" href="#!">
+								<i class="fe fe-shopping-bag"></i>
+								Boutique
+							</a>
+						</li>
+					{% elseif is_granted('ROLE_DOCTOR')%}
+						<li class="nav-item d-flex align-items-center">
+							<a class="nav-link {% if app.request.get('_route') == 'app_doctor_patients' %}active{% endif %}" href="{{ path('app_doctor_patients', {'id':app.user.id}) }}">
+								<i class="fe fe-users"></i>
+								Mes patients
+							</a>
+						</li>
+					{% endif %}
 					<li class="nav-item dropdown">
 						<a class="nav-link dropdown-toggle d-flex" id="dropdown-user" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-							<div class="user-nav d-sm-flex d-none flex-column">
-								<span class="user-name fw-bolder">{{ app.user.firstname|default(app.user.username) }} {{ app.user.lastname|default('') }}</span>
+							<div class="user-nav d-sm-flex justify-content-center d-none flex-column">
+								<span class="user-name fw-bolder">
+									{{ app.user.firstname|default(app.user.username) }}
+									{{ app.user.lastname|default('') }}
+								</span>
 								{% if is_granted('ROLE_PATIENT') %}
 									<span class="user-status">Patient</span>
 								{% elseif is_granted('ROLE_DOCTOR')%}
@@ -41,54 +77,29 @@
 							</span>
 						</a>
 						<div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-user">
+							{# <div class="dropdown-divider mb-3 mt-3"></div> #}
 							{% if is_granted('ROLE_PATIENT') %}
-							<a class="dropdown-item" href="{{ path('app_patient_dashboard', {'id':app.user.id}) }}">
+								<a class="dropdown-item" href="{{ path('app_user_edit', {'id': app.user.id, 'userType': 'patient'}) }}">
 							{% elseif is_granted('ROLE_DOCTOR')%}
-							<a class="dropdown-item" href="{{ path('app_doctor_dashboard', {'id':app.user.id}) }}">
-							{% elseif is_granted('ROLE_ADMIN')%}
-							<a class="dropdown-item" href="{{ path('app_admin_dashboard') }}">
+								<a class="dropdown-item" href="{{ path('app_user_edit', {'id': app.user.id, 'userType': 'doctor'}) }}">
 							{% endif %}
-								<i class="fe fe-layout"></i>
-								Tableau de bord
-							</a>
-							{% if is_granted('ROLE_PATIENT') %}
-							<a class="dropdown-item" href="#!">
-								<i class="fe fe-shopping-bag"></i>
-								Boutique
-							</a>
-							{% elseif is_granted('ROLE_DOCTOR')%}
-							<a class="dropdown-item" href="{{ path('app_doctor_patients', {'id':app.user.id}) }}">
-								<i class="fe fe-users"></i>
-								Mes patients
-							</a>
-							{% endif %}
-							{% if is_granted('ROLE_PATIENT') or is_granted('ROLE_DOCTOR')%}
-							<a class="dropdown-item" href="#!">
-								<i class="fe fe-file-text"></i>
-								Mes fiches
-							</a>
-							<div class="dropdown-divider mb-3 mt-3"></div>
-							{% if is_granted('ROLE_PATIENT') %}
-							<a class="dropdown-item" href="{{ path('app_user_edit', {'id': app.user.id, 'userType': 'patient'}) }}">
-							{% elseif is_granted('ROLE_DOCTOR')%}
-							<a class="dropdown-item" href="{{ path('app_user_edit', {'id': app.user.id, 'userType': 'doctor'}) }}">
-							{% endif %}
-								<i class="fe fe-settings"></i>
-								Paramètres
-							</a>
-							{% endif %}
+									<i class="fe fe-settings"></i>
+									Paramètres
+								</a>
 							<a class="dropdown-item" href="{{ path('app_logout') }}">
 								<i class="fe fe-log-out"></i>
 								Déconnexion
 							</a>
 						</div>
 					</li>
-				{% else %}
+					{% else %}
 					<a class="navbar-btn btn btn btn-outline-primary lift ms-auto" href="#!">
-						<i class="fe fe-shopping-bag"></i> BOUTIQUE
+						<i class="fe fe-shopping-bag"></i>
+						BOUTIQUE
 					</a>
 					<a class="navbar-btn btn btn-primary lift ms-auto" href="{{ path('app_login') }}">
-						SE CONNECTER <i class="fe fe-log-in"></i>
+						SE CONNECTER
+						<i class="fe fe-log-in"></i>
 					</a>
 				{% endif %}
 			</ul>

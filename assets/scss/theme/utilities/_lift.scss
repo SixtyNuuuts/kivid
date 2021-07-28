@@ -4,12 +4,18 @@
 //
 
 .lift {
-  transition: box-shadow .25s ease, transform .25s ease;
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
 }
 
 .lift:hover,
 .lift:focus {
   box-shadow: $box-shadow-lift !important;
+  transform: translate3d(0, -3px, 0);
+}
+
+.lift-btn:hover,
+.lift-btn:focus {
+  box-shadow: $box-shadow-lift-btn !important;
   transform: translate3d(0, -3px, 0);
 }
 

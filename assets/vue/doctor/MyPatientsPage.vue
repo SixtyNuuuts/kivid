@@ -1,64 +1,69 @@
 <template>
-    <div>
-        <AddPatient
+    <div id="vue">
+        <PatientsList
             :doctor="doctor"
-            :patients="allPatientsExceptDoctor"
-            :createPatientForm="createPatientForm"
-            :addPatientForm="addPatientForm"
-        />
-        <PatientList
-            :doctor="doctor"
-            :patients="doctorPatients"
-            :removePatientForm="removePatientForm"
+            :triggerAddPatient="triggerAddPatient"
+            :doctorPatients="doctorPatients"
+            :csrfTokenAddPatient="csrfTokenAddPatient"
+            :csrfTokenRemovePatient="csrfTokenRemovePatient"
+            :csrfTokenCreatePatient="csrfTokenCreatePatient"
         />
     </div>
 </template>
 
 <script>
-import AddPatient from "./components/AddPatient.vue";
-import PatientList from "./components/PatientList.vue";
+import PatientsList from "./components/PatientsList.vue";
 
 export default {
     name: "MyPatientsPage",
     components: {
-        PatientList,
-        AddPatient,
+        PatientsList,
     },
-    data: () => ({
-        doctor: null,
-        createPatientForm: null,
-        addPatientForm: null,
-        removePatientForm: null,
-        allPatients: null,
-    }),
+    data() {
+        return {
+            playerVars: {
+                rel: 0,
+                showinfo: 0,
+                ecver: 2,
+                modestbranding: 1,
+            },
+            triggerAddPatient: false,
+            loadingDoctorPatientsList: null,
+            doctor: null,
+            doctorPatients: [],
+            csrfTokenAddPatient: null,
+            csrfTokenRemovePatient: null,
+            csrfTokenCreatePatient: null,
+        };
+    },
     created() {
         const data = JSON.parse(document.getElementById("vueData").innerHTML);
 
         this.doctor = data.doctor;
-        this.createPatientForm = data.createPatientForm;
-        this.addPatientForm = data.addPatientForm;
-        this.removePatientForm = data.removePatientForm;
-        this.allPatients = data.allPatients;
-    },
-    computed: {
-        doctorPatients() {
-            return this.allPatients.filter((patient) => {
-                if (patient.doctor) {
-                    return this.doctor.id === patient.doctor.id;
-                }
+        this.triggerAddPatient =
+            data.trigger === "trigger-add-patient" ? true : false;
+        this.csrfTokenAddPatient = data.csrfTokenAddPatient;
+        this.csrfTokenRemovePatient = data.csrfTokenRemovePatient;
+        this.csrfTokenCreatePatient = data.csrfTokenCreatePatient;
+
+        this.loadingDoctorPatientsList = this.$vs.loading({
+            text: "chargement",
+            type: "border",
+        });
+
+        this.axios
+            .get(`/kine/${this.doctor.id}/get/patients`)
+            .then((response) => {
+                this.doctorPatients = response.data;
+
+                this.loadingDoctorPatientsList.close();
+                this.loadingDoctorPatientsList = null;
+            })
+            .catch((error) => {
+                console.log(error);
+                this.loadingDoctorPatientsList.close();
+                this.loadingDoctorPatientsList = null;
             });
-        },
-        allPatientsExceptDoctor() {
-            return this.allPatients.filter((patient) => {
-                return (
-                    !patient.doctor ||
-                    (patient.doctor ? this.doctor.id !== patient.doctor.id : "")
-                );
-            });
-        },
     },
 };
 </script>
-
-<style lang="scss">
-</style>

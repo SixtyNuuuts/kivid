@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\User;
 
 use App\Form\DoctorFormType;
 use App\Form\PatientFormType;
@@ -11,12 +11,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
-/**
- * @Route("/user")
- */
-class UserCRUDController extends AbstractController
+class CRUDController extends AbstractController
 {
     private $patientRepository;
     private $doctorRepository;
@@ -28,7 +26,7 @@ class UserCRUDController extends AbstractController
     }
 
     /**
-     * @Route("/{userType}/{id}/edit", name="app_user_edit", methods={"GET","POST"})
+     * @Route("/{userType}/{id}/edit", name="app_user_edit", methods={"GET", "POST"})
      */
     public function edit(Request $request, string $userType, int $id, SluggerInterface $slugger): Response
     {
@@ -65,16 +63,28 @@ class UserCRUDController extends AbstractController
 
             $this->addFlash('success', 'Votre profil a été mis à jour !');
 
-            $referer = filter_var($request->headers->get('referer'), FILTER_SANITIZE_URL);
-
-            return $this->redirect($referer);
+            return $this->redirectToRoute('app_user_edit', ['userType' => $userType, 'id' => $user->getId()]);
         }
 
-        $template = $request->query->get('fetch') ? 'modal_edit' : 'edit';
-
-        return $this->render("crud/{$template}.html.twig", [
+        return $this->render("crud/edit.html.twig", [
             'user' => $user,
             'form' => $form->createView(),
         ]);
+    }
+
+    /**
+     * @Route("/{userType}/all", name="app_user_get_all", methods={"GET"})
+     */
+    public function getAll(string $userType): JsonResponse
+    {
+        $repository = $this->patientRepository;
+        $serializeGroup = 'patient_read';
+
+        if ('doctors' === $userType) {
+            $repository = $this->doctorRepository;
+            $serializeGroup = 'doctor_read';
+        }
+
+        return $this->json($repository->findAll(), 200, [], ['groups' => $serializeGroup]);
     }
 }

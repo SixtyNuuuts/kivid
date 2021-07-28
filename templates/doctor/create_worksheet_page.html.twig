@@ -1,0 +1,62 @@
+{% extends 'layout/vue.html.twig' %}
+
+{% block title %}Mes Fiches
+{% endblock %}
+
+{% block stylesheets %}
+	{{ parent() }}
+
+	{{ encore_entry_link_tags('create-worksheet-page') }}
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+
+	{{ encore_entry_script_tags('create-worksheet-page') }}
+{% endblock %}
+
+{% block body %}
+	<div class="container create-worksheet my-8">
+		{% if patientForPrescription %}
+			<h1 class="prescription">
+				<div class="avatar avatar-md me-3">
+					<img class="avatar-img rounded-circle" src="{{ patientForPrescription.avatarUrl|default('/img/avatar-default.svg') }}" alt="avatar">
+				</div>
+				<div>
+					<span class="badge rounded-pill bg-dark-soft h6 text-uppercase prescri-for">
+						Création de la fiche pour
+					</span>
+					<div class="prescri-name">
+					{{
+						patientForPrescription.gender
+							? "male" == patientForPrescription.gender
+								? "M."
+								: "Mme"
+							: ""
+					}}
+					{{ patientForPrescription.firstname }}
+					{{ patientForPrescription.lastname }}
+					</div>
+				</div>
+			</h1>
+		{% elseif action == 'creation'%}
+			<h1 class="long"><i class="fe fe-file-plus"></i>Création d'un modèle de fiche</h1>
+		{% elseif action == 'edition' %}
+			<h1 class="long"><i class="fe fe-edit"></i>Edition d'un modèle de fiche</h1>
+		{% endif %}
+
+		<div id="vue"></div>
+	</div>
+{% endblock %}
+
+{% block vueData %}
+	{	
+		"doctor": {{ doctor|serialize('json', {'groups': 'doctor_read'})|raw }},
+		"action": {{ action|serialize('json')|raw }},
+		"patientForPrescription": {{ patientForPrescription|serialize('json', {'groups': 'patient_read'})|raw }},
+		"worksheetTemplate": {{ worksheetTemplate|serialize('json', {'groups': 'worksheet_read'})|raw }},
+		"csrfTokenCreateWorksheet": {{ csrf_token('create_worksheet' ~ doctor.id)|serialize('json')|raw }},
+		"csrfTokenEditWorksheetTemplate": {{ csrf_token('edit_worksheet_template' ~ doctor.id)|serialize('json')|raw }},
+		"csrfTokenCreatePrescription": {{ csrf_token('create_prescription' ~ doctor.id)|serialize('json')|raw }}
+	}
+{% endblock %}

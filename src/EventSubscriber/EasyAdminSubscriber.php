@@ -12,15 +12,15 @@ class EasyAdminSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            BeforeEntityPersistedEvent::class => ['setVideoThunbnail'],
-            BeforeEntityUpdatedEvent::class => ['setVideoThunbnail'],
+            BeforeEntityPersistedEvent::class => ['setVideoUrlAndThunbnail'],
+            BeforeEntityUpdatedEvent::class => ['setVideoUrlAndThunbnail'],
         ];
     }
 
     /**
      * @param BeforeEntityPersistedEvent|BeforeEntityUpdatedEvent $event.
      */
-    public function setVideoThunbnail($event)
+    public function setVideoUrlAndThunbnail($event)
     {
         $entity = $event->getEntityInstance();
 
@@ -28,18 +28,14 @@ class EasyAdminSubscriber implements EventSubscriberInterface
             return;
         }
 
-        if (!$entity->getUrl()) {
+        if (!$entity->getYoutubeId()) {
             return;
         }
 
-        $urlParsed = parse_url($entity->getUrl(), PHP_URL_QUERY);
+        $url = "https://www.youtube.com/watch?v={$entity->getYoutubeId()}";
+        $thumbnailUrl = "https://img.youtube.com/vi/{$entity->getYoutubeId()}/mqdefault.jpg";
 
-        parse_str($urlParsed, $queryParams);
-
-        $videoId = $queryParams["v"] ?? '';
-
-        $thumbnailUrl = "https://img.youtube.com/vi/{$videoId}/mqdefault.jpg";
-
+        $entity->setUrl($url);
         $entity->setThumbnailUrl($thumbnailUrl);
     }
 }
