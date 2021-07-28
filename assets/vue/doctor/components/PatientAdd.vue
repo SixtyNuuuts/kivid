@@ -308,7 +308,7 @@ export default {
     name: "PatientAdd",
     props: {
         doctor: Object,
-        trigerAddPatient: Boolean,
+        triggerAddPatient: Boolean,
         allPatientsList: Array,
         csrfTokenAddPatient: String,
         csrfTokenCreatePatient: String,
@@ -338,7 +338,7 @@ export default {
         };
     },
     mounted() {
-        if (this.trigerAddPatient) {
+        if (this.triggerAddPatient) {
             this.modalAddPatient = true;
         }
     },

@@ -2,7 +2,7 @@
     <div>
         <PatientAdd
             :doctor="doctor"
-            :trigerAddPatient="trigerAddPatient"
+            :triggerAddPatient="triggerAddPatient"
             :allPatientsList="allPatientsExceptDoctor"
             :csrfTokenAddPatient="csrfTokenAddPatient"
             :csrfTokenCreatePatient="csrfTokenCreatePatient"
@@ -159,17 +159,20 @@
                 />
             </template>
             <template #notFound>
-                <div v-if="filter">
-                    <i class="fe fe-user-minus"></i>
-                    Aucun patient n'a été trouvé avec "<strong>{{
-                        filter
-                    }}</strong
-                    >".
+                <div v-if="doctorPatientsListArray.length">
+                    <div v-if="filter">
+                        <i class="fe fe-user-minus"></i>
+                        Aucun patient n'a été trouvé avec "<strong>{{
+                            filter
+                        }}</strong
+                        >".
+                    </div>
+                    <div v-else>
+                        <i class="fe fe-user-minus"></i>
+                        Vous n'avez aucun patient.
+                    </div>
                 </div>
-                <div v-else>
-                    <i class="fe fe-user-minus"></i>
-                    Vous n'avez aucun patient.
-                </div>
+                <div v-else>...</div>
             </template>
         </vs-table>
         <vs-dialog class="modal-confirm" v-model="modalConfirmRemovePatient">
@@ -228,7 +231,7 @@ export default {
     },
     props: {
         doctor: Object,
-        trigerAddPatient: Boolean,
+        triggerAddPatient: Boolean,
         doctorPatients: Array,
         csrfTokenAddPatient: String,
         csrfTokenRemovePatient: String,

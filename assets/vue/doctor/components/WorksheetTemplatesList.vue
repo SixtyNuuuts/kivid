@@ -253,17 +253,20 @@
                 />
             </template>
             <template #notFound>
-                <div v-if="filter">
-                    <i class="fe fe-file-minus"></i>
-                    Aucun modèle de fiche n'a été trouvé avec "<strong>{{
-                        filter
-                    }}</strong
-                    >".
+                <div v-if="worksheetTemplatesListArray.length">
+                    <div v-if="filter">
+                        <i class="fe fe-file-minus"></i>
+                        Aucun modèle de fiche n'a été trouvé avec "<strong>{{
+                            filter
+                        }}</strong
+                        >".
+                    </div>
+                    <div v-else>
+                        <i class="fe fe-file-minus"></i>
+                        Aucun modèle de fiche n'a été trouvé.
+                    </div>
                 </div>
-                <div v-else>
-                    <i class="fe fe-file-minus"></i>
-                    Aucun modèle de fiche n'a été trouvé.
-                </div>
+                <div v-else>...</div>
             </template>
         </vs-table>
         <vs-dialog
@@ -366,7 +369,6 @@ export default {
         patientForPrescription: Object,
         worksheetTemplates: Array,
         tagsFromExercises: Array,
-        // csrfTokenAddWorksheetTemplate: String,
         csrfTokenRemoveWorksheetTemplate: String,
         csrfTokenCreatePatient: String,
         csrfTokenCreatePrescription: String,

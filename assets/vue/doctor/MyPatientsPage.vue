@@ -2,7 +2,7 @@
     <div id="vue">
         <PatientsList
             :doctor="doctor"
-            :trigerAddPatient="trigerAddPatient"
+            :triggerAddPatient="triggerAddPatient"
             :doctorPatients="doctorPatients"
             :csrfTokenAddPatient="csrfTokenAddPatient"
             :csrfTokenRemovePatient="csrfTokenRemovePatient"
@@ -27,7 +27,7 @@ export default {
                 ecver: 2,
                 modestbranding: 1,
             },
-            trigerAddPatient: false,
+            triggerAddPatient: false,
             loadingDoctorPatientsList: null,
             doctor: null,
             doctorPatients: [],
@@ -40,8 +40,8 @@ export default {
         const data = JSON.parse(document.getElementById("vueData").innerHTML);
 
         this.doctor = data.doctor;
-        this.trigerAddPatient =
-            data.triger === "triger-add-patient" ? true : false;
+        this.triggerAddPatient =
+            data.trigger === "trigger-add-patient" ? true : false;
         this.csrfTokenAddPatient = data.csrfTokenAddPatient;
         this.csrfTokenRemovePatient = data.csrfTokenRemovePatient;
         this.csrfTokenCreatePatient = data.csrfTokenCreatePatient;

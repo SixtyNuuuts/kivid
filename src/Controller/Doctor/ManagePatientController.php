@@ -52,13 +52,13 @@ class ManagePatientController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/patients/{triger}", name="app_doctor_patients", methods={"GET"})
+     * @Route("/{id}/patients/{trigger}", name="app_doctor_patients", methods={"GET"})
      */
-    public function patientsList(Doctor $doctor, string $triger = ""): Response
+    public function patientsList(Doctor $doctor, string $trigger = ""): Response
     {
         return $this->render('doctor/patients_list.html.twig', [
             'doctor' => $doctor,
-            'triger' => $triger,
+            'trigger' => $trigger,
         ]);
     }
 

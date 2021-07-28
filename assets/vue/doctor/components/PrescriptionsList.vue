@@ -145,17 +145,20 @@
                 />
             </template>
             <template #notFound>
-                <div v-if="filter">
-                    <i class="fe fe-file-minus"></i>
-                    Aucune prescription n'a été trouvée avec "<strong>{{
-                        filter
-                    }}</strong
-                    >".
+                <div v-if="doctorPrescriptionsListArray.length">
+                    <div v-if="filter">
+                        <i class="fe fe-file-minus"></i>
+                        Aucune prescription n'a été trouvée avec "<strong>{{
+                            filter
+                        }}</strong
+                        >".
+                    </div>
+                    <div v-else>
+                        <i class="fe fe-file-minus"></i>
+                        Vous n'avez aucune prescription.
+                    </div>
                 </div>
-                <div v-else>
-                    <i class="fe fe-file-minus"></i>
-                    Vous n'avez aucune prescription.
-                </div>
+                <div v-else>...</div>
             </template>
         </vs-table>
         <vs-dialog
