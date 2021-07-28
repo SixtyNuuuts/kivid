@@ -153,6 +153,9 @@
                                 {{ prescription.worksheet.title }}
                             </div>
                         </div>
+                        <div v-else class="no-worksheet">
+                            Aucune fiche pour ce patient
+                        </div>
                     </vs-td>
                     <vs-td class="sm-dnone">
                         <div v-if="patient.lastLoginAt">
@@ -514,17 +517,27 @@ export default {
     flex-wrap: wrap;
 }
 
-.worksheet {
+.worksheet,
+.no-worksheet {
     display: inline-block !important;
-    background: #f9fbfd;
     padding: 0.5em 0.7em;
-    border-radius: 0.5em;
     font-size: 0.65em;
     line-height: 1.3;
     margin: 0.3em;
     text-align: center;
-    box-shadow: 0 0.1rem 0.3rem rgb(22 28 45 / 20%) !important;
     width: 100%;
+}
+
+.worksheet {
+    background: #f9fbfd;
     color: #36486a;
+    box-shadow: 0 0.1rem 0.3rem rgb(22 28 45 / 20%) !important;
+    border-radius: 0.2em;
+}
+
+.no-worksheet {
+    background: #f2f5f9;
+    color: #8a9ebf;
+    border-radius: 1.5em;
 }
 </style>
