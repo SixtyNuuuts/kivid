@@ -259,6 +259,36 @@ class ManageWorksheetController extends AbstractController
     }
 
     /**
+     * @Route("/{id}/remove/prescription", name="app_doctor_remove_prescription", methods={"POST"})
+     */
+    public function removePrescription(Request $request, Doctor $doctor): JsonResponse
+    {
+        if ($request->isMethod('post')) {
+            $data = json_decode($request->getContent());
+
+            if ($this->isCsrfTokenValid('remove_prescription' . $doctor->getId(), $data->_token)) {
+                $prescription = $this->prescriptionRepository->findOneBy(['id' => $data->prescription_id]);
+
+                if ($prescription->getDoctor() === $doctor) {
+                    $this->em->remove($prescription);
+
+                    $this->em->flush();
+
+                    return $this->json(
+                        'La prescription a bien été supprimée',
+                        200,
+                    );
+                }
+            }
+        }
+
+        return $this->json(
+            'Nous n\'avons pas pu supprimer la prescription, veuillez réessayer ultérieurement.',
+            500,
+        );
+    }
+
+    /**
      * @Route("/{id}/get/prescriptions", name="app_doctor_get_prescriptions", methods={"GET"})
      */
     public function getPrescriptions(Doctor $doctor): JsonResponse
