@@ -190,6 +190,36 @@ class ManageWorksheetController extends AbstractController
     }
 
     /**
+     * @Route("/{id}/remove/worksheet-template", name="app_doctor_remove_worksheet_template", methods={"POST"})
+     */
+    public function removeWorksheetTemplate(Request $request, Doctor $doctor): JsonResponse
+    {
+        if ($request->isMethod('post')) {
+            $data = json_decode($request->getContent());
+
+            if ($this->isCsrfTokenValid('remove_worksheet_template' . $doctor->getId(), $data->_token)) {
+                $worksheetTemplate = $this->worksheetRepository->findOneBy(['id' => $data->worksheetTemplate_id]);
+
+                if ($worksheetTemplate->getDoctor() === $doctor) {
+                    $this->em->remove($worksheetTemplate);
+
+                    $this->em->flush();
+
+                    return $this->json(
+                        'Le modèle de fiche a bien été supprimé',
+                        200,
+                    );
+                }
+            }
+        }
+
+        return $this->json(
+            'Nous n\'avons pas pu supprimer le modèle de fiche, veuillez réessayer ultérieurement.',
+            500,
+        );
+    }
+
+    /**
      * @Route("/{id}/create/prescription", name="app_doctor_create_prescription", methods={"POST"})
      */
     public function createPrescription(Request $request, Doctor $doctor): JsonResponse
@@ -224,36 +254,6 @@ class ManageWorksheetController extends AbstractController
 
         return $this->json(
             'Nous n\'avons pas pu prescrire la fiche, veuillez réessayer ultérieurement.',
-            500,
-        );
-    }
-
-    /**
-     * @Route("/{id}/remove/worksheet-template", name="app_doctor_remove_worksheet_template", methods={"POST"})
-     */
-    public function removeWorksheetTemplate(Request $request, Doctor $doctor): JsonResponse
-    {
-        if ($request->isMethod('post')) {
-            $data = json_decode($request->getContent());
-
-            if ($this->isCsrfTokenValid('remove_worksheet_template' . $doctor->getId(), $data->_token)) {
-                $worksheetTemplate = $this->worksheetRepository->findOneBy(['id' => $data->worksheetTemplate_id]);
-
-                if ($worksheetTemplate->getDoctor() === $doctor) {
-                    $this->em->remove($worksheetTemplate);
-
-                    $this->em->flush();
-
-                    return $this->json(
-                        'Le modèle de fiche a bien été supprimé',
-                        200,
-                    );
-                }
-            }
-        }
-
-        return $this->json(
-            'Nous n\'avons pas pu supprimer le modèle de fiche, veuillez réessayer ultérieurement.',
             500,
         );
     }
