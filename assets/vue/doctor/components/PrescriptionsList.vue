@@ -325,16 +325,43 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.vs-table__th:first-child {
-    max-width: 110px;
+.vs-table__th:nth-child(1) {
+    width: 10% !important;
+    @media (max-width: 515px) {
+        width: 0% !important;
+    }
 }
 
 .vs-table__th:nth-child(2) {
-    width: 250px;
+    width: 32% !important;
+    @media (max-width: 515px) {
+        width: 0% !important;
+    }
 }
 
 .vs-table__th:nth-child(3) {
-    width: 200px;
+    width: 25% !important;
+    @media (max-width: 515px) {
+        width: 0% !important;
+    }
+}
+
+.vs-table__th:nth-child(4) {
+    width: 10% !important;
+    @media (max-width: 515px) {
+        width: 0% !important;
+    }
+}
+
+.vs-table__th:nth-child(5) {
+    width: 17% !important;
+    @media (max-width: 515px) {
+        width: 0% !important;
+    }
+}
+
+.vs-table__th:nth-child(6) {
+    width: 0% !important;
 }
 
 .user {

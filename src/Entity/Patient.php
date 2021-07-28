@@ -28,8 +28,15 @@ class Patient extends User
 
     /**
      * @ORM\OneToMany(targetEntity=Prescription::class, mappedBy="patient")
+     * @Groups({"patient_read"})
      */
     private $prescriptions;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"patient_read"})
+     */
+    private $lastLoginAt;
 
     public function __construct()
     {
@@ -87,6 +94,18 @@ class Patient extends User
                 $prescription->setPatient(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getLastLoginAt(): ?\DateTimeInterface
+    {
+        return $this->lastLoginAt;
+    }
+
+    public function setLastLoginAt(?\DateTimeInterface $lastLoginAt): self
+    {
+        $this->lastLoginAt = $lastLoginAt;
 
         return $this;
     }

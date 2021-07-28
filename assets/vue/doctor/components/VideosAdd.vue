@@ -461,13 +461,13 @@ h2 {
     box-shadow: 0 0.3rem 0.5rem rgb(102 113 143 / 31%) !important;
 
     &:hover {
-        background: white;
+        background: #ffb54d;
 
         i {
             font-size: 1.7em;
             margin-left: 0.15em;
             margin-top: 0.035em;
-            color: #ffb54d;
+            color: white;
         }
     }
 

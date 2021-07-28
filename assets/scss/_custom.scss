@@ -30,6 +30,18 @@ body {
     position: relative;
 }
 
+@media (max-width: 768px) {
+    .sm-dnone {
+        display: none;
+    }
+}
+
+@media (max-width: 996px) {
+    .md-dnone {
+        display: none;
+    }
+}
+
 h1 {
     font-size: 1.7em;
     display: flex;
@@ -44,7 +56,7 @@ h1 {
     }
 
     &.long {
-        @media (min-width: 650px) {
+        @media (min-width: 620px) {
             margin-bottom: 1.1em;
         }
     }
@@ -60,7 +72,7 @@ h1 {
         font-size: 1.3em;
         color: rgb(14, 14, 22);
 
-        @media (min-width: 650px) {
+        @media (min-width: 620px) {
             margin-bottom: 1.5em;
         }
 

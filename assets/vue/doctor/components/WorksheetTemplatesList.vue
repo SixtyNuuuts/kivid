@@ -437,7 +437,7 @@ export default {
                 !this.modalConfirmRemoveWorksheetTemplate);
         },
         editWorksheetTemplate(worksheetTemplate) {
-            document.location.href = `/kine/${this.doctor.id}/fiche/modification/${worksheetTemplate.id}`;
+            document.location.href = `/kine/${this.doctor.id}/fiche/edition/${worksheetTemplate.id}`;
         },
         createWorksheetTemplateFromTemplate() {
             return (this.modalCreateWorksheetFromTemplate =
@@ -554,16 +554,43 @@ export default {
 
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
 <style lang="scss" scoped>
-.vs-table__th:first-child {
-    max-width: 110px;
+.vs-table__th:nth-child(1) {
+    width: 10% !important;
+    @media (max-width: 515px) {
+        width: 0% !important;
+    }
 }
 
 .vs-table__th:nth-child(2) {
-    width: 370px;
+    width: 35% !important;
+    @media (max-width: 515px) {
+        width: 0% !important;
+    }
 }
 
 .vs-table__th:nth-child(3) {
-    width: 90px;
+    width: 10% !important;
+    @media (max-width: 515px) {
+        width: 0% !important;
+    }
+}
+
+.vs-table__th:nth-child(4) {
+    width: 10% !important;
+    @media (max-width: 515px) {
+        width: 0% !important;
+    }
+}
+
+.vs-table__th:nth-child(5) {
+    width: 20% !important;
+    @media (max-width: 515px) {
+        width: 0% !important;
+    }
+}
+
+.vs-table__th:nth-child(6) {
+    width: 0% !important;
 }
 
 .vs-button.btn-top-absolute {

@@ -23,6 +23,7 @@
             <template #thead>
                 <vs-tr>
                     <vs-th
+                        class="sm-dnone"
                         sort
                         @click="
                             doctorPatientsListArray = sortData(
@@ -47,6 +48,7 @@
                         Nom
                     </vs-th>
                     <vs-th
+                        class="sm-dnone md-dnone"
                         sort
                         @click="
                             doctorPatientsListArray = sortData(
@@ -59,6 +61,7 @@
                         Email
                     </vs-th>
                     <vs-th
+                        class="sm-dnone"
                         sort
                         @click="
                             doctorPatientsListArray = sortData(
@@ -69,6 +72,20 @@
                         "
                     >
                         Age
+                    </vs-th>
+                    <vs-th>Fiche(s)</vs-th>
+                    <vs-th
+                        class="sm-dnone"
+                        sort
+                        @click="
+                            doctorPatientsListArray = sortData(
+                                $event,
+                                doctorPatientsListArray,
+                                'lastLoginAt'
+                            )
+                        "
+                    >
+                        Dernière connexion
                     </vs-th>
                     <vs-th></vs-th>
                 </vs-tr>
@@ -85,7 +102,7 @@
                         'inactive-status': false === patient.isVerified,
                     }"
                 >
-                    <vs-td>
+                    <vs-td class="sm-dnone">
                         <div v-if="patient.isVerified" class="status">
                             <div class="icon-active-status"></div>
                             <p class="text-status">Actif</p>
@@ -113,14 +130,32 @@
                             </p>
                         </div>
                     </vs-td>
-                    <vs-td>
+                    <vs-td class="sm-dnone md-dnone">
                         {{ patient.email }}
                     </vs-td>
-                    <vs-td
-                        ><span v-if="patient.birthdate"
-                            >{{ getAge(patient.birthdate) }} ans</span
-                        ></vs-td
-                    >
+                    <vs-td class="sm-dnone">
+                        <span v-if="patient.birthdate">
+                            {{ getAge(patient.birthdate) }} ans
+                        </span>
+                    </vs-td>
+                    <vs-td>
+                        <div v-if="patient.prescriptions.length">
+                            <div
+                                class="worksheet"
+                                v-for="(
+                                    prescription, pi
+                                ) in patient.prescriptions"
+                                :key="pi"
+                            >
+                                {{ prescription.worksheet.title }}
+                            </div>
+                        </div>
+                    </vs-td>
+                    <vs-td class="sm-dnone">
+                        <div v-if="patient.lastLoginAt">
+                            {{ formatDate(patient.lastLoginAt) }}
+                        </div>
+                    </vs-td>
                     <vs-td>
                         <div>
                             <vs-button
@@ -355,6 +390,9 @@ export default {
         getAge(dateString) {
             return f.generateAgeFromDateOfBirth(dateString);
         },
+        formatDate(datetime) {
+            return f.formatDate(datetime);
+        },
     },
     created() {
         this.axios
@@ -370,8 +408,50 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.vs-table__th:first-child {
-    max-width: 150px;
+.vs-table__th:nth-child(1) {
+    width: 8% !important;
+    @media (max-width: 515px) {
+        width: 0% !important;
+    }
+}
+
+.vs-table__th:nth-child(2) {
+    width: 22% !important;
+    @media (max-width: 515px) {
+        width: 0% !important;
+    }
+}
+
+.vs-table__th:nth-child(3) {
+    width: 22% !important;
+    @media (max-width: 515px) {
+        width: 0% !important;
+    }
+}
+
+.vs-table__th:nth-child(4) {
+    width: 7% !important;
+    @media (max-width: 515px) {
+        width: 0% !important;
+    }
+}
+
+.vs-table__th:nth-child(5) {
+    width: 16% !important;
+    @media (max-width: 515px) {
+        width: 0% !important;
+    }
+}
+
+.vs-table__th:nth-child(6) {
+    width: 10% !important;
+    @media (max-width: 515px) {
+        width: 0% !important;
+    }
+}
+
+.vs-table__th:nth-child(7) {
+    width: 0% !important;
 }
 
 .status {
@@ -409,5 +489,19 @@ export default {
         margin-left: 0.6em;
         flex: 1;
     }
+}
+
+.worksheet {
+    display: inline-block !important;
+    background: #f9fbfd;
+    padding: 0.5em 0.7em;
+    border-radius: 0.5em;
+    font-size: 0.65em;
+    line-height: 1.3;
+    margin: 0.3em;
+    text-align: center;
+    box-shadow: 0 0.1rem 0.3rem rgb(22 28 45 / 20%) !important;
+    width: 100%;
+    color: #36486a;
 }
 </style>

@@ -3,6 +3,7 @@
 namespace App\Security;
 
 use App\Entity\User;
+use App\Entity\Patient;
 use App\Security\RedirectFromRoleTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -72,6 +73,12 @@ abstract class AbstractSocialAuthenticator extends OAuth2Authenticator
                 }
 
                 $user = $this->getUserFromResourceOwner($resourceOwner, $userType);
+
+                if ($user instanceof Patient) {
+                    $user->setLastLoginAt(new \DateTime());
+
+                    $this->em->flush();
+                }
 
                 if (!$user) {
                     throw new UserOauthNotFoundException($resourceOwner);

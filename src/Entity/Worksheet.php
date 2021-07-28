@@ -23,7 +23,7 @@ class Worksheet
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"worksheet_read", "prescription_read"})
+     * @Groups({"worksheet_read", "prescription_read", "patient_read"})
      */
     private $title;
 

@@ -26,3 +26,10 @@ services:
 
     SymfonyCasts\Bundle\ResetPassword\Generator\ResetPasswordTokenGenerator: "@symfonycasts.reset_password.token_generator"
     SymfonyCasts\Bundle\ResetPassword\Util\ResetPasswordCleaner: "@symfonycasts.reset_password.cleaner"
+
+    App\EventListener\LoginListener:
+        tags:
+            - {
+                  name: "kernel.event_listener",
+                  event: "security.interactive_login",
+              }

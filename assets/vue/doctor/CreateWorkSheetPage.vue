@@ -165,10 +165,10 @@
                     Créer la fiche
                 </vs-button>
                 <vs-button
-                    v-if="action === 'modification'"
+                    v-if="action === 'edition'"
                     size="large"
                     @click="editWorksheetTemplate()"
-                    ><i class="fe fe-edit-2"></i>
+                    ><i class="fe fe-edit-3"></i>
                     Valider les modifications
                 </vs-button>
             </div>
