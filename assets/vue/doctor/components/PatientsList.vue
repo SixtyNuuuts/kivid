@@ -170,7 +170,7 @@
                                 <i class="fe fe-file-plus"></i>
                                 Prescrire
                             </vs-button>
-                            <vs-tooltip>
+                            <vs-tooltip class="sm-dnone">
                                 <vs-button
                                     class="btn-remove"
                                     @click="removePatient(patient)"
@@ -440,9 +440,9 @@ export default {
 }
 
 .vs-table__th:nth-child(5) {
-    width: 16% !important;
+    width: 25% !important;
     @media (max-width: 515px) {
-        width: 0% !important;
+        width: 5% !important;
     }
 }
 
@@ -487,10 +487,26 @@ export default {
 }
 
 .user {
+    flex-direction: column;
+
     p {
+        margin-top: 0.5em;
+        margin-left: 0;
         margin-bottom: 0;
-        margin-left: 0.6em;
         flex: 1;
+        font-size: 0.8em;
+        text-align: center;
+    }
+
+    @media (min-width: 515px) {
+        flex-direction: row;
+
+        p {
+            margin-left: 0.6em;
+            margin-top: 0;
+            font-size: 1em;
+            text-align: left;
+        }
     }
 }
 

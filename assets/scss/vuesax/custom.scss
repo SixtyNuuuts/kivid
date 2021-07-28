@@ -324,6 +324,12 @@
   }
 }
 
+.vs-table table {
+  @media (max-width: 515px) {
+    min-width: initial;
+  }
+}
+
 .vs-table__header .multiselect__option {
   transition: all 0.25s ease;
   font-size: 0.9em;
