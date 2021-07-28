@@ -14,7 +14,7 @@
                 </template>
             </vs-input>
             <div v-if="search" class="search-active">
-                <span v-if="worksheetTemplatesListArrayFiltered.length">
+                <span v-if="worksheetTemplatesListArrayFiltered.length > 1">
                     {{ worksheetTemplatesListArrayFiltered.length }} fiches
                 </span>
                 <span v-else>

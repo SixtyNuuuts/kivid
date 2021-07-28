@@ -14,7 +14,7 @@
                 </template>
             </vs-input>
             <div v-if="search" class="search-active">
-                <span v-if="doctorPatientsListArrayFiltered.length">
+                <span v-if="doctorPatientsListArrayFiltered.length > 1">
                     {{ doctorPatientsListArrayFiltered.length }} Patients
                 </span>
                 <span v-else>

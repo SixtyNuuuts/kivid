@@ -139,7 +139,10 @@
                         </span>
                     </vs-td>
                     <vs-td>
-                        <div v-if="patient.prescriptions.length">
+                        <div
+                            v-if="patient.prescriptions.length"
+                            class="worksheets"
+                        >
                             <div
                                 class="worksheet"
                                 v-for="(
@@ -489,6 +492,10 @@ export default {
         margin-left: 0.6em;
         flex: 1;
     }
+}
+
+.worksheets {
+    flex-wrap: wrap;
 }
 
 .worksheet {
