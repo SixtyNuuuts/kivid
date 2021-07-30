@@ -22,6 +22,7 @@
                 <vs-option label="Cheville" value="Cheville"
                     >Cheville</vs-option
                 >
+                <vs-option label="Coude" value="Coude">Coude</vs-option>
                 <vs-option label="Hanche" value="Hanche">Hanche</vs-option>
                 <vs-option label="Epaule " value="Epaule">Epaule</vs-option>
                 <vs-option label="Dos" value="Dos">Dos</vs-option>

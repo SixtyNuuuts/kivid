@@ -32,8 +32,7 @@
 					{% if is_granted('ROLE_PATIENT') or is_granted('ROLE_DOCTOR')%}
 						<li class="nav-item d-flex align-items-center">
 						{% if is_granted('ROLE_PATIENT') %}
-							<a class="nav-link" href="#!">
-							{# <a class="nav-link  {% if app.request.get('_route') == 'app_patient_worksheets' %}active{% endif %}" href="{{ path('app_patient_worksheets', {'id':app.user.id}) }}"> #}
+							<a class="nav-link  {% if app.request.get('_route') == 'app_patient_worksheets' %}active{% endif %}" href="{{ path('app_patient_worksheets', {'id':app.user.id}) }}">
 						{% elseif is_granted('ROLE_DOCTOR')%}
 							<a class="nav-link  {% if app.request.get('_route') == 'app_doctor_worksheets' %}active{% endif %}" href="{{ path('app_doctor_worksheets', {'id':app.user.id}) }}">
 						{% endif %}

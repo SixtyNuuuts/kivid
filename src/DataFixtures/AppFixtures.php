@@ -43,6 +43,7 @@ class AppFixtures extends Fixture
 
         $partOfBody = [
             'Genou',
+            'Coude',
             'Cheville',
             'Hanche',
             'Epaule',

@@ -17,31 +17,31 @@ class Exercise
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"worksheet_read"})
+     * @Groups({"worksheet_read", "prescription_read"})
      */
     private $id;
 
     /**
      * @ORM\ManyToOne(targetEntity=Video::class, inversedBy="exercises")
-     * @Groups({"worksheet_read"})
+     * @Groups({"worksheet_read", "prescription_read"})
      */
     private $video;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"worksheet_read"})
+     * @Groups({"worksheet_read", "prescription_read"})
      */
     private $numberOfRepetitions;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"worksheet_read"})
+     * @Groups({"worksheet_read", "prescription_read"})
      */
     private $numberOfSeries;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"worksheet_read"})
+     * @Groups({"worksheet_read", "prescription_read"})
      */
     private $option;
 
@@ -57,7 +57,7 @@ class Exercise
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"worksheet_read"})
+     * @Groups({"worksheet_read", "prescription_read"})
      */
     private $position;
 

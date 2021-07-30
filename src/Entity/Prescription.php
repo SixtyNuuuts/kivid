@@ -29,6 +29,7 @@ class Prescription
     /**
      * @ORM\ManyToOne(targetEntity=Doctor::class, inversedBy="prescriptions")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"prescription_read"})
      */
     private $doctor;
 

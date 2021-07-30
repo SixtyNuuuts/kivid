@@ -17,39 +17,45 @@ class Video
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"worksheet_read", "video_read"})
+     * @Groups({"worksheet_read", "video_read", "prescription_read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"worksheet_read", "video_read"})
+     * @Groups({"worksheet_read", "video_read", "prescription_read"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"worksheet_read", "video_read"})
+     * @Groups({"worksheet_read", "video_read", "prescription_read"})
      */
     private $url;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"worksheet_read", "video_read"})
+     * @Groups({"worksheet_read", "video_read", "prescription_read"})
      */
     private $thumbnailUrl;
 
     /**
      * @ORM\Column(type="text", nullable=true)
-     * @Groups({"worksheet_read", "video_read"})
+     * @Groups({"worksheet_read", "video_read", "prescription_read"})
      */
     private $description;
 
     /**
      * @ORM\ManyToMany(targetEntity=Tag::class, inversedBy="videos")
-     * @Groups({"worksheet_read", "video_read"})
+     * @Groups({"worksheet_read", "video_read", "prescription_read"})
      */
     private $tags;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"worksheet_read", "video_read", "prescription_read"})
+     */
+    private $youtubeId;
 
     /**
      * @ORM\OneToMany(targetEntity=Exercise::class, mappedBy="video")
@@ -60,12 +66,6 @@ class Video
      * @ORM\Column(type="datetime_immutable")
      */
     private $createdAt;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"worksheet_read", "video_read"})
-     */
-    private $youtubeId;
 
     public function __construct()
     {

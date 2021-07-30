@@ -2,7 +2,6 @@
 
 namespace App\Controller\Doctor;
 
-use App\Entity\Video;
 use App\Entity\Doctor;
 use App\Entity\Patient;
 use App\Entity\Exercise;
@@ -19,7 +18,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
@@ -54,15 +52,15 @@ class ManageWorksheetController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/fiches/{list}/{patientForPrescription}", name="app_doctor_worksheets", methods={"GET"})
+     * @Route("/{id}/fiches/{listType}/{patientForPrescription}", name="app_doctor_worksheets", methods={"GET"})
      */
     public function worksheetList(
         Doctor $doctor,
-        string $list = 'prescriptions',
+        string $listType = 'prescriptions',
         Patient $patientForPrescription = null
     ): Response {
         return $this->render('doctor/worksheets_list.html.twig', [
-            'list' => $list,
+            'listType' => $listType,
             'patientForPrescription' => $patientForPrescription,
             'doctor' => $doctor,
         ]);

@@ -484,6 +484,46 @@
   }
 }
 
+.worksheet-details {
+  .vs-alert {
+    background: white;
+  }
+
+  .vs-card {
+    max-width: none !important;
+    margin: 1em 0;
+
+    &:hover {
+      transform: none !important;
+    }
+
+    .vs-card__img {
+      flex: 3;
+
+      img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+      }
+    }
+
+    .vs-card__text {
+      flex: 4;
+
+      .vs-card__title {
+        padding: 0;
+        margin-bottom: 0.5em;
+      }
+
+      p {
+        max-height: 4em;
+        overflow: auto;
+        font-size: 0.9em;
+      }
+    }
+  }
+}
+
 /* VARIABLES */
 :root {
   /* --vs-primary: 25, 91, 255; */

@@ -29,7 +29,7 @@ class Worksheet
 
     /**
      * @ORM\Column(type="text", nullable=true)
-     * @Groups({"worksheet_read"})
+     * @Groups({"worksheet_read", "prescription_read"})
      */
     private $description;
 
@@ -41,7 +41,7 @@ class Worksheet
 
     /**
      * @ORM\ManyToMany(targetEntity=Exercise::class, inversedBy="worksheets")
-     * @Groups({"worksheet_read"})
+     * @Groups({"worksheet_read", "prescription_read"})
      */
     private $exercises;
 
@@ -58,7 +58,7 @@ class Worksheet
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"worksheet_read"})
+     * @Groups({"worksheet_read", "prescription_read"})
      */
     private $partOfBody;
 

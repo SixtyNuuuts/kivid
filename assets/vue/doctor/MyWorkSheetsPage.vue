@@ -69,7 +69,7 @@ export default {
         const data = JSON.parse(document.getElementById("vueData").innerHTML);
 
         this.doctor = data.doctor;
-        this.activeTab = data.list;
+        this.activeTab = data.listType;
         this.patientForPrescription = data.patientForPrescription;
         this.csrfTokenRemovePrescription = data.csrfTokenRemovePrescription;
         this.csrfTokenRemoveWorksheetTemplate =
