@@ -9,6 +9,10 @@ Vue.use(VueAxios, axios)
 // Vuesax (UX lib)
 import Vuesax from 'vuesax'
 
+// Youtube player
+import VueYoutube from 'vue-youtube'
+Vue.use(VueYoutube)
+
 Vue.use(Vuesax, {
     colors: {
         primary: '#ffab2c',

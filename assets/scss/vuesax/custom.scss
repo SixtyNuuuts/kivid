@@ -524,6 +524,20 @@
   }
 }
 
+.modal-playing-video {
+  .vs-dialog__content.notFooter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+
+    iframe {
+      width: 85%;
+      height: 550px;
+    }
+  }
+}
+
 /* VARIABLES */
 :root {
   /* --vs-primary: 25, 91, 255; */

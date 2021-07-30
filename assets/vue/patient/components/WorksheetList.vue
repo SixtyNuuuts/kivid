@@ -5,6 +5,8 @@
                 v-for="(prescription, i) in prescriptionsList"
                 :key="i"
                 class="worksheet-item card shadow-lg"
+                @click="activeWorksheet = i"
+                :class="{ active: activeWorksheet === i }"
             >
                 <div class="card-header">
                     <div class="title">
@@ -65,79 +67,114 @@
                 </div>
             </div>
         </div>
-        <div
-            v-for="(prescription, i) in prescriptionsList"
-            :key="i"
-            class="worksheet-details"
-        >
-            <h1>{{ prescription.worksheet.title }}</h1>
-            <div class="actions-btns">
-                <vs-button @click="true" size="large">
-                    <i class="fe fe-play-circle"></i>
-                    Démarrer
-                </vs-button>
-                <!-- <vs-button @click="true"> Reprendre </vs-button> -->
-            </div>
-            <vs-alert closable v-model="alertCommentExercises">
-                <template #icon>
-                    <i class="fe fe-info"></i>
-                </template>
-                À la fin de vos exercices, vous aurez la possiblité d’écrire un
-                bref commentaire.
-            </vs-alert>
-            <transition name="fade">
-                <div>
-                    <vs-card
-                        type="3"
-                        v-for="(exercise, i) in prescription.worksheet
-                            .exercises"
-                        :key="i"
-                    >
-                        <template #title>
-                            <h3>{{ exercise.video.name }}</h3>
-                        </template>
-                        <template #img>
-                            <img
-                                :src="exercise.video.thumbnailUrl"
-                                alt="vignette de la vidéo"
-                            />
-                        </template>
-                        <template #text>
-                            <p>
-                                {{ exercise.video.description }}
-                            </p>
+        <div class="worksheet-details">
+            <div v-for="(prescription, i) in prescriptionsList" :key="i">
+                <transition name="fade">
+                    <div v-if="activeWorksheet === i">
+                        <h1>{{ prescription.worksheet.title }}</h1>
+                        <div class="actions-btns">
+                            <vs-button
+                                @click="
+                                    playVideoList(
+                                        prescription.worksheet.exercises[0]
+                                    )
+                                "
+                                size="large"
+                            >
+                                <i class="fe fe-play-circle"></i>
+                                Démarrer
+                            </vs-button>
+                            <!-- <vs-button @click="true"> Reprendre </vs-button> -->
+                        </div>
+                        <vs-alert closable v-model="alertCommentExercises">
+                            <template #icon>
+                                <i class="fe fe-info"></i>
+                            </template>
+                            À la fin de vos exercices, vous aurez la possiblité
+                            d’écrire un bref commentaire.
+                        </vs-alert>
+                        <vs-card
+                            type="3"
+                            v-for="(exercise, i) in prescription.worksheet
+                                .exercises"
+                            :key="i"
+                        >
+                            <template #title>
+                                <h3>{{ exercise.video.name }}</h3>
+                            </template>
+                            <template #img>
+                                <img
+                                    :src="exercise.video.thumbnailUrl"
+                                    alt="vignette de la vidéo"
+                                />
+                            </template>
+                            <template #text>
+                                <p>
+                                    {{ exercise.video.description }}
+                                </p>
 
-                            <div class="specs">
-                                <div>
-                                    <h5>
-                                        <i class="fe fe-activity"></i>Nb de
-                                        Répétitions
-                                    </h5>
-                                    <p>
-                                        {{ exercise.numberOfRepetitions }}
-                                    </p>
+                                <div class="specs">
+                                    <div>
+                                        <h5>
+                                            <i class="fe fe-activity"></i>Nb de
+                                            Répétitions
+                                        </h5>
+                                        <p>
+                                            {{ exercise.numberOfRepetitions }}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <h5>
+                                            <i class="fe fe-activity"></i>Nb de
+                                            Nb de Séries
+                                        </h5>
+                                        <p>
+                                            {{ exercise.numberOfSeries }}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <h5>
+                                            <i class="fe fe-activity"></i>Option
+                                        </h5>
+                                        <p>{{ exercise.option }}</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h5>
-                                        <i class="fe fe-activity"></i>Nb de Nb
-                                        de Séries
-                                    </h5>
-                                    <p>
-                                        {{ exercise.numberOfSeries }}
-                                    </p>
-                                </div>
-                                <div>
-                                    <h5>
-                                        <i class="fe fe-activity"></i>Option
-                                    </h5>
-                                    <p>{{ exercise.option }}</p>
-                                </div>
-                            </div>
-                        </template>
-                    </vs-card>
-                </div>
-            </transition>
+                            </template>
+                        </vs-card>
+                    </div>
+                </transition>
+            </div>
         </div>
+        <vs-dialog
+            overflow-hidden
+            full-screen
+            v-model="modalVideoPlay"
+            class="modal-playing-video"
+        >
+            <h3>{{ currentExercise.video.name }}</h3>
+            <youtube
+                :player-vars="playerVars"
+                :video-id="currentExercise.video.youtubeId"
+            ></youtube>
+            <div class="specs">
+                <div>
+                    <h5><i class="fe fe-activity"></i>Nb de Répétitions</h5>
+                    <p>
+                        {{ currentExercise.numberOfRepetitions }}
+                    </p>
+                </div>
+                <div>
+                    <h5><i class="fe fe-activity"></i>Nb de Nb de Séries</h5>
+                    <p>
+                        {{ currentExercise.numberOfSeries }}
+                    </p>
+                </div>
+                <div>
+                    <h5><i class="fe fe-activity"></i>Option</h5>
+                    <p>{{ currentExercise.option }}</p>
+                </div>
+            </div>
+        </vs-dialog>
     </div>
 </template>
 
@@ -153,17 +190,30 @@ export default {
         return {
             patientPrescriptions: [],
             alertCommentExercises: true,
+            activeWorksheet: 0,
+            modalVideoPlay: false,
+            selectedExercise: { video: {} },
+            playerVars: {
+                rel: 0,
+                showinfo: 0,
+                ecver: 2,
+                modestbranding: 1,
+            },
         };
     },
     computed: {
         prescriptionsList() {
             return this.patientPrescriptions;
         },
+        currentExercise() {
+            return this.selectedExercise;
+        },
     },
     methods: {
-        // f(f) {
-        //     return f;
-        // },
+        playVideoList(exercise) {
+            this.modalVideoPlay = true;
+            this.selectedExercise = exercise;
+        },
     },
     mounted() {
         this.loadingPatientPrescriptionsList = this.$vs.loading({
@@ -217,6 +267,12 @@ export default {
             cursor: pointer;
             position: relative;
             background-color: white;
+            transition: all 0.2s;
+            border-left: 1px solid transparent;
+
+            &.active {
+                border-left: 5px solid orange;
+            }
 
             .card-header {
                 display: flex;
@@ -228,7 +284,7 @@ export default {
                 .title {
                     display: flex;
                     flex-direction: column;
-                    width: 65%;
+                    width: 75%;
                     white-space: nowrap;
 
                     .tags {
@@ -261,7 +317,7 @@ export default {
                     align-items: flex-end;
                     justify-content: center;
                     flex-direction: column;
-                    width: 35%;
+                    width: 25%;
 
                     span {
                         margin-right: 0.5em;
@@ -385,6 +441,18 @@ export default {
                 }
             }
         }
+    }
+}
+
+.modal-playing-video.vs-dialog__content.notFooter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+
+    iframe {
+        width: 100%;
+        max-width: 650px; /* Also helpful. Optional. */
     }
 }
 </style>
