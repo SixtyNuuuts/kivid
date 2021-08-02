@@ -23,6 +23,7 @@
 {% endblock %}
 {% block vueData %}
 	{
-		"patient": {{ patient|serialize('json', {'groups': 'patient_read'})|raw }}
+		"patient": {{ patient|serialize('json', {'groups': 'patient_read'})|raw }},
+		"csrfTokenExerciseCompleted": {{ csrf_token('exercise_completed' ~ patient.id)|serialize('json')|raw }}
 	}
 {% endblock %}

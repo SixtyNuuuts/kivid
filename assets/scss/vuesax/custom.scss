@@ -473,22 +473,6 @@
   }
 }
 
-.modal-playing-video {
-  .vs-dialog__content.notFooter {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    height: 100%;
-
-    iframe {
-      width: 85%;
-      height: 550px;
-      max-width: 1010px;
-    }
-  }
-}
-
 /* Tab */
 .vs-navbar-content {
   position: relative;
@@ -542,6 +526,12 @@
         font-size: 0.9em;
       }
     }
+  }
+}
+
+.completed {
+  .vs-card {
+    opacity: 0.5;
   }
 }
 

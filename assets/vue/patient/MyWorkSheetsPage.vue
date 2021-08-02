@@ -1,6 +1,9 @@
 <template>
-    <div id="vue">
-        <WorksheetList :patient="patient" />
+    <div>
+        <WorksheetList
+            :patient="patient"
+            :csrfTokenExerciseCompleted="csrfTokenExerciseCompleted"
+        />
     </div>
 </template>
 
@@ -16,12 +19,14 @@ export default {
     data() {
         return {
             patient: null,
+            csrfTokenExerciseCompleted: null,
         };
     },
     created() {
         const data = JSON.parse(document.getElementById("vueData").innerHTML);
 
         this.patient = data.patient;
+        this.csrfTokenExerciseCompleted = data.csrfTokenExerciseCompleted;
     },
 };
 </script>

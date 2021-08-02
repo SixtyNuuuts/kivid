@@ -10,10 +10,21 @@ html {
 
 .container.my-worksheets.my-8 {
     max-width: 1050px;
+    position: initial;
+
+    iframe {
+        width: 85%;
+        height: 550px;
+        max-width: 1010px;
+    }
 }
 
 body {
     line-height: 1.4;
+
+    &.max-height-100vh {
+        max-height: 100vh;
+    }
 }
 
 ::-webkit-scrollbar {

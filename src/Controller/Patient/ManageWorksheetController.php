@@ -5,6 +5,7 @@ namespace App\Controller\Patient;
 use App\Entity\Patient;
 use App\Repository\VideoRepository;
 use App\Repository\DoctorRepository;
+use App\Repository\ExerciseRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\PrescriptionRepository;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,6 +23,7 @@ class ManageWorksheetController extends AbstractController
 {
     private $doctorRepository;
     private $prescriptionRepository;
+    private $exerciseRepository;
     private $videoRepository;
     private $mailer;
     private $serializer;
@@ -30,6 +32,7 @@ class ManageWorksheetController extends AbstractController
     public function __construct(
         DoctorRepository $doctorRepository,
         PrescriptionRepository $prescriptionRepository,
+        ExerciseRepository $exerciseRepository,
         VideoRepository $videoRepository,
         MailerInterface $mailer,
         SerializerInterface $serializerInterface,
@@ -37,6 +40,7 @@ class ManageWorksheetController extends AbstractController
     ) {
         $this->doctorRepository = $doctorRepository;
         $this->prescriptionRepository = $prescriptionRepository;
+        $this->exerciseRepository = $exerciseRepository;
         $this->videoRepository = $videoRepository;
         $this->mailer = $mailer;
         $this->serializer = $serializerInterface;
@@ -63,6 +67,34 @@ class ManageWorksheetController extends AbstractController
             200,
             [],
             ['groups' => 'prescription_read']
+        );
+    }
+
+    /**
+     * @Route("/{id}/completed/exercise", name="app_patient_exercise_completed", methods={"POST"})
+     */
+    public function exerciseCompleted(Request $request, Patient $patient): JsonResponse
+    {
+        if ($request->isMethod('post')) {
+            $data = json_decode($request->getContent());
+
+            if ($this->isCsrfTokenValid('exercise_completed' . $patient->getId(), $data->_token)) {
+                $exercise = $this->exerciseRepository->findOneBy(['id' => $data->exercise_id]);
+
+                $exercise->setIsCompleted(true);
+
+                $this->em->flush();
+
+                return $this->json(
+                    'Félicitations, vous avez terminé cet exercice !',
+                    200,
+                );
+            }
+        }
+
+        return $this->json(
+            'Nous n\'avons pas pu enregistrer la complétion de cet exercice',
+            500,
         );
     }
 }

@@ -1,5 +1,5 @@
 <template>
-    <div ref="worksheetsList" class="worksheets-list">
+    <div class="worksheets-list">
         <div class="worksheet-item-list">
             <div
                 v-for="(prescription, i) in prescriptionsList"
@@ -105,6 +105,9 @@
                                 .exercises"
                             :key="i"
                             @click="playVideoList(exercise)"
+                            :class="{
+                                completed: true === exercise.isCompleted,
+                            }"
                         >
                             <template #title>
                                 <h3>{{ exercise.video.name }}</h3>
@@ -152,62 +155,74 @@
                 </transition>
             </div>
         </div>
-        <vs-dialog
-            overflow-hidden
-            full-screen
-            v-model="modalVideoPlay"
-            class="modal-playing-video"
-        >
-            <h2>{{ currentExercise.video.name }}</h2>
-            <youtube
-                :player-vars="playerVars"
-                :video-id="currentExercise.video.youtubeId"
-                @ended="ended()"
-            ></youtube>
-            <div>
-                <div
-                    v-if="
-                        currentExercise &&
-                        videoList.indexOf(currentExercise) != 0
-                    "
-                    class="prev"
+        <transition name="fade">
+            <div v-if="playerVideoToggle" class="overlay">
+                <vs-button
+                    class="btn-close-player"
+                    circle
+                    icon
+                    @click="closePlayerVideo"
                 >
-                    <vs-button circle icon @click="playPrevVideo()">
-                        <i class="fe fe-arrow-left"></i>
-                    </vs-button>
-                </div>
-                <div
-                    v-if="
-                        currentExercise &&
-                        videoList.indexOf(currentExercise) !=
-                            videoList.length - 1
-                    "
-                    class="next"
-                >
-                    <vs-button circle icon @click="playNextVideo()">
-                        <i class="fe fe-arrow-right"></i>
-                    </vs-button>
+                    <i class="fe fe-x"></i>
+                </vs-button>
+                <div class="player-video">
+                    <h2>{{ currentExercise.video.name }}</h2>
+                    <youtube
+                        :player-vars="playerVars"
+                        :video-id="currentExercise.video.youtubeId"
+                        @ended="ended()"
+                        ref="youtube"
+                    ></youtube>
+                    <div>
+                        <div
+                            v-if="
+                                currentExercise &&
+                                videoList.indexOf(currentExercise) != 0
+                            "
+                            class="prev"
+                        >
+                            <vs-button circle icon @click="playPrevVideo()">
+                                <i class="fe fe-arrow-left"></i>
+                            </vs-button>
+                        </div>
+                        <div
+                            v-if="
+                                currentExercise &&
+                                videoList.indexOf(currentExercise) !=
+                                    videoList.length - 1
+                            "
+                            class="next"
+                        >
+                            <vs-button circle icon @click="playNextVideo()">
+                                <i class="fe fe-arrow-right"></i>
+                            </vs-button>
+                        </div>
+                    </div>
+                    <div class="specs">
+                        <div>
+                            <h5>
+                                <i class="fe fe-activity"></i>Nb de Répétitions
+                            </h5>
+                            <p class="number">
+                                {{ currentExercise.numberOfRepetitions }}
+                            </p>
+                        </div>
+                        <div>
+                            <h5>
+                                <i class="fe fe-activity"></i>Nb de Nb de Séries
+                            </h5>
+                            <p class="number">
+                                {{ currentExercise.numberOfSeries }}
+                            </p>
+                        </div>
+                        <div v-if="currentExercise.option">
+                            <h5><i class="fe fe-activity"></i>Option</h5>
+                            <p>{{ currentExercise.option }}</p>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="specs">
-                <div>
-                    <h5><i class="fe fe-activity"></i>Nb de Répétitions</h5>
-                    <p class="number">
-                        {{ currentExercise.numberOfRepetitions }}
-                    </p>
-                </div>
-                <div>
-                    <h5><i class="fe fe-activity"></i>Nb de Nb de Séries</h5>
-                    <p class="number">
-                        {{ currentExercise.numberOfSeries }}
-                    </p>
-                </div>
-                <div v-if="currentExercise.option">
-                    <h5><i class="fe fe-activity"></i>Option</h5>
-                    <p>{{ currentExercise.option }}</p>
-                </div>
-            </div>
-        </vs-dialog>
+        </transition>
     </div>
 </template>
 
@@ -218,13 +233,14 @@ export default {
     name: "WorksheetList",
     props: {
         patient: Object,
+        csrfTokenExerciseCompleted: String,
     },
     data() {
         return {
             patientPrescriptions: [],
             alertCommentExercises: true,
             activeWorksheet: null,
-            modalVideoPlay: false,
+            playerVideoToggle: false,
             videoList: [],
             currentExercise: { video: {} },
             playerVars: {
@@ -249,7 +265,7 @@ export default {
             this.videoList = exercises;
         },
         playVideoList(exercise) {
-            this.modalVideoPlay = true;
+            this.playerVideoToggle = true;
 
             if (!exercise) {
                 this.currentExercise = this.videoList.filter(
@@ -258,21 +274,70 @@ export default {
             } else {
                 this.currentExercise = exercise;
             }
+            this.playVideo();
+            this.addMaxHeightToBody();
         },
         playPrevVideo() {
             this.currentExercise =
                 this.videoList[
                     this.videoList.indexOf(this.currentExercise) - 1
                 ];
+            this.playVideo();
+            this.addMaxHeightToBody();
         },
         playNextVideo() {
             this.currentExercise =
                 this.videoList[
                     this.videoList.indexOf(this.currentExercise) + 1
                 ];
+            this.playVideo();
+            this.addMaxHeightToBody();
+        },
+        playVideo() {
+            setTimeout(() => {
+                this.$refs.youtube.player.playVideo();
+            }, 500);
+        },
+        closePlayerVideo() {
+            this.playerVideoToggle = false;
+            this.removeMaxHeightToBody();
+        },
+        addMaxHeightToBody() {
+            document.body.classList.add("max-height-100vh");
+        },
+        removeMaxHeightToBody() {
+            document.body.classList.remove("max-height-100vh");
         },
         ended() {
             this.currentExercise.isCompleted = true;
+
+            this.axios
+                .post(`/patient/${this.patient.id}/completed/exercise`, {
+                    _token: this.csrfTokenExerciseCompleted,
+                    exercise_id: this.currentExercise.id,
+                })
+                .then((response) => {
+                    this.openNotification(
+                        `<strong>Exercice terminé !</strong>`,
+                        `${response.data}`,
+                        "top-right",
+                        "success",
+                        "<i class='fe fe-check-circle'></i>"
+                    );
+
+                    this.playerVideoToggle = false;
+                })
+                .catch((error) => {
+                    this.openNotification(
+                        `<strong>Erreur</strong>`,
+                        `${error.response.data}`,
+                        "top-right",
+                        "danger",
+                        "<i class='fe fe-alert-circle'></i>"
+                    );
+
+                    this.playerVideoToggle = false;
+                });
 
             if (
                 this.videoList.indexOf(this.currentExercise) !=
@@ -281,10 +346,21 @@ export default {
                 this.playNextVideo();
             }
         },
+        openNotification(title, text, position, color, icon) {
+            this.$vs.notification({
+                progress: "auto",
+                flat: true,
+                icon,
+                color,
+                position,
+                title,
+                text,
+            });
+        },
     },
     mounted() {
         this.loadingPatientPrescriptionsList = this.$vs.loading({
-            target: this.$refs.worksheetsList,
+            // target: this.$refs.worksheetsList,
             text: "chargement",
             type: "border",
         });
@@ -307,6 +383,11 @@ export default {
                             },
                             []
                         ));
+                });
+
+                this.patientPrescriptions.map((prescription) => {
+                    return (prescription.worksheet.exercises =
+                        f.sortedByPosition(prescription.worksheet.exercises));
                 });
 
                 this.activeWorksheetAndGenerateVideoList(
@@ -343,7 +424,7 @@ export default {
             border-left: 1px solid transparent;
 
             &.active {
-                border-left: 5px solid orange;
+                border-left: 10px solid orange;
             }
 
             .card-header {
@@ -489,6 +570,41 @@ export default {
         }
     }
 
+    .completed {
+        position: relative;
+
+        &::after {
+            content: "";
+            position: absolute;
+            top: 39%;
+            right: -1em;
+            width: 2em;
+            height: 2em;
+            background: linear-gradient(
+                90deg,
+                #ffc250,
+                #ffb049 50%,
+                #fc9c2e 100%
+            );
+            border-radius: 50%;
+            color: white;
+            font-family: "Feather" !important;
+            font-style: normal;
+            font-weight: normal;
+            font-variant: normal;
+            text-transform: none;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0.3rem 0.5rem rgb(102 113 143 / 31%);
+        }
+
+        > * {
+            opacity: 0.5;
+        }
+    }
+
     .worksheet-details {
         flex: 4;
         position: relative;
@@ -530,6 +646,56 @@ export default {
     }
 }
 
+.overlay {
+    background: rgb(0 0 0 / 95%);
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 90000000;
+    display: flex;
+
+    .btn-close-player {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 2em;
+        height: 2em;
+        font-size: 2em;
+        z-index: 1000000;
+        background: transparent;
+
+        &:hover {
+            box-shadow: none;
+            transform: none;
+            color: #838383;
+        }
+    }
+
+    .player-video {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        width: 100%;
+        position: relative;
+        z-index: 100;
+        padding: 2em;
+
+        h2 {
+            color: #fab84b;
+            margin-bottom: 1em;
+        }
+
+        p {
+            font-weight: 600;
+            color: #ffffff;
+            background-color: transparent;
+        }
+    }
+}
+
 .prev,
 .next {
     position: absolute;
@@ -558,7 +724,7 @@ export default {
     justify-content: space-between;
     width: 85%;
     max-width: 1010px;
-    margin-top: 1em;
+    margin-top: 2em;
     flex-direction: column;
 
     div {

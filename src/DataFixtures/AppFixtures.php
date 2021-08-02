@@ -174,12 +174,12 @@ class AppFixtures extends Fixture
                     ->setPerDay(rand(1, 2))
                     ->setPerWeek(rand(2, 5))
                 ;
-                
-                for ($we=1; $we <= $prescription->getDuration(); $we++) {
-                    for ($da=1; $da <= $prescription->getPerWeek(); $da++) {
-                        for ($ex=1; $ex <= $prescription->getPerDay(); $ex++) {
-                            $worksheetSession = new WorksheetSession;
-                            
+
+                for ($we = 1; $we <= $prescription->getDuration(); $we++) {
+                    for ($da = 1; $da <= $prescription->getPerWeek(); $da++) {
+                        for ($ex = 1; $ex <= $prescription->getPerDay(); $ex++) {
+                            $worksheetSession = new WorksheetSession();
+
                             $worksheetSession->setPrescription($prescription);
                             $worksheetSession->setExecution($ex);
                             $worksheetSession->setDay($da);
