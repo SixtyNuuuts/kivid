@@ -10,6 +10,7 @@ use App\Entity\Patient;
 use App\Entity\Exercise;
 use App\Entity\Worksheet;
 use App\Entity\Prescription;
+use App\Entity\WorksheetSession;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -168,9 +169,26 @@ class AppFixtures extends Fixture
                 $prescription->setPatient($patient)
                     ->setDoctor($kine)
                     ->setWorksheet($worksheetTemplateArray[array_rand($worksheetTemplateArray)]->setIsTemplate(false))
-                    ->setProgression(rand(5, 100))
                     ->setCreatedAt(\DateTimeImmutable::createFromMutable($faker->dateTimeBetween()))
+                    ->setDuration(rand(4, 10))
+                    ->setPerDay(rand(1, 2))
+                    ->setPerWeek(rand(2, 5))
                 ;
+                
+                for ($we=1; $we <= $prescription->getDuration(); $we++) {
+                    for ($da=1; $da <= $prescription->getPerWeek(); $da++) {
+                        for ($ex=1; $ex <= $prescription->getPerDay(); $ex++) {
+                            $worksheetSession = new WorksheetSession;
+                            
+                            $worksheetSession->setPrescription($prescription);
+                            $worksheetSession->setExecution($ex);
+                            $worksheetSession->setDay($da);
+                            $worksheetSession->setWeek($we);
+
+                            $manager->persist($worksheetSession);
+                        }
+                    }
+                }
 
                 $patient->addPrescription($prescription);
 

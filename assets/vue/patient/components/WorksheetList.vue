@@ -5,7 +5,7 @@
                 v-for="(prescription, i) in prescriptionsList"
                 :key="i"
                 class="worksheet-item card shadow-lg"
-                @click="activeWorksheet = i"
+                @click="activeWorksheetAndGenerateVideoList(prescription, i)"
                 :class="{ active: activeWorksheet === i }"
             >
                 <div class="card-header">
@@ -61,8 +61,13 @@
                             exercise
                         </span>
                     </div>
-                    <div class="lets-go">
-                        c'est parti ! <i class="fe fe-arrow-right-circle"></i>
+                    <div v-if="activeWorksheet === i" class="lets-go">
+                        <span>c'est parti !</span>
+                        <i class="fe fe-arrow-right-circle"></i>
+                    </div>
+                    <div v-else class="selectionner">
+                        <span>Sélectionner</span>
+                        <i class="fe fe-arrow-right-circle"></i>
                     </div>
                 </div>
             </div>
@@ -73,16 +78,17 @@
                     <div v-if="activeWorksheet === i">
                         <h1>{{ prescription.worksheet.title }}</h1>
                         <div class="actions-btns">
-                            <vs-button
-                                @click="
-                                    playVideoList(
-                                        prescription.worksheet.exercises[0]
-                                    )
-                                "
-                                size="large"
-                            >
+                            <vs-button @click="playVideoList()" size="large">
                                 <i class="fe fe-play-circle"></i>
-                                Démarrer
+                                <span
+                                    v-if="
+                                        !prescription.worksheet.exercises[0]
+                                            .isCompleted
+                                    "
+                                >
+                                    Démarrer
+                                </span>
+                                <span v-else>Reprendre</span>
                             </vs-button>
                             <!-- <vs-button @click="true"> Reprendre </vs-button> -->
                         </div>
@@ -98,6 +104,7 @@
                             v-for="(exercise, i) in prescription.worksheet
                                 .exercises"
                             :key="i"
+                            @click="playVideoList(exercise)"
                         >
                             <template #title>
                                 <h3>{{ exercise.video.name }}</h3>
@@ -132,7 +139,7 @@
                                             {{ exercise.numberOfSeries }}
                                         </p>
                                     </div>
-                                    <div>
+                                    <div v-if="exercise.option">
                                         <h5>
                                             <i class="fe fe-activity"></i>Option
                                         </h5>
@@ -151,25 +158,51 @@
             v-model="modalVideoPlay"
             class="modal-playing-video"
         >
-            <h3>{{ currentExercise.video.name }}</h3>
+            <h2>{{ currentExercise.video.name }}</h2>
             <youtube
                 :player-vars="playerVars"
                 :video-id="currentExercise.video.youtubeId"
+                @ended="ended()"
             ></youtube>
+            <div>
+                <div
+                    v-if="
+                        currentExercise &&
+                        videoList.indexOf(currentExercise) != 0
+                    "
+                    class="prev"
+                >
+                    <vs-button circle icon @click="playPrevVideo()">
+                        <i class="fe fe-arrow-left"></i>
+                    </vs-button>
+                </div>
+                <div
+                    v-if="
+                        currentExercise &&
+                        videoList.indexOf(currentExercise) !=
+                            videoList.length - 1
+                    "
+                    class="next"
+                >
+                    <vs-button circle icon @click="playNextVideo()">
+                        <i class="fe fe-arrow-right"></i>
+                    </vs-button>
+                </div>
+            </div>
             <div class="specs">
                 <div>
                     <h5><i class="fe fe-activity"></i>Nb de Répétitions</h5>
-                    <p>
+                    <p class="number">
                         {{ currentExercise.numberOfRepetitions }}
                     </p>
                 </div>
                 <div>
                     <h5><i class="fe fe-activity"></i>Nb de Nb de Séries</h5>
-                    <p>
+                    <p class="number">
                         {{ currentExercise.numberOfSeries }}
                     </p>
                 </div>
-                <div>
+                <div v-if="currentExercise.option">
                     <h5><i class="fe fe-activity"></i>Option</h5>
                     <p>{{ currentExercise.option }}</p>
                 </div>
@@ -190,9 +223,10 @@ export default {
         return {
             patientPrescriptions: [],
             alertCommentExercises: true,
-            activeWorksheet: 0,
+            activeWorksheet: null,
             modalVideoPlay: false,
-            selectedExercise: { video: {} },
+            videoList: [],
+            currentExercise: { video: {} },
             playerVars: {
                 rel: 0,
                 showinfo: 0,
@@ -205,14 +239,47 @@ export default {
         prescriptionsList() {
             return this.patientPrescriptions;
         },
-        currentExercise() {
-            return this.selectedExercise;
-        },
     },
     methods: {
+        activeWorksheetAndGenerateVideoList(prescription, i) {
+            this.activeWorksheet = i;
+            this.generateVideoList(prescription.worksheet.exercises);
+        },
+        generateVideoList(exercises) {
+            this.videoList = exercises;
+        },
         playVideoList(exercise) {
             this.modalVideoPlay = true;
-            this.selectedExercise = exercise;
+
+            if (!exercise) {
+                this.currentExercise = this.videoList.filter(
+                    (e) => false === e.isCompleted
+                )[0];
+            } else {
+                this.currentExercise = exercise;
+            }
+        },
+        playPrevVideo() {
+            this.currentExercise =
+                this.videoList[
+                    this.videoList.indexOf(this.currentExercise) - 1
+                ];
+        },
+        playNextVideo() {
+            this.currentExercise =
+                this.videoList[
+                    this.videoList.indexOf(this.currentExercise) + 1
+                ];
+        },
+        ended() {
+            this.currentExercise.isCompleted = true;
+
+            if (
+                this.videoList.indexOf(this.currentExercise) !=
+                this.videoList.length - 1
+            ) {
+                this.playNextVideo();
+            }
         },
     },
     mounted() {
@@ -241,6 +308,11 @@ export default {
                             []
                         ));
                 });
+
+                this.activeWorksheetAndGenerateVideoList(
+                    this.patientPrescriptions[0],
+                    0
+                );
 
                 this.loadingPatientPrescriptionsList.close();
                 this.loadingPatientPrescriptionsList = null;
@@ -384,9 +456,8 @@ export default {
                     font-size: 0.7em;
                 }
 
-                .lets-go {
-                    color: #ffa227;
-                    background-color: #fff6e8;
+                .lets-go,
+                .selectionner {
                     padding: 0.3em 0.9em;
                     text-transform: uppercase;
                     font-size: 0.65em;
@@ -394,11 +465,25 @@ export default {
                     display: flex;
                     align-items: center;
 
+                    span {
+                        margin-top: 0.15em;
+                    }
+
                     i {
                         margin-left: 0.3em;
                         margin-top: -0.05em;
                         font-size: 1.15em;
                     }
+                }
+
+                .selectionner {
+                    color: #869ab8;
+                    background-color: #f9fafd;
+                }
+
+                .lets-go {
+                    color: #ffa227;
+                    background-color: #fff6e8;
                 }
             }
         }
@@ -413,12 +498,13 @@ export default {
 
         h1 {
             margin-bottom: 0.7em;
+            width: 75%;
         }
 
         .actions-btns {
             display: flex;
             position: absolute;
-            top: 0.9em;
+            top: 1em;
             right: 1.6em;
         }
 
@@ -444,15 +530,80 @@ export default {
     }
 }
 
-.modal-playing-video.vs-dialog__content.notFooter {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
+.prev,
+.next {
+    position: absolute;
+    top: 47%;
 
-    iframe {
+    button {
+        width: 3em;
+        height: 3em;
+
+        i {
+            font-size: 1.5em;
+        }
+    }
+}
+
+.prev {
+    left: 2%;
+}
+
+.next {
+    right: 2%;
+}
+
+.specs {
+    display: flex;
+    justify-content: space-between;
+    width: 85%;
+    max-width: 1010px;
+    margin-top: 1em;
+    flex-direction: column;
+
+    div {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        flex: 1;
         width: 100%;
-        max-width: 650px; /* Also helpful. Optional. */
+
+        h5 {
+            color: #ffab2c;
+            margin-bottom: 0.5em;
+            line-height: 1.2;
+
+            i {
+                margin-right: 0.3em;
+            }
+        }
+
+        p {
+            border-radius: 0.2em;
+            font-weight: 600;
+            color: #506690;
+            background-color: #f1f4f8;
+            width: 100%;
+            padding: 0.5em 0.7em;
+            line-height: 1.2;
+
+            &.number {
+                font-size: 2em;
+                text-align: center;
+            }
+        }
+    }
+
+    @media (min-width: 765px) {
+        flex-direction: row;
+
+        div {
+            max-width: 13em;
+            &:not(:last-child) {
+                margin-right: 0.8em;
+            }
+        }
     }
 }
 </style>

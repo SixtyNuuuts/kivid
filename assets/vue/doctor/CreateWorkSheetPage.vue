@@ -169,7 +169,7 @@
                     v-if="action === 'edition'"
                     size="large"
                     @click="editWorksheetTemplate()"
-                    ><i class="fe fe-edit-3"></i>
+                    ><i class="fe fe-check-circle"></i>
                     Valider les modifications
                 </vs-button>
             </div>
@@ -441,7 +441,7 @@ export default {
                         } else {
                             document.location.href = `/kine/${this.doctor.id}/fiches/modeles`;
                         }
-                    }, 3000);
+                    }, 2000);
                 })
                 .catch((error) => {
                     this.openNotification(
@@ -481,8 +481,12 @@ export default {
                     this.modalConfirmEditWorksheetTemplate = false;
 
                     setTimeout(() => {
-                        document.location.href = `/kine/${this.doctor.id}/fiches/modeles`;
-                    }, 3000);
+                        if (this.patientForPrescription) {
+                            document.location.href = `/kine/${this.doctor.id}/fiches/prescriptions`;
+                        } else {
+                            document.location.href = `/kine/${this.doctor.id}/fiches/modeles`;
+                        }
+                    }, 2000);
                 })
                 .catch((error) => {
                     this.openNotification(
@@ -828,5 +832,10 @@ $primary: #ffab2c;
             margin-left: 0.4em;
         }
     }
+}
+
+i[class="fe fe-check-circle"] {
+    margin-right: 0.45em;
+    margin-top: 0.08em;
 }
 </style>

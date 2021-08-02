@@ -52,18 +52,18 @@
                         Patient
                     </vs-th>
                     <vs-th>Commentaires</vs-th>
-                    <vs-th
+                    <!-- <vs-th
                         sort
                         @click="
                             doctorPrescriptionsListArray = sortData(
                                 $event,
                                 doctorPrescriptionsListArray,
-                                'progression'
+                                'duration'
                             )
                         "
                     >
-                        Progression
-                    </vs-th>
+                        duration
+                    </vs-th> -->
                     <vs-th></vs-th>
                 </vs-tr>
             </template>
@@ -108,16 +108,27 @@
                             </div>
                         </div>
                     </vs-td>
-                    <vs-td>
+                    <!-- <vs-td>
                         <div class="progress">
                             <span
                                 class="progress-bar"
-                                :style="`width: ${prescription.progression}%`"
+                                :style="`width: ${prescription.duration}%`"
                             ></span>
                         </div>
-                    </vs-td>
+                    </vs-td> -->
                     <vs-td>
                         <div>
+                            <vs-tooltip>
+                                <vs-button
+                                    class="btn-edit"
+                                    @click="editPrescription(prescription)"
+                                >
+                                    <i class="fe fe-edit-2"></i>
+                                </vs-button>
+                                <template #tooltip>
+                                    Editer la prescription
+                                </template>
+                            </vs-tooltip>
                             <vs-tooltip>
                                 <vs-button
                                     class="btn-remove"
@@ -251,6 +262,9 @@ export default {
         },
     },
     methods: {
+        editPrescription(prescription) {
+            document.location.href = `/kine/${this.doctor.id}/fiche/edition/${prescription.worksheet.id}/${prescription.patient.id}`;
+        },
         removePrescription(prescription) {
             this.removePrescriptionDetails = prescription;
 
@@ -353,14 +367,14 @@ export default {
     }
 }
 
-.vs-table__th:nth-child(5) {
-    width: 17% !important;
-    @media (max-width: 515px) {
-        width: 0% !important;
-    }
-}
+// .vs-table__th:nth-child(5) {
+//     width: 17% !important;
+//     @media (max-width: 515px) {
+//         width: 0% !important;
+//     }
+// }
 
-.vs-table__th:nth-child(6) {
+.vs-table__th:nth-child(5) {
     width: 0% !important;
 }
 

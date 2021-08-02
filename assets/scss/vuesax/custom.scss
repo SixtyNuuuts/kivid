@@ -473,6 +473,22 @@
   }
 }
 
+.modal-playing-video {
+  .vs-dialog__content.notFooter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100%;
+
+    iframe {
+      width: 85%;
+      height: 550px;
+      max-width: 1010px;
+    }
+  }
+}
+
 /* Tab */
 .vs-navbar-content {
   position: relative;
@@ -484,9 +500,14 @@
   }
 }
 
+// specific
 .worksheet-details {
   .vs-alert {
     background: white;
+
+    .vs-alert__content__text {
+      color: #869ab8;
+    }
   }
 
   .vs-card {
@@ -498,7 +519,7 @@
     }
 
     .vs-card__img {
-      flex: 3;
+      flex: 2;
 
       img {
         height: 100%;
@@ -520,20 +541,6 @@
         overflow: auto;
         font-size: 0.9em;
       }
-    }
-  }
-}
-
-.modal-playing-video {
-  .vs-dialog__content.notFooter {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-
-    iframe {
-      width: 85%;
-      height: 550px;
     }
   }
 }

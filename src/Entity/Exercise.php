@@ -61,10 +61,17 @@ class Exercise
      */
     private $position;
 
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"prescription_read"})
+     */
+    private $isCompleted;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->worksheets = new ArrayCollection();
+        $this->isCompleted = false;
     }
 
     public function getId(): ?int
@@ -174,5 +181,17 @@ class Exercise
     public function __toString()
     {
         return $this->getVideo()->getName();
+    }
+
+    public function getIsCompleted(): ?bool
+    {
+        return $this->isCompleted;
+    }
+
+    public function setIsCompleted(?bool $isCompleted): self
+    {
+        $this->isCompleted = $isCompleted;
+
+        return $this;
     }
 }

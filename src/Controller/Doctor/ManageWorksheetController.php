@@ -155,6 +155,7 @@ class ManageWorksheetController extends AbstractController
 
                 foreach ($worksheet->getExercises() as $exercise) {
                     $worksheet->removeExercise($exercise);
+                    $this->em->remove($exercise);
                 }
 
                 foreach ($data->exercises as $dataExercise) {
