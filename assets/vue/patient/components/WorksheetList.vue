@@ -79,13 +79,20 @@
                         <h1>{{ prescription.worksheet.title }}</h1>
                         <div class="actions-btns">
                             <vs-button
+                                v-if="
+                                    !videoList.filter(
+                                        (e) => false === e.isCompleted
+                                    ).length
+                                "
+                                size="large"
+                                class="disabled"
+                            >
+                                Terminé
+                            </vs-button>
+                            <vs-button
+                                v-else
                                 @click="playVideoList()"
                                 size="large"
-                                :class="{
-                                    disabled: !videoList.filter(
-                                        (e) => false === e.isCompleted
-                                    ).length,
-                                }"
                             >
                                 <i class="fe fe-play-circle"></i>
                                 <span
@@ -96,18 +103,8 @@
                                 >
                                     Démarrer
                                 </span>
-                                <span
-                                    v-if="
-                                        !videoList.filter(
-                                            (e) => false === e.isCompleted
-                                        ).length
-                                    "
-                                >
-                                    Terminé
-                                </span>
                                 <span v-else>Reprendre</span>
                             </vs-button>
-                            <!-- <vs-button @click="true"> Reprendre </vs-button> -->
                         </div>
                         <vs-alert closable v-model="alertCommentExercises">
                             <template #icon>
@@ -1049,6 +1046,7 @@ export default {
             align-items: center;
             justify-content: center;
             padding: 5%;
+            min-height: 28em;
 
             h3 {
                 color: #ffab2c;
