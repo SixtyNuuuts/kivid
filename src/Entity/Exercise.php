@@ -67,11 +67,18 @@ class Exercise
      */
     private $isCompleted;
 
+    /**
+     * @ORM\OneToMany(targetEntity=ExerciseStat::class, mappedBy="exercise")
+     * @Groups({"prescription_read"})
+     */
+    private $exerciseStats;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->worksheets = new ArrayCollection();
         $this->isCompleted = false;
+        $this->exerciseStats = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -191,6 +198,36 @@ class Exercise
     public function setIsCompleted(?bool $isCompleted): self
     {
         $this->isCompleted = $isCompleted;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ExerciseStat[]
+     */
+    public function getExerciseStats(): Collection
+    {
+        return $this->exerciseStats;
+    }
+
+    public function addExerciseStat(ExerciseStat $exerciseStat): self
+    {
+        if (!$this->exerciseStats->contains($exerciseStat)) {
+            $this->exerciseStats[] = $exerciseStat;
+            $exerciseStat->setExercise($this);
+        }
+
+        return $this;
+    }
+
+    public function removeExerciseStat(ExerciseStat $exerciseStat): self
+    {
+        if ($this->exerciseStats->removeElement($exerciseStat)) {
+            // set the owning side to null (unless already changed)
+            if ($exerciseStat->getExercise() === $this) {
+                $exerciseStat->setExercise(null);
+            }
+        }
 
         return $this;
     }

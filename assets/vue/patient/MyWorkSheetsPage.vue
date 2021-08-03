@@ -3,6 +3,7 @@
         <WorksheetList
             :patient="patient"
             :csrfTokenExerciseCompleted="csrfTokenExerciseCompleted"
+            :csrfTokenCreateExerciseStats="csrfTokenCreateExerciseStats"
         />
     </div>
 </template>
@@ -20,6 +21,7 @@ export default {
         return {
             patient: null,
             csrfTokenExerciseCompleted: null,
+            csrfTokenCreateExerciseStats: null,
         };
     },
     created() {
@@ -27,6 +29,7 @@ export default {
 
         this.patient = data.patient;
         this.csrfTokenExerciseCompleted = data.csrfTokenExerciseCompleted;
+        this.csrfTokenCreateExerciseStats = data.csrfTokenCreateExerciseStats;
     },
 };
 </script>

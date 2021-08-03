@@ -9,6 +9,7 @@ use App\Entity\Doctor;
 use App\Entity\Patient;
 use App\Entity\Exercise;
 use App\Entity\Worksheet;
+use App\Entity\ExerciseStat;
 use App\Entity\Prescription;
 use App\Entity\WorksheetSession;
 use Doctrine\Persistence\ObjectManager;
@@ -82,7 +83,7 @@ class AppFixtures extends Fixture
 
         $manager->persist($worksheetTempleateCreator);
 
-        for ($wi = 0; $wi < rand(130, 150); $wi++) {
+        for ($wi = 0; $wi < rand(60, 80); $wi++) {
             $worksheetTemplate = new Worksheet();
 
             $worksheetTemplate
@@ -119,6 +120,21 @@ class AppFixtures extends Fixture
                 };
 
                 $exercise->setVideo($video);
+
+                $exerciseStatsCriterions = [
+                    "sensitivity",
+                    "technical",
+                    "difficulty",
+                ];
+
+                foreach ($exerciseStatsCriterions as $criterion) {
+                    $exerciseStatInit = new ExerciseStat();
+
+                    $exerciseStatInit->setCriterion($criterion)
+                                     ->setExercise($exercise);
+
+                    $manager->persist($exerciseStatInit);
+                }
 
                 $manager->persist($video);
                 $manager->persist($exercise);

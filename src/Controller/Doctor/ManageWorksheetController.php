@@ -6,6 +6,7 @@ use App\Entity\Doctor;
 use App\Entity\Patient;
 use App\Entity\Exercise;
 use App\Entity\Worksheet;
+use App\Entity\ExerciseStat;
 use App\Entity\Prescription;
 use App\Repository\VideoRepository;
 use App\Repository\PatientRepository;
@@ -112,6 +113,21 @@ class ManageWorksheetController extends AbstractController
 
                     $worksheet->addExercise($exercise);
 
+                    $exerciseStatsCriterions = [
+                        "sensitivity",
+                        "technical",
+                        "difficulty",
+                    ];
+
+                    foreach ($exerciseStatsCriterions as $criterion) {
+                        $exerciseStatInit = new ExerciseStat();
+
+                        $exerciseStatInit->setCriterion($criterion)
+                                         ->setExercise($exercise);
+
+                        $this->em->persist($exerciseStatInit);
+                    }
+
                     $this->em->persist($exercise);
                 }
 
@@ -167,6 +183,21 @@ class ManageWorksheetController extends AbstractController
 
                     $video = $this->videoRepository->findOneById($dataExercise->video->id);
                     $exercise->setVideo($video);
+
+                    $exerciseStatsCriterions = [
+                        "sensitivity",
+                        "technical",
+                        "difficulty",
+                    ];
+
+                    foreach ($exerciseStatsCriterions as $criterion) {
+                        $exerciseStatInit = new ExerciseStat();
+
+                        $exerciseStatInit->setCriterion($criterion)
+                                         ->setExercise($exercise);
+
+                        $this->em->persist($exerciseStatInit);
+                    }
 
                     $worksheet->addExercise($exercise);
 

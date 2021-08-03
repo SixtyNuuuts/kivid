@@ -78,7 +78,15 @@
                     <div v-if="activeWorksheet === i">
                         <h1>{{ prescription.worksheet.title }}</h1>
                         <div class="actions-btns">
-                            <vs-button @click="playVideoList()" size="large">
+                            <vs-button
+                                @click="playVideoList()"
+                                size="large"
+                                :class="{
+                                    disabled: !videoList.filter(
+                                        (e) => false === e.isCompleted
+                                    ).length,
+                                }"
+                            >
                                 <i class="fe fe-play-circle"></i>
                                 <span
                                     v-if="
@@ -87,6 +95,15 @@
                                     "
                                 >
                                     Démarrer
+                                </span>
+                                <span
+                                    v-if="
+                                        !videoList.filter(
+                                            (e) => false === e.isCompleted
+                                        ).length
+                                    "
+                                >
+                                    Terminé
                                 </span>
                                 <span v-else>Reprendre</span>
                             </vs-button>
@@ -166,13 +183,154 @@
                     <i class="fe fe-x"></i>
                 </vs-button>
                 <div class="player-video">
-                    <h2>{{ currentExercise.video.name }}</h2>
-                    <youtube
-                        :player-vars="playerVars"
-                        :video-id="currentExercise.video.youtubeId"
-                        @ended="ended()"
-                        ref="youtube"
-                    ></youtube>
+                    <h2>
+                        {{ currentExercise.video.name }}
+                        <span v-if="currentExercise.isCompleted">
+                            <i class="fe fe-check-circle"></i>terminé !
+                        </span>
+                    </h2>
+                    <!--  -->
+                    <transition name="slide" mode="out-in">
+                        <div class="video" v-if="showVideo" key="video">
+                            <youtube
+                                :player-vars="playerVars"
+                                :video-id="currentExercise.video.youtubeId"
+                                @ended="ended()"
+                                ref="youtube"
+                            ></youtube>
+                        </div>
+                        <div
+                            v-if="
+                                !showVideo &&
+                                !currentExercise.exerciseStats.find(
+                                    (s) => 'technical' === s.criterion
+                                ).rating
+                            "
+                            class="stat-rating"
+                            key="technical"
+                        >
+                            <h3>
+                                Comment était votre technique ? 1<span>/</span>3
+                            </h3>
+                            <custom-slider
+                                min="1"
+                                max="5"
+                                step="1"
+                                :values="sliderTechnicalValues"
+                                v-model="sliderTechnicalChoice"
+                            />
+                            <div class="graduation">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                            <div class="slider-labels">
+                                <span>Médiocre</span>
+                                <span>Excellent</span>
+                            </div>
+                            <vs-button
+                                size="large"
+                                @click="validTechnicalStat()"
+                                ><i class="fe fe-check-circle"></i>
+                                Valider
+                            </vs-button>
+                            <a class="re-show-video" @click="reShowVideo()"
+                                ><i class="fe fe-youtube"></i>
+                                Revoir la vidéo
+                            </a>
+                        </div>
+                        <div
+                            v-if="
+                                !showVideo &&
+                                currentExercise.exerciseStats.find(
+                                    (s) => 'technical' === s.criterion
+                                ).rating &&
+                                !currentExercise.exerciseStats.find(
+                                    (s) => 'difficulty' === s.criterion
+                                ).rating
+                            "
+                            class="stat-rating"
+                            key="difficulty"
+                        >
+                            <h3>
+                                Comment avez-vous trouvé l’exercice ?
+                                2<span>/</span>3
+                            </h3>
+                            <custom-slider
+                                min="1"
+                                max="5"
+                                step="1"
+                                :values="sliderDifficultyValues"
+                                v-model="sliderDifficultyChoice"
+                            />
+                            <div class="graduation">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                            <div class="slider-labels">
+                                <span>Beaucoup trop facile</span>
+                                <span>Vraiment Trop difficile</span>
+                            </div>
+                            <vs-button
+                                size="large"
+                                @click="validDifficultyStat()"
+                                ><i class="fe fe-check-circle"></i>
+                                Valider
+                            </vs-button>
+                            <a class="re-show-video" @click="reShowVideo()"
+                                ><i class="fe fe-youtube"></i>
+                                Revoir la vidéo
+                            </a>
+                        </div>
+                        <div
+                            v-if="
+                                !showVideo &&
+                                currentExercise.exerciseStats.find(
+                                    (s) => 'difficulty' === s.criterion
+                                ).rating &&
+                                !currentExercise.exerciseStats.find(
+                                    (s) => 'sensitivity' === s.criterion
+                                ).rating
+                            "
+                            class="stat-rating"
+                            key="sensitivity"
+                        >
+                            <h3>Comment vous sentez-vous ? 3<span>/</span>3</h3>
+                            <custom-slider
+                                min="1"
+                                max="5"
+                                step="1"
+                                :values="sliderSensitivityValues"
+                                v-model="sliderSensitivityChoice"
+                            />
+                            <div class="graduation">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                            <div class="slider-labels">
+                                <span>Trop mal</span>
+                                <span>Magnifiquement Bien</span>
+                            </div>
+                            <vs-button
+                                size="large"
+                                @click="validSensitivityStat()"
+                                ><i class="fe fe-check-circle"></i>
+                                Valider
+                            </vs-button>
+                            <a class="re-show-video" @click="reShowVideo()"
+                                ><i class="fe fe-youtube"></i>
+                                Revoir la vidéo
+                            </a>
+                        </div>
+                    </transition>
                     <div>
                         <div
                             v-if="
@@ -199,6 +357,13 @@
                         </div>
                     </div>
                     <div class="specs">
+                        <div class="count-exercise">
+                            <h5>
+                                Exercice
+                                {{ videoList.indexOf(currentExercise) + 1
+                                }}<span>/</span>{{ videoList.length }}
+                            </h5>
+                        </div>
                         <div>
                             <h5>
                                 <i class="fe fe-activity"></i>Nb de Répétitions
@@ -228,12 +393,17 @@
 
 <script>
 import f from "../../services/function";
+import CustomSlider from "vue-custom-range-slider";
 
 export default {
     name: "WorksheetList",
+    components: {
+        CustomSlider,
+    },
     props: {
         patient: Object,
         csrfTokenExerciseCompleted: String,
+        csrfTokenCreateExerciseStats: String,
     },
     data() {
         return {
@@ -243,6 +413,76 @@ export default {
             playerVideoToggle: false,
             videoList: [],
             currentExercise: { video: {} },
+            sliderTechnicalChoice: "3",
+            sliderTechnicalValues: [
+                {
+                    label: "Médiocre",
+                    value: "1",
+                },
+                {
+                    label: "Passable",
+                    value: "2",
+                },
+                {
+                    label: "Pas mal",
+                    value: "3",
+                },
+                {
+                    label: "Bonne !",
+                    value: "4",
+                },
+                {
+                    label: "Excellente !!",
+                    value: "5",
+                },
+            ],
+            sliderDifficultyChoice: "3",
+            sliderDifficultyValues: [
+                {
+                    label: "Beaucoup trop facile !",
+                    value: "1",
+                },
+                {
+                    label: "Trop facile",
+                    value: "2",
+                },
+                {
+                    label: "Ok",
+                    value: "3",
+                },
+                {
+                    label: "Trop difficile",
+                    value: "4",
+                },
+                {
+                    label: "Vraiment Trop difficile !",
+                    value: "5",
+                },
+            ],
+            sliderSensitivityChoice: "3",
+            sliderSensitivityValues: [
+                {
+                    label: "Trop mal :(",
+                    value: "1",
+                },
+                {
+                    label: "Bof",
+                    value: "2",
+                },
+                {
+                    label: "Pas mal",
+                    value: "3",
+                },
+                {
+                    label: "Bien !",
+                    value: "4",
+                },
+                {
+                    label: "Magnifiquement Bien !!",
+                    value: "5",
+                },
+            ],
+            showVideo: true,
             playerVars: {
                 rel: 0,
                 showinfo: 0,
@@ -257,6 +497,106 @@ export default {
         },
     },
     methods: {
+        reShowVideo() {
+            this.showVideo = true;
+        },
+        validTechnicalStat() {
+            this.currentExercise.exerciseStats.find(
+                (s) => "technical" === s.criterion
+            ).rating = this.sliderTechnicalChoice;
+
+            this.axios
+                .post(
+                    `/patient/${this.patient.id}/save/exercise-stat/technical`,
+                    {
+                        _token: this.csrfTokenCreateExerciseStats,
+                        exercise_id: this.currentExercise.id,
+                        exercise_stat_value: this.sliderTechnicalChoice,
+                    }
+                )
+                .then((response) => {
+                    console.log(response.data);
+
+                    this.sliderTechnicalChoice = "3";
+                })
+                .catch((error) => {
+                    console.log(error.response.data);
+                });
+        },
+        validDifficultyStat() {
+            this.currentExercise.exerciseStats.find(
+                (s) => "difficulty" === s.criterion
+            ).rating = this.sliderDifficultyChoice;
+
+            this.axios
+                .post(
+                    `/patient/${this.patient.id}/save/exercise-stat/difficulty`,
+                    {
+                        _token: this.csrfTokenCreateExerciseStats,
+                        exercise_id: this.currentExercise.id,
+                        exercise_stat_value: this.sliderDifficultyChoice,
+                    }
+                )
+                .then((response) => {
+                    console.log(response.data);
+
+                    this.sliderDifficultyChoice = "3";
+                })
+                .catch((error) => {
+                    console.log(error.response.data);
+                });
+        },
+        validSensitivityStat() {
+            this.currentExercise.exerciseStats.find(
+                (s) => "sensitivity" === s.criterion
+            ).rating = this.sliderSensitivityChoice;
+
+            this.axios
+                .post(
+                    `/patient/${this.patient.id}/save/exercise-stat/sensitivity`,
+                    {
+                        _token: this.csrfTokenCreateExerciseStats,
+                        exercise_id: this.currentExercise.id,
+                        exercise_stat_value: this.sliderSensitivityChoice,
+                    }
+                )
+                .then((response) => {
+                    console.log(response.data);
+
+                    this.axios
+                        .post(
+                            `/patient/${this.patient.id}/completed/exercise`,
+                            {
+                                _token: this.csrfTokenExerciseCompleted,
+                                exercise_id: this.currentExercise.id,
+                            }
+                        )
+                        .then((response) => {
+                            this.openNotification(
+                                `<strong>Exercice terminé !</strong>`,
+                                `${response.data}`,
+                                "top-right",
+                                "success",
+                                "<i class='fe fe-check-circle'></i>"
+                            );
+                        })
+                        .catch((error) => {
+                            this.openNotification(
+                                `<strong>Erreur</strong>`,
+                                `${error.response.data}`,
+                                "top-right",
+                                "danger",
+                                "<i class='fe fe-alert-circle'></i>"
+                            );
+                        });
+
+                    this.sliderSensitivityChoice = "3";
+                    this.currentExercise.isCompleted = true;
+                })
+                .catch((error) => {
+                    console.log(error.response.data);
+                });
+        },
         activeWorksheetAndGenerateVideoList(prescription, i) {
             this.activeWorksheet = i;
             this.generateVideoList(prescription.worksheet.exercises);
@@ -271,9 +611,10 @@ export default {
                 this.currentExercise = this.videoList.filter(
                     (e) => false === e.isCompleted
                 )[0];
-            } else {
+            } else if (exercise) {
                 this.currentExercise = exercise;
             }
+
             this.playVideo();
             this.addMaxHeightToBody();
         },
@@ -294,9 +635,10 @@ export default {
             this.addMaxHeightToBody();
         },
         playVideo() {
-            setTimeout(() => {
-                this.$refs.youtube.player.playVideo();
-            }, 500);
+            this.showVideo = true;
+            // setTimeout(() => {
+            //     this.$refs.youtube.player.playVideo();
+            // }, 500);
         },
         closePlayerVideo() {
             this.playerVideoToggle = false;
@@ -309,42 +651,14 @@ export default {
             document.body.classList.remove("max-height-100vh");
         },
         ended() {
-            this.currentExercise.isCompleted = true;
+            this.showVideo = false;
 
-            this.axios
-                .post(`/patient/${this.patient.id}/completed/exercise`, {
-                    _token: this.csrfTokenExerciseCompleted,
-                    exercise_id: this.currentExercise.id,
-                })
-                .then((response) => {
-                    this.openNotification(
-                        `<strong>Exercice terminé !</strong>`,
-                        `${response.data}`,
-                        "top-right",
-                        "success",
-                        "<i class='fe fe-check-circle'></i>"
-                    );
-
-                    this.playerVideoToggle = false;
-                })
-                .catch((error) => {
-                    this.openNotification(
-                        `<strong>Erreur</strong>`,
-                        `${error.response.data}`,
-                        "top-right",
-                        "danger",
-                        "<i class='fe fe-alert-circle'></i>"
-                    );
-
-                    this.playerVideoToggle = false;
-                });
-
-            if (
-                this.videoList.indexOf(this.currentExercise) !=
-                this.videoList.length - 1
-            ) {
-                this.playNextVideo();
-            }
+            // if (
+            //     this.videoList.indexOf(this.currentExercise) !=
+            //     this.videoList.length - 1
+            // ) {
+            //     this.playNextVideo();
+            // }
         },
         openNotification(title, text, position, color, icon) {
             this.$vs.notification({
@@ -653,7 +967,7 @@ export default {
     position: absolute;
     top: 0;
     left: 0;
-    z-index: 90000000;
+    z-index: 10000;
     display: flex;
 
     .btn-close-player {
@@ -675,17 +989,127 @@ export default {
 
     .player-video {
         display: flex;
-        justify-content: center;
+        justify-content: flex-start;
         align-items: center;
         flex-direction: column;
         width: 100%;
         position: relative;
         z-index: 100;
         padding: 2em;
+        overflow: auto;
+
+        @media (min-width: 765px) {
+            justify-content: center;
+        }
 
         h2 {
             color: #fab84b;
             margin-bottom: 1em;
+
+            span {
+                font-size: 0.4em;
+                background: linear-gradient(
+                    90deg,
+                    #ffc250,
+                    #ffb049 50%,
+                    #fc9c2e 100%
+                );
+                color: black;
+                padding: 0.2em 0.6em;
+                border-radius: 1.8em;
+                font-weight: 600;
+                text-transform: uppercase;
+                position: relative;
+                top: -3px;
+
+                i {
+                    margin-right: 0.3em;
+                    position: relative;
+                    top: 1px;
+                }
+            }
+        }
+
+        .video {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-width: 85%;
+            min-height: 70%;
+        }
+
+        .stat-rating {
+            width: 85%;
+            height: 70%;
+            background-color: #181819eb;
+            border-radius: 1.4em;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 5%;
+
+            h3 {
+                color: #ffab2c;
+                margin-bottom: 2em;
+                font-size: 1.6em;
+
+                span {
+                    font-size: 0.8em;
+                    position: relative;
+                    top: -3.1px;
+                    margin-right: 0.2em;
+                    margin-left: 0.1em;
+                    color: #c88827;
+                }
+            }
+
+            .graduation {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                width: 95%;
+
+                span {
+                    background-color: #838383;
+                    width: 1px;
+                    height: 10px;
+                    position: relative;
+                    top: -0.8em;
+                }
+            }
+
+            .slider-labels {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                color: #a7a7a7;
+                width: 100%;
+                margin-bottom: 2em;
+            }
+
+            .re-show-video {
+                margin-top: 2em;
+                color: #b2b2b2;
+                background-color: #262626;
+                padding: 0.4em 0.9em;
+                border-radius: 0.7em;
+                font-size: 0.9em;
+                cursor: pointer;
+
+                &:hover {
+                    text-decoration: none;
+                    color: #8f8f8f;
+                    background-color: #444444;
+                }
+
+                i {
+                    position: relative;
+                    top: 2px;
+                    margin-right: 0.1em;
+                }
+            }
         }
 
         p {
@@ -735,6 +1159,27 @@ export default {
         flex: 1;
         width: 100%;
 
+        &.count-exercise {
+            justify-content: flex-start;
+            align-items: flex-start;
+
+            h5 {
+                margin-bottom: 0;
+                background-color: #ffffff17;
+                padding: 0.4em 1em;
+                border-radius: 2em;
+            }
+
+            span {
+                font-size: 0.8em;
+                margin-left: 0.1em;
+                margin-right: 0.2em;
+                position: relative;
+                top: -0.1em;
+                color: #d8932a;
+            }
+        }
+
         h5 {
             color: #ffab2c;
             margin-bottom: 0.5em;
@@ -770,6 +1215,16 @@ export default {
                 margin-right: 0.8em;
             }
         }
+    }
+}
+
+.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+    background: rgb(177, 177, 177);
+
+    i {
+        display: none;
     }
 }
 </style>

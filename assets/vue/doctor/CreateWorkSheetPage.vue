@@ -833,9 +833,4 @@ $primary: #ffab2c;
         }
     }
 }
-
-i[class="fe fe-check-circle"] {
-    margin-right: 0.45em;
-    margin-top: 0.08em;
-}
 </style>
