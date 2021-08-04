@@ -92,7 +92,7 @@ export default {
                     this.loadingDoctorPrescriptionsList = null;
                 })
                 .catch((error) => {
-                    console.log(error);
+                    console.log(error.response);
                     this.loadingDoctorPrescriptionsList.close();
                     this.loadingDoctorPrescriptionsList = null;
                 });

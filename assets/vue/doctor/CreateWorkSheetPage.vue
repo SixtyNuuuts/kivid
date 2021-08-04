@@ -163,7 +163,7 @@
                     size="large"
                     @click="createWorksheet()"
                     ><i class="fe fe-file-plus"></i>
-                    Créer la fiche
+                    Créer le modèle
                 </vs-button>
                 <vs-button
                     v-if="action === 'edition'"
@@ -337,6 +337,7 @@ export default {
             const is = this.exercisesSelected.length;
             videos.forEach((v, i) => {
                 const exercise = {
+                    id: null,
                     position: is + i,
                     numberOfRepetitions: 0,
                     numberOfSeries: 0,
@@ -444,6 +445,7 @@ export default {
                     }, 2000);
                 })
                 .catch((error) => {
+                    console.log(error.response.data);
                     this.openNotification(
                         `<strong>Création de la fiche : Erreur</strong>`,
                         `${error.response.data}`,
@@ -489,6 +491,7 @@ export default {
                     }, 2000);
                 })
                 .catch((error) => {
+                    console.log(error.response.data);
                     this.openNotification(
                         `<strong>Edition de la fiche : Erreur</strong>`,
                         `${error.response.data}`,

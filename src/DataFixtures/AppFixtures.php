@@ -191,19 +191,23 @@ class AppFixtures extends Fixture
                     ->setPerWeek(rand(2, 5))
                 ;
 
-                for ($we = 1; $we <= $prescription->getDuration(); $we++) {
-                    for ($da = 1; $da <= $prescription->getPerWeek(); $da++) {
-                        for ($ex = 1; $ex <= $prescription->getPerDay(); $ex++) {
-                            $worksheetSession = new WorksheetSession();
+                for ($ws = 1; $ws <= $prescription->getDuration()
+                                   * $prescription->getPerWeek()
+                                   * $prescription->getPerDay(); $ws++) {
+                    $worksheetSession = new WorksheetSession();
 
-                            $worksheetSession->setPrescription($prescription);
-                            $worksheetSession->setExecution($ex);
-                            $worksheetSession->setDay($da);
-                            $worksheetSession->setWeek($we);
+                    $worksheetSession->setPrescription($prescription);
+                    $worksheetSession->setExecOrder($ws);
 
-                            $manager->persist($worksheetSession);
-                        }
-                    }
+                    // if (1 === $worksheetSessionOrder) {
+                    //     $dateNow = new \DateTime();
+                    //     $dateDeadline = $dateNow->add(new \DateInterval('P7D'));
+                    //     $worksheetSession->setStartAt($dateNow)
+                    //                      ->setDeadlineAt($dateDeadline)
+                    //                      ->setIsInProgress(true);
+                    // }
+
+                    $manager->persist($worksheetSession);
                 }
 
                 $patient->addPrescription($prescription);

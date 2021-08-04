@@ -37,22 +37,17 @@ class WorksheetSession
     private $isCompleted;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"prescription_read"})
      */
-    private $day;
+    private $isInProgress
+    ;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"prescription_read"})
      */
-    private $week;
-
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"prescription_read"})
-     */
-    private $execution;
+    private $execOrder;
 
     /**
      * @ORM\ManyToOne(targetEntity=Prescription::class, inversedBy="worksheetSessions")
@@ -63,6 +58,7 @@ class WorksheetSession
     public function __construct()
     {
         $this->isCompleted = false;
+        $this->isInProgress = false;
     }
 
     public function getId(): ?int
@@ -106,26 +102,14 @@ class WorksheetSession
         return $this;
     }
 
-    public function getDay(): ?int
+    public function getIsInProgress(): ?bool
     {
-        return $this->day;
+        return $this->isInProgress;
     }
 
-    public function setDay(?int $day): self
+    public function setIsInProgress(?bool $isInProgress): self
     {
-        $this->day = $day;
-
-        return $this;
-    }
-
-    public function getExecution(): ?int
-    {
-        return $this->execution;
-    }
-
-    public function setExecution(?int $execution): self
-    {
-        $this->execution = $execution;
+        $this->isInProgress = $isInProgress;
 
         return $this;
     }
@@ -142,14 +126,14 @@ class WorksheetSession
         return $this;
     }
 
-    public function getWeek(): ?int
+    public function getExecOrder(): ?int
     {
-        return $this->week;
+        return $this->execOrder;
     }
 
-    public function setWeek(?int $week): self
+    public function setExecOrder(?int $execOrder): self
     {
-        $this->week = $week;
+        $this->execOrder = $execOrder;
 
         return $this;
     }

@@ -8,6 +8,8 @@ use App\Entity\Exercise;
 use App\Entity\Worksheet;
 use App\Entity\ExerciseStat;
 use App\Entity\Prescription;
+use App\Entity\WorksheetSession;
+use App\Repository\ExerciseRepository;
 use App\Repository\VideoRepository;
 use App\Repository\PatientRepository;
 use App\Repository\WorksheetRepository;
@@ -30,6 +32,7 @@ class ManageWorksheetController extends AbstractController
     private $patientRepository;
     private $prescriptionRepository;
     private $videoRepository;
+    private $exerciseRepository;
     private $mailer;
     private $serializer;
     private $em;
@@ -39,6 +42,7 @@ class ManageWorksheetController extends AbstractController
         PrescriptionRepository $prescriptionRepository,
         WorksheetRepository $worksheetRepository,
         VideoRepository $videoRepository,
+        ExerciseRepository $exerciseRepository,
         MailerInterface $mailer,
         SerializerInterface $serializerInterface,
         EntityManagerInterface $em
@@ -47,6 +51,7 @@ class ManageWorksheetController extends AbstractController
         $this->prescriptionRepository = $prescriptionRepository;
         $this->worksheetRepository = $worksheetRepository;
         $this->videoRepository = $videoRepository;
+        $this->exerciseRepository = $exerciseRepository;
         $this->mailer = $mailer;
         $this->serializer = $serializerInterface;
         $this->em = $em;
@@ -96,39 +101,13 @@ class ManageWorksheetController extends AbstractController
             if ($this->isCsrfTokenValid('create_worksheet' . $doctor->getId(), $data->_token)) {
                 $worksheet = new Worksheet();
                 $worksheet->setTitle($data->title)
-                  ->setDescription($data->description)
-                  ->setPartOfBody($data->partOfBody)
-                  ->setIsTemplate($data->isTemplate)
-                  ->setDoctor($doctor);
+                          ->setDescription($data->description)
+                          ->setPartOfBody($data->partOfBody)
+                          ->setIsTemplate($data->isTemplate)
+                          ->setDoctor($doctor);
 
                 foreach ($data->exercises as $dataExercise) {
-                    $exercise = new Exercise();
-                    $exercise->setNumberOfRepetitions($dataExercise->numberOfRepetitions)
-                     ->setNumberOfSeries($dataExercise->numberOfSeries)
-                     ->setOption($dataExercise->option)
-                     ->setPosition($dataExercise->position);
-
-                    $video = $this->videoRepository->findOneById($dataExercise->video->id);
-                    $exercise->setVideo($video);
-
-                    $worksheet->addExercise($exercise);
-
-                    $exerciseStatsCriterions = [
-                        "sensitivity",
-                        "technical",
-                        "difficulty",
-                    ];
-
-                    foreach ($exerciseStatsCriterions as $criterion) {
-                        $exerciseStatInit = new ExerciseStat();
-
-                        $exerciseStatInit->setCriterion($criterion)
-                                         ->setExercise($exercise);
-
-                        $this->em->persist($exerciseStatInit);
-                    }
-
-                    $this->em->persist($exercise);
+                    $this->generateExercise($dataExercise, $worksheet);
                 }
 
                 $this->em->persist($worksheet);
@@ -165,43 +144,20 @@ class ManageWorksheetController extends AbstractController
                 $worksheet = $this->worksheetRepository->findOneBy(['id' => $data->worksheetId]);
 
                 $worksheet->setTitle($data->title)
-                  ->setDescription($data->description)
-                  ->setPartOfBody($data->partOfBody);
-
-
-                foreach ($worksheet->getExercises() as $exercise) {
-                    $worksheet->removeExercise($exercise);
-                    $this->em->remove($exercise);
-                }
+                          ->setDescription($data->description)
+                          ->setPartOfBody($data->partOfBody);
 
                 foreach ($data->exercises as $dataExercise) {
-                    $exercise = new Exercise();
-                    $exercise->setNumberOfRepetitions($dataExercise->numberOfRepetitions)
-                     ->setNumberOfSeries($dataExercise->numberOfSeries)
-                     ->setOption($dataExercise->option)
-                     ->setPosition($dataExercise->position);
-
-                    $video = $this->videoRepository->findOneById($dataExercise->video->id);
-                    $exercise->setVideo($video);
-
-                    $exerciseStatsCriterions = [
-                        "sensitivity",
-                        "technical",
-                        "difficulty",
-                    ];
-
-                    foreach ($exerciseStatsCriterions as $criterion) {
-                        $exerciseStatInit = new ExerciseStat();
-
-                        $exerciseStatInit->setCriterion($criterion)
-                                         ->setExercise($exercise);
-
-                        $this->em->persist($exerciseStatInit);
+                    if ($dataExercise->id) {
+                        $exercise = $this->exerciseRepository->findOneBy(['id' => $dataExercise->id]);
+                        $exercise->setNumberOfRepetitions($dataExercise->numberOfRepetitions)
+                                 ->setNumberOfSeries($dataExercise->numberOfSeries)
+                                 ->setOption($dataExercise->option)
+                                 ->setPosition($dataExercise->position);
                     }
-
-                    $worksheet->addExercise($exercise);
-
-                    $this->em->persist($exercise);
+                    if (null === $dataExercise->id) {
+                        $this->generateExercise($dataExercise, $worksheet);
+                    }
                 }
 
                 $this->em->flush();
@@ -268,6 +224,14 @@ class ManageWorksheetController extends AbstractController
                              ->setWorksheet($worksheet)
                 ;
 
+                // Temporaire - juste pour une session pour l'instant
+                // (plus tard * x  durée en semaines * x par semaine * x par jour )
+                $worksheetSession = new WorksheetSession();
+                $worksheetSession->setPrescription($prescription);
+                $worksheetSession->setExecOrder(1);
+                $this->em->persist($worksheetSession);
+                //
+
                 $this->em->persist($prescription);
 
                 $this->em->flush();
@@ -329,5 +293,36 @@ class ManageWorksheetController extends AbstractController
             [],
             ['groups' => 'prescription_read']
         );
+    }
+
+    private function generateExercise(object $dataExercise, Worksheet $worksheet): void
+    {
+        $exercise = new Exercise();
+        $exercise->setNumberOfRepetitions($dataExercise->numberOfRepetitions)
+                     ->setNumberOfSeries($dataExercise->numberOfSeries)
+                     ->setOption($dataExercise->option)
+                     ->setPosition($dataExercise->position);
+
+        $video = $this->videoRepository->findOneById($dataExercise->video->id);
+        $exercise->setVideo($video);
+
+        $exerciseStatsCriterions = [
+            "sensitivity",
+            "technical",
+            "difficulty",
+        ];
+
+        foreach ($exerciseStatsCriterions as $criterion) {
+            $exerciseStatInit = new ExerciseStat();
+
+            $exerciseStatInit->setCriterion($criterion)
+                             ->setExercise($exercise);
+
+            $this->em->persist($exerciseStatInit);
+        }
+
+        $worksheet->addExercise($exercise);
+
+        $this->em->persist($exercise);
     }
 }
