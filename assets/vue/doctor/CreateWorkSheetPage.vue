@@ -323,6 +323,8 @@ export default {
             btnLoadingValidCreateWorksheet: false,
             csrfTokenCreatePrescription: null,
             csrfTokenEditWorksheetTemplate: null,
+            csrfTokenEditPrescription: null,
+            csrfTokenRemoveExerciseFromWorksheet: null,
             btnLoadingValidEditWorksheetTemplate: false,
             modalConfirmEditWorksheetTemplate: false,
         };
@@ -479,16 +481,49 @@ export default {
                         "success",
                         "<i class='fe fe-check-circle'></i>"
                     );
-                    this.btnLoadingValidEditWorksheetTemplate = false;
-                    this.modalConfirmEditWorksheetTemplate = false;
 
-                    setTimeout(() => {
-                        if (this.patientForPrescription) {
-                            document.location.href = `/kine/${this.doctor.id}/fiches/prescriptions`;
-                        } else {
+                    if (this.patientForPrescription) {
+                        this.axios
+                            .post(`/kine/${this.doctor.id}/edit/prescription`, {
+                                _token: this.csrfTokenEditPrescription,
+                                patientId: this.patientForPrescription.id,
+                                worksheetId: this.worksheet.id,
+                            })
+                            .then((response) => {
+                                this.openNotification(
+                                    `<strong>Edition de la prescription</strong>`,
+                                    `${response.data}`,
+                                    "top-right",
+                                    "success",
+                                    "<i class='fe fe-check-circle'></i>"
+                                );
+                                this.btnLoadingValidEditWorksheetTemplate = false;
+                                this.modalConfirmEditWorksheetTemplate = false;
+
+                                setTimeout(() => {
+                                    document.location.href = `/kine/${this.doctor.id}/fiches/prescriptions`;
+                                }, 2000);
+                            })
+                            .catch((error) => {
+                                console.log(error.response.data);
+                                this.openNotification(
+                                    `<strong>Edition de la prescription : Erreur</strong>`,
+                                    `${error.response.data}`,
+                                    "top-right",
+                                    "danger",
+                                    "<i class='fe fe-alert-circle'></i>"
+                                );
+                                this.btnLoadingValidEditWorksheetTemplate = false;
+                                this.modalConfirmEditWorksheetTemplate = false;
+                            });
+                    } else {
+                        this.btnLoadingValidEditWorksheetTemplate = false;
+                        this.modalConfirmEditWorksheetTemplate = false;
+
+                        setTimeout(() => {
                             document.location.href = `/kine/${this.doctor.id}/fiches/modeles`;
-                        }
-                    }, 2000);
+                        }, 2000);
+                    }
                 })
                 .catch((error) => {
                     console.log(error.response.data);
@@ -510,16 +545,56 @@ export default {
                 !this.modalConfirmRemoveExercise);
         },
         validRemoveExercise() {
-            this.exercisesSelected.splice(
-                this.exercisesSelected.indexOf(this.removeExerciseDetails),
-                1
-            );
+            if (!this.removeExerciseDetails.id) {
+                this.exercisesSelected.splice(
+                    this.exercisesSelected.indexOf(this.removeExerciseDetails),
+                    1
+                );
 
-            f.sortedByPosition(this.exercisesSelected).map(
-                (e, i) => (e.position = i)
-            );
+                f.sortedByPosition(this.exercisesSelected).map(
+                    (e, i) => (e.position = i)
+                );
 
-            this.modalConfirmRemoveExercise = false;
+                this.modalConfirmRemoveExercise = false;
+            } else {
+                this.axios
+                    .post(
+                        `/kine/${this.doctor.id}/remove/exercise-from-worksheet`,
+                        {
+                            _token: this.csrfTokenRemoveExerciseFromWorksheet,
+                            worksheet_id: this.worksheet.id,
+                            exercise_id: this.removeExerciseDetails.id,
+                        }
+                    )
+                    .then((response) => {
+                        console.log(response.data);
+
+                        this.exercisesSelected.splice(
+                            this.exercisesSelected.indexOf(
+                                this.removeExerciseDetails
+                            ),
+                            1
+                        );
+
+                        f.sortedByPosition(this.exercisesSelected).map(
+                            (e, i) => (e.position = i)
+                        );
+
+                        this.modalConfirmRemoveExercise = false;
+                    })
+                    .catch((error) => {
+                        console.log(error.response.data);
+                        this.openNotification(
+                            `<strong>Erreur lors de la suppression de l'exercice</strong>`,
+                            `${error.response.data}`,
+                            "top-right",
+                            "danger",
+                            "<i class='fe fe-alert-circle'></i>"
+                        );
+
+                        this.modalConfirmRemoveExercise = false;
+                    });
+            }
         },
         openNotification(title, text, position, color, icon) {
             this.$vs.notification({
@@ -543,6 +618,9 @@ export default {
         this.csrfTokenCreatePrescription = data.csrfTokenCreatePrescription;
         this.csrfTokenEditWorksheetTemplate =
             data.csrfTokenEditWorksheetTemplate;
+        this.csrfTokenEditPrescription = data.csrfTokenEditPrescription;
+        this.csrfTokenRemoveExerciseFromWorksheet =
+            data.csrfTokenRemoveExerciseFromWorksheet;
 
         if (data.worksheetTemplate) {
             this.worksheet = {

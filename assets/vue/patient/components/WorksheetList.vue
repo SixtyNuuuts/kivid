@@ -6,7 +6,12 @@
                 :key="i"
                 class="worksheet-item card shadow-lg"
                 @click="activeWorksheetAndGenerateVideoList(prescription, i)"
-                :class="{ active: activeWorksheet === i }"
+                :class="{
+                    active: activeWorksheet === i,
+                    'is-completed': !prescription.worksheetSessions.filter(
+                        (ws) => false === ws.isCompleted
+                    ).length,
+                }"
             >
                 <div class="card-header">
                     <div class="title">
@@ -41,8 +46,23 @@
                 </div>
                 <div class="card-body">
                     <div class="timing">
-                        <i class="fe fe-calendar"></i>
-                        <p>Plus que <span>5 j.</span> pour terminer la fiche</p>
+                        <div
+                            v-if="
+                                !prescription.worksheetSessions.filter(
+                                    (ws) => false === ws.isCompleted
+                                ).length
+                            "
+                        >
+                            <i class="fe fe-check-circle"></i>
+                            <p>Terminé</p>
+                        </div>
+                        <div v-else>
+                            <i class="fe fe-calendar"></i>
+                            <p>
+                                Plus que <span>5 j.</span> pour terminer la
+                                fiche
+                            </p>
+                        </div>
                     </div>
                 </div>
                 <div class="card-footer">
@@ -50,22 +70,40 @@
                         v-if="prescription.worksheet.exercises"
                         class="exercises"
                     >
+                        {{
+                            prescription.worksheet.exercises.filter(
+                                (e) => true === e.isCompleted
+                            ).length
+                        }}<span class="slash">/</span
+                        >{{ prescription.worksheet.exercises.length }}
                         <span
                             v-if="prescription.worksheet.exercises.length > 1"
                         >
-                            {{ prescription.worksheet.exercises.length }}
                             exercises
                         </span>
-                        <span v-else>
-                            {{ prescription.worksheet.exercises.length }}
-                            exercise
-                        </span>
+                        <span v-else>exercise</span>
                     </div>
-                    <div v-if="activeWorksheet === i" class="lets-go">
+                    <div
+                        v-if="
+                            activeWorksheet === i &&
+                            prescription.worksheetSessions.filter(
+                                (ws) => false === ws.isCompleted
+                            ).length
+                        "
+                        class="lets-go"
+                    >
                         <span>c'est parti !</span>
                         <i class="fe fe-arrow-right-circle"></i>
                     </div>
-                    <div v-else class="selectionner">
+                    <div
+                        v-if="
+                            activeWorksheet !== i &&
+                            prescription.worksheetSessions.filter(
+                                (ws) => false === ws.isCompleted
+                            ).length
+                        "
+                        class="selectionner"
+                    >
                         <span>Sélectionner</span>
                         <i class="fe fe-arrow-right-circle"></i>
                     </div>
@@ -80,13 +118,14 @@
                         <div class="actions-btns">
                             <vs-button
                                 v-if="
-                                    !videoList.filter(
+                                    !prescription.worksheet.exercises.filter(
                                         (e) => false === e.isCompleted
                                     ).length
                                 "
                                 size="large"
                                 class="disabled"
                             >
+                                <i class="fe fe-check-circle"></i>
                                 Terminé
                             </vs-button>
                             <vs-button
@@ -200,7 +239,10 @@
                             v-if="
                                 !showVideo &&
                                 !currentExercise.exerciseStats.find(
-                                    (s) => 'technical' === s.criterion
+                                    (s) =>
+                                        'technical' === s.criterion &&
+                                        currentWorksheetSession.id ===
+                                            s.worksheetSession.id
                                 ).rating
                             "
                             class="stat-rating"
@@ -242,10 +284,16 @@
                             v-if="
                                 !showVideo &&
                                 currentExercise.exerciseStats.find(
-                                    (s) => 'technical' === s.criterion
+                                    (s) =>
+                                        'technical' === s.criterion &&
+                                        currentWorksheetSession.id ===
+                                            s.worksheetSession.id
                                 ).rating &&
                                 !currentExercise.exerciseStats.find(
-                                    (s) => 'difficulty' === s.criterion
+                                    (s) =>
+                                        'difficulty' === s.criterion &&
+                                        currentWorksheetSession.id ===
+                                            s.worksheetSession.id
                                 ).rating
                             "
                             class="stat-rating"
@@ -288,10 +336,16 @@
                             v-if="
                                 !showVideo &&
                                 currentExercise.exerciseStats.find(
-                                    (s) => 'difficulty' === s.criterion
+                                    (s) =>
+                                        'difficulty' === s.criterion &&
+                                        currentWorksheetSession.id ===
+                                            s.worksheetSession.id
                                 ).rating &&
                                 !currentExercise.exerciseStats.find(
-                                    (s) => 'sensitivity' === s.criterion
+                                    (s) =>
+                                        'sensitivity' === s.criterion &&
+                                        currentWorksheetSession.id ===
+                                            s.worksheetSession.id
                                 ).rating
                             "
                             class="stat-rating"
@@ -401,15 +455,18 @@ export default {
         patient: Object,
         csrfTokenExerciseCompleted: String,
         csrfTokenCreateExerciseStats: String,
+        csrfTokenStartWorksheetSession: String,
     },
     data() {
         return {
             patientPrescriptions: [],
             alertCommentExercises: true,
             activeWorksheet: null,
+            activePrescription: null,
             playerVideoToggle: false,
             videoList: [],
             currentExercise: { video: {} },
+            currentWorksheetSession: null,
             sliderTechnicalChoice: "3",
             sliderTechnicalValues: [
                 {
@@ -490,7 +547,7 @@ export default {
     },
     computed: {
         prescriptionsList() {
-            return this.patientPrescriptions;
+            return f.sortedByPosition(this.patientPrescriptions);
         },
     },
     methods: {
@@ -499,7 +556,9 @@ export default {
         },
         validTechnicalStat() {
             this.currentExercise.exerciseStats.find(
-                (s) => "technical" === s.criterion
+                (s) =>
+                    "technical" === s.criterion &&
+                    this.currentWorksheetSession.id === s.worksheetSession.id
             ).rating = this.sliderTechnicalChoice;
 
             this.axios
@@ -522,7 +581,9 @@ export default {
         },
         validDifficultyStat() {
             this.currentExercise.exerciseStats.find(
-                (s) => "difficulty" === s.criterion
+                (s) =>
+                    "difficulty" === s.criterion &&
+                    this.currentWorksheetSession.id === s.worksheetSession.id
             ).rating = this.sliderDifficultyChoice;
 
             this.axios
@@ -545,7 +606,9 @@ export default {
         },
         validSensitivityStat() {
             this.currentExercise.exerciseStats.find(
-                (s) => "sensitivity" === s.criterion
+                (s) =>
+                    "sensitivity" === s.criterion &&
+                    this.currentWorksheetSession.id === s.worksheetSession.id
             ).rating = this.sliderSensitivityChoice;
 
             this.axios
@@ -596,6 +659,9 @@ export default {
         },
         activeWorksheetAndGenerateVideoList(prescription, i) {
             this.activeWorksheet = i;
+            this.activePrescription = prescription;
+            this.currentWorksheetSession =
+                this.activePrescription.worksheetSessions[0];
             this.generateVideoList(prescription.worksheet.exercises);
         },
         generateVideoList(exercises) {
@@ -632,7 +698,21 @@ export default {
             this.addMaxHeightToBody();
         },
         playVideo() {
+            this.activePrescription.worksheetSessions[0].isInProgress = true;
             this.showVideo = true;
+
+            this.axios
+                .post(`/patient/${this.patient.id}/start/worksheet-session`, {
+                    _token: this.csrfTokenStartWorksheetSession,
+                    prescriptionId: this.activePrescription.id,
+                })
+                .then((response) => {
+                    console.log(response.data);
+                })
+                .catch((error) => {
+                    console.log(error.response.data);
+                });
+
             // setTimeout(() => {
             //     this.$refs.youtube.player.playVideo();
             // }, 500);
@@ -701,10 +781,36 @@ export default {
                         f.sortedByPosition(prescription.worksheet.exercises));
                 });
 
+                this.patientPrescriptions.map((prescription) => {
+                    if (
+                        !prescription.worksheetSessions.filter(
+                            (ws) => false === ws.isCompleted
+                        ).length
+                    ) {
+                        return (prescription.position = 1);
+                    } else {
+                        return (prescription.position = 0);
+                    }
+                });
+
                 this.activeWorksheetAndGenerateVideoList(
-                    this.patientPrescriptions[0],
+                    this.prescriptionsList[0],
                     0
                 );
+
+                // temporaire à supprimer en prod
+                if (
+                    !this.activePrescription.worksheetSessions.filter(
+                        (ws) => false === ws.isCompleted
+                    ).length
+                ) {
+                    console.log("d");
+                    this.activePrescription.worksheet.exercises.map(
+                        (exercise) => {
+                            return (exercise.isCompleted = true);
+                        }
+                    );
+                }
 
                 this.loadingPatientPrescriptionsList.close();
                 this.loadingPatientPrescriptionsList = null;
@@ -736,6 +842,18 @@ export default {
 
             &.active {
                 border-left: 10px solid orange;
+            }
+
+            &.is-completed {
+                > *:not(.card-body) {
+                    opacity: 0.5;
+                    color: #869ab8;
+                    background-color: #f9fafd !important;
+                }
+
+                .card-body {
+                    background-color: #abbcd51a !important;
+                }
             }
 
             .card-header {
@@ -810,24 +928,26 @@ export default {
                 font-size: 1.2em;
 
                 .timing {
-                    display: flex;
-                    align-items: center;
+                    > div {
+                        display: flex;
+                        align-items: center;
 
-                    i {
-                        color: #fad776;
-                        margin-top: -2px;
-                        margin-right: 5px;
-                        font-size: 0.65em;
-                    }
+                        i {
+                            color: #fad776;
+                            margin-top: -2px;
+                            margin-right: 5px;
+                            font-size: 0.65em;
+                        }
 
-                    p {
-                        margin-bottom: 0;
-                        font-style: italic;
-                        font-size: 0.65em;
-                        color: #506690;
+                        p {
+                            margin-bottom: 0;
+                            font-style: italic;
+                            font-size: 0.65em;
+                            color: #506690;
 
-                        span {
-                            font-weight: 700;
+                            span {
+                                font-weight: 700;
+                            }
                         }
                     }
                 }
@@ -1219,10 +1339,15 @@ export default {
 .disabled {
     pointer-events: none;
     opacity: 0.5;
-    background: rgb(177, 177, 177);
+    background: #abbcd5;
+}
 
-    i {
-        display: none;
-    }
+.slash {
+    font-size: 0.8em;
+    position: relative;
+    top: -1px;
+    margin-right: 0.15em;
+    margin-left: 0.13em;
+    color: #b4cce0;
 }
 </style>

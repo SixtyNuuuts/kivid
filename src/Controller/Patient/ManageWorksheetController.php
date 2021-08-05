@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\PrescriptionRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
+use App\Repository\WorksheetSessionRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -24,6 +25,7 @@ class ManageWorksheetController extends AbstractController
     private $doctorRepository;
     private $prescriptionRepository;
     private $exerciseRepository;
+    private $worksheetSessionRepository;
     private $videoRepository;
     private $mailer;
     private $serializer;
@@ -33,6 +35,7 @@ class ManageWorksheetController extends AbstractController
         DoctorRepository $doctorRepository,
         PrescriptionRepository $prescriptionRepository,
         ExerciseRepository $exerciseRepository,
+        WorksheetSessionRepository $worksheetSessionRepository,
         VideoRepository $videoRepository,
         MailerInterface $mailer,
         SerializerInterface $serializerInterface,
@@ -40,6 +43,7 @@ class ManageWorksheetController extends AbstractController
     ) {
         $this->doctorRepository = $doctorRepository;
         $this->prescriptionRepository = $prescriptionRepository;
+        $this->worksheetSessionRepository = $worksheetSessionRepository;
         $this->exerciseRepository = $exerciseRepository;
         $this->videoRepository = $videoRepository;
         $this->mailer = $mailer;
@@ -67,6 +71,43 @@ class ManageWorksheetController extends AbstractController
             200,
             [],
             ['groups' => 'prescription_read']
+        );
+    }
+
+    /**
+     * @Route("/{id}/start/worksheet-session", name="app_patient_start_worksheet_session", methods={"POST"})
+     */
+    public function startWorksheetSession(Request $request, Patient $patient): JsonResponse
+    {
+        if ($request->isMethod('post')) {
+            $data = json_decode($request->getContent());
+
+            if ($this->isCsrfTokenValid('start_worksheet_session' . $patient->getId(), $data->_token)) {
+                $worksheetSessions = $this->worksheetSessionRepository->findBy(
+                    ['prescription' => $data->prescriptionId],
+                    ['execOrder' => 'ASC'],
+                );
+
+                $worksheetSessions[0]->setIsInProgress(true);
+
+                // foreach ($worksheetSessions as $worksheetSession) {
+                //     # code...
+                // }
+
+                $this->em->flush();
+
+                return $this->json(
+                    $worksheetSessions,
+                    200,
+                    [],
+                    ['groups' => 'prescription_read']
+                );
+            }
+        }
+
+        return $this->json(
+            'Nous n\'avons pas pu démarrer la session de la prescription, veuillez réessayer ultérieurement.',
+            500,
         );
     }
 

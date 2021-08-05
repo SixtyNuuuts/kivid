@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\WorksheetSessionRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -15,6 +17,7 @@ class WorksheetSession
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"prescription_read"})
      */
     private $id;
 
@@ -55,10 +58,16 @@ class WorksheetSession
      */
     private $prescription;
 
+    /**
+     * @ORM\OneToMany(targetEntity=ExerciseStat::class, mappedBy="worksheetSession")
+     */
+    private $exerciseStats;
+
     public function __construct()
     {
         $this->isCompleted = false;
         $this->isInProgress = false;
+        $this->exerciseStats = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -134,6 +143,36 @@ class WorksheetSession
     public function setExecOrder(?int $execOrder): self
     {
         $this->execOrder = $execOrder;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ExerciseStat[]
+     */
+    public function getExerciseStats(): Collection
+    {
+        return $this->exerciseStats;
+    }
+
+    public function addExerciseStat(ExerciseStat $exerciseStat): self
+    {
+        if (!$this->exerciseStats->contains($exerciseStat)) {
+            $this->exerciseStats[] = $exerciseStat;
+            $exerciseStat->setWorksheetSession($this);
+        }
+
+        return $this;
+    }
+
+    public function removeExerciseStat(ExerciseStat $exerciseStat): self
+    {
+        if ($this->exerciseStats->removeElement($exerciseStat)) {
+            // set the owning side to null (unless already changed)
+            if ($exerciseStat->getWorksheetSession() === $this) {
+                $exerciseStat->setWorksheetSession(null);
+            }
+        }
 
         return $this;
     }

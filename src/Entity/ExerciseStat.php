@@ -20,7 +20,7 @@ class ExerciseStat
     private $id;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"prescription_read"})
      */
     private $doneAt;
@@ -43,10 +43,11 @@ class ExerciseStat
      */
     private $exercise;
 
-    public function __construct()
-    {
-        $this->doneAt = new \DateTime();
-    }
+    /**
+     * @ORM\ManyToOne(targetEntity=WorksheetSession::class, inversedBy="exerciseStats")
+     * @Groups({"prescription_read"})
+     */
+    private $worksheetSession;
 
     public function getId(): ?int
     {
@@ -97,6 +98,18 @@ class ExerciseStat
     public function setExercise(?Exercise $exercise): self
     {
         $this->exercise = $exercise;
+
+        return $this;
+    }
+
+    public function getWorksheetSession(): ?WorksheetSession
+    {
+        return $this->worksheetSession;
+    }
+
+    public function setWorksheetSession(?WorksheetSession $worksheetSession): self
+    {
+        $this->worksheetSession = $worksheetSession;
 
         return $this;
     }

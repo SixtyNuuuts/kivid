@@ -65,6 +65,12 @@ class AppFixtures extends Fixture
             'female',
         ];
 
+        $exerciseStatsCriterions = [
+            "sensitivity",
+            "technical",
+            "difficulty",
+        ];
+
         foreach ($tagNames as $tagName) {
             $tag = new Tag();
             $tag->setName($tagName);
@@ -83,7 +89,7 @@ class AppFixtures extends Fixture
 
         $manager->persist($worksheetTempleateCreator);
 
-        for ($wi = 0; $wi < rand(60, 80); $wi++) {
+        for ($wi = 0; $wi < rand(5, 15); $wi++) {
             $worksheetTemplate = new Worksheet();
 
             $worksheetTemplate
@@ -97,7 +103,7 @@ class AppFixtures extends Fixture
 
             $randomTags = array_rand($tagArray, rand(2, 3));
 
-            for ($ei = 0; $ei < rand(5, 8); $ei++) {
+            for ($ei = 0; $ei < rand(3, 5); $ei++) {
                 $exercise = new Exercise();
 
                 $exercise->setNumberOfRepetitions(rand(8, 15))
@@ -120,21 +126,6 @@ class AppFixtures extends Fixture
                 };
 
                 $exercise->setVideo($video);
-
-                $exerciseStatsCriterions = [
-                    "sensitivity",
-                    "technical",
-                    "difficulty",
-                ];
-
-                foreach ($exerciseStatsCriterions as $criterion) {
-                    $exerciseStatInit = new ExerciseStat();
-
-                    $exerciseStatInit->setCriterion($criterion)
-                                     ->setExercise($exercise);
-
-                    $manager->persist($exerciseStatInit);
-                }
 
                 $manager->persist($video);
                 $manager->persist($exercise);
@@ -161,17 +152,21 @@ class AppFixtures extends Fixture
                 ->setGender($gender[array_rand($gender)]);
             ;
 
-            for ($wii = 0; $wii < 5; $wii++) {
+            for ($wii = 0; $wii < rand(1, 5); $wii++) {
                 $kine->addWorksheet($worksheetTemplateArray[array_rand($worksheetTemplateArray)]);
             }
 
             $manager->persist($kine);
 
-            for ($pi = 0; $pi < rand(10, 50); $pi++) {
+            for ($pi = 0; $pi < rand(15, 25); $pi++) {
                 $patient = new Patient();
 
                 $patient
-                    ->setBirthdate(\DateTimeImmutable::createFromMutable($faker->dateTimeBetween('-90 years', 'now')))
+                    ->setBirthdate(
+                        \DateTimeImmutable::createFromMutable(
+                            $faker->dateTimeBetween('-90 years', '-20 years')
+                        )
+                    )
                     ->setDoctor($kine)
                     ->setEmail("patient{$ki}{$pi}@mail.com")
                     ->setPassword($this->passwordHasher->hashPassword($kine, 'password'))
@@ -181,31 +176,67 @@ class AppFixtures extends Fixture
                     ->setGender($gender[array_rand($gender)]);
                 ;
 
+                $worksheetForPrescription = $worksheetTemplateArray[array_rand($worksheetTemplateArray)];
+
                 $prescription = new Prescription();
                 $prescription->setPatient($patient)
                     ->setDoctor($kine)
-                    ->setWorksheet($worksheetTemplateArray[array_rand($worksheetTemplateArray)]->setIsTemplate(false))
+                    ->setWorksheet($worksheetForPrescription)
                     ->setCreatedAt(\DateTimeImmutable::createFromMutable($faker->dateTimeBetween()))
-                    ->setDuration(rand(4, 10))
-                    ->setPerDay(rand(1, 2))
-                    ->setPerWeek(rand(2, 5))
+                    ->setDuration(rand(1, 2))
+                    ->setPerDay(1)
+                    ->setPerWeek(rand(1, 2))
                 ;
 
-                for ($ws = 1; $ws <= $prescription->getDuration()
-                                   * $prescription->getPerWeek()
-                                   * $prescription->getPerDay(); $ws++) {
+                $prescriptionIsCompleted = rand(0, 1) == 1;
+
+                $randomStartDate = $faker->dateTimeBetween('-24 months', '-12 months');
+
+                for (
+                    $ws = 1; $ws <= $prescription->getDuration()
+                                  * $prescription->getPerWeek()
+                                  * $prescription->getPerDay(); $ws++
+                ) {
                     $worksheetSession = new WorksheetSession();
 
-                    $worksheetSession->setPrescription($prescription);
-                    $worksheetSession->setExecOrder($ws);
+                    $worksheetSession->setPrescription($prescription)
+                                     ->setExecOrder($ws);
 
-                    // if (1 === $worksheetSessionOrder) {
-                    //     $dateNow = new \DateTime();
-                    //     $dateDeadline = $dateNow->add(new \DateInterval('P7D'));
-                    //     $worksheetSession->setStartAt($dateNow)
-                    //                      ->setDeadlineAt($dateDeadline)
-                    //                      ->setIsInProgress(true);
-                    // }
+                    foreach ($worksheetForPrescription->getExercises() as $exercise) {
+                        foreach ($exerciseStatsCriterions as $criterion) {
+                            $exerciseStat = new ExerciseStat();
+
+                            $exerciseStat->setCriterion($criterion)
+                                         ->setExercise($exercise)
+                                         ->setWorksheetSession($worksheetSession);
+
+                            if ($prescriptionIsCompleted) {
+                                $exerciseStatDoneDate = new \DateTime();
+                                $exerciseStatDoneDate->setTimestamp(
+                                    $randomStartDate->getTimestamp() + rand(259200, 604800)
+                                );
+
+                                $exerciseStat->setDoneAt($exerciseStatDoneDate)
+                                             ->setRating(rand(1, 5));
+                            }
+
+                            $manager->persist($exerciseStat);
+                        }
+                    }
+
+                    if ($prescriptionIsCompleted) {
+                        $worksheetSession->setIsCompleted(true);
+
+                        $worksheetSessionStartDate = new \DateTime();
+                        $worksheetSessionStartDate->setTimestamp($randomStartDate->getTimestamp());
+                        $worksheetSession->setStartAt($worksheetSessionStartDate);
+
+                        $worksheetSessionDeadlineDate = new \DateTime();
+                        $worksheetSessionDeadlineDate->setTimestamp($randomStartDate->getTimestamp() + 604800);
+                        $worksheetSession->setDeadlineAt($worksheetSessionDeadlineDate);
+
+                        $randomStartDate = $worksheetSessionDeadlineDate;
+                    }
 
                     $manager->persist($worksheetSession);
                 }

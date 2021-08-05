@@ -25,6 +25,7 @@
 	{
 		"patient": {{ patient|serialize('json', {'groups': 'patient_read'})|raw }},
 		"csrfTokenExerciseCompleted": {{ csrf_token('exercise_completed' ~ patient.id)|serialize('json')|raw }},
+		"csrfTokenStartWorksheetSession": {{ csrf_token('start_worksheet_session' ~ patient.id)|serialize('json')|raw }},
 		"csrfTokenCreateExerciseStats": {{ csrf_token('save_exercise_stat' ~ patient.id)|serialize('json')|raw }}
 	}
 {% endblock %}

@@ -72,6 +72,7 @@ class Worksheet
         $this->createdAt = new \DateTimeImmutable();
         $this->exercises = new ArrayCollection();
         $this->prescriptions = new ArrayCollection();
+        $this->isTemplate = false;
     }
 
     public function getId(): ?int

@@ -66,6 +66,8 @@
 		"worksheetTemplate": {{ worksheetTemplate|serialize('json', {'groups': 'worksheet_read'})|raw }},
 		"csrfTokenCreateWorksheet": {{ csrf_token('create_worksheet' ~ doctor.id)|serialize('json')|raw }},
 		"csrfTokenEditWorksheetTemplate": {{ csrf_token('edit_worksheet_template' ~ doctor.id)|serialize('json')|raw }},
+		"csrfTokenEditPrescription": {{ csrf_token('edit_prescription' ~ doctor.id)|serialize('json')|raw }},
+		"csrfTokenRemoveExerciseFromWorksheet": {{ csrf_token('remove_exercise_from_worksheet' ~ doctor.id)|serialize('json')|raw }},
 		"csrfTokenCreatePrescription": {{ csrf_token('create_prescription' ~ doctor.id)|serialize('json')|raw }}
 	}
 {% endblock %}
