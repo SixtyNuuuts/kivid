@@ -54,6 +54,19 @@ class StatController extends AbstractController
     }
 
     /**
+     * @Route("/{id}/get/exercise-stats", name="app_patient_get_exercise_stats", methods={"GET"})
+     */
+    public function getExerciseStats(Patient $patient): JsonResponse
+    {
+        return $this->json(
+            $this->prescriptionRepository->findBy(['patient' => $patient]),
+            200,
+            [],
+            ['groups' => 'exercise_stats_read']
+        );
+    }
+
+    /**
      * @Route("/{id}/save/exercise-stat/{statCriterion}", name="app_patient_save_exercise_stat", methods={"POST"})
      */
     public function saveExerciseStat(Request $request, Patient $patient, string $statCriterion): JsonResponse

@@ -27,6 +27,7 @@ Encore
     .addEntry('doctor-create-worksheet-page', './assets/vue/doctor/create-worksheet-page.js')
     // Patient
     .addEntry('patient-my-worksheets-page', './assets/vue/patient/my-worksheets-page.js')
+    .addEntry('patient-dashboard-page', './assets/vue/patient/dashboard-page.js')
 
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
     // .enableStimulusBridge('./assets/controllers.json')

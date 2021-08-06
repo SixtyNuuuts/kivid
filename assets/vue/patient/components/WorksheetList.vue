@@ -799,18 +799,17 @@ export default {
                 );
 
                 // temporaire à supprimer en prod
-                if (
-                    !this.activePrescription.worksheetSessions.filter(
-                        (ws) => false === ws.isCompleted
-                    ).length
-                ) {
-                    console.log("d");
-                    this.activePrescription.worksheet.exercises.map(
-                        (exercise) => {
-                            return (exercise.isCompleted = true);
-                        }
-                    );
-                }
+                // if (
+                //     !this.activePrescription.worksheetSessions.filter(
+                //         (ws) => false === ws.isCompleted
+                //     ).length
+                // ) {
+                //     this.activePrescription.worksheet.exercises.map(
+                //         (exercise) => {
+                //             return (exercise.isCompleted = true);
+                //         }
+                //     );
+                // }
 
                 this.loadingPatientPrescriptionsList.close();
                 this.loadingPatientPrescriptionsList = null;
@@ -832,6 +831,7 @@ export default {
         flex: 2;
         box-shadow: 0 0.5rem 1.5rem rgb(33 42 69 / 15%) !important;
         z-index: 10;
+        max-width: 22em;
 
         .worksheet-item.card {
             cursor: pointer;
@@ -872,6 +872,7 @@ export default {
                     .tags {
                         margin-bottom: 0.1em;
                         font-size: 0.65em;
+                        overflow: hidden;
 
                         .tags-chip {
                             background: linear-gradient(

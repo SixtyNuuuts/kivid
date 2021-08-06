@@ -38,7 +38,7 @@ class Prescription
     /**
      * @ORM\ManyToOne(targetEntity=Worksheet::class, inversedBy="prescriptions")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"prescription_read", "patient_read"})
+     * @Groups({"prescription_read", "patient_read", "exercise_stats_read"})
      */
     private $worksheet;
 
@@ -50,7 +50,7 @@ class Prescription
 
     /**
      * @ORM\OneToMany(targetEntity=WorksheetSession::class, mappedBy="prescription")
-     * @Groups({"prescription_read"})
+     * @Groups({"prescription_read", "exercise_stats_read"})
      */
     private $worksheetSessions;
 

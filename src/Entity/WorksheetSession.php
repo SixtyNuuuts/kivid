@@ -17,38 +17,38 @@ class WorksheetSession
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"prescription_read"})
+     * @Groups({"prescription_read", "exercise_stats_read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"prescription_read"})
+     * @Groups({"prescription_read", "exercise_stats_read"})
      */
     private $startAt;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"prescription_read"})
+     * @Groups({"prescription_read", "exercise_stats_read"})
      */
     private $deadlineAt;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"prescription_read"})
+     * @Groups({"prescription_read", "exercise_stats_read"})
      */
     private $isCompleted;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"prescription_read"})
+     * @Groups({"prescription_read", "exercise_stats_read"})
      */
     private $isInProgress
     ;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"prescription_read"})
+     * @Groups({"prescription_read", "exercise_stats_read"})
      */
     private $execOrder;
 
@@ -60,6 +60,7 @@ class WorksheetSession
 
     /**
      * @ORM\OneToMany(targetEntity=ExerciseStat::class, mappedBy="worksheetSession")
+     * @Groups({"exercise_stats_read"})
      */
     private $exerciseStats;
 

@@ -15,25 +15,25 @@ class ExerciseStat
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"prescription_read"})
+     * @Groups({"prescription_read", "exercise_stats_read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"prescription_read"})
+     * @Groups({"prescription_read", "exercise_stats_read"})
      */
     private $doneAt;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"prescription_read"})
+     * @Groups({"prescription_read", "exercise_stats_read"})
      */
     private $criterion;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"prescription_read"})
+     * @Groups({"prescription_read", "exercise_stats_read"})
      */
     private $rating;
 

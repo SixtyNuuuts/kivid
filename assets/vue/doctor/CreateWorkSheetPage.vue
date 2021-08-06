@@ -545,7 +545,7 @@ export default {
                 !this.modalConfirmRemoveExercise);
         },
         validRemoveExercise() {
-            if (!this.removeExerciseDetails.id) {
+            if (!this.removeExerciseDetails.id || "creation" === this.action) {
                 this.exercisesSelected.splice(
                     this.exercisesSelected.indexOf(this.removeExerciseDetails),
                     1
