@@ -11,8 +11,8 @@ export default {
             sensitivityStats: [],
             sensitivityStatsValues: [],
             sensitivityStatsLabels: [],
-            gradient: null,
-            gradient2: null,
+            colors: ["#fbc351", "#f1f4f8", "#abbcd5", "#f7b83c"],
+            gradients: [],
         };
     },
     methods: {
@@ -72,19 +72,22 @@ export default {
                     "sensitivity"
                 );
 
-                this.sensitivityStatsValues = this.sensitivityStats.map((w) => {
-                    return (w = {
-                        label: `${w.worksheetTitle} - ${w.worksheetPartOfBody}`,
-                        borderColor: "#FC2525",
-                        pointBackgroundColor: "white",
-                        borderWidth: 1,
-                        pointBorderColor: "white",
-                        backgroundColor: this.gradient,
-                        data: w.stats.map(
-                            (s) => (s = { x: new Date(s.doneAt), y: s.rating })
-                        ),
-                    });
-                });
+                this.sensitivityStatsValues = this.sensitivityStats.map(
+                    (w, i) => {
+                        return (w = {
+                            label: `${w.worksheetTitle} - ${w.worksheetPartOfBody}`,
+                            borderColor: this.colors[i],
+                            pointBackgroundColor: "white",
+                            borderWidth: 1,
+                            pointBorderColor: "white",
+                            backgroundColor: this.gradients[i],
+                            data: w.stats.map(
+                                (s) =>
+                                    (s = { x: new Date(s.doneAt), y: s.rating })
+                            ),
+                        });
+                    }
+                );
 
                 this.sensitivityStatsLabels = this.sensitivityStats.map((w) => {
                     return (w = [w.stats.map((s) => (s = s.doneAt))]);
@@ -160,20 +163,37 @@ export default {
                 this.loadingPatientExerciseStats = null;
             });
 
-        this.gradient = this.$refs.canvas
+        this.gradients[0] = this.$refs.canvas
             .getContext("2d")
             .createLinearGradient(0, 0, 0, 450);
-        this.gradient2 = this.$refs.canvas
+        this.gradients[1] = this.$refs.canvas
+            .getContext("2d")
+            .createLinearGradient(0, 0, 0, 450);
+        this.gradients[2] = this.$refs.canvas
+            .getContext("2d")
+            .createLinearGradient(0, 0, 0, 450);
+        this.gradients[3] = this.$refs.canvas
+            .getContext("2d")
+            .createLinearGradient(0, 0, 0, 450);
+        this.gradients[4] = this.$refs.canvas
             .getContext("2d")
             .createLinearGradient(0, 0, 0, 450);
 
-        this.gradient.addColorStop(0, "rgba(255, 0,0, 0.5)");
-        this.gradient.addColorStop(0.5, "rgba(255, 0, 0, 0.25)");
-        this.gradient.addColorStop(1, "rgba(255, 0, 0, 0)");
+        this.gradients[0].addColorStop(0, "rgba(251, 195, 81, 0.5)");
+        this.gradients[0].addColorStop(0.5, "rgba(251, 195, 81, 0.25)");
+        this.gradients[0].addColorStop(1, "rgba(251, 195, 81, 0)");
 
-        this.gradient2.addColorStop(0, "rgba(0, 231, 255, 0.9)");
-        this.gradient2.addColorStop(0.5, "rgba(0, 231, 255, 0.25)");
-        this.gradient2.addColorStop(1, "rgba(0, 231, 255, 0)");
+        this.gradients[1].addColorStop(0, "rgba(241, 244, 248, 0.9)");
+        this.gradients[1].addColorStop(0.5, "rgba(241, 244, 248, 0.25)");
+        this.gradients[1].addColorStop(1, "rgba(241, 244, 248, 0)");
+
+        this.gradients[2].addColorStop(0, "rgba(171, 188, 213, 0.5)");
+        this.gradients[2].addColorStop(0.5, "rgba(171, 188, 213, 0.25)");
+        this.gradients[2].addColorStop(1, "rgba(171, 188, 213, 0)");
+
+        this.gradients[3].addColorStop(0, "rgba(247, 184, 60, 0.9)");
+        this.gradients[3].addColorStop(0.5, "rgba(247, 184, 60, 0.25)");
+        this.gradients[3].addColorStop(1, "rgba(247, 184, 60, 0)");
     },
 };
 </script>
