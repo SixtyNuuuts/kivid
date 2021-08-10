@@ -37,12 +37,18 @@
                                         {{ worksheetTemplate.title }}
                                     </div>
                                     <div
-                                        v-if="worksheetTemplate.doctor"
-                                        class="creator"
+                                        v-if="worksheetTemplate.prescriber"
+                                        class="prescriber"
                                     >
                                         de
-                                        {{ worksheetTemplate.doctor.firstname }}
-                                        {{ worksheetTemplate.doctor.lastname }}
+                                        {{
+                                            worksheetTemplate.prescriber
+                                                .firstname
+                                        }}
+                                        {{
+                                            worksheetTemplate.prescriber
+                                                .lastname
+                                        }}
                                     </div>
                                 </div>
                             </div>
@@ -153,7 +159,7 @@ h2 {
                 font-size: 0.8em;
             }
 
-            .creator {
+            .prescriber {
                 font-size: 0.7em;
                 color: #91a3bd;
                 overflow: hidden;

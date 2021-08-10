@@ -128,7 +128,7 @@ export default {
     }
 
     function getValues(obj) {
-      const searchFields = ["firstname", "lastname", "email", "title", "name", "worksheet", "patient", "doctor"]
+      const searchFields = ["firstname", "lastname", "email", "title", "name", "worksheet", "patient", "prescriber"]
 
       const objFilteredBySearchField = Object.keys(obj).reduce((r, key) => {
         if (searchFields.includes(key)) {

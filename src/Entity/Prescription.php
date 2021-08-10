@@ -43,34 +43,16 @@ class Prescription
     private $worksheet;
 
     /**
-     * @ORM\Column(type="datetime_immutable")
-     * @Groups({"prescription_read"})
-     */
-    private $createdAt;
-
-    /**
      * @ORM\OneToMany(targetEntity=WorksheetSession::class, mappedBy="prescription")
      * @Groups({"prescription_read", "exercise_stats_read"})
      */
     private $worksheetSessions;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="datetime_immutable")
      * @Groups({"prescription_read"})
      */
-    private $duration;
-
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"prescription_read"})
-     */
-    private $perDay;
-
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"prescription_read"})
-     */
-    private $perWeek;
+    private $createdAt;
 
     public function __construct()
     {
@@ -157,42 +139,6 @@ class Prescription
                 $worksheetSession->setPrescription(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getDuration(): ?int
-    {
-        return $this->duration;
-    }
-
-    public function setDuration(?int $duration): self
-    {
-        $this->duration = $duration;
-
-        return $this;
-    }
-
-    public function getPerDay(): ?int
-    {
-        return $this->perDay;
-    }
-
-    public function setPerDay(?int $perDay): self
-    {
-        $this->perDay = $perDay;
-
-        return $this;
-    }
-
-    public function getPerWeek(): ?int
-    {
-        return $this->perWeek;
-    }
-
-    public function setPerWeek(?int $perWeek): self
-    {
-        $this->perWeek = $perWeek;
 
         return $this;
     }

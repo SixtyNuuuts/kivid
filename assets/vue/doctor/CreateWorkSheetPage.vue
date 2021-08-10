@@ -2,7 +2,7 @@
     <div id="vue">
         <VideosAdd @videos-selection="addVideosSelection" />
         <div>
-            <div class="vs-input-content new-worksheet-inputs">
+            <div class="vs-input-content new-worksheet-input worksheet-title">
                 <input
                     v-model="worksheet.title"
                     id="title"
@@ -17,6 +17,7 @@
             <vs-select
                 label-placeholder="Partie du corps"
                 v-model="worksheet.partOfBody"
+                class="select-part-of-body"
             >
                 <vs-option label="Genou" value="Genou">Genou</vs-option>
                 <vs-option label="Cheville" value="Cheville"
@@ -28,7 +29,7 @@
                 <vs-option label="Dos" value="Dos">Dos</vs-option>
             </vs-select>
 
-            <div class="vs-input-content new-worksheet-inputs">
+            <div class="vs-input-content new-worksheet-input">
                 <textarea
                     v-model="worksheet.description"
                     id="description"
@@ -39,6 +40,93 @@
                     for="description"
                     >Description de la fiche</label
                 >
+            </div>
+
+            <div class="durations-inputs">
+                <div class="vs-input-content new-worksheet-input">
+                    <input
+                        v-model="worksheet.duration"
+                        id="duration"
+                        type="number"
+                        class="vs-input vs-input--has-icon form-control"
+                        @keyup="
+                            checkAndFormatDurationValue(
+                                worksheet.duration,
+                                $event
+                            )
+                        "
+                        @blur="
+                            checkIfDurationValueIsEmptyOrNull(
+                                worksheet.duration,
+                                $event
+                            )
+                        "
+                        min="1"
+                        max="52"
+                    />
+                    <label
+                        :class="{ focus: worksheet.duration != '' }"
+                        for="duration"
+                    >
+                        Durée de la prescription en semaine (max: 52)
+                    </label>
+                </div>
+                <div class="vs-input-content new-worksheet-input">
+                    <input
+                        v-model="worksheet.perWeek"
+                        id="perWeek"
+                        type="number"
+                        class="vs-input vs-input--has-icon form-control"
+                        @keyup="
+                            checkAndFormatDurationValue(
+                                worksheet.perWeek,
+                                $event
+                            )
+                        "
+                        @blur="
+                            checkIfDurationValueIsEmptyOrNull(
+                                worksheet.perWeek,
+                                $event
+                            )
+                        "
+                        min="1"
+                        max="7"
+                    />
+                    <label
+                        :class="{ focus: worksheet.perWeek != '' }"
+                        for="perWeek"
+                    >
+                        Nb de sessions par semaine (max: 7)
+                    </label>
+                </div>
+                <div class="vs-input-content new-worksheet-input">
+                    <input
+                        v-model="worksheet.perDay"
+                        id="perDay"
+                        type="number"
+                        class="vs-input vs-input--has-icon form-control"
+                        @keyup="
+                            checkAndFormatDurationValue(
+                                worksheet.perDay,
+                                $event
+                            )
+                        "
+                        @blur="
+                            checkIfDurationValueIsEmptyOrNull(
+                                worksheet.perDay,
+                                $event
+                            )
+                        "
+                        min="1"
+                        max="3"
+                    />
+                    <label
+                        :class="{ focus: worksheet.perDay != '' }"
+                        for="perDay"
+                    >
+                        Nb d'exécutions de la fiche par session (max: 3)
+                    </label>
+                </div>
             </div>
 
             <transition name="fade">
@@ -306,6 +394,14 @@ export default {
                 title: "",
                 partOfBody: "",
                 description: "",
+                duration: 1,
+                perDay: 1,
+                perWeek: 1,
+            },
+            maxDuration: {
+                duration: 52,
+                perDay: 3,
+                perWeek: 7,
             },
             timeout: false,
             playerVars: {
@@ -380,6 +476,59 @@ export default {
                 }
             }
         },
+        checkAndFormatDurationValue(durationValue, event) {
+            const durationType = event.target.id;
+
+            if (!("Backspace" === event.code)) {
+                if ("duration" === durationType) {
+                    if (durationValue < 1) {
+                        this.worksheet.duration = 1;
+                    }
+                    if (durationValue > this.maxDuration.duration) {
+                        this.worksheet.duration = this.maxDuration.duration;
+                    }
+                }
+
+                if ("perDay" === durationType) {
+                    if (durationValue < 1) {
+                        this.worksheet.perDay = 1;
+                    }
+                    if (durationValue > this.maxDuration.perDay) {
+                        this.worksheet.perDay = this.maxDuration.perDay;
+                    }
+                }
+
+                if ("perWeek" === durationType) {
+                    if (durationValue < 1) {
+                        this.worksheet.perWeek = 1;
+                    }
+                    if (durationValue > this.maxDuration.perWeek) {
+                        this.worksheet.perWeek = this.maxDuration.perWeek;
+                    }
+                }
+            }
+        },
+        checkIfDurationValueIsEmptyOrNull(durationValue, event) {
+            const durationType = event.target.id;
+
+            if ("duration" === durationType) {
+                if ("" === durationValue || null === durationValue) {
+                    this.worksheet.duration = 1;
+                }
+            }
+
+            if ("perDay" === durationType) {
+                if ("" === durationValue || null === durationValue) {
+                    this.worksheet.perDay = 1;
+                }
+            }
+
+            if ("perWeek" === durationType) {
+                if ("" === durationValue || null === durationValue) {
+                    this.worksheet.perWeek = 1;
+                }
+            }
+        },
         createWorksheet() {
             return (this.modalConfirmCreateWorksheet =
                 !this.modalConfirmCreateWorksheet);
@@ -391,6 +540,9 @@ export default {
                     title: this.worksheet.title,
                     description: this.worksheet.description,
                     partOfBody: this.worksheet.partOfBody,
+                    duration: this.worksheet.duration,
+                    perWeek: this.worksheet.perWeek,
+                    perDay: this.worksheet.perDay,
                     exercises: this.getExercisesSelected,
                     isTemplate: this.patientForPrescription ? false : true,
                 })
@@ -471,6 +623,9 @@ export default {
                     title: this.worksheet.title,
                     description: this.worksheet.description,
                     partOfBody: this.worksheet.partOfBody,
+                    duration: this.worksheet.duration,
+                    perWeek: this.worksheet.perWeek,
+                    perDay: this.worksheet.perDay,
                     exercises: this.getExercisesSelected,
                 })
                 .then((response) => {
@@ -628,6 +783,9 @@ export default {
                 title: data.worksheetTemplate.title,
                 partOfBody: data.worksheetTemplate.partOfBody,
                 description: data.worksheetTemplate.description,
+                duration: data.worksheetTemplate.duration,
+                perDay: data.worksheetTemplate.perDay,
+                perWeek: data.worksheetTemplate.perWeek,
             };
 
             this.exercisesSelected = data.worksheetTemplate.exercises;
@@ -674,12 +832,45 @@ $primary: #ffab2c;
     font-size: 0.75em !important;
 }
 
-.new-worksheet-inputs {
+.durations-inputs {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+
+    .new-worksheet-input {
+        flex: 1;
+        margin: 0.7em 0;
+
+        &:first-child {
+            min-width: 100%;
+        }
+
+        @media (min-width: 720px) {
+            &:nth-child(2) {
+                margin-right: 1em;
+            }
+        }
+    }
+
+    @media (min-width: 720px) {
+        flex-direction: row;
+    }
+}
+
+.select-part-of-body {
+    margin: 1.8em 0;
+}
+
+.new-worksheet-input {
     font-size: 1.2em;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     margin: 1.3em 0;
+
+    &.worksheet-title {
+        margin-top: 2.1em;
+    }
 
     label {
         position: absolute;
@@ -715,6 +906,10 @@ $primary: #ffab2c;
         top: -1.5em;
         left: 1.4em;
         font-size: 0.65em;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 93%;
     }
 
     input:focus,

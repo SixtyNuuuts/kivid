@@ -66,13 +66,18 @@ class ManageWorksheetController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/fiches/{listType}/{patientForPrescription}", name="app_doctor_worksheets", methods={"GET"})
+     * @Route("/{id}/fiches/{listType}/{patientId}", name="app_doctor_worksheets", methods={"GET"})
      */
     public function worksheetList(
         Doctor $doctor,
         string $listType = 'prescriptions',
-        Patient $patientForPrescription = null
+        int $patientId = null
     ): Response {
+        $patientForPrescription =
+            $patientId ?
+                $this->patientRepository->findOneBy(['id' => $patientId])
+            : null;
+
         return $this->render('doctor/worksheets_list.html.twig', [
             'listType' => $listType,
             'patientForPrescription' => $patientForPrescription,
@@ -81,15 +86,25 @@ class ManageWorksheetController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/fiche/{action}/{worksheetTemplate}/{patientForPrescription}",
+     * @Route("/{id}/fiche/{action}/{worksheetTemplateId}/{patientId}",
      * name="app_doctor_worksheet_creation", methods={"GET"})
      */
     public function worksheetCreation(
         Doctor $doctor,
         string $action,
-        Worksheet $worksheetTemplate = null,
-        Patient $patientForPrescription = null
+        int $worksheetTemplateId = null,
+        int $patientId = null
     ): Response {
+        $worksheetTemplate =
+        $worksheetTemplateId ?
+            $this->worksheetRepository->findOneBy(['id' => $worksheetTemplateId])
+        : null;
+
+        $patientForPrescription =
+        $patientId ?
+            $this->patientRepository->findOneBy(['id' => $patientId])
+        : null;
+
         return $this->render('doctor/create_worksheet_page.html.twig', [
             'doctor' => $doctor,
             'action' => $action,
@@ -111,8 +126,11 @@ class ManageWorksheetController extends AbstractController
                 $worksheet->setTitle($data->title)
                           ->setDescription($data->description)
                           ->setPartOfBody($data->partOfBody)
+                          ->setDuration($data->duration)
+                          ->setPerWeek($data->perWeek)
+                          ->setPerDay($data->perDay)
                           ->setIsTemplate($data->isTemplate)
-                          ->setDoctor($doctor);
+                          ->setPrescriber($doctor);
 
                 foreach ($data->exercises as $dataExercise) {
                     $this->generateExercise($dataExercise, $worksheet);
@@ -153,7 +171,11 @@ class ManageWorksheetController extends AbstractController
 
                 $worksheet->setTitle($data->title)
                           ->setDescription($data->description)
-                          ->setPartOfBody($data->partOfBody);
+                          ->setPartOfBody($data->partOfBody)
+                          ->setDuration($data->duration)
+                          ->setPerWeek($data->perWeek)
+                          ->setPerDay($data->perDay)
+                ;
 
                 foreach ($data->exercises as $dataExercise) {
                     if ($dataExercise->id) {
@@ -279,16 +301,20 @@ class ManageWorksheetController extends AbstractController
                              ->setWorksheet($worksheet)
                 ;
 
-                // Temporaire - juste pour une session pour l'instant
-                // (plus tard * x  durée en semaines * x par semaine * x par jour )
-                $worksheetSession = new WorksheetSession();
-                $worksheetSession->setPrescription($prescription);
-                $worksheetSession->setExecOrder(1);
-                $this->em->persist($worksheetSession);
-                //
+                for (
+                    $execution = 1; $execution <= $worksheet->getDuration()
+                                                * $worksheet->getPerWeek()
+                                                * $worksheet->getPerDay(); $execution++
+                ) {
+                    $worksheetSession = new WorksheetSession();
+                    $worksheetSession->setPrescription($prescription);
+                    $worksheetSession->setExecOrder($execution);
 
-                foreach ($worksheet->getExercises() as $exercise) {
-                    $this->generateExerciseStatsInit($exercise, $worksheetSession);
+                    foreach ($worksheet->getExercises() as $exercise) {
+                        $this->generateExerciseStatsInit($exercise, $worksheetSession);
+                    }
+
+                    $this->em->persist($worksheetSession);
                 }
 
                 $this->em->persist($prescription);

@@ -11,7 +11,7 @@
         <vs-dialog
             width="1000px"
             v-model="modalAddVideo"
-            :loading="!videosList.length"
+            :loading="loadingVideosList"
         >
             <h2><i class="fe fe-youtube"></i>Selectionner des vidéos</h2>
 
@@ -38,8 +38,9 @@
                         deselectLabel=""
                     >
                         <span slot="noResult">
-                            Aucun mot-clé ne correspond à ce texte
+                            Aucun mot-clé ne correspond à ce texte.
                         </span>
+                        <span slot="noOptions"> Aucun mot-clé. </span>
                         <template slot="singleLabel" slot-scope="props">
                             <span>{{ props.option }}</span>
                         </template>
@@ -210,6 +211,7 @@ export default {
             modalAddVideo: false,
             modalViewVideo: false,
             selectedViewVideo: false,
+            loadingVideosList: false,
         };
     },
     computed: {
@@ -304,13 +306,17 @@ export default {
         },
     },
     created() {
+        this.loadingVideosList = true;
+
         this.axios
             .get(`/get/videos`)
             .then((response) => {
+                this.loadingVideosList = false;
                 this.videosList = response.data;
             })
             .catch((error) => {
                 console.log(error);
+                this.loadingVideosList = false;
             });
 
         window.addEventListener("resize", this.resizeWindowEventHandler);

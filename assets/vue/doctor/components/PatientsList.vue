@@ -200,7 +200,7 @@
                 />
             </template>
             <template #notFound>
-                <div v-if="doctorPatientsListArray.length">
+                <div v-if="!$parent.loadingDoctorPatientsList">
                     <div v-if="filter">
                         <i class="fe fe-user-minus"></i>
                         Aucun patient n'a été trouvé avec "<strong>{{
@@ -285,6 +285,7 @@ export default {
             max: 10,
             doctorPatientsList: [],
             allPatientsList: [],
+            loadingAllPatientsList: false,
             modalConfirmRemovePatient: false,
             removePatientDetails: {},
             btnLoadingValidRemovePatient: false,
@@ -401,13 +402,17 @@ export default {
         },
     },
     created() {
+        this.loadingAllPatientsList = true;
+
         this.axios
             .get(`/get/patients`)
             .then((response) => {
                 this.allPatientsList = response.data;
+                this.loadingAllPatientsList = false;
             })
             .catch((error) => {
                 console.log(error);
+                this.loadingAllPatientsList = false;
             });
     },
 };

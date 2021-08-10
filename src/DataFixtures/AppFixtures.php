@@ -78,16 +78,16 @@ class AppFixtures extends Fixture
             $tagArray[] = $tag;
         };
 
-        $worksheetTempleateCreator = new Doctor();
+        $worksheetTempleatePrescriber = new Doctor();
 
-        $worksheetTempleateCreator->setEmail("kine-creator@mail.com")
-            ->setPassword($this->passwordHasher->hashPassword($worksheetTempleateCreator, 'password'))
+        $worksheetTempleatePrescriber->setEmail("kine-prescriber@mail.com")
+            ->setPassword($this->passwordHasher->hashPassword($worksheetTempleatePrescriber, 'password'))
             ->setFirstname($faker->firstName)
             ->setLastname($faker->lastName)
             ->setGender($gender[array_rand($gender)]);
         ;
 
-        $manager->persist($worksheetTempleateCreator);
+        $manager->persist($worksheetTempleatePrescriber);
 
         for ($wi = 0; $wi < rand(5, 15); $wi++) {
             $worksheetTemplate = new Worksheet();
@@ -96,9 +96,12 @@ class AppFixtures extends Fixture
                 ->setTitle($tagNames[array_rand($tagNames)])
                 ->setDescription($faker->text())
                 ->setCreatedAt(\DateTimeImmutable::createFromMutable($faker->dateTimeBetween()))
-                ->setDoctor($worksheetTempleateCreator)
+                ->setPrescriber($worksheetTempleatePrescriber)
                 ->setPartOfBody($partOfBody[array_rand($partOfBody)])
                 ->setIsTemplate(true)
+                ->setDuration(1)
+                ->setPerDay(1)
+                ->setPerWeek(1)
             ;
 
             $randomTags = array_rand($tagArray, rand(2, 3));
@@ -178,23 +181,24 @@ class AppFixtures extends Fixture
 
                 for ($wpi = 0; $wpi < 2; $wpi++) {
                     $worksheetForPrescription = $worksheetTemplateArray[array_rand($worksheetTemplateArray)];
+                    $worksheetForPrescription->setDuration(26)
+                                             ->setPerDay(1)
+                                             ->setPerWeek(7)
+                    ;
 
                     $prescription = new Prescription();
                     $prescription->setPatient($patient)
                         ->setDoctor($kine)
                         ->setWorksheet($worksheetForPrescription)
                         ->setCreatedAt(\DateTimeImmutable::createFromMutable($faker->dateTimeBetween()))
-                        ->setDuration(26)
-                        ->setPerDay(1)
-                        ->setPerWeek(7)
                     ;
 
                     $randomStartDate = $faker->dateTimeBetween('-6 months', '-6 months');
 
                     for (
-                        $ws = 1; $ws <= $prescription->getDuration()
-                                  * $prescription->getPerWeek()
-                                  * $prescription->getPerDay(); $ws++
+                        $ws = 1; $ws <= $worksheetForPrescription->getDuration()
+                                      * $worksheetForPrescription->getPerWeek()
+                                      * $worksheetForPrescription->getPerDay(); $ws++
                     ) {
                         $worksheetSession = new WorksheetSession();
 
