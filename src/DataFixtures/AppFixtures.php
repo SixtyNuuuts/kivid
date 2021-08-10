@@ -93,7 +93,7 @@ class AppFixtures extends Fixture
             $worksheetTemplate = new Worksheet();
 
             $worksheetTemplate
-                ->setTitle($faker->sentence(4))
+                ->setTitle($tagNames[array_rand($tagNames)])
                 ->setDescription($faker->text())
                 ->setCreatedAt(\DateTimeImmutable::createFromMutable($faker->dateTimeBetween()))
                 ->setDoctor($worksheetTempleateCreator)
@@ -138,7 +138,7 @@ class AppFixtures extends Fixture
             $manager->persist($worksheetTemplate);
         }
 
-        for ($ki = 0; $ki < rand(2, 3); $ki++) {
+        for ($ki = 0; $ki < 1; $ki++) {
             $kine = new Doctor();
 
             $kine->setCity($faker->city)
@@ -152,13 +152,13 @@ class AppFixtures extends Fixture
                 ->setGender($gender[array_rand($gender)]);
             ;
 
-            for ($wii = 0; $wii < rand(1, 5); $wii++) {
+            for ($wii = 0; $wii < rand(1, 2); $wii++) {
                 $kine->addWorksheet($worksheetTemplateArray[array_rand($worksheetTemplateArray)]);
             }
 
             $manager->persist($kine);
 
-            for ($pi = 0; $pi < rand(5, 10); $pi++) {
+            for ($pi = 0; $pi < 1; $pi++) {
                 $patient = new Patient();
 
                 $patient
@@ -176,7 +176,7 @@ class AppFixtures extends Fixture
                     ->setGender($gender[array_rand($gender)]);
                 ;
 
-                for ($i = 0; $i < rand(2, 5); $i++) {
+                for ($wpi = 0; $wpi < 2; $wpi++) {
                     $worksheetForPrescription = $worksheetTemplateArray[array_rand($worksheetTemplateArray)];
 
                     $prescription = new Prescription();
@@ -184,14 +184,12 @@ class AppFixtures extends Fixture
                         ->setDoctor($kine)
                         ->setWorksheet($worksheetForPrescription)
                         ->setCreatedAt(\DateTimeImmutable::createFromMutable($faker->dateTimeBetween()))
-                        ->setDuration(rand(1, 4))
+                        ->setDuration(26)
                         ->setPerDay(1)
-                        ->setPerWeek(rand(1, 2))
+                        ->setPerWeek(7)
                     ;
 
-                    // $prescriptionIsCompleted = rand(0, 1) == 1;
-
-                    $randomStartDate = $faker->dateTimeBetween('-24 months', '-12 months');
+                    $randomStartDate = $faker->dateTimeBetween('-6 months', '-6 months');
 
                     for (
                         $ws = 1; $ws <= $prescription->getDuration()
@@ -201,7 +199,15 @@ class AppFixtures extends Fixture
                         $worksheetSession = new WorksheetSession();
 
                         $worksheetSession->setPrescription($prescription)
-                                     ->setExecOrder($ws);
+                                         ->setExecOrder($ws);
+
+                        $worksheetSession->setIsCompleted(true);
+
+                        $worksheetSessionStartDate = new \DateTime();
+                        $worksheetSessionStartDate->setTimestamp($randomStartDate->getTimestamp());
+                        $worksheetSession->setStartAt($worksheetSessionStartDate);
+
+                        $inc = 1;
 
                         foreach ($worksheetForPrescription->getExercises() as $exercise) {
                             $exercise->setIsCompleted(true);
@@ -210,36 +216,27 @@ class AppFixtures extends Fixture
                                 $exerciseStat = new ExerciseStat();
 
                                 $exerciseStat->setCriterion($criterion)
-                                         ->setExercise($exercise)
-                                         ->setWorksheetSession($worksheetSession);
+                                             ->setExercise($exercise)
+                                             ->setWorksheetSession($worksheetSession);
 
-                                // if ($prescriptionIsCompleted) {
                                 $exerciseStatDoneDate = new \DateTime();
+
                                 $exerciseStatDoneDate->setTimestamp(
-                                    $randomStartDate->getTimestamp() + rand(259200, 604800)
+                                    $randomStartDate->getTimestamp() + $inc++ * 150
                                 );
 
                                 $exerciseStat->setDoneAt($exerciseStatDoneDate)
                                              ->setRating(rand(1, 5));
-                                // }
 
                                 $manager->persist($exerciseStat);
                             }
                         }
 
-                        // if ($prescriptionIsCompleted) {
-                        $worksheetSession->setIsCompleted(true);
-
-                        $worksheetSessionStartDate = new \DateTime();
-                        $worksheetSessionStartDate->setTimestamp($randomStartDate->getTimestamp());
-                        $worksheetSession->setStartAt($worksheetSessionStartDate);
-
                         $worksheetSessionDeadlineDate = new \DateTime();
-                        $worksheetSessionDeadlineDate->setTimestamp($randomStartDate->getTimestamp() + 604800);
+                        $worksheetSessionDeadlineDate->setTimestamp($randomStartDate->getTimestamp() + 86400);
                         $worksheetSession->setDeadlineAt($worksheetSessionDeadlineDate);
 
                         $randomStartDate = $worksheetSessionDeadlineDate;
-                        // }
 
                         $manager->persist($worksheetSession);
                     }
