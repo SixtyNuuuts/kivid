@@ -40,13 +40,6 @@ class WorksheetSession
     private $isCompleted;
 
     /**
-     * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"prescription_read", "exercise_stats_read"})
-     */
-    private $isInProgress
-    ;
-
-    /**
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"prescription_read", "exercise_stats_read"})
      */
@@ -59,7 +52,7 @@ class WorksheetSession
     private $prescription;
 
     /**
-     * @ORM\OneToMany(targetEntity=ExerciseStat::class, mappedBy="worksheetSession")
+     * @ORM\OneToMany(targetEntity=ExerciseStat::class, mappedBy="worksheetSession", orphanRemoval=true))
      * @Groups({"exercise_stats_read"})
      */
     private $exerciseStats;
@@ -67,7 +60,6 @@ class WorksheetSession
     public function __construct()
     {
         $this->isCompleted = false;
-        $this->isInProgress = false;
         $this->exerciseStats = new ArrayCollection();
     }
 
@@ -108,18 +100,6 @@ class WorksheetSession
     public function setIsCompleted(?bool $isCompleted): self
     {
         $this->isCompleted = $isCompleted;
-
-        return $this;
-    }
-
-    public function getIsInProgress(): ?bool
-    {
-        return $this->isInProgress;
-    }
-
-    public function setIsInProgress(?bool $isInProgress): self
-    {
-        $this->isInProgress = $isInProgress;
 
         return $this;
     }

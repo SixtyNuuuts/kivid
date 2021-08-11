@@ -216,7 +216,7 @@ class ManageWorksheetController extends AbstractController
             if ($this->isCsrfTokenValid('remove_worksheet_template' . $doctor->getId(), $data->_token)) {
                 $worksheetTemplate = $this->worksheetRepository->findOneBy(['id' => $data->worksheetTemplate_id]);
 
-                if ($worksheetTemplate->getDoctor() === $doctor) {
+                if ($worksheetTemplate->getPrescriber() === $doctor) {
                     $this->em->remove($worksheetTemplate);
 
                     $this->em->flush();
@@ -249,7 +249,7 @@ class ManageWorksheetController extends AbstractController
                 $exercise = $this->exerciseRepository->findOneBy(['id' => $data->exercise_id]);
                 $exerciseStats = $this->exerciseStatRepository->findBy(['exercise' => $exercise]);
 
-                if ($worksheet->getDoctor() === $doctor) {
+                if ($worksheet->getPrescriber() === $doctor) {
                     $worksheet->removeExercise($exercise);
 
                     $allStatsNull = true;

@@ -91,6 +91,9 @@ class Worksheet
         $this->exercises = new ArrayCollection();
         $this->prescriptions = new ArrayCollection();
         $this->isTemplate = false;
+        $this->duration = 1;
+        $this->perDay = 1;
+        $this->perWeek = 1;
     }
 
     public function getId(): ?int

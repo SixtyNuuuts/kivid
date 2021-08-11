@@ -96,7 +96,7 @@
                         :class="{ focus: worksheet.perWeek != '' }"
                         for="perWeek"
                     >
-                        Nb de sessions par semaine (max: 7)
+                        Nb de fois par semaine (max: 7)
                     </label>
                 </div>
                 <div class="vs-input-content new-worksheet-input">
@@ -124,7 +124,7 @@
                         :class="{ focus: worksheet.perDay != '' }"
                         for="perDay"
                     >
-                        Nb d'exécutions de la fiche par session (max: 3)
+                        Nb de fois par jour (max: 3)
                     </label>
                 </div>
             </div>
@@ -599,7 +599,7 @@ export default {
                     }, 2000);
                 })
                 .catch((error) => {
-                    console.log(error.response.data);
+                    console.log(error.response.data.detail);
                     this.openNotification(
                         `<strong>Création de la fiche : Erreur</strong>`,
                         `${error.response.data}`,
@@ -660,7 +660,7 @@ export default {
                                 }, 2000);
                             })
                             .catch((error) => {
-                                console.log(error.response.data);
+                                console.log(error.response.data.detail);
                                 this.openNotification(
                                     `<strong>Edition de la prescription : Erreur</strong>`,
                                     `${error.response.data}`,
@@ -681,7 +681,7 @@ export default {
                     }
                 })
                 .catch((error) => {
-                    console.log(error.response.data);
+                    console.log(error.response.data.detail);
                     this.openNotification(
                         `<strong>Edition de la fiche : Erreur</strong>`,
                         `${error.response.data}`,
@@ -738,7 +738,7 @@ export default {
                         this.modalConfirmRemoveExercise = false;
                     })
                     .catch((error) => {
-                        console.log(error.response.data);
+                        console.log(error.response.data.detail);
                         this.openNotification(
                             `<strong>Erreur lors de la suppression de l'exercice</strong>`,
                             `${error.response.data}`,

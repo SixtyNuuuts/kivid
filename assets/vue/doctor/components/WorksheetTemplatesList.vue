@@ -480,6 +480,7 @@ export default {
                     this.modalConfirmRemoveWorksheetTemplate = false;
                 })
                 .catch((error) => {
+                    console.log(error.response.data.detail);
                     this.openNotification(
                         `<strong>Suppression du modèle : Erreur</strong>`,
                         `${error.response.data}`,

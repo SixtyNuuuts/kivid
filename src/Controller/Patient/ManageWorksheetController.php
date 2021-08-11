@@ -3,6 +3,8 @@
 namespace App\Controller\Patient;
 
 use App\Entity\Patient;
+use App\Entity\Worksheet;
+use App\Entity\WorksheetSession;
 use App\Repository\VideoRepository;
 use App\Repository\DoctorRepository;
 use App\Repository\ExerciseRepository;
@@ -83,18 +85,16 @@ class ManageWorksheetController extends AbstractController
             $data = json_decode($request->getContent());
 
             if ($this->isCsrfTokenValid('start_worksheet_session' . $patient->getId(), $data->_token)) {
+                $prescription = $this->prescriptionRepository->findOneBy(['id' => $data->prescriptionId]);
+
+                $worksheet = $prescription->getWorksheet();
+
                 $worksheetSessions = $this->worksheetSessionRepository->findBy(
-                    ['prescription' => $data->prescriptionId],
+                    ['prescription' => $prescription],
                     ['execOrder' => 'ASC'],
                 );
 
-                // TODO
-
-                $worksheetSessions[0]->setIsInProgress(true);
-
-                // foreach ($worksheetSessions as $worksheetSession) {
-                //     # code...
-                // }
+                $this->generateSessionDates($worksheet, $worksheetSessions);
 
                 $this->em->flush();
 
@@ -110,6 +110,35 @@ class ManageWorksheetController extends AbstractController
         return $this->json(
             'Nous n\'avons pas pu démarrer la session de la prescription, veuillez réessayer ultérieurement.',
             500,
+        );
+    }
+
+    /**
+     * @Route("/{id}/get/current-worksheet-session/{prescriptionId}",
+     * name="app_patient_get_current_worksheet_session", methods={"GET"})
+     */
+    public function getCurrentWorksheetSession(Patient $patient, int $prescriptionId): JsonResponse
+    {
+        $worksheetSessions = $this->worksheetSessionRepository->findBy(
+            ['prescription' => $prescriptionId],
+            ['execOrder' => 'ASC'],
+        );
+
+        $worksheetSessionByDate = array_filter(
+            $worksheetSessions,
+            fn ($session) =>
+            (new \DateTime() >= $session->getStartAt()
+            && new \DateTime() <= $session->getDeadlineAt())
+            && !$session->getIsCompleted()
+        );
+
+        $this->em->flush();
+
+        return $this->json(
+            $worksheetSessionByDate[0],
+            200,
+            [],
+            ['groups' => 'prescription_read']
         );
     }
 
@@ -139,5 +168,36 @@ class ManageWorksheetController extends AbstractController
             'Nous n\'avons pas pu enregistrer la complétion de cet exercice',
             500,
         );
+    }
+
+    private function generateSessionDates(Worksheet $worksheet, array $worksheetSessions): void
+    {
+        $executionDuration = (
+            (
+                604800 // secondes dans une semaine
+                / $worksheet->getPerWeek()
+            )
+            / $worksheet->getPerDay()
+        );
+
+        $worksheetPrescriptionStartDate = new \DateTime();
+
+        foreach ($worksheetSessions as $worksheetSession) {
+            $worksheetSessionStartDate = new \DateTime();
+            $worksheetSessionStartDate->setTimestamp(
+                $worksheetPrescriptionStartDate->getTimestamp()
+                + 1
+            );
+            $worksheetSession->setStartAt($worksheetSessionStartDate);
+
+            $worksheetSessionDeadlineDate = new \DateTime();
+            $worksheetSessionDeadlineDate->setTimestamp(
+                $worksheetSessionStartDate->getTimestamp()
+                + $executionDuration
+            );
+            $worksheetSession->setDeadlineAt($worksheetSessionDeadlineDate);
+
+            $worksheetPrescriptionStartDate = $worksheetSessionDeadlineDate;
+        }
     }
 }

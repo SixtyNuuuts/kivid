@@ -543,6 +543,8 @@ export default {
                 ecver: 2,
                 modestbranding: 1,
             },
+            loadingPatientPrescriptionsList: null,
+            loadingGetCurrentWorksheetSession: null,
         };
     },
     computed: {
@@ -576,7 +578,7 @@ export default {
                     this.sliderTechnicalChoice = "3";
                 })
                 .catch((error) => {
-                    console.log(error.response.data);
+                    console.log(error.response.data.detail);
                 });
         },
         validDifficultyStat() {
@@ -601,7 +603,7 @@ export default {
                     this.sliderDifficultyChoice = "3";
                 })
                 .catch((error) => {
-                    console.log(error.response.data);
+                    console.log(error.response.data.detail);
                 });
         },
         validSensitivityStat() {
@@ -654,14 +656,16 @@ export default {
                     this.currentExercise.isCompleted = true;
                 })
                 .catch((error) => {
-                    console.log(error.response.data);
+                    console.log(error.response.data.detail);
                 });
         },
         activeWorksheetAndGenerateVideoList(prescription, i) {
-            this.activeWorksheet = i;
             this.activePrescription = prescription;
-            this.currentWorksheetSession =
-                this.activePrescription.worksheetSessions[0];
+
+            this.activeWorksheet = i;
+
+            this.getCurrentSession();
+
             this.generateVideoList(prescription.worksheet.exercises);
         },
         generateVideoList(exercises) {
@@ -698,9 +702,17 @@ export default {
             this.addMaxHeightToBody();
         },
         playVideo() {
-            this.activePrescription.worksheetSessions[0].isInProgress = true;
-            this.showVideo = true;
-
+            if (!this.currentWorksheetSession.startAt) {
+                this.startSessions();
+            } else {
+                this.showVideo = true;
+            }
+        },
+        closePlayerVideo() {
+            this.playerVideoToggle = false;
+            this.removeMaxHeightToBody();
+        },
+        startSessions() {
             this.axios
                 .post(`/patient/${this.patient.id}/start/worksheet-session`, {
                     _token: this.csrfTokenStartWorksheetSession,
@@ -708,18 +720,51 @@ export default {
                 })
                 .then((response) => {
                     console.log(response.data);
+
+                    this.showVideo = true;
                 })
                 .catch((error) => {
-                    console.log(error.response.data);
-                });
+                    console.log(error.response.data.detail);
 
-            // setTimeout(() => {
-            //     this.$refs.youtube.player.playVideo();
-            // }, 500);
+                    this.openNotification(
+                        `<strong>Erreur</strong>`,
+                        `${error.response.data}`,
+                        "top-right",
+                        "danger",
+                        "<i class='fe fe-alert-circle'></i>"
+                    );
+                });
         },
-        closePlayerVideo() {
-            this.playerVideoToggle = false;
-            this.removeMaxHeightToBody();
+        getCurrentSession() {
+            this.loadingGetCurrentWorksheetSession = this.$vs.loading({
+                text: "chargement",
+                type: "border",
+            });
+
+            this.axios
+                .get(
+                    `/patient/${this.patient.id}/get/current-worksheet-session/${this.activePrescription.id}`
+                )
+                .then((response) => {
+                    this.currentWorksheetSession = response.data;
+
+                    this.loadingGetCurrentWorksheetSession.close();
+                    this.loadingGetCurrentWorksheetSession = null;
+                })
+                .catch((error) => {
+                    console.log(error);
+
+                    this.openNotification(
+                        `<strong>Erreur</strong>`,
+                        `${error.response.data}`,
+                        "top-right",
+                        "danger",
+                        "<i class='fe fe-alert-circle'></i>"
+                    );
+
+                    this.loadingGetCurrentWorksheetSession.close();
+                    this.loadingGetCurrentWorksheetSession = null;
+                });
         },
         addMaxHeightToBody() {
             document.body.classList.add("max-height-100vh");
@@ -729,13 +774,6 @@ export default {
         },
         ended() {
             this.showVideo = false;
-
-            // if (
-            //     this.videoList.indexOf(this.currentExercise) !=
-            //     this.videoList.length - 1
-            // ) {
-            //     this.playNextVideo();
-            // }
         },
         openNotification(title, text, position, color, icon) {
             this.$vs.notification({
@@ -751,7 +789,6 @@ export default {
     },
     mounted() {
         this.loadingPatientPrescriptionsList = this.$vs.loading({
-            // target: this.$refs.worksheetsList,
             text: "chargement",
             type: "border",
         });
@@ -798,24 +835,12 @@ export default {
                     0
                 );
 
-                // temporaire à supprimer en prod
-                // if (
-                //     !this.activePrescription.worksheetSessions.filter(
-                //         (ws) => false === ws.isCompleted
-                //     ).length
-                // ) {
-                //     this.activePrescription.worksheet.exercises.map(
-                //         (exercise) => {
-                //             return (exercise.isCompleted = true);
-                //         }
-                //     );
-                // }
-
                 this.loadingPatientPrescriptionsList.close();
                 this.loadingPatientPrescriptionsList = null;
             })
             .catch((error) => {
                 console.log(error);
+
                 this.loadingPatientPrescriptionsList.close();
                 this.loadingPatientPrescriptionsList = null;
             });
