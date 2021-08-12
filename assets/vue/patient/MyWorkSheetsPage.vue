@@ -4,6 +4,7 @@
             :patient="patient"
             :csrfTokenExerciseCompleted="csrfTokenExerciseCompleted"
             :csrfTokenCreateExerciseStats="csrfTokenCreateExerciseStats"
+            :csrfTokenInitWorksheetSessions="csrfTokenInitWorksheetSessions"
             :csrfTokenStartWorksheetSession="csrfTokenStartWorksheetSession"
         />
     </div>
@@ -23,6 +24,7 @@ export default {
             patient: null,
             csrfTokenExerciseCompleted: null,
             csrfTokenCreateExerciseStats: null,
+            csrfTokenInitWorksheetSessions: null,
             csrfTokenStartWorksheetSession: null,
         };
     },
@@ -32,6 +34,8 @@ export default {
         this.patient = data.patient;
         this.csrfTokenExerciseCompleted = data.csrfTokenExerciseCompleted;
         this.csrfTokenCreateExerciseStats = data.csrfTokenCreateExerciseStats;
+        this.csrfTokenInitWorksheetSessions =
+            data.csrfTokenInitWorksheetSessions;
         this.csrfTokenStartWorksheetSession =
             data.csrfTokenStartWorksheetSession;
     },

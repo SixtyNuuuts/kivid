@@ -15,7 +15,7 @@ export default {
     data() {
         return {
             patient: null,
-            // csrfTokenStartWorksheetSession: null,
+            // csrfTokenInitWorksheetSessions: null,
         };
     },
     created() {
@@ -23,8 +23,8 @@ export default {
 
         this.patient = data.patient;
 
-        // this.csrfTokenStartWorksheetSession =
-        // data.csrfTokenStartWorksheetSession;
+        // this.csrfTokenInitWorksheetSessions =
+        // data.csrfTokenInitWorksheetSessions;
     },
 };
 </script>

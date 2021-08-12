@@ -44,7 +44,7 @@ class Exercise
      * @Groups({"worksheet_read", "prescription_read"})
      */
     private $option;
-    
+
     /**
      * @ORM\ManyToOne(targetEntity=Worksheet::class, inversedBy="exercises")
      */

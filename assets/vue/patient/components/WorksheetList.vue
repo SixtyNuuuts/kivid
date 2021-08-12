@@ -2,7 +2,9 @@
     <div class="worksheets-list">
         <div class="worksheet-item-list">
             <div
-                v-for="(prescription, i) in prescriptionsList"
+                v-for="(
+                    prescription, i
+                ) in patientPrescriptionsSortedByPosition"
                 :key="i"
                 class="worksheet-item card shadow-lg"
                 @click="
@@ -68,27 +70,36 @@
                                 Plus de sessions pour cette prescription
                             </p>
                         </div>
-                        <div v-else>
+                        <div
+                            v-if="
+                                !prescription.currentWorksheetSession
+                                    .isCompleted &&
+                                prescription.currentWorksheetSession.startAt
+                            "
+                        >
                             <i class="fe fe-calendar"></i>
-                            <!-- <p>
-                                {{ "Plus de sessions pour cette prescription"
-                                          diffTimeBetweenNowAndSession(
-                                              getNextSession(prescription)
-                                                  .startAt
-                                }}
-                            </p> -->
                             <p>
                                 Plus que
                                 <span>
                                     {{
                                         diffTimeBetweenNowAndSession(
-                                            getNextSession(prescription)
+                                            prescription.currentWorksheetSession
                                                 .deadlineAt
                                         )
                                     }}
                                 </span>
                                 pour terminer la fiche
                             </p>
+                        </div>
+                        <div
+                            v-if="
+                                !prescription.currentWorksheetSession
+                                    .isCompleted &&
+                                !prescription.currentWorksheetSession.startAt
+                            "
+                        >
+                            <i class="fe fe-calendar"></i>
+                            <p>Nouvelle fiche disponnible</p>
                         </div>
                     </div>
                 </div>
@@ -113,9 +124,7 @@
                     <div
                         v-if="
                             indiceActiveWorksheet === i &&
-                            prescription.worksheetSessions.filter(
-                                (ws) => false === ws.isCompleted
-                            ).length
+                            !prescription.currentWorksheetSession.isCompleted
                         "
                         class="lets-go"
                     >
@@ -123,12 +132,7 @@
                         <i class="fe fe-arrow-right-circle"></i>
                     </div>
                     <div
-                        v-if="
-                            indiceActiveWorksheet !== i &&
-                            prescription.worksheetSessions.filter(
-                                (ws) => false === ws.isCompleted
-                            ).length
-                        "
+                        v-if="indiceActiveWorksheet !== i"
                         class="selectionner"
                     >
                         <span>Sélectionner</span>
@@ -138,7 +142,12 @@
             </div>
         </div>
         <div class="worksheet-details">
-            <div v-for="(prescription, i) in prescriptionsList" :key="i">
+            <div
+                v-for="(
+                    prescription, i
+                ) in patientPrescriptionsSortedByPosition"
+                :key="i"
+            >
                 <transition name="fade">
                     <div v-if="indiceActiveWorksheet === i">
                         <h1>{{ prescription.worksheet.title }}</h1>
@@ -199,9 +208,7 @@
                                 />
                             </template>
                             <template #text>
-                                <p>
-                                    {{ exercise.video.description }}
-                                </p>
+                                <p v-html="exercise.video.description"></p>
 
                                 <div class="specs">
                                     <div>
@@ -516,6 +523,7 @@ export default {
         patient: Object,
         csrfTokenExerciseCompleted: String,
         csrfTokenCreateExerciseStats: String,
+        csrfTokenInitWorksheetSessions: String,
         csrfTokenStartWorksheetSession: String,
     },
     data() {
@@ -617,7 +625,7 @@ export default {
         };
     },
     computed: {
-        prescriptionsList() {
+        patientPrescriptionsSortedByPosition() {
             return f.sortByPosition(this.patientPrescriptions);
         },
         hideVideoFrame() {
@@ -722,6 +730,15 @@ export default {
                             }
                         )
                         .then((response) => {
+                            if (
+                                !this.activePrescription.worksheet.exercises.find(
+                                    (e) => false === e.isCompleted
+                                )
+                            ) {
+                                this.currentWorksheetSession.isInProgress = false;
+                                this.currentWorksheetSession.isCompleted = true;
+                            }
+
                             this.openNotification(
                                 `<strong>Exercice terminé !</strong>`,
                                 `${response.data}`,
@@ -804,47 +821,59 @@ export default {
             this.addMaxHeightToBody();
         },
         playVideo() {
-            if (!this.currentWorksheetSession.startAt) {
-                this.startSessions();
-            } else {
-                this.showVideo = true;
+            this.showVideo = true;
+
+            this.initWorksheetSessions();
+        },
+        initWorksheetSessions() {
+            if (!this.activePrescription.currentWorksheetSession.startAt) {
+                this.axios
+                    .post(
+                        `/patient/${this.patient.id}/init/worksheet-sessions`,
+                        {
+                            _token: this.csrfTokenInitWorksheetSessions,
+                            prescriptionId: this.activePrescription.id,
+                        }
+                    )
+                    .then((response) => {
+                        console.log("init worksheet sessions");
+
+                        this.activePrescription.worksheetSessions =
+                            this.sortByExecOrder(response.data);
+
+                        this.currentWorksheetSession =
+                            this.activePrescription.worksheetSessions[0];
+                    })
+                    .catch((error) => {
+                        if (error.response) {
+                            console.log(error.response.data.detail);
+                        }
+
+                        this.openNotification(
+                            `<strong>Erreur</strong>`,
+                            `${error.response.data}`,
+                            "top-right",
+                            "danger",
+                            "<i class='fe fe-alert-circle'></i>"
+                        );
+                    });
             }
         },
         closePlayerVideo() {
             this.playerVideoToggle = false;
             this.removeMaxHeightToBody();
         },
-        startSessions() {
-            this.showVideo = true;
-
-            this.axios
-                .post(`/patient/${this.patient.id}/start/worksheet-session`, {
-                    _token: this.csrfTokenStartWorksheetSession,
-                    prescriptionId: this.activePrescription.id,
-                })
-                .then((response) => {
-                    console.log(response.data);
-                })
-                .catch((error) => {
-                    if (error.response) {
-                        console.log(error.response.data.detail);
-                    }
-
-                    this.openNotification(
-                        `<strong>Erreur</strong>`,
-                        `${error.response.data}`,
-                        "top-right",
-                        "danger",
-                        "<i class='fe fe-alert-circle'></i>"
-                    );
-                });
-        },
         getCurrentSession(worksheetSessions) {
-            return worksheetSessions.filter(
-                (session) =>
+            if (!worksheetSessions[0].startAt) {
+                return worksheetSessions[0];
+            }
+
+            return this.sortByExecOrder(worksheetSessions).filter((session) => {
+                return (
                     new Date() >= new Date(session.startAt) &&
                     new Date() <= new Date(session.deadlineAt)
-            )[0];
+                );
+            })[0];
         },
         getNextSession(prescription) {
             const nextSessionIndice =
@@ -877,15 +906,19 @@ export default {
             const nbMin = Math.floor(restInMin);
 
             const daysToString =
-                nbDays > 1 ? `${nbDays} jours` : `${nbDays} jour`;
+                nbDays > 1 ? `${nbDays} jours, ` : `${nbDays} jour, `;
 
             const hoursToString =
-                nbHours > 1 ? `${nbHours} heures` : `${nbHours} heure`;
+                nbHours > 1 ? `${nbHours} heures et ` : `${nbHours} heure et `;
 
             const minutesToString =
                 nbMin > 1 ? `${nbMin} minutes` : `${nbMin} minute`;
 
-            return `${daysToString}, ${hoursToString} et ${minutesToString}`;
+            return `
+                ${nbDays !== 0 ? daysToString : ""}
+                ${nbHours !== 0 ? hoursToString : ""}
+                ${nbMin !== 0 ? minutesToString : ""}
+            `;
         },
         sortByExecOrder(worksheetSessions) {
             worksheetSessions.sort(function (a, b) {
@@ -990,7 +1023,9 @@ export default {
                                     ),
                             },
                             currentWorksheetSession: this.getCurrentSession(
-                                prescription.worksheetSessions
+                                this.sortByExecOrder(
+                                    prescription.worksheetSessions
+                                )
                             ),
                             worksheetSessions: this.sortByExecOrder(
                                 prescription.worksheetSessions
@@ -999,22 +1034,61 @@ export default {
                     }
                 );
 
-                if (this.patientPrescriptions.length) {
-                    this.patientPrescriptions.map((prescription) => {
+                this.patientPrescriptions = this.patientPrescriptions.map(
+                    (prescription) => {
+                        if (
+                            !prescription.currentWorksheetSession
+                                .isInProgress &&
+                            !prescription.currentWorksheetSession.isCompleted
+                        ) {
+                            this.axios
+                                .post(
+                                    `/patient/${this.patient.id}/start/worksheet-session`,
+                                    {
+                                        _token: this
+                                            .csrfTokenStartWorksheetSession,
+                                        worksheetId: prescription.worksheet.id,
+                                        worksheetSessionId:
+                                            prescription.currentWorksheetSession
+                                                .id,
+                                    }
+                                )
+                                .then((response) => {
+                                    console.log("start worksheet session");
+
+                                    prescription.currentWorksheetSession.isInProgress = true;
+                                })
+                                .catch((error) => {
+                                    if (error.response) {
+                                        console.log(error.response.data.detail);
+                                    }
+
+                                    this.openNotification(
+                                        `<strong>Erreur</strong>`,
+                                        `${error.response.data}`,
+                                        "top-right",
+                                        "danger",
+                                        "<i class='fe fe-alert-circle'></i>"
+                                    );
+                                });
+                        }
+
                         if (
                             prescription.currentWorksheetSession &&
                             prescription.currentWorksheetSession.isCompleted
                         ) {
-                            return (prescription.position = 1);
+                            prescription.position = 1;
                         } else {
-                            return (prescription.position = 0);
+                            prescription.position = 0;
                         }
-                    });
-                }
 
-                if (this.prescriptionsList.length) {
+                        return prescription;
+                    }
+                );
+
+                if (this.patientPrescriptionsSortedByPosition.length) {
                     this.setCurrentPrescriptionAndGenerateVideoList(
-                        this.prescriptionsList[0],
+                        this.patientPrescriptionsSortedByPosition[0],
                         0
                     );
                 }
@@ -1053,6 +1127,10 @@ export default {
 
             &.active {
                 border-left: 10px solid orange;
+
+                &.is-completed {
+                    border-left: 10px solid #c4cedd;
+                }
             }
 
             &.is-completed {
@@ -1062,8 +1140,16 @@ export default {
                     background-color: #f9fafd !important;
                 }
 
+                .card-header .part-of-body span {
+                    color: #8592a5 !important;
+                }
+
                 .card-body {
                     background-color: #abbcd51a !important;
+
+                    i {
+                        color: #c3cddc !important;
+                    }
                 }
             }
 

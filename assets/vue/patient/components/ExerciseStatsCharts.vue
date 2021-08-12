@@ -65,7 +65,7 @@ export default {
     },
     props: {
         patient: Object,
-        // csrfTokenStartWorksheetSession: String,
+        // csrfTokenInitWorksheetSessions: String,
     },
     data() {
         return {

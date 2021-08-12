@@ -81,14 +81,14 @@ class ManageWorksheetController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/start/worksheet-session", name="app_patient_start_worksheet_session", methods={"POST"})
+     * @Route("/{id}/init/worksheet-sessions", name="app_patient_init_worksheet_sessions", methods={"POST"})
      */
-    public function startWorksheetSession(Request $request, Patient $patient): JsonResponse
+    public function initWorksheetSessions(Request $request, Patient $patient): JsonResponse
     {
         if ($request->isMethod('post')) {
             $data = json_decode($request->getContent());
 
-            if ($this->isCsrfTokenValid('start_worksheet_session' . $patient->getId(), $data->_token)) {
+            if ($this->isCsrfTokenValid('init_worksheet_sessions' . $patient->getId(), $data->_token)) {
                 $prescription = $this->prescriptionRepository->findOneBy(['id' => $data->prescriptionId]);
 
                 $worksheet = $prescription->getWorksheet();
@@ -104,6 +104,41 @@ class ManageWorksheetController extends AbstractController
 
                 return $this->json(
                     $worksheetSessions,
+                    200,
+                    [],
+                    ['groups' => 'prescription_read']
+                );
+            }
+        }
+
+        return $this->json(
+            'Nous n\'avons pas pu initialiser les sessions de la prescription, veuillez réessayer ultérieurement.',
+            500,
+        );
+    }
+
+    /**
+     * @Route("/{id}/start/worksheet-session", name="app_patient_start_worksheet_session", methods={"POST"})
+     */
+    public function startWorksheetSession(Request $request, Patient $patient): JsonResponse
+    {
+        if ($request->isMethod('post')) {
+            $data = json_decode($request->getContent());
+
+            if ($this->isCsrfTokenValid('start_worksheet_session' . $patient->getId(), $data->_token)) {
+                $worksheet = $this->worksheetRepository->findOneBy(['id' => $data->worksheetId]);
+                $worksheetSession = $this->worksheetSessionRepository->findOneBy(['id' => $data->worksheetSessionId]);
+
+                foreach ($worksheet->getExercises() as $exercise) {
+                    $exercise->setIsCompleted(false);
+                }
+
+                $worksheetSession->setIsInProgress(true);
+
+                $this->em->flush();
+
+                return $this->json(
+                    $worksheetSession,
                     200,
                     [],
                     ['groups' => 'prescription_read']
@@ -195,7 +230,8 @@ class ManageWorksheetController extends AbstractController
 
         if (empty($exercisesNotCompleted)) {
             $worksheetSession = $this->worksheetSessionRepository->findOneBy(['id' => $worksheetSessionsId]);
-            
+
+            $worksheetSession->setIsInProgress(false);
             $worksheetSession->setIsCompleted(true);
 
             $this->em->flush();
