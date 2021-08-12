@@ -10,6 +10,7 @@ use App\Repository\DoctorRepository;
 use App\Repository\ExerciseRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\PrescriptionRepository;
+use App\Repository\WorksheetRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
 use App\Repository\WorksheetSessionRepository;
@@ -26,6 +27,7 @@ class ManageWorksheetController extends AbstractController
 {
     private $doctorRepository;
     private $prescriptionRepository;
+    private $worksheetRepository;
     private $exerciseRepository;
     private $worksheetSessionRepository;
     private $videoRepository;
@@ -36,6 +38,7 @@ class ManageWorksheetController extends AbstractController
     public function __construct(
         DoctorRepository $doctorRepository,
         PrescriptionRepository $prescriptionRepository,
+        WorksheetRepository $worksheetRepository,
         ExerciseRepository $exerciseRepository,
         WorksheetSessionRepository $worksheetSessionRepository,
         VideoRepository $videoRepository,
@@ -45,6 +48,7 @@ class ManageWorksheetController extends AbstractController
     ) {
         $this->doctorRepository = $doctorRepository;
         $this->prescriptionRepository = $prescriptionRepository;
+        $this->worksheetRepository = $worksheetRepository;
         $this->worksheetSessionRepository = $worksheetSessionRepository;
         $this->exerciseRepository = $exerciseRepository;
         $this->videoRepository = $videoRepository;
@@ -124,7 +128,7 @@ class ManageWorksheetController extends AbstractController
             ['execOrder' => 'ASC'],
         );
 
-        $worksheetSessionByDate = array_filter(
+        $currentWorksheetSession = array_filter(
             $worksheetSessions,
             fn ($session) =>
             (new \DateTime() >= $session->getStartAt()
@@ -132,10 +136,14 @@ class ManageWorksheetController extends AbstractController
             && !$session->getIsCompleted()
         );
 
+        if (!$currentWorksheetSession) {
+            $currentWorksheetSession =  $worksheetSessions;
+        }
+
         $this->em->flush();
 
         return $this->json(
-            $worksheetSessionByDate[0],
+            $currentWorksheetSession[0],
             200,
             [],
             ['groups' => 'prescription_read']
@@ -151,11 +159,17 @@ class ManageWorksheetController extends AbstractController
             $data = json_decode($request->getContent());
 
             if ($this->isCsrfTokenValid('exercise_completed' . $patient->getId(), $data->_token)) {
+                // set Exercise Completed
                 $exercise = $this->exerciseRepository->findOneBy(['id' => $data->exercise_id]);
 
                 $exercise->setIsCompleted(true);
 
                 $this->em->flush();
+
+                $this->ifAllExercisesIsCompletedSetWorksheetSessionsCompleted(
+                    $data->worksheet_id,
+                    $data->worksheetSession_id
+                );
 
                 return $this->json(
                     'Félicitations, vous avez terminé cet exercice !',
@@ -198,6 +212,26 @@ class ManageWorksheetController extends AbstractController
             $worksheetSession->setDeadlineAt($worksheetSessionDeadlineDate);
 
             $worksheetPrescriptionStartDate = $worksheetSessionDeadlineDate;
+        }
+    }
+
+    private function ifAllExercisesIsCompletedSetWorksheetSessionsCompleted(
+        int $worksheetId,
+        int $worksheetSessionsId
+    ): void {
+        $exercises = $this->exerciseRepository->findBy(['worksheet' => $worksheetId]);
+
+        $exercisesNotCompleted = array_filter(
+            $exercises,
+            fn ($exercise) => !$exercise->getIsCompleted()
+        );
+
+        if (empty($exercisesNotCompleted)) {
+            $worksheetSession = $this->worksheetSessionRepository->findOneBy(['id' => $worksheetSessionsId]);
+            
+            $worksheetSession->setIsCompleted(true);
+
+            $this->em->flush();
         }
     }
 }

@@ -60,7 +60,10 @@ export default {
                 this.loadingDoctorPatientsList = null;
             })
             .catch((error) => {
-                console.log(error);
+                if (error.response) {
+                    console.log(error.response.data.detail);
+                }
+
                 this.loadingDoctorPatientsList.close();
                 this.loadingDoctorPatientsList = null;
             });

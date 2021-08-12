@@ -5,9 +5,11 @@
                 v-for="(prescription, i) in prescriptionsList"
                 :key="i"
                 class="worksheet-item card shadow-lg"
-                @click="activeWorksheetAndGenerateVideoList(prescription, i)"
+                @click="
+                    setCurrentPrescriptionAndGenerateVideoList(prescription, i)
+                "
                 :class="{
-                    active: activeWorksheet === i,
+                    active: indiceActiveWorksheet === i,
                     'is-completed': !prescription.worksheetSessions.filter(
                         (ws) => false === ws.isCompleted
                     ).length,
@@ -85,7 +87,7 @@
                     </div>
                     <div
                         v-if="
-                            activeWorksheet === i &&
+                            indiceActiveWorksheet === i &&
                             prescription.worksheetSessions.filter(
                                 (ws) => false === ws.isCompleted
                             ).length
@@ -97,7 +99,7 @@
                     </div>
                     <div
                         v-if="
-                            activeWorksheet !== i &&
+                            indiceActiveWorksheet !== i &&
                             prescription.worksheetSessions.filter(
                                 (ws) => false === ws.isCompleted
                             ).length
@@ -113,7 +115,7 @@
         <div class="worksheet-details">
             <div v-for="(prescription, i) in prescriptionsList" :key="i">
                 <transition name="fade">
-                    <div v-if="activeWorksheet === i">
+                    <div v-if="indiceActiveWorksheet === i">
                         <h1>{{ prescription.worksheet.title }}</h1>
                         <div class="actions-btns">
                             <vs-button
@@ -219,169 +221,203 @@
                     <i class="fe fe-x"></i>
                 </vs-button>
                 <div class="player-video">
-                    <h2>
+                    <h2 :class="{ 'fade-leave': fadeLeave }">
                         {{ currentExercise.video.name }}
                         <span v-if="currentExercise.isCompleted">
                             <i class="fe fe-check-circle"></i>terminé !
                         </span>
                     </h2>
-                    <!--  -->
-                    <transition name="slide" mode="out-in">
-                        <div class="video" v-if="showVideo" key="video">
-                            <youtube
-                                :player-vars="playerVars"
-                                :video-id="currentExercise.video.youtubeId"
-                                @ended="ended()"
-                                ref="youtube"
-                            ></youtube>
-                        </div>
-                        <div
-                            v-if="
-                                !showVideo &&
-                                !currentExercise.exerciseStats.find(
-                                    (s) =>
-                                        'technical' === s.criterion &&
-                                        currentWorksheetSession.id ===
-                                            s.worksheetSession.id
-                                ).rating
-                            "
-                            class="stat-rating"
-                            key="technical"
-                        >
-                            <h3>
-                                Comment était votre technique ? 1<span>/</span>3
-                            </h3>
-                            <custom-slider
-                                min="1"
-                                max="5"
-                                step="1"
-                                :values="sliderTechnicalValues"
-                                v-model="sliderTechnicalChoice"
-                            />
-                            <div class="graduation">
-                                <span></span>
-                                <span></span>
-                                <span></span>
-                                <span></span>
-                                <span></span>
+                    <div
+                        class="video-frame"
+                        :class="{ 'no-video': hideVideoFrame }"
+                    >
+                        <transition name="slide" mode="out-in">
+                            <div
+                                class="video"
+                                v-if="showVideo"
+                                key="video"
+                                :class="{
+                                    'old-video-visible': oldVideoVisible,
+                                    'new-video-slide-enter': newVideoSlideEnter,
+                                    'old-video-slide-leave-to-left':
+                                        oldVideoSlideLeaveToLeft,
+                                    'old-video-slide-leave-to-right':
+                                        oldVideoSlideLeaveToRight,
+                                    'new-video-slide-reset-left':
+                                        newVideoSlideResetLeft,
+                                    'new-video-slide-reset-right':
+                                        newVideoSlideResetRight,
+                                }"
+                            >
+                                <div class="frame">
+                                    <youtube
+                                        :player-vars="playerVars"
+                                        :video-id="
+                                            currentExercise.video.youtubeId
+                                        "
+                                        @ended="ended()"
+                                        ref="youtube"
+                                    ></youtube>
+                                    <div class="force-dimensions"></div>
+                                    <youtube
+                                        :video-id="
+                                            oldVideoForSlideTransition.video
+                                                .youtubeId
+                                        "
+                                    ></youtube>
+                                </div>
                             </div>
-                            <div class="slider-labels">
-                                <span>Médiocre</span>
-                                <span>Excellent</span>
+                            <div
+                                v-if="
+                                    !showVideo &&
+                                    !currentExercise.exerciseStats.find(
+                                        (s) =>
+                                            'technical' === s.criterion &&
+                                            currentWorksheetSession.id ===
+                                                s.worksheetSession.id
+                                    ).rating
+                                "
+                                class="stat-rating"
+                                key="technical"
+                            >
+                                <h3>
+                                    Comment était votre technique ?
+                                    1<span>/</span>3
+                                </h3>
+                                <custom-slider
+                                    min="1"
+                                    max="5"
+                                    step="1"
+                                    :values="sliderTechnicalValues"
+                                    v-model="sliderTechnicalChoice"
+                                />
+                                <div class="graduation">
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                </div>
+                                <div class="slider-labels">
+                                    <span>Médiocre</span>
+                                    <span>Excellent</span>
+                                </div>
+                                <vs-button
+                                    size="large"
+                                    @click="validTechnicalStat()"
+                                    ><i class="fe fe-check-circle"></i>
+                                    Valider
+                                </vs-button>
+                                <a class="re-show-video" @click="reShowVideo()"
+                                    ><i class="fe fe-youtube"></i>
+                                    Revoir la vidéo
+                                </a>
                             </div>
-                            <vs-button
-                                size="large"
-                                @click="validTechnicalStat()"
-                                ><i class="fe fe-check-circle"></i>
-                                Valider
-                            </vs-button>
-                            <a class="re-show-video" @click="reShowVideo()"
-                                ><i class="fe fe-youtube"></i>
-                                Revoir la vidéo
-                            </a>
-                        </div>
-                        <div
-                            v-if="
-                                !showVideo &&
-                                currentExercise.exerciseStats.find(
-                                    (s) =>
-                                        'technical' === s.criterion &&
-                                        currentWorksheetSession.id ===
-                                            s.worksheetSession.id
-                                ).rating &&
-                                !currentExercise.exerciseStats.find(
-                                    (s) =>
-                                        'difficulty' === s.criterion &&
-                                        currentWorksheetSession.id ===
-                                            s.worksheetSession.id
-                                ).rating
-                            "
-                            class="stat-rating"
-                            key="difficulty"
-                        >
-                            <h3>
-                                Comment avez-vous trouvé l’exercice ?
-                                2<span>/</span>3
-                            </h3>
-                            <custom-slider
-                                min="1"
-                                max="5"
-                                step="1"
-                                :values="sliderDifficultyValues"
-                                v-model="sliderDifficultyChoice"
-                            />
-                            <div class="graduation">
-                                <span></span>
-                                <span></span>
-                                <span></span>
-                                <span></span>
-                                <span></span>
+                            <div
+                                v-if="
+                                    !showVideo &&
+                                    currentExercise.exerciseStats.find(
+                                        (s) =>
+                                            'technical' === s.criterion &&
+                                            currentWorksheetSession.id ===
+                                                s.worksheetSession.id
+                                    ).rating &&
+                                    !currentExercise.exerciseStats.find(
+                                        (s) =>
+                                            'difficulty' === s.criterion &&
+                                            currentWorksheetSession.id ===
+                                                s.worksheetSession.id
+                                    ).rating
+                                "
+                                class="stat-rating"
+                                key="difficulty"
+                            >
+                                <h3>
+                                    Comment avez-vous trouvé l’exercice ?
+                                    2<span>/</span>3
+                                </h3>
+                                <custom-slider
+                                    min="1"
+                                    max="5"
+                                    step="1"
+                                    :values="sliderDifficultyValues"
+                                    v-model="sliderDifficultyChoice"
+                                />
+                                <div class="graduation">
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                </div>
+                                <div class="slider-labels">
+                                    <span>Beaucoup trop facile</span>
+                                    <span>Vraiment Trop difficile</span>
+                                </div>
+                                <vs-button
+                                    size="large"
+                                    @click="validDifficultyStat()"
+                                    ><i class="fe fe-check-circle"></i>
+                                    Valider
+                                </vs-button>
+                                <a class="re-show-video" @click="reShowVideo()"
+                                    ><i class="fe fe-youtube"></i>
+                                    Revoir la vidéo
+                                </a>
                             </div>
-                            <div class="slider-labels">
-                                <span>Beaucoup trop facile</span>
-                                <span>Vraiment Trop difficile</span>
+                            <div
+                                v-if="
+                                    !showVideo &&
+                                    currentExercise.exerciseStats.find(
+                                        (s) =>
+                                            'difficulty' === s.criterion &&
+                                            currentWorksheetSession.id ===
+                                                s.worksheetSession.id
+                                    ).rating &&
+                                    !currentExercise.exerciseStats.find(
+                                        (s) =>
+                                            'sensitivity' === s.criterion &&
+                                            currentWorksheetSession.id ===
+                                                s.worksheetSession.id
+                                    ).rating
+                                "
+                                class="stat-rating"
+                                key="sensitivity"
+                            >
+                                <h3>
+                                    Comment vous sentez-vous ? 3<span>/</span>3
+                                </h3>
+                                <custom-slider
+                                    min="1"
+                                    max="5"
+                                    step="1"
+                                    :values="sliderSensitivityValues"
+                                    v-model="sliderSensitivityChoice"
+                                />
+                                <div class="graduation">
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                </div>
+                                <div class="slider-labels">
+                                    <span>Trop mal</span>
+                                    <span>Magnifiquement Bien</span>
+                                </div>
+                                <vs-button
+                                    size="large"
+                                    @click="validSensitivityStat()"
+                                    ><i class="fe fe-check-circle"></i>
+                                    Valider
+                                </vs-button>
+                                <a class="re-show-video" @click="reShowVideo()"
+                                    ><i class="fe fe-youtube"></i>
+                                    Revoir la vidéo
+                                </a>
                             </div>
-                            <vs-button
-                                size="large"
-                                @click="validDifficultyStat()"
-                                ><i class="fe fe-check-circle"></i>
-                                Valider
-                            </vs-button>
-                            <a class="re-show-video" @click="reShowVideo()"
-                                ><i class="fe fe-youtube"></i>
-                                Revoir la vidéo
-                            </a>
-                        </div>
-                        <div
-                            v-if="
-                                !showVideo &&
-                                currentExercise.exerciseStats.find(
-                                    (s) =>
-                                        'difficulty' === s.criterion &&
-                                        currentWorksheetSession.id ===
-                                            s.worksheetSession.id
-                                ).rating &&
-                                !currentExercise.exerciseStats.find(
-                                    (s) =>
-                                        'sensitivity' === s.criterion &&
-                                        currentWorksheetSession.id ===
-                                            s.worksheetSession.id
-                                ).rating
-                            "
-                            class="stat-rating"
-                            key="sensitivity"
-                        >
-                            <h3>Comment vous sentez-vous ? 3<span>/</span>3</h3>
-                            <custom-slider
-                                min="1"
-                                max="5"
-                                step="1"
-                                :values="sliderSensitivityValues"
-                                v-model="sliderSensitivityChoice"
-                            />
-                            <div class="graduation">
-                                <span></span>
-                                <span></span>
-                                <span></span>
-                                <span></span>
-                                <span></span>
-                            </div>
-                            <div class="slider-labels">
-                                <span>Trop mal</span>
-                                <span>Magnifiquement Bien</span>
-                            </div>
-                            <vs-button
-                                size="large"
-                                @click="validSensitivityStat()"
-                                ><i class="fe fe-check-circle"></i>
-                                Valider
-                            </vs-button>
-                            <a class="re-show-video" @click="reShowVideo()"
-                                ><i class="fe fe-youtube"></i>
-                                Revoir la vidéo
-                            </a>
-                        </div>
-                    </transition>
+                        </transition>
+                    </div>
                     <div>
                         <div
                             v-if="
@@ -407,7 +443,7 @@
                             </vs-button>
                         </div>
                     </div>
-                    <div class="specs">
+                    <div class="specs" :class="{ 'fade-leave': fadeLeave }">
                         <div class="count-exercise">
                             <h5>
                                 Exercice
@@ -461,11 +497,19 @@ export default {
         return {
             patientPrescriptions: [],
             alertCommentExercises: true,
-            activeWorksheet: null,
+            indiceActiveWorksheet: null,
             activePrescription: null,
             playerVideoToggle: false,
             videoList: [],
             currentExercise: { video: {} },
+            oldVideoForSlideTransition: { video: {} },
+            fadeLeave: false,
+            oldVideoVisible: false,
+            newVideoSlideEnter: false,
+            oldVideoSlideLeaveToLeft: false,
+            oldVideoSlideLeaveToRight: false,
+            newVideoSlideResetLeft: false,
+            newVideoSlideResetRight: false,
             currentWorksheetSession: null,
             sliderTechnicalChoice: "3",
             sliderTechnicalValues: [
@@ -551,6 +595,17 @@ export default {
         prescriptionsList() {
             return f.sortedByPosition(this.patientPrescriptions);
         },
+        hideVideoFrame() {
+            return !this.showVideo &&
+                !this.currentExercise.exerciseStats.find(
+                    (s) =>
+                        null === s.rating &&
+                        this.currentWorksheetSession.id ===
+                            s.worksheetSession.id
+                )
+                ? true
+                : false;
+        },
     },
     methods: {
         reShowVideo() {
@@ -578,7 +633,9 @@ export default {
                     this.sliderTechnicalChoice = "3";
                 })
                 .catch((error) => {
-                    console.log(error.response.data.detail);
+                    if (error.response) {
+                        console.log(error.response.data.detail);
+                    }
                 });
         },
         validDifficultyStat() {
@@ -603,7 +660,9 @@ export default {
                     this.sliderDifficultyChoice = "3";
                 })
                 .catch((error) => {
-                    console.log(error.response.data.detail);
+                    if (error.response) {
+                        console.log(error.response.data.detail);
+                    }
                 });
         },
         validSensitivityStat() {
@@ -631,6 +690,10 @@ export default {
                             {
                                 _token: this.csrfTokenExerciseCompleted,
                                 exercise_id: this.currentExercise.id,
+                                worksheet_id:
+                                    this.activePrescription.worksheet.id,
+                                worksheetSession_id:
+                                    this.currentWorksheetSession.id,
                             }
                         )
                         .then((response) => {
@@ -643,6 +706,10 @@ export default {
                             );
                         })
                         .catch((error) => {
+                            if (error.response) {
+                                console.log(error.response.data);
+                            }
+
                             this.openNotification(
                                 `<strong>Erreur</strong>`,
                                 `${error.response.data}`,
@@ -656,13 +723,15 @@ export default {
                     this.currentExercise.isCompleted = true;
                 })
                 .catch((error) => {
-                    console.log(error.response.data.detail);
+                    if (error.response) {
+                        console.log(error.response.data.detail);
+                    }
                 });
         },
-        activeWorksheetAndGenerateVideoList(prescription, i) {
+        setCurrentPrescriptionAndGenerateVideoList(prescription, i) {
             this.activePrescription = prescription;
 
-            this.activeWorksheet = i;
+            this.indiceActiveWorksheet = i;
 
             this.getCurrentSession();
 
@@ -686,6 +755,10 @@ export default {
             this.addMaxHeightToBody();
         },
         playPrevVideo() {
+            if (this.showVideo) {
+                this.slidePrevAnim();
+            }
+
             this.currentExercise =
                 this.videoList[
                     this.videoList.indexOf(this.currentExercise) - 1
@@ -694,6 +767,10 @@ export default {
             this.addMaxHeightToBody();
         },
         playNextVideo() {
+            if (this.showVideo) {
+                this.slideNextAnim();
+            }
+
             this.currentExercise =
                 this.videoList[
                     this.videoList.indexOf(this.currentExercise) + 1
@@ -713,6 +790,8 @@ export default {
             this.removeMaxHeightToBody();
         },
         startSessions() {
+            this.showVideo = true;
+
             this.axios
                 .post(`/patient/${this.patient.id}/start/worksheet-session`, {
                     _token: this.csrfTokenStartWorksheetSession,
@@ -720,11 +799,11 @@ export default {
                 })
                 .then((response) => {
                     console.log(response.data);
-
-                    this.showVideo = true;
                 })
                 .catch((error) => {
-                    console.log(error.response.data.detail);
+                    if (error.response) {
+                        console.log(error.response.data.detail);
+                    }
 
                     this.openNotification(
                         `<strong>Erreur</strong>`,
@@ -752,11 +831,13 @@ export default {
                     this.loadingGetCurrentWorksheetSession = null;
                 })
                 .catch((error) => {
-                    console.log(error);
+                    if (error.response) {
+                        console.log(error.response.data.detail);
+                    }
 
                     this.openNotification(
                         `<strong>Erreur</strong>`,
-                        `${error.response.data}`,
+                        ``,
                         "top-right",
                         "danger",
                         "<i class='fe fe-alert-circle'></i>"
@@ -774,6 +855,48 @@ export default {
         },
         ended() {
             this.showVideo = false;
+        },
+        slidePrevAnim() {
+            this.oldVideoForSlideTransition = this.currentExercise;
+
+            this.fadeLeave = true;
+
+            this.newVideoSlideEnter = false;
+            this.newVideoSlideResetLeft = true;
+
+            this.oldVideoVisible = true;
+            this.oldVideoSlideLeaveToRight = true;
+
+            setTimeout(() => {
+                this.newVideoSlideResetLeft = false;
+                this.newVideoSlideEnter = true;
+
+                this.oldVideoVisible = false;
+                this.oldVideoSlideLeaveToRight = false;
+
+                this.fadeLeave = false;
+            }, 600);
+        },
+        slideNextAnim() {
+            this.oldVideoForSlideTransition = this.currentExercise;
+
+            this.fadeLeave = true;
+
+            this.newVideoSlideEnter = false;
+            this.newVideoSlideResetRight = true;
+
+            this.oldVideoVisible = true;
+            this.oldVideoSlideLeaveToLeft = true;
+
+            setTimeout(() => {
+                this.newVideoSlideResetRight = false;
+                this.newVideoSlideEnter = true;
+
+                this.oldVideoVisible = false;
+                this.oldVideoSlideLeaveToLeft = false;
+
+                this.fadeLeave = false;
+            }, 600);
         },
         openNotification(title, text, position, color, icon) {
             this.$vs.notification({
@@ -830,16 +953,20 @@ export default {
                     }
                 });
 
-                this.activeWorksheetAndGenerateVideoList(
-                    this.prescriptionsList[0],
-                    0
-                );
+                if (this.prescriptionsList.length) {
+                    this.setCurrentPrescriptionAndGenerateVideoList(
+                        this.prescriptionsList[0],
+                        0
+                    );
+                }
 
                 this.loadingPatientPrescriptionsList.close();
                 this.loadingPatientPrescriptionsList = null;
             })
             .catch((error) => {
-                console.log(error);
+                if (error.response) {
+                    console.log(error.response.data.detail);
+                }
 
                 this.loadingPatientPrescriptionsList.close();
                 this.loadingPatientPrescriptionsList = null;
@@ -1139,7 +1266,8 @@ export default {
         position: relative;
         z-index: 100;
         padding: 2em;
-        overflow: auto;
+        overflow: hidden;
+        overflow-y: auto;
 
         @media (min-width: 765px) {
             justify-content: center;
@@ -1147,7 +1275,13 @@ export default {
 
         h2 {
             color: #fab84b;
-            margin-bottom: 1em;
+            margin-top: 0.5em;
+            margin-bottom: 0.8em;
+            transition: opacity 0.2s;
+            max-height: 3em;
+            display: flex;
+            justify-content: center;
+            align-items: center;
 
             span {
                 font-size: 0.4em;
@@ -1163,7 +1297,9 @@ export default {
                 font-weight: 600;
                 text-transform: uppercase;
                 position: relative;
-                top: -3px;
+                top: 1px;
+                margin-left: 1.2em;
+                white-space: nowrap;
 
                 i {
                     margin-right: 0.3em;
@@ -1173,93 +1309,150 @@ export default {
             }
         }
 
-        .video {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-width: 85%;
-            min-height: 70%;
-        }
-
-        .stat-rating {
+        .video-frame {
             width: 85%;
-            height: 70%;
-            background-color: #181819eb;
-            border-radius: 1.4em;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 5%;
-            min-height: 28em;
+            max-width: 1050px;
+            height: 65%;
+            transition: height 0.5s ease-in-out;
 
-            h3 {
-                color: #ffab2c;
-                margin-bottom: 2em;
-                font-size: 1.6em;
-
-                span {
-                    font-size: 0.8em;
-                    position: relative;
-                    top: -3.1px;
-                    margin-right: 0.2em;
-                    margin-left: 0.1em;
-                    color: #c88827;
-                }
+            &.no-video {
+                height: 0;
             }
 
-            .graduation {
+            .video {
+                height: 100%;
                 display: flex;
-                justify-content: space-between;
+                justify-content: center;
                 align-items: center;
-                width: 95%;
 
-                span {
-                    background-color: #838383;
-                    width: 1px;
-                    height: 10px;
-                    position: relative;
-                    top: -0.8em;
+                .frame {
+                    display: flex;
+                    height: 100%;
+                    width: 100%;
+                    display: flex;
+
+                    > div.force-dimensions {
+                        min-width: 100%;
+                        min-height: 100%;
+                    }
+                }
+
+                & .frame :last-child {
+                    visibility: hidden;
+                    pointer-events: none;
+                    z-index: -1;
+                    transform: translate(-200%, 0);
+                }
+
+                &.old-video-visible .frame :last-child {
+                    visibility: visible;
+                }
+
+                &.new-video-slide-enter .frame :first-child {
+                    transition: all 0.6s;
+                    transform: translate(0, 0);
+                }
+
+                &.old-video-slide-leave-to-left .frame :last-child {
+                    transition: all 0.6s ease-in-out;
+                    transform: translate(-335%, 0);
+                }
+
+                &.old-video-slide-leave-to-right .frame :last-child {
+                    transition: all 0.6s ease-in;
+                    transform: translate(135%, 0);
+                }
+
+                &.new-video-slide-reset-left .frame :first-child {
+                    transform: translate(-135%, 0);
+                }
+
+                &.new-video-slide-reset-right .frame :first-child {
+                    transform: translate(135%, 0);
                 }
             }
 
-            .slider-labels {
+            .stat-rating {
+                height: 100%;
+                background-color: #181819eb;
+                border-radius: 1.4em;
                 display: flex;
-                justify-content: space-between;
+                flex-direction: column;
                 align-items: center;
-                color: #a7a7a7;
-                width: 100%;
-                margin-bottom: 2em;
-            }
+                justify-content: center;
+                padding: 5%;
 
-            .re-show-video {
-                margin-top: 2em;
-                color: #b2b2b2;
-                background-color: #262626;
-                padding: 0.4em 0.9em;
-                border-radius: 0.7em;
-                font-size: 0.9em;
-                cursor: pointer;
+                h3 {
+                    color: #ffab2c;
+                    margin-bottom: 2em;
+                    font-size: 1.6em;
 
-                &:hover {
-                    text-decoration: none;
-                    color: #8f8f8f;
-                    background-color: #444444;
+                    span {
+                        font-size: 0.8em;
+                        position: relative;
+                        top: -3.1px;
+                        margin-right: 0.2em;
+                        margin-left: 0.1em;
+                        color: #c88827;
+                    }
                 }
 
-                i {
-                    position: relative;
-                    top: 2px;
-                    margin-right: 0.1em;
+                .graduation {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    width: 95%;
+
+                    span {
+                        background-color: #838383;
+                        width: 1px;
+                        height: 10px;
+                        position: relative;
+                        top: -0.8em;
+                    }
+                }
+
+                .slider-labels {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    color: #a7a7a7;
+                    width: 100%;
+                    margin-bottom: 2em;
+                }
+
+                .re-show-video {
+                    margin-top: 2em;
+                    color: #b2b2b2;
+                    background-color: #262626;
+                    padding: 0.4em 0.9em;
+                    border-radius: 0.7em;
+                    font-size: 0.9em;
+                    cursor: pointer;
+
+                    &:hover {
+                        text-decoration: none;
+                        color: #8f8f8f;
+                        background-color: #444444;
+                    }
+
+                    i {
+                        position: relative;
+                        top: 2px;
+                        margin-right: 0.1em;
+                    }
                 }
             }
         }
 
-        p {
-            font-weight: 600;
-            color: #ffffff;
-            background-color: transparent;
+        .specs {
+            margin-top: 3em;
+
+            p {
+                font-weight: 600;
+                color: #ffffff;
+                background-color: transparent;
+            }
         }
     }
 }
@@ -1287,6 +1480,10 @@ export default {
     right: 2%;
 }
 
+.fade-leave {
+    opacity: 0;
+}
+
 .specs {
     display: flex;
     justify-content: space-between;
@@ -1294,12 +1491,13 @@ export default {
     max-width: 1010px;
     margin-top: 2em;
     flex-direction: column;
+    transition: opacity 0.2s;
 
     div {
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
+        justify-content: flex-start;
         flex: 1;
         width: 100%;
 

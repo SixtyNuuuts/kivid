@@ -411,7 +411,10 @@ export default {
                 this.loadingAllPatientsList = false;
             })
             .catch((error) => {
-                console.log(error);
+                if (error.response) {
+                    console.log(error.response.data.detail);
+                }
+
                 this.loadingAllPatientsList = false;
             });
     },

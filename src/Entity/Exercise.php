@@ -44,11 +44,12 @@ class Exercise
      * @Groups({"worksheet_read", "prescription_read"})
      */
     private $option;
-
+    
     /**
-     * @ORM\ManyToMany(targetEntity=Worksheet::class, mappedBy="exercises")
+     * @ORM\ManyToOne(targetEntity=Worksheet::class, inversedBy="exercises")
      */
-    private $worksheets;
+    private $worksheet;
+
 
     /**
      * @ORM\Column(type="datetime_immutable")
@@ -76,7 +77,6 @@ class Exercise
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
-        $this->worksheets = new ArrayCollection();
         $this->isCompleted = false;
         $this->exerciseStats = new ArrayCollection();
     }
@@ -130,33 +130,6 @@ class Exercise
     public function setOption(?string $option): self
     {
         $this->option = $option;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Worksheet[]
-     */
-    public function getWorksheets(): Collection
-    {
-        return $this->worksheets;
-    }
-
-    public function addWorksheet(Worksheet $worksheet): self
-    {
-        if (!$this->worksheets->contains($worksheet)) {
-            $this->worksheets[] = $worksheet;
-            $worksheet->addExercise($this);
-        }
-
-        return $this;
-    }
-
-    public function removeWorksheet(Worksheet $worksheet): self
-    {
-        if ($this->worksheets->removeElement($worksheet)) {
-            $worksheet->removeExercise($this);
-        }
 
         return $this;
     }
@@ -228,6 +201,18 @@ class Exercise
                 $exerciseStat->setExercise(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getWorksheet(): ?Worksheet
+    {
+        return $this->worksheet;
+    }
+
+    public function setWorksheet(?Worksheet $worksheet): self
+    {
+        $this->worksheet = $worksheet;
 
         return $this;
     }

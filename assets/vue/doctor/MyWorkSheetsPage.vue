@@ -115,7 +115,10 @@ export default {
                 this.loadingWorksheetTemplatesList = null;
             })
             .catch((error) => {
-                console.log(error);
+                if (error.response) {
+                    console.log(error.response.data.detail);
+                }
+
                 this.loadingWorksheetTemplatesList.close();
                 this.loadingWorksheetTemplatesList = null;
             });

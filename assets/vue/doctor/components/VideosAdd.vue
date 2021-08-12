@@ -315,7 +315,10 @@ export default {
                 this.videosList = response.data;
             })
             .catch((error) => {
-                console.log(error);
+                if (error.response) {
+                    console.log(error.response.data.detail);
+                }
+
                 this.loadingVideosList = false;
             });
 

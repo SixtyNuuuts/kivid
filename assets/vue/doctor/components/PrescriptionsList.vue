@@ -297,7 +297,9 @@ export default {
                     this.modalConfirmRemovePrescription = false;
                 })
                 .catch((error) => {
-                    console.log(error.response.data.detail);
+                    if (error.response) {
+                        console.log(error.response.data.detail);
+                    }
                     this.openNotification(
                         `<strong>Suppression de la prescription : Erreur</strong>`,
                         `${error.response.data}`,

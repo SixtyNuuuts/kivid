@@ -52,7 +52,7 @@ class WorksheetSession
     private $prescription;
 
     /**
-     * @ORM\OneToMany(targetEntity=ExerciseStat::class, mappedBy="worksheetSession", orphanRemoval=true))
+     * @ORM\OneToMany(targetEntity=ExerciseStat::class, mappedBy="worksheetSession", orphanRemoval=true)
      * @Groups({"exercise_stats_read"})
      */
     private $exerciseStats;

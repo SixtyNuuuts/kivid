@@ -13,9 +13,9 @@ html {
     position: initial;
 
     iframe {
-        width: 85%;
+        width: 100%;
         height: 100%;
-        max-width: 1010px;
+        min-width: 100%;
     }
 }
 

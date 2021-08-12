@@ -40,7 +40,7 @@ class Worksheet
     private $createdAt;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Exercise::class, inversedBy="worksheets")
+     * @ORM\OneToMany(targetEntity=Exercise::class, mappedBy="worksheet", orphanRemoval=true)
      * @Groups({"worksheet_read", "prescription_read"})
      */
     private $exercises;
@@ -149,6 +149,7 @@ class Worksheet
     {
         if (!$this->exercises->contains($exercise)) {
             $this->exercises[] = $exercise;
+            $exercise->setWorksheet($this);
         }
 
         return $this;
@@ -156,7 +157,12 @@ class Worksheet
 
     public function removeExercise(Exercise $exercise): self
     {
-        $this->exercises->removeElement($exercise);
+        if ($this->exercises->removeElement($exercise)) {
+            // set the owning side to null (unless already changed)
+            if ($exercise->getWorksheet() === $this) {
+                $exercise->setWorksheet(null);
+            }
+        }
 
         return $this;
     }

@@ -527,7 +527,9 @@ export default {
                 this.loadingPatientExerciseStats = null;
             })
             .catch((error) => {
-                console.log(error);
+                if (error.response) {
+                    console.log(error.response.data.detail);
+                }
 
                 this.loadingPatientExerciseStats.close();
                 this.loadingPatientExerciseStats = null;

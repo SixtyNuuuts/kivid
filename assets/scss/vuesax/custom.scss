@@ -3,6 +3,11 @@
   z-index: 89999 !important;
 }
 
+.vs-alert__content {
+  display: flex;
+  align-items: center;
+}
+
 /* input / select */
 .vs-input {
   width: 100% !important;
