@@ -427,7 +427,7 @@ export default {
     },
     computed: {
         getExercisesSelected() {
-            return f.sortedByPosition(this.exercisesSelected);
+            return f.sortByPosition(this.exercisesSelected);
         },
     },
     methods: {
@@ -712,7 +712,7 @@ export default {
                     1
                 );
 
-                f.sortedByPosition(this.exercisesSelected).map(
+                f.sortByPosition(this.exercisesSelected).map(
                     (e, i) => (e.position = i)
                 );
 
@@ -737,7 +737,7 @@ export default {
                             1
                         );
 
-                        f.sortedByPosition(this.exercisesSelected).map(
+                        f.sortByPosition(this.exercisesSelected).map(
                             (e, i) => (e.position = i)
                         );
 

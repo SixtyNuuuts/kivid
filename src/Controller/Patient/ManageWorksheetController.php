@@ -118,39 +118,6 @@ class ManageWorksheetController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/get/current-worksheet-session/{prescriptionId}",
-     * name="app_patient_get_current_worksheet_session", methods={"GET"})
-     */
-    public function getCurrentWorksheetSession(Patient $patient, int $prescriptionId): JsonResponse
-    {
-        $worksheetSessions = $this->worksheetSessionRepository->findBy(
-            ['prescription' => $prescriptionId],
-            ['execOrder' => 'ASC'],
-        );
-
-        $currentWorksheetSession = array_filter(
-            $worksheetSessions,
-            fn ($session) =>
-            (new \DateTime() >= $session->getStartAt()
-            && new \DateTime() <= $session->getDeadlineAt())
-            && !$session->getIsCompleted()
-        );
-
-        if (!$currentWorksheetSession) {
-            $currentWorksheetSession =  $worksheetSessions;
-        }
-
-        $this->em->flush();
-
-        return $this->json(
-            $currentWorksheetSession[0],
-            200,
-            [],
-            ['groups' => 'prescription_read']
-        );
-    }
-
-    /**
      * @Route("/{id}/completed/exercise", name="app_patient_exercise_completed", methods={"POST"})
      */
     public function exerciseCompleted(Request $request, Patient $patient): JsonResponse

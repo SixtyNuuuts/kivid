@@ -10,9 +10,8 @@
                 "
                 :class="{
                     active: indiceActiveWorksheet === i,
-                    'is-completed': !prescription.worksheetSessions.filter(
-                        (ws) => false === ws.isCompleted
-                    ).length,
+                    'is-completed':
+                        prescription.currentWorksheetSession.isCompleted,
                 }"
             >
                 <div class="card-header">
@@ -50,19 +49,45 @@
                     <div class="timing">
                         <div
                             v-if="
-                                !prescription.worksheetSessions.filter(
-                                    (ws) => false === ws.isCompleted
-                                ).length
+                                prescription.currentWorksheetSession.isCompleted
                             "
                         >
                             <i class="fe fe-check-circle"></i>
-                            <p>Terminé</p>
+                            <p>Session Terminée</p>
+                            <p v-if="getNextSession(prescription)">
+                                Prochaine session dans
+                                <span>
+                                    {{
+                                        diffTimeBetweenNowAndSession(
+                                            getNextSession(prescription).startAt
+                                        )
+                                    }}
+                                </span>
+                            </p>
+                            <p v-else>
+                                Plus de sessions pour cette prescription
+                            </p>
                         </div>
                         <div v-else>
                             <i class="fe fe-calendar"></i>
+                            <!-- <p>
+                                {{ "Plus de sessions pour cette prescription"
+                                          diffTimeBetweenNowAndSession(
+                                              getNextSession(prescription)
+                                                  .startAt
+                                }}
+                            </p> -->
                             <p>
-                                Plus que <span>5 j.</span> pour terminer la
-                                fiche
+                                Plus que
+                                <span>
+                                    {{
+                                        diffTimeBetweenNowAndSession(
+                                            getNextSession(prescription)
+                                                .deadlineAt
+                                        )
+                                    }}
+                                </span>
+                                pour terminer la fiche
                             </p>
                         </div>
                     </div>
@@ -593,7 +618,7 @@ export default {
     },
     computed: {
         prescriptionsList() {
-            return f.sortedByPosition(this.patientPrescriptions);
+            return f.sortByPosition(this.patientPrescriptions);
         },
         hideVideoFrame() {
             return !this.showVideo &&
@@ -731,9 +756,9 @@ export default {
         setCurrentPrescriptionAndGenerateVideoList(prescription, i) {
             this.activePrescription = prescription;
 
-            this.indiceActiveWorksheet = i;
+            this.currentWorksheetSession = prescription.currentWorksheetSession;
 
-            this.getCurrentSession();
+            this.indiceActiveWorksheet = i;
 
             this.generateVideoList(prescription.worksheet.exercises);
         },
@@ -814,38 +839,59 @@ export default {
                     );
                 });
         },
-        getCurrentSession() {
-            this.loadingGetCurrentWorksheetSession = this.$vs.loading({
-                text: "chargement",
-                type: "border",
+        getCurrentSession(worksheetSessions) {
+            return worksheetSessions.filter(
+                (session) =>
+                    new Date() >= new Date(session.startAt) &&
+                    new Date() <= new Date(session.deadlineAt)
+            )[0];
+        },
+        getNextSession(prescription) {
+            const nextSessionIndice =
+                prescription.worksheetSessions.indexOf(
+                    prescription.worksheetSessions.find(
+                        (s) => prescription.currentWorksheetSession.id === s.id
+                    )
+                ) + 1;
+
+            if (nextSessionIndice < prescription.worksheetSessions.length) {
+                return prescription.worksheetSessions[nextSessionIndice];
+            } else null;
+        },
+        diffTimeBetweenNowAndSession(sessionDate) {
+            const timeNow = new Date().getTime();
+            const timeSession = new Date(sessionDate).getTime();
+
+            const msDiff = timeSession - timeNow;
+
+            const dayDiff = msDiff / 86400 / 1000;
+            const nbDays = Math.floor(dayDiff);
+
+            const restInHours = (msDiff - 86400 * nbDays * 1000) / 3600 / 1000;
+            const nbHours = Math.floor(restInHours);
+
+            const restInMin =
+                (msDiff - (3600 * nbHours * 1000 + 86400 * nbDays * 1000)) /
+                60 /
+                1000;
+            const nbMin = Math.floor(restInMin);
+
+            const daysToString =
+                nbDays > 1 ? `${nbDays} jours` : `${nbDays} jour`;
+
+            const hoursToString =
+                nbHours > 1 ? `${nbHours} heures` : `${nbHours} heure`;
+
+            const minutesToString =
+                nbMin > 1 ? `${nbMin} minutes` : `${nbMin} minute`;
+
+            return `${daysToString}, ${hoursToString} et ${minutesToString}`;
+        },
+        sortByExecOrder(worksheetSessions) {
+            worksheetSessions.sort(function (a, b) {
+                return a.execOrder - b.execOrder;
             });
-
-            this.axios
-                .get(
-                    `/patient/${this.patient.id}/get/current-worksheet-session/${this.activePrescription.id}`
-                )
-                .then((response) => {
-                    this.currentWorksheetSession = response.data;
-
-                    this.loadingGetCurrentWorksheetSession.close();
-                    this.loadingGetCurrentWorksheetSession = null;
-                })
-                .catch((error) => {
-                    if (error.response) {
-                        console.log(error.response.data.detail);
-                    }
-
-                    this.openNotification(
-                        `<strong>Erreur</strong>`,
-                        ``,
-                        "top-right",
-                        "danger",
-                        "<i class='fe fe-alert-circle'></i>"
-                    );
-
-                    this.loadingGetCurrentWorksheetSession.close();
-                    this.loadingGetCurrentWorksheetSession = null;
-                });
+            return worksheetSessions;
         },
         addMaxHeightToBody() {
             document.body.classList.add("max-height-100vh");
@@ -919,39 +965,52 @@ export default {
         this.axios
             .get(`/patient/${this.patient.id}/get/prescriptions`)
             .then((response) => {
-                this.patientPrescriptions = response.data;
-
-                this.patientPrescriptions.map((prescription) => {
-                    return (prescription.worksheet.exercisesTags =
-                        prescription.worksheet.exercises.reduce(
-                            (r, exercise) => {
-                                exercise.video.tags.forEach((tag) => {
-                                    if (!r.includes(tag.name)) {
-                                        r.push(tag.name);
-                                    }
-                                });
-                                return r;
+                this.patientPrescriptions = response.data.map(
+                    (prescription) => {
+                        return {
+                            ...prescription,
+                            worksheet: {
+                                ...prescription.worksheet,
+                                exercises: f.sortByPosition(
+                                    prescription.worksheet.exercises
+                                ),
+                                exercisesTags:
+                                    prescription.worksheet.exercises.reduce(
+                                        (r, exercise) => {
+                                            exercise.video.tags.forEach(
+                                                (tag) => {
+                                                    if (!r.includes(tag.name)) {
+                                                        r.push(tag.name);
+                                                    }
+                                                }
+                                            );
+                                            return r;
+                                        },
+                                        []
+                                    ),
                             },
-                            []
-                        ));
-                });
-
-                this.patientPrescriptions.map((prescription) => {
-                    return (prescription.worksheet.exercises =
-                        f.sortedByPosition(prescription.worksheet.exercises));
-                });
-
-                this.patientPrescriptions.map((prescription) => {
-                    if (
-                        !prescription.worksheetSessions.filter(
-                            (ws) => false === ws.isCompleted
-                        ).length
-                    ) {
-                        return (prescription.position = 1);
-                    } else {
-                        return (prescription.position = 0);
+                            currentWorksheetSession: this.getCurrentSession(
+                                prescription.worksheetSessions
+                            ),
+                            worksheetSessions: this.sortByExecOrder(
+                                prescription.worksheetSessions
+                            ),
+                        };
                     }
-                });
+                );
+
+                if (this.patientPrescriptions.length) {
+                    this.patientPrescriptions.map((prescription) => {
+                        if (
+                            prescription.currentWorksheetSession &&
+                            prescription.currentWorksheetSession.isCompleted
+                        ) {
+                            return (prescription.position = 1);
+                        } else {
+                            return (prescription.position = 0);
+                        }
+                    });
+                }
 
                 if (this.prescriptionsList.length) {
                     this.setCurrentPrescriptionAndGenerateVideoList(
