@@ -127,6 +127,9 @@ class ManageWorksheetController extends AbstractController
 
             if ($this->isCsrfTokenValid('start_worksheet_session' . $patient->getId(), $data->_token)) {
                 $worksheet = $this->worksheetRepository->findOneBy(['id' => $data->worksheetId]);
+                $worksheetSession = $this->worksheetSessionRepository->findOneBy(['id' => $data->worksheetSessionId]);
+
+                $worksheetSession->setIsInProgress(true);
 
                 foreach ($worksheet->getExercises() as $exercise) {
                     $exercise->setIsCompleted(false);
@@ -226,7 +229,8 @@ class ManageWorksheetController extends AbstractController
 
         if (empty($exercisesNotCompleted)) {
             $worksheetSession = $this->worksheetSessionRepository->findOneBy(['id' => $worksheetSessionsId]);
-
+            
+            $worksheetSession->setIsInProgress(false);
             $worksheetSession->setIsCompleted(true);
 
             $this->em->flush();

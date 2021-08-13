@@ -32,6 +32,12 @@ class WorksheetSession
      * @Groups({"prescription_read", "exercise_stats_read"})
      */
     private $deadlineAt;
+    
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"prescription_read", "exercise_stats_read"})
+     */
+    private $isInProgress;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
@@ -59,6 +65,7 @@ class WorksheetSession
 
     public function __construct()
     {
+        $this->isInProgress = false;
         $this->isCompleted = false;
         $this->exerciseStats = new ArrayCollection();
     }
@@ -88,6 +95,18 @@ class WorksheetSession
     public function setDeadlineAt(?\DateTimeInterface $deadlineAt): self
     {
         $this->deadlineAt = $deadlineAt;
+
+        return $this;
+    }
+
+    public function getIsInProgress(): ?bool
+    {
+        return $this->isInProgress;
+    }
+
+    public function setIsInProgress(?bool $isInProgress): self
+    {
+        $this->isInProgress = $isInProgress;
 
         return $this;
     }

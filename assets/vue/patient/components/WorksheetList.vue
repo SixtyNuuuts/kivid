@@ -818,6 +818,7 @@ export default {
                             ) {
                                 this.playerVideoToggle = false;
                                 this.currentWorksheetSession.isCompleted = true;
+                                this.currentWorksheetSession.isInProgress = false;
                             }
 
                             this.openNotification(
@@ -1124,6 +1125,8 @@ export default {
                     (prescription) => {
                         if (
                             prescription.currentWorksheetSession &&
+                            !prescription.currentWorksheetSession
+                                .isInProgress &&
                             !prescription.currentWorksheetSession.isCompleted
                         ) {
                             this.axios
@@ -1133,10 +1136,15 @@ export default {
                                         _token: this
                                             .csrfTokenStartWorksheetSession,
                                         worksheetId: prescription.worksheet.id,
+                                        worksheetSessionId:
+                                            prescription.currentWorksheetSession
+                                                .id,
                                     }
                                 )
                                 .then((response) => {
                                     console.log("start worksheet session");
+
+                                    prescription.currentWorksheetSession.isInProgress = true;
 
                                     prescription.worksheet.exercises.forEach(
                                         (exercise) => {
