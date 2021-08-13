@@ -32,7 +32,7 @@ class WorksheetSession
      * @Groups({"prescription_read", "exercise_stats_read"})
      */
     private $deadlineAt;
-    
+
     /**
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"prescription_read", "exercise_stats_read"})

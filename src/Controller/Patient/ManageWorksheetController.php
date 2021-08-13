@@ -229,7 +229,7 @@ class ManageWorksheetController extends AbstractController
 
         if (empty($exercisesNotCompleted)) {
             $worksheetSession = $this->worksheetSessionRepository->findOneBy(['id' => $worksheetSessionsId]);
-            
+
             $worksheetSession->setIsInProgress(false);
             $worksheetSession->setIsCompleted(true);
 
