@@ -1,512 +1,575 @@
 <template>
     <div class="worksheets-list">
-        <div class="worksheet-item-list">
-            <div
-                v-for="(
-                    prescription, i
-                ) in patientPrescriptionsSortedByPosition"
-                :key="i"
-                class="worksheet-item card shadow-lg"
-                @click="
-                    setCurrentPrescriptionAndGenerateVideoList(prescription, i)
-                "
-                :class="{
-                    active: indiceActiveWorksheet === i,
-                    'is-completed':
-                        prescription.currentWorksheetSession.isCompleted,
-                }"
-            >
-                <div class="card-header">
-                    <div class="title">
-                        <div
-                            v-if="prescription.worksheet.exercisesTags"
-                            class="tags"
-                        >
+        <div v-if="patientPrescriptionsSortedByPosition.length">
+            <div class="worksheet-item-list">
+                <div
+                    v-for="(
+                        prescription, i
+                    ) in patientPrescriptionsSortedByPosition"
+                    :key="i"
+                    class="worksheet-item card shadow-lg"
+                    @click="
+                        setCurrentPrescriptionAndGenerateVideoList(
+                            prescription,
+                            i
+                        )
+                    "
+                    :class="{
+                        active: indiceActiveWorksheet === i,
+                        'is-completed':
+                            (prescription.currentWorksheetSession &&
+                                prescription.currentWorksheetSession
+                                    .isCompleted) ||
+                            !prescription.currentWorksheetSession,
+                    }"
+                >
+                    <div class="card-header">
+                        <div class="title">
                             <div
-                                class="tags-chip tags-chip-raised"
-                                v-for="tag in prescription.worksheet
-                                    .exercisesTags"
-                                :key="tag"
+                                v-if="prescription.worksheet.exercisesTags"
+                                class="tags"
                             >
-                                {{ tag }}
+                                <div
+                                    class="tags-chip tags-chip-raised"
+                                    v-for="tag in prescription.worksheet
+                                        .exercisesTags"
+                                    :key="tag"
+                                >
+                                    {{ tag }}
+                                </div>
                             </div>
+                            <h3>{{ prescription.worksheet.title }}</h3>
                         </div>
-                        <h3>{{ prescription.worksheet.title }}</h3>
-                    </div>
 
-                    <div
-                        v-if="prescription.worksheet.partOfBody"
-                        class="part-of-body"
-                    >
-                        <div class="img-part-of-body">
-                            <img
-                                :src="`/img/icons/part-of-body/${prescription.worksheet.partOfBody.toLowerCase()}.svg`"
-                                :alt="`icon ${prescription.worksheet.partOfBody.toLowerCase()}`"
-                            />
-                        </div>
-                        <span>{{ prescription.worksheet.partOfBody }}</span>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="timing">
                         <div
-                            v-if="
-                                prescription.currentWorksheetSession.isCompleted
-                            "
+                            v-if="prescription.worksheet.partOfBody"
+                            class="part-of-body"
                         >
-                            <i class="fe fe-check-circle"></i>
-                            <p>Session Terminée</p>
-                            <p v-if="getNextSession(prescription)">
-                                Prochaine session dans
-                                <span>
-                                    {{
-                                        diffTimeBetweenNowAndSession(
-                                            getNextSession(prescription).startAt
-                                        )
-                                    }}
-                                </span>
-                            </p>
-                            <p v-else>
-                                Plus de sessions pour cette prescription
-                            </p>
-                        </div>
-                        <div
-                            v-if="
-                                !prescription.currentWorksheetSession
-                                    .isCompleted &&
-                                prescription.currentWorksheetSession.startAt
-                            "
-                        >
-                            <i class="fe fe-calendar"></i>
-                            <p>
-                                Plus que
-                                <span>
-                                    {{
-                                        diffTimeBetweenNowAndSession(
-                                            prescription.currentWorksheetSession
-                                                .deadlineAt
-                                        )
-                                    }}
-                                </span>
-                                pour terminer la fiche
-                            </p>
-                        </div>
-                        <div
-                            v-if="
-                                !prescription.currentWorksheetSession
-                                    .isCompleted &&
-                                !prescription.currentWorksheetSession.startAt
-                            "
-                        >
-                            <i class="fe fe-calendar"></i>
-                            <p>Nouvelle fiche disponnible</p>
+                            <div class="img-part-of-body">
+                                <img
+                                    :src="`/img/icons/part-of-body/${prescription.worksheet.partOfBody.toLowerCase()}.svg`"
+                                    :alt="`icon ${prescription.worksheet.partOfBody.toLowerCase()}`"
+                                />
+                            </div>
+                            <span>{{ prescription.worksheet.partOfBody }}</span>
                         </div>
                     </div>
-                </div>
-                <div class="card-footer">
-                    <div
-                        v-if="prescription.worksheet.exercises"
-                        class="exercises"
-                    >
-                        {{
-                            prescription.worksheet.exercises.filter(
-                                (e) => true === e.isCompleted
-                            ).length
-                        }}<span class="slash">/</span
-                        >{{ prescription.worksheet.exercises.length }}
-                        <span
-                            v-if="prescription.worksheet.exercises.length > 1"
-                        >
-                            exercises
-                        </span>
-                        <span v-else>exercise</span>
-                    </div>
-                    <div
-                        v-if="
-                            indiceActiveWorksheet === i &&
-                            !prescription.currentWorksheetSession.isCompleted
-                        "
-                        class="lets-go"
-                    >
-                        <span>c'est parti !</span>
-                        <i class="fe fe-arrow-right-circle"></i>
-                    </div>
-                    <div
-                        v-if="indiceActiveWorksheet !== i"
-                        class="selectionner"
-                    >
-                        <span>Sélectionner</span>
-                        <i class="fe fe-arrow-right-circle"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="worksheet-details">
-            <div
-                v-for="(
-                    prescription, i
-                ) in patientPrescriptionsSortedByPosition"
-                :key="i"
-            >
-                <transition name="fade">
-                    <div v-if="indiceActiveWorksheet === i">
-                        <h1>{{ prescription.worksheet.title }}</h1>
-                        <div class="actions-btns">
-                            <vs-button
+                    <div class="card-body">
+                        <div class="timing">
+                            <div
                                 v-if="
-                                    !prescription.worksheet.exercises.filter(
-                                        (e) => false === e.isCompleted
-                                    ).length
+                                    prescription.currentWorksheetSession &&
+                                    prescription.currentWorksheetSession
+                                        .isCompleted
                                 "
-                                size="large"
-                                class="disabled"
                             >
                                 <i class="fe fe-check-circle"></i>
-                                Terminé
-                            </vs-button>
-                            <vs-button
-                                v-else
-                                @click="playVideoList()"
-                                size="large"
+                                <p>Session Terminée</p>
+                                <p v-if="getNextSession(prescription)">
+                                    Prochaine session dans
+                                    <span>
+                                        {{
+                                            diffTimeBetweenNowAndSession(
+                                                getNextSession(prescription)
+                                                    .startAt
+                                            )
+                                        }}
+                                    </span>
+                                </p>
+                            </div>
+                            <div
+                                v-if="
+                                    !prescription.currentWorksheetSession ||
+                                    (prescription.currentWorksheetSession &&
+                                        prescription.currentWorksheetSession
+                                            .isCompleted &&
+                                        !getNextSession(prescription))
+                                "
                             >
-                                <i class="fe fe-play-circle"></i>
-                                <span
-                                    v-if="
-                                        !prescription.worksheet.exercises[0]
-                                            .isCompleted
-                                    "
-                                >
-                                    Démarrer
-                                </span>
-                                <span v-else>Reprendre</span>
-                            </vs-button>
+                                <p>Plus de sessions pour cette prescription</p>
+                            </div>
+                            <div
+                                v-if="
+                                    prescription.currentWorksheetSession &&
+                                    !prescription.currentWorksheetSession
+                                        .isCompleted &&
+                                    prescription.currentWorksheetSession.startAt
+                                "
+                            >
+                                <i class="fe fe-calendar"></i>
+                                <p>
+                                    Plus que
+                                    <span>
+                                        {{
+                                            diffTimeBetweenNowAndSession(
+                                                prescription
+                                                    .currentWorksheetSession
+                                                    .deadlineAt
+                                            )
+                                        }}
+                                    </span>
+                                    pour terminer la fiche
+                                </p>
+                            </div>
+                            <div
+                                v-if="
+                                    prescription.currentWorksheetSession &&
+                                    !prescription.currentWorksheetSession
+                                        .isCompleted &&
+                                    !prescription.currentWorksheetSession
+                                        .startAt
+                                "
+                            >
+                                <i class="fe fe-calendar"></i>
+                                <p>Nouvelle fiche disponnible</p>
+                            </div>
                         </div>
-                        <vs-alert closable v-model="alertCommentExercises">
-                            <template #icon>
-                                <i class="fe fe-info"></i>
-                            </template>
-                            À la fin de vos exercices, vous aurez la possiblité
-                            d’écrire un bref commentaire.
-                        </vs-alert>
-                        <vs-card
-                            type="3"
-                            v-for="(exercise, i) in prescription.worksheet
-                                .exercises"
-                            :key="i"
-                            @click="playVideoList(exercise)"
-                            :class="{
-                                completed: true === exercise.isCompleted,
-                            }"
-                        >
-                            <template #title>
-                                <h3>{{ exercise.video.name }}</h3>
-                            </template>
-                            <template #img>
-                                <img
-                                    :src="exercise.video.thumbnailUrl"
-                                    alt="vignette de la vidéo"
-                                />
-                            </template>
-                            <template #text>
-                                <p v-html="exercise.video.description"></p>
-
-                                <div class="specs">
-                                    <div>
-                                        <h5>
-                                            <i class="fe fe-activity"></i>Nb de
-                                            Répétitions
-                                        </h5>
-                                        <p>
-                                            {{ exercise.numberOfRepetitions }}
-                                        </p>
-                                    </div>
-                                    <div>
-                                        <h5>
-                                            <i class="fe fe-activity"></i>Nb de
-                                            Nb de Séries
-                                        </h5>
-                                        <p>
-                                            {{ exercise.numberOfSeries }}
-                                        </p>
-                                    </div>
-                                    <div v-if="exercise.option">
-                                        <h5>
-                                            <i class="fe fe-activity"></i>Option
-                                        </h5>
-                                        <p>{{ exercise.option }}</p>
-                                    </div>
-                                </div>
-                            </template>
-                        </vs-card>
                     </div>
-                </transition>
-            </div>
-        </div>
-        <transition name="fade">
-            <div v-if="playerVideoToggle" class="overlay">
-                <vs-button
-                    class="btn-close-player"
-                    circle
-                    icon
-                    @click="closePlayerVideo"
-                >
-                    <i class="fe fe-x"></i>
-                </vs-button>
-                <div class="player-video">
-                    <h2 :class="{ 'fade-leave': fadeLeave }">
-                        {{ currentExercise.video.name }}
-                        <span v-if="currentExercise.isCompleted">
-                            <i class="fe fe-check-circle"></i>terminé !
-                        </span>
-                    </h2>
-                    <div
-                        class="video-frame"
-                        :class="{ 'no-video': hideVideoFrame }"
-                    >
-                        <transition name="slide" mode="out-in">
-                            <div
-                                class="video"
-                                v-if="showVideo"
-                                key="video"
-                                :class="{
-                                    'old-video-visible': oldVideoVisible,
-                                    'new-video-slide-enter': newVideoSlideEnter,
-                                    'old-video-slide-leave-to-left':
-                                        oldVideoSlideLeaveToLeft,
-                                    'old-video-slide-leave-to-right':
-                                        oldVideoSlideLeaveToRight,
-                                    'new-video-slide-reset-left':
-                                        newVideoSlideResetLeft,
-                                    'new-video-slide-reset-right':
-                                        newVideoSlideResetRight,
-                                }"
-                            >
-                                <div class="frame">
-                                    <youtube
-                                        :player-vars="playerVars"
-                                        :video-id="
-                                            currentExercise.video.youtubeId
-                                        "
-                                        @ended="ended()"
-                                        ref="youtube"
-                                    ></youtube>
-                                    <div class="force-dimensions"></div>
-                                    <youtube
-                                        :video-id="
-                                            oldVideoForSlideTransition.video
-                                                .youtubeId
-                                        "
-                                    ></youtube>
-                                </div>
-                            </div>
-                            <div
-                                v-if="
-                                    !showVideo &&
-                                    !currentExercise.exerciseStats.find(
-                                        (s) =>
-                                            'technical' === s.criterion &&
-                                            currentWorksheetSession.id ===
-                                                s.worksheetSession.id
-                                    ).rating
-                                "
-                                class="stat-rating"
-                                key="technical"
-                            >
-                                <h3>
-                                    Comment était votre technique ?
-                                    1<span>/</span>3
-                                </h3>
-                                <custom-slider
-                                    min="1"
-                                    max="5"
-                                    step="1"
-                                    :values="sliderTechnicalValues"
-                                    v-model="sliderTechnicalChoice"
-                                />
-                                <div class="graduation">
-                                    <span></span>
-                                    <span></span>
-                                    <span></span>
-                                    <span></span>
-                                    <span></span>
-                                </div>
-                                <div class="slider-labels">
-                                    <span>Médiocre</span>
-                                    <span>Excellent</span>
-                                </div>
-                                <vs-button
-                                    size="large"
-                                    @click="validTechnicalStat()"
-                                    ><i class="fe fe-check-circle"></i>
-                                    Valider
-                                </vs-button>
-                                <a class="re-show-video" @click="reShowVideo()"
-                                    ><i class="fe fe-youtube"></i>
-                                    Revoir la vidéo
-                                </a>
-                            </div>
-                            <div
-                                v-if="
-                                    !showVideo &&
-                                    currentExercise.exerciseStats.find(
-                                        (s) =>
-                                            'technical' === s.criterion &&
-                                            currentWorksheetSession.id ===
-                                                s.worksheetSession.id
-                                    ).rating &&
-                                    !currentExercise.exerciseStats.find(
-                                        (s) =>
-                                            'difficulty' === s.criterion &&
-                                            currentWorksheetSession.id ===
-                                                s.worksheetSession.id
-                                    ).rating
-                                "
-                                class="stat-rating"
-                                key="difficulty"
-                            >
-                                <h3>
-                                    Comment avez-vous trouvé l’exercice ?
-                                    2<span>/</span>3
-                                </h3>
-                                <custom-slider
-                                    min="1"
-                                    max="5"
-                                    step="1"
-                                    :values="sliderDifficultyValues"
-                                    v-model="sliderDifficultyChoice"
-                                />
-                                <div class="graduation">
-                                    <span></span>
-                                    <span></span>
-                                    <span></span>
-                                    <span></span>
-                                    <span></span>
-                                </div>
-                                <div class="slider-labels">
-                                    <span>Beaucoup trop facile</span>
-                                    <span>Vraiment Trop difficile</span>
-                                </div>
-                                <vs-button
-                                    size="large"
-                                    @click="validDifficultyStat()"
-                                    ><i class="fe fe-check-circle"></i>
-                                    Valider
-                                </vs-button>
-                                <a class="re-show-video" @click="reShowVideo()"
-                                    ><i class="fe fe-youtube"></i>
-                                    Revoir la vidéo
-                                </a>
-                            </div>
-                            <div
-                                v-if="
-                                    !showVideo &&
-                                    currentExercise.exerciseStats.find(
-                                        (s) =>
-                                            'difficulty' === s.criterion &&
-                                            currentWorksheetSession.id ===
-                                                s.worksheetSession.id
-                                    ).rating &&
-                                    !currentExercise.exerciseStats.find(
-                                        (s) =>
-                                            'sensitivity' === s.criterion &&
-                                            currentWorksheetSession.id ===
-                                                s.worksheetSession.id
-                                    ).rating
-                                "
-                                class="stat-rating"
-                                key="sensitivity"
-                            >
-                                <h3>
-                                    Comment vous sentez-vous ? 3<span>/</span>3
-                                </h3>
-                                <custom-slider
-                                    min="1"
-                                    max="5"
-                                    step="1"
-                                    :values="sliderSensitivityValues"
-                                    v-model="sliderSensitivityChoice"
-                                />
-                                <div class="graduation">
-                                    <span></span>
-                                    <span></span>
-                                    <span></span>
-                                    <span></span>
-                                    <span></span>
-                                </div>
-                                <div class="slider-labels">
-                                    <span>Trop mal</span>
-                                    <span>Magnifiquement Bien</span>
-                                </div>
-                                <vs-button
-                                    size="large"
-                                    @click="validSensitivityStat()"
-                                    ><i class="fe fe-check-circle"></i>
-                                    Valider
-                                </vs-button>
-                                <a class="re-show-video" @click="reShowVideo()"
-                                    ><i class="fe fe-youtube"></i>
-                                    Revoir la vidéo
-                                </a>
-                            </div>
-                        </transition>
-                    </div>
-                    <div>
+                    <div class="card-footer">
                         <div
-                            v-if="
-                                currentExercise &&
-                                videoList.indexOf(currentExercise) != 0
-                            "
-                            class="prev"
+                            v-if="prescription.worksheet.exercises"
+                            class="exercises"
                         >
-                            <vs-button circle icon @click="playPrevVideo()">
-                                <i class="fe fe-arrow-left"></i>
-                            </vs-button>
+                            {{
+                                prescription.worksheet.exercises.filter(
+                                    (e) => true === e.isCompleted
+                                ).length
+                            }}<span class="slash">/</span
+                            >{{ prescription.worksheet.exercises.length }}
+                            <span
+                                v-if="
+                                    prescription.worksheet.exercises.length > 1
+                                "
+                            >
+                                exercises
+                            </span>
+                            <span v-else>exercise</span>
                         </div>
                         <div
                             v-if="
-                                currentExercise &&
-                                videoList.indexOf(currentExercise) !=
-                                    videoList.length - 1
+                                prescription.currentWorksheetSession &&
+                                indiceActiveWorksheet === i &&
+                                !prescription.currentWorksheetSession
+                                    .isCompleted
                             "
-                            class="next"
+                            class="lets-go"
                         >
-                            <vs-button circle icon @click="playNextVideo()">
-                                <i class="fe fe-arrow-right"></i>
-                            </vs-button>
+                            <span>c'est parti !</span>
+                            <i class="fe fe-arrow-right-circle"></i>
                         </div>
-                    </div>
-                    <div class="specs" :class="{ 'fade-leave': fadeLeave }">
-                        <div class="count-exercise">
-                            <h5>
-                                Exercice
-                                {{ videoList.indexOf(currentExercise) + 1
-                                }}<span>/</span>{{ videoList.length }}
-                            </h5>
-                        </div>
-                        <div>
-                            <h5>
-                                <i class="fe fe-activity"></i>Nb de Répétitions
-                            </h5>
-                            <p class="number">
-                                {{ currentExercise.numberOfRepetitions }}
-                            </p>
-                        </div>
-                        <div>
-                            <h5>
-                                <i class="fe fe-activity"></i>Nb de Nb de Séries
-                            </h5>
-                            <p class="number">
-                                {{ currentExercise.numberOfSeries }}
-                            </p>
-                        </div>
-                        <div v-if="currentExercise.option">
-                            <h5><i class="fe fe-activity"></i>Option</h5>
-                            <p>{{ currentExercise.option }}</p>
+                        <div
+                            v-if="indiceActiveWorksheet !== i"
+                            class="selectionner"
+                        >
+                            <span>Sélectionner</span>
+                            <i class="fe fe-arrow-right-circle"></i>
                         </div>
                     </div>
                 </div>
             </div>
-        </transition>
+            <div class="worksheet-details">
+                <div
+                    v-for="(
+                        prescription, i
+                    ) in patientPrescriptionsSortedByPosition"
+                    :key="i"
+                >
+                    <transition name="fade">
+                        <div v-if="indiceActiveWorksheet === i">
+                            <h1>{{ prescription.worksheet.title }}</h1>
+                            <div class="actions-btns">
+                                <vs-button
+                                    v-if="
+                                        !prescription.worksheet.exercises.filter(
+                                            (e) => false === e.isCompleted
+                                        ).length
+                                    "
+                                    size="large"
+                                    class="disabled"
+                                >
+                                    <i class="fe fe-check-circle"></i>
+                                    Terminé
+                                </vs-button>
+                                <vs-button
+                                    v-else
+                                    @click="playVideoList()"
+                                    size="large"
+                                >
+                                    <i class="fe fe-play-circle"></i>
+                                    <span
+                                        v-if="
+                                            !prescription.worksheet.exercises[0]
+                                                .isCompleted
+                                        "
+                                    >
+                                        Démarrer
+                                    </span>
+                                    <span v-else>Reprendre</span>
+                                </vs-button>
+                            </div>
+                            <vs-alert closable v-model="alertCommentExercises">
+                                <template #icon>
+                                    <i class="fe fe-info"></i>
+                                </template>
+                                À la fin de vos exercices, vous aurez la
+                                possiblité d’écrire un bref commentaire.
+                            </vs-alert>
+                            <vs-card
+                                type="3"
+                                v-for="(exercise, i) in prescription.worksheet
+                                    .exercises"
+                                :key="i"
+                                @click="playVideoList(exercise)"
+                                :class="{
+                                    completed: true === exercise.isCompleted,
+                                }"
+                            >
+                                <template #title>
+                                    <h3>{{ exercise.video.name }}</h3>
+                                </template>
+                                <template #img>
+                                    <img
+                                        :src="exercise.video.thumbnailUrl"
+                                        alt="vignette de la vidéo"
+                                    />
+                                </template>
+                                <template #text>
+                                    <p v-html="exercise.video.description"></p>
+
+                                    <div class="specs">
+                                        <div>
+                                            <h5>
+                                                <i class="fe fe-activity"></i>Nb
+                                                de Répétitions
+                                            </h5>
+                                            <p>
+                                                {{
+                                                    exercise.numberOfRepetitions
+                                                }}
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <h5>
+                                                <i class="fe fe-activity"></i>Nb
+                                                de Nb de Séries
+                                            </h5>
+                                            <p>
+                                                {{ exercise.numberOfSeries }}
+                                            </p>
+                                        </div>
+                                        <div v-if="exercise.option">
+                                            <h5>
+                                                <i class="fe fe-activity"></i
+                                                >Option
+                                            </h5>
+                                            <p>{{ exercise.option }}</p>
+                                        </div>
+                                    </div>
+                                </template>
+                            </vs-card>
+                        </div>
+                    </transition>
+                </div>
+            </div>
+            <transition name="fade">
+                <div v-if="playerVideoToggle" class="overlay">
+                    <vs-button
+                        class="btn-close-player"
+                        circle
+                        icon
+                        @click="closePlayerVideo"
+                    >
+                        <i class="fe fe-x"></i>
+                    </vs-button>
+                    <div class="player-video">
+                        <h2 :class="{ 'fade-leave': fadeLeave }">
+                            {{ currentExercise.video.name }}
+                            <span v-if="currentExercise.isCompleted">
+                                <i class="fe fe-check-circle"></i>terminé !
+                            </span>
+                        </h2>
+                        <div
+                            class="video-frame"
+                            :class="{ 'no-video': hideVideoFrame }"
+                        >
+                            <transition name="slide" mode="out-in">
+                                <div
+                                    class="video"
+                                    v-if="showVideo"
+                                    key="video"
+                                    :class="{
+                                        'old-video-visible': oldVideoVisible,
+                                        'new-video-slide-enter':
+                                            newVideoSlideEnter,
+                                        'old-video-slide-leave-to-left':
+                                            oldVideoSlideLeaveToLeft,
+                                        'old-video-slide-leave-to-right':
+                                            oldVideoSlideLeaveToRight,
+                                        'new-video-slide-reset-left':
+                                            newVideoSlideResetLeft,
+                                        'new-video-slide-reset-right':
+                                            newVideoSlideResetRight,
+                                    }"
+                                >
+                                    <div class="frame">
+                                        <youtube
+                                            :player-vars="playerVars"
+                                            :video-id="
+                                                currentExercise.video.youtubeId
+                                            "
+                                            @ended="ended()"
+                                            ref="youtube"
+                                        ></youtube>
+                                        <div class="force-dimensions"></div>
+                                        <youtube
+                                            :video-id="
+                                                oldVideoForSlideTransition.video
+                                                    .youtubeId
+                                            "
+                                        ></youtube>
+                                    </div>
+                                </div>
+                                <div
+                                    v-if="
+                                        !showVideo &&
+                                        !currentExercise.exerciseStats.find(
+                                            (s) =>
+                                                'technical' === s.criterion &&
+                                                currentWorksheetSession.id ===
+                                                    s.worksheetSession.id
+                                        ).rating
+                                    "
+                                    class="stat-rating"
+                                    key="technical"
+                                >
+                                    <h3>
+                                        Comment était votre technique ?
+                                        1<span>/</span>3
+                                    </h3>
+                                    <custom-slider
+                                        min="1"
+                                        max="5"
+                                        step="1"
+                                        :values="sliderTechnicalValues"
+                                        v-model="sliderTechnicalChoice"
+                                    />
+                                    <div class="graduation">
+                                        <span></span>
+                                        <span></span>
+                                        <span></span>
+                                        <span></span>
+                                        <span></span>
+                                    </div>
+                                    <div class="slider-labels">
+                                        <span>Médiocre</span>
+                                        <span>Excellent</span>
+                                    </div>
+                                    <vs-button
+                                        size="large"
+                                        @click="validTechnicalStat()"
+                                        :loading="btnLoadingValidTechnicalStat"
+                                        :class="{
+                                            disabled:
+                                                btnLoadingValidTechnicalStat,
+                                        }"
+                                        ><i class="fe fe-check-circle"></i>
+                                        Valider
+                                    </vs-button>
+                                    <a
+                                        class="re-show-video"
+                                        @click="reShowVideo()"
+                                        ><i class="fe fe-youtube"></i>
+                                        Revoir la vidéo
+                                    </a>
+                                </div>
+                                <div
+                                    v-if="
+                                        !showVideo &&
+                                        currentExercise.exerciseStats.find(
+                                            (s) =>
+                                                'technical' === s.criterion &&
+                                                currentWorksheetSession.id ===
+                                                    s.worksheetSession.id
+                                        ).rating &&
+                                        !currentExercise.exerciseStats.find(
+                                            (s) =>
+                                                'difficulty' === s.criterion &&
+                                                currentWorksheetSession.id ===
+                                                    s.worksheetSession.id
+                                        ).rating
+                                    "
+                                    class="stat-rating"
+                                    key="difficulty"
+                                >
+                                    <h3>
+                                        Comment avez-vous trouvé l’exercice ?
+                                        2<span>/</span>3
+                                    </h3>
+                                    <custom-slider
+                                        min="1"
+                                        max="5"
+                                        step="1"
+                                        :values="sliderDifficultyValues"
+                                        v-model="sliderDifficultyChoice"
+                                    />
+                                    <div class="graduation">
+                                        <span></span>
+                                        <span></span>
+                                        <span></span>
+                                        <span></span>
+                                        <span></span>
+                                    </div>
+                                    <div class="slider-labels">
+                                        <span>Beaucoup trop facile</span>
+                                        <span>Vraiment Trop difficile</span>
+                                    </div>
+                                    <vs-button
+                                        size="large"
+                                        @click="validDifficultyStat()"
+                                        :loading="btnLoadingValidDifficultyStat"
+                                        :class="{
+                                            disabled:
+                                                btnLoadingValidDifficultyStat,
+                                        }"
+                                        ><i class="fe fe-check-circle"></i>
+                                        Valider
+                                    </vs-button>
+                                    <a
+                                        class="re-show-video"
+                                        @click="reShowVideo()"
+                                        ><i class="fe fe-youtube"></i>
+                                        Revoir la vidéo
+                                    </a>
+                                </div>
+                                <div
+                                    v-if="
+                                        !showVideo &&
+                                        currentExercise.exerciseStats.find(
+                                            (s) =>
+                                                'difficulty' === s.criterion &&
+                                                currentWorksheetSession.id ===
+                                                    s.worksheetSession.id
+                                        ).rating &&
+                                        !currentExercise.exerciseStats.find(
+                                            (s) =>
+                                                'sensitivity' === s.criterion &&
+                                                currentWorksheetSession.id ===
+                                                    s.worksheetSession.id
+                                        ).rating
+                                    "
+                                    class="stat-rating"
+                                    key="sensitivity"
+                                >
+                                    <h3>
+                                        Comment vous sentez-vous ?
+                                        3<span>/</span>3
+                                    </h3>
+                                    <custom-slider
+                                        min="1"
+                                        max="5"
+                                        step="1"
+                                        :values="sliderSensitivityValues"
+                                        v-model="sliderSensitivityChoice"
+                                    />
+                                    <div class="graduation">
+                                        <span></span>
+                                        <span></span>
+                                        <span></span>
+                                        <span></span>
+                                        <span></span>
+                                    </div>
+                                    <div class="slider-labels">
+                                        <span>Trop mal</span>
+                                        <span>Magnifiquement Bien</span>
+                                    </div>
+                                    <vs-button
+                                        size="large"
+                                        @click="validSensitivityStat()"
+                                        :loading="
+                                            btnLoadingValidSensitivityStat
+                                        "
+                                        :class="{
+                                            disabled:
+                                                btnLoadingValidSensitivityStat,
+                                        }"
+                                        ><i class="fe fe-check-circle"></i>
+                                        Valider
+                                    </vs-button>
+                                    <a
+                                        class="re-show-video"
+                                        @click="reShowVideo()"
+                                        ><i class="fe fe-youtube"></i>
+                                        Revoir la vidéo
+                                    </a>
+                                </div>
+                            </transition>
+                        </div>
+                        <div>
+                            <div
+                                v-if="
+                                    currentExercise &&
+                                    videoList.indexOf(currentExercise) != 0
+                                "
+                                class="prev"
+                            >
+                                <vs-button circle icon @click="playPrevVideo()">
+                                    <i class="fe fe-arrow-left"></i>
+                                </vs-button>
+                            </div>
+                            <div
+                                v-if="
+                                    currentExercise &&
+                                    videoList.indexOf(currentExercise) !=
+                                        videoList.length - 1
+                                "
+                                class="next"
+                            >
+                                <vs-button circle icon @click="playNextVideo()">
+                                    <i class="fe fe-arrow-right"></i>
+                                </vs-button>
+                            </div>
+                        </div>
+                        <div class="specs" :class="{ 'fade-leave': fadeLeave }">
+                            <div class="count-exercise">
+                                <h5>
+                                    Exercice
+                                    {{ videoList.indexOf(currentExercise) + 1
+                                    }}<span>/</span>{{ videoList.length }}
+                                </h5>
+                            </div>
+                            <div>
+                                <h5>
+                                    <i class="fe fe-activity"></i>Nb de
+                                    Répétitions
+                                </h5>
+                                <p class="number">
+                                    {{ currentExercise.numberOfRepetitions }}
+                                </p>
+                            </div>
+                            <div>
+                                <h5>
+                                    <i class="fe fe-activity"></i>Nb de Nb de
+                                    Séries
+                                </h5>
+                                <p class="number">
+                                    {{ currentExercise.numberOfSeries }}
+                                </p>
+                            </div>
+                            <div v-if="currentExercise.option">
+                                <h5><i class="fe fe-activity"></i>Option</h5>
+                                <p>{{ currentExercise.option }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </transition>
+        </div>
+        <div v-else class="no-worksheet">
+            <div v-if="!loadingPatientPrescriptionsList">
+                <i class="fe fe-file-minus"></i> Vous n'avez aucune fiche.
+            </div>
+            <div v-else>...</div>
+        </div>
     </div>
 </template>
 
@@ -613,6 +676,9 @@ export default {
                     value: "5",
                 },
             ],
+            btnLoadingValidSensitivityStat: false,
+            btnLoadingValidTechnicalStat: false,
+            btnLoadingValidDifficultyStat: false,
             showVideo: true,
             playerVars: {
                 rel: 0,
@@ -645,6 +711,8 @@ export default {
             this.showVideo = true;
         },
         validTechnicalStat() {
+            this.btnLoadingValidTechnicalStat = true;
+
             this.currentExercise.exerciseStats.find(
                 (s) =>
                     "technical" === s.criterion &&
@@ -658,20 +726,26 @@ export default {
                         _token: this.csrfTokenCreateExerciseStats,
                         exercise_id: this.currentExercise.id,
                         exercise_stat_value: this.sliderTechnicalChoice,
+                        worksheet_session_id: this.currentWorksheetSession.id,
                     }
                 )
                 .then((response) => {
                     console.log(response.data);
 
+                    this.btnLoadingValidTechnicalStat = false;
                     this.sliderTechnicalChoice = "3";
                 })
                 .catch((error) => {
                     if (error.response) {
                         console.log(error.response.data.detail);
                     }
+
+                    this.btnLoadingValidTechnicalStat = false;
                 });
         },
         validDifficultyStat() {
+            this.btnLoadingValidDifficultyStat = true;
+
             this.currentExercise.exerciseStats.find(
                 (s) =>
                     "difficulty" === s.criterion &&
@@ -685,20 +759,26 @@ export default {
                         _token: this.csrfTokenCreateExerciseStats,
                         exercise_id: this.currentExercise.id,
                         exercise_stat_value: this.sliderDifficultyChoice,
+                        worksheet_session_id: this.currentWorksheetSession.id,
                     }
                 )
                 .then((response) => {
                     console.log(response.data);
 
+                    this.btnLoadingValidDifficultyStat = false;
                     this.sliderDifficultyChoice = "3";
                 })
                 .catch((error) => {
                     if (error.response) {
                         console.log(error.response.data.detail);
                     }
+
+                    this.btnLoadingValidDifficultyStat = false;
                 });
         },
         validSensitivityStat() {
+            this.btnLoadingValidSensitivityStat = true;
+
             this.currentExercise.exerciseStats.find(
                 (s) =>
                     "sensitivity" === s.criterion &&
@@ -712,6 +792,7 @@ export default {
                         _token: this.csrfTokenCreateExerciseStats,
                         exercise_id: this.currentExercise.id,
                         exercise_stat_value: this.sliderSensitivityChoice,
+                        worksheet_session_id: this.currentWorksheetSession.id,
                     }
                 )
                 .then((response) => {
@@ -735,7 +816,7 @@ export default {
                                     (e) => false === e.isCompleted
                                 )
                             ) {
-                                this.currentWorksheetSession.isInProgress = false;
+                                this.playerVideoToggle = false;
                                 this.currentWorksheetSession.isCompleted = true;
                             }
 
@@ -761,6 +842,7 @@ export default {
                             );
                         });
 
+                    this.btnLoadingValidSensitivityStat = false;
                     this.sliderSensitivityChoice = "3";
                     this.currentExercise.isCompleted = true;
                 })
@@ -768,6 +850,7 @@ export default {
                     if (error.response) {
                         console.log(error.response.data.detail);
                     }
+                    this.btnLoadingValidSensitivityStat = false;
                 });
         },
         setCurrentPrescriptionAndGenerateVideoList(prescription, i) {
@@ -841,8 +924,9 @@ export default {
                         this.activePrescription.worksheetSessions =
                             this.sortByExecOrder(response.data);
 
-                        this.currentWorksheetSession =
-                            this.activePrescription.worksheetSessions[0];
+                        this.activePrescription.currentWorksheetSession =
+                            response.data[0];
+                        this.currentWorksheetSession = response.data[0];
                     })
                     .catch((error) => {
                         if (error.response) {
@@ -878,8 +962,10 @@ export default {
         getNextSession(prescription) {
             const nextSessionIndice =
                 prescription.worksheetSessions.indexOf(
-                    prescription.worksheetSessions.find(
-                        (s) => prescription.currentWorksheetSession.id === s.id
+                    prescription.worksheetSessions.find((s) =>
+                        prescription.currentWorksheetSession
+                            ? prescription.currentWorksheetSession.id === s.id
+                            : false
                     )
                 ) + 1;
 
@@ -1037,8 +1123,7 @@ export default {
                 this.patientPrescriptions = this.patientPrescriptions.map(
                     (prescription) => {
                         if (
-                            !prescription.currentWorksheetSession
-                                .isInProgress &&
+                            prescription.currentWorksheetSession &&
                             !prescription.currentWorksheetSession.isCompleted
                         ) {
                             this.axios
@@ -1048,15 +1133,16 @@ export default {
                                         _token: this
                                             .csrfTokenStartWorksheetSession,
                                         worksheetId: prescription.worksheet.id,
-                                        worksheetSessionId:
-                                            prescription.currentWorksheetSession
-                                                .id,
                                     }
                                 )
                                 .then((response) => {
                                     console.log("start worksheet session");
 
-                                    prescription.currentWorksheetSession.isInProgress = true;
+                                    prescription.worksheet.exercises.forEach(
+                                        (exercise) => {
+                                            exercise.isCompleted = false;
+                                        }
+                                    );
                                 })
                                 .catch((error) => {
                                     if (error.response) {
@@ -1078,8 +1164,19 @@ export default {
                             prescription.currentWorksheetSession.isCompleted
                         ) {
                             prescription.position = 1;
+                            if (!this.getNextSession(prescription)) {
+                                prescription.position = 2;
+                            }
                         } else {
                             prescription.position = 0;
+                        }
+
+                        if (!prescription.currentWorksheetSession) {
+                            prescription.worksheet.exercises.forEach(
+                                (exercise) => {
+                                    exercise.isCompleted = true;
+                                }
+                            );
                         }
 
                         return prescription;
@@ -1110,263 +1207,266 @@ export default {
 
 <style lang="scss" scoped>
 .worksheets-list {
-    display: flex;
+    > div {
+        display: flex;
 
-    .worksheet-item-list {
-        flex: 2;
-        box-shadow: 0 0.5rem 1.5rem rgb(33 42 69 / 15%) !important;
-        z-index: 10;
-        max-width: 22em;
+        .worksheet-item-list {
+            flex: 2;
+            box-shadow: 0 0.5rem 1.5rem rgb(33 42 69 / 15%) !important;
+            z-index: 10;
+            max-width: 22em;
 
-        .worksheet-item.card {
-            cursor: pointer;
-            position: relative;
-            background-color: white;
-            transition: all 0.2s;
-            border-left: 1px solid transparent;
+            .worksheet-item.card {
+                cursor: pointer;
+                position: relative;
+                background-color: white;
+                transition: all 0.2s;
+                border-left: 1px solid transparent;
 
-            &.active {
-                border-left: 10px solid orange;
+                &.active {
+                    border-left: 10px solid orange;
+
+                    &.is-completed {
+                        border-left: 10px solid #c4cedd;
+                    }
+                }
 
                 &.is-completed {
-                    border-left: 10px solid #c4cedd;
-                }
-            }
+                    > *:not(.card-body) {
+                        opacity: 0.5;
+                        color: #869ab8;
+                        background-color: #f9fafd !important;
+                    }
 
-            &.is-completed {
-                > *:not(.card-body) {
-                    opacity: 0.5;
-                    color: #869ab8;
-                    background-color: #f9fafd !important;
+                    .card-header .part-of-body span {
+                        color: #8592a5 !important;
+                    }
+
+                    .card-body {
+                        background-color: #abbcd51a !important;
+
+                        i {
+                            color: #c3cddc !important;
+                        }
+                    }
                 }
 
-                .card-header .part-of-body span {
-                    color: #8592a5 !important;
+                .card-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 0.5rem 1.1rem;
+                    padding-top: 0.8rem;
+
+                    .title {
+                        display: flex;
+                        flex-direction: column;
+                        width: 75%;
+                        white-space: nowrap;
+
+                        .tags {
+                            margin-bottom: 0.1em;
+                            font-size: 0.65em;
+                            overflow: hidden;
+
+                            .tags-chip {
+                                background: linear-gradient(
+                                    90deg,
+                                    #ffc250,
+                                    #ffb049 50%,
+                                    #fc9c2e 100%
+                                );
+                                color: white;
+                                font-weight: 600;
+                            }
+                        }
+
+                        h3 {
+                            margin: 0;
+                            font-weight: 700;
+                            font-size: 1em;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                        }
+                    }
+
+                    .part-of-body {
+                        display: flex;
+                        align-items: flex-end;
+                        justify-content: center;
+                        flex-direction: column;
+                        width: 25%;
+
+                        span {
+                            margin-right: 0.5em;
+                            margin-top: 0.3em;
+                            text-transform: uppercase;
+                            font-size: 0.65em;
+                            color: #ffab2c;
+                        }
+
+                        .img-part-of-body {
+                            width: 2em;
+                            height: 2em;
+                            border-radius: 50%;
+                            padding: 0.3em;
+                            padding-top: 0.1em;
+                            background-color: #fff6e8;
+                        }
+                    }
                 }
 
                 .card-body {
-                    background-color: #abbcd51a !important;
-
-                    i {
-                        color: #c3cddc !important;
-                    }
-                }
-            }
-
-            .card-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 0.5rem 1.1rem;
-                padding-top: 0.8rem;
-
-                .title {
+                    background-color: #f9fafd;
                     display: flex;
-                    flex-direction: column;
-                    width: 75%;
-                    white-space: nowrap;
-
-                    .tags {
-                        margin-bottom: 0.1em;
-                        font-size: 0.65em;
-                        overflow: hidden;
-
-                        .tags-chip {
-                            background: linear-gradient(
-                                90deg,
-                                #ffc250,
-                                #ffb049 50%,
-                                #fc9c2e 100%
-                            );
-                            color: white;
-                            font-weight: 600;
-                        }
-                    }
-
-                    h3 {
-                        margin: 0;
-                        font-weight: 700;
-                        font-size: 1em;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                    }
-                }
-
-                .part-of-body {
-                    display: flex;
-                    align-items: flex-end;
                     justify-content: center;
-                    flex-direction: column;
-                    width: 25%;
+                    padding: 1rem 1.1rem;
+                    font-size: 1.2em;
 
-                    span {
-                        margin-right: 0.5em;
-                        margin-top: 0.3em;
-                        text-transform: uppercase;
-                        font-size: 0.65em;
-                        color: #ffab2c;
-                    }
+                    .timing {
+                        > div {
+                            display: flex;
+                            align-items: center;
 
-                    .img-part-of-body {
-                        width: 2em;
-                        height: 2em;
-                        border-radius: 50%;
-                        padding: 0.3em;
-                        padding-top: 0.1em;
-                        background-color: #fff6e8;
-                    }
-                }
-            }
+                            i {
+                                color: #fad776;
+                                margin-top: -2px;
+                                margin-right: 5px;
+                                font-size: 0.65em;
+                            }
 
-            .card-body {
-                background-color: #f9fafd;
-                display: flex;
-                justify-content: center;
-                padding: 1rem 1.1rem;
-                font-size: 1.2em;
+                            p {
+                                margin-bottom: 0;
+                                font-style: italic;
+                                font-size: 0.65em;
+                                color: #506690;
 
-                .timing {
-                    > div {
-                        display: flex;
-                        align-items: center;
-
-                        i {
-                            color: #fad776;
-                            margin-top: -2px;
-                            margin-right: 5px;
-                            font-size: 0.65em;
-                        }
-
-                        p {
-                            margin-bottom: 0;
-                            font-style: italic;
-                            font-size: 0.65em;
-                            color: #506690;
-
-                            span {
-                                font-weight: 700;
+                                span {
+                                    font-weight: 700;
+                                }
                             }
                         }
                     }
                 }
-            }
 
-            .card-footer {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                border-top: 1px solid #f1f4f8;
-                padding: 0.7rem 1.1rem;
-                border-bottom: 1px solid #e2e9f9;
-                box-shadow: 0 0.6rem 1rem rgb(33 42 69 / 15%) !important;
-
-                .exercises {
-                    color: #869ab8;
-                    text-transform: uppercase;
-                    font-size: 0.7em;
-                }
-
-                .lets-go,
-                .selectionner {
-                    padding: 0.3em 0.9em;
-                    text-transform: uppercase;
-                    font-size: 0.65em;
-                    border-radius: 2em;
+                .card-footer {
                     display: flex;
+                    justify-content: space-between;
                     align-items: center;
+                    border-top: 1px solid #f1f4f8;
+                    padding: 0.7rem 1.1rem;
+                    border-bottom: 1px solid #e2e9f9;
+                    box-shadow: 0 0.6rem 1rem rgb(33 42 69 / 15%) !important;
 
-                    span {
-                        margin-top: 0.15em;
+                    .exercises {
+                        color: #869ab8;
+                        text-transform: uppercase;
+                        font-size: 0.7em;
                     }
 
-                    i {
-                        margin-left: 0.3em;
-                        margin-top: -0.05em;
-                        font-size: 1.15em;
-                    }
-                }
+                    .lets-go,
+                    .selectionner {
+                        padding: 0.3em 0.9em;
+                        text-transform: uppercase;
+                        font-size: 0.65em;
+                        border-radius: 2em;
+                        display: flex;
+                        align-items: center;
 
-                .selectionner {
-                    color: #869ab8;
-                    background-color: #f9fafd;
-                }
-
-                .lets-go {
-                    color: #ffa227;
-                    background-color: #fff6e8;
-                }
-            }
-        }
-    }
-
-    .completed {
-        position: relative;
-
-        &::after {
-            content: "";
-            position: absolute;
-            top: 39%;
-            right: -1em;
-            width: 2em;
-            height: 2em;
-            background: linear-gradient(
-                90deg,
-                #ffc250,
-                #ffb049 50%,
-                #fc9c2e 100%
-            );
-            border-radius: 50%;
-            color: white;
-            font-family: "Feather" !important;
-            font-style: normal;
-            font-weight: normal;
-            font-variant: normal;
-            text-transform: none;
-            line-height: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0.3rem 0.5rem rgb(102 113 143 / 31%);
-        }
-
-        > * {
-            opacity: 0.5;
-        }
-    }
-
-    .worksheet-details {
-        flex: 4;
-        position: relative;
-        background-color: #f1f4f8;
-        padding: 1.5em 2.5em;
-        padding-right: 2em;
-
-        h1 {
-            margin-bottom: 0.7em;
-            width: 75%;
-        }
-
-        .actions-btns {
-            display: flex;
-            position: absolute;
-            top: 1em;
-            right: 1.6em;
-        }
-
-        .vs-card-content.type-3 .vs-card {
-            .specs {
-                display: flex;
-                justify-content: space-between;
-                margin-top: 0.7em;
-
-                > div {
-                    h5 {
-                        font-size: 0.75rem;
-                        color: #ffab2c;
-                        margin-bottom: 0;
+                        span {
+                            margin-top: 0.15em;
+                        }
 
                         i {
-                            margin-right: 0.5em;
+                            margin-left: 0.3em;
+                            margin-top: -0.05em;
+                            font-size: 1.15em;
+                        }
+                    }
+
+                    .selectionner {
+                        color: #869ab8;
+                        background-color: #f9fafd;
+                    }
+
+                    .lets-go {
+                        color: #ffa227;
+                        background-color: #fff6e8;
+                    }
+                }
+            }
+        }
+
+        .completed {
+            position: relative;
+
+            &::after {
+                content: "";
+                position: absolute;
+                top: 39%;
+                right: -1em;
+                width: 2em;
+                height: 2em;
+                background: linear-gradient(
+                    90deg,
+                    #ffc250,
+                    #ffb049 50%,
+                    #fc9c2e 100%
+                );
+                border-radius: 50%;
+                color: white;
+                font-family: "Feather" !important;
+                font-style: normal;
+                font-weight: normal;
+                font-variant: normal;
+                text-transform: none;
+                line-height: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 0.3rem 0.5rem rgb(102 113 143 / 31%);
+            }
+
+            > * {
+                opacity: 0.5;
+            }
+        }
+
+        .worksheet-details {
+            flex: 4;
+            position: relative;
+            background-color: #f1f4f8;
+            padding: 1.5em 2.5em;
+            padding-right: 2em;
+            border-radius: 0 1em 1em 0;
+
+            h1 {
+                margin-bottom: 0.7em;
+                width: 75%;
+            }
+
+            .actions-btns {
+                display: flex;
+                position: absolute;
+                top: 1em;
+                right: 1.6em;
+            }
+
+            .vs-card-content.type-3 .vs-card {
+                .specs {
+                    display: flex;
+                    justify-content: space-between;
+                    margin-top: 0.7em;
+
+                    > div {
+                        h5 {
+                            font-size: 0.75rem;
+                            color: #ffab2c;
+                            margin-bottom: 0;
+
+                            i {
+                                margin-right: 0.5em;
+                            }
                         }
                     }
                 }
@@ -1480,6 +1580,10 @@ export default {
                         min-width: 100%;
                         min-height: 100%;
                     }
+                }
+
+                & .frame :first-child {
+                    z-index: 100;
                 }
 
                 & .frame :last-child {
@@ -1718,5 +1822,27 @@ export default {
     margin-right: 0.15em;
     margin-left: 0.13em;
     color: #b4cce0;
+}
+
+.no-worksheet {
+    text-align: center;
+    background-color: #ffffff;
+    padding: 2.5em 2em;
+    border: 1px solid #d9e2ef;
+    border-radius: 0.9em;
+    color: #a0b3d0;
+    font-size: 0.8em;
+    width: 100%;
+    margin-top: 1.5em;
+    justify-content: center;
+    align-items: center;
+
+    i {
+        opacity: 0.4;
+        position: relative;
+        top: 1px;
+        font-size: 1.1em;
+        left: -3px;
+    }
 }
 </style>

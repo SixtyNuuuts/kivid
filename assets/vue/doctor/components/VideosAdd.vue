@@ -166,8 +166,9 @@
             <div class="buttons">
                 <vs-button
                     @click="validVideosSelection()"
+                    :loading="btnLoadingValidVideosSelection"
                     :class="{
-                        disabled: false,
+                        disabled: btnLoadingValidVideosSelection,
                     }"
                     ><i class="fe fe-check-circle"></i>Valider la
                     selection</vs-button
@@ -212,6 +213,7 @@ export default {
             modalViewVideo: false,
             selectedViewVideo: false,
             loadingVideosList: false,
+            btnLoadingValidVideosSelection: false,
         };
     },
     computed: {
@@ -250,12 +252,17 @@ export default {
             this.selectedVideos.splice(this.selectedVideos.indexOf(video), 1);
         },
         validVideosSelection() {
+            this.btnLoadingValidVideosSelection = true;
             this.$emit("videos-selection", this.selectedVideos);
 
             this.filter = "";
             this.selectedTags = [];
             this.selectedVideos = [];
             this.modalAddVideo = false;
+
+            setTimeout(() => {
+                this.btnLoadingValidVideosSelection = false;
+            }, 1000);
         },
         getPage(data, page, maxItems) {
             return f.getPage(data, page, maxItems);

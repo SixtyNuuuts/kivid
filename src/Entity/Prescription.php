@@ -36,7 +36,7 @@ class Prescription
     private $doctor;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Worksheet::class, inversedBy="prescriptions")
+     * @ORM\ManyToOne(targetEntity=Worksheet::class, inversedBy="prescriptions", cascade={"remove"})
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"prescription_read", "patient_read", "exercise_stats_read"})
      */

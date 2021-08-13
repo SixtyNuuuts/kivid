@@ -154,9 +154,7 @@
                             ></youtube>
                         </template>
                         <template #text>
-                            <p>
-                                {{ exercise.video.description }}
-                            </p>
+                            <p v-html="exercise.video.description"></p>
 
                             <div class="inputs-line first">
                                 <vs-input
@@ -306,6 +304,7 @@
                     :loading="btnLoadingValidCreateWorksheet"
                     primary
                     transparent
+                    :class="{ disabled: btnLoadingValidCreateWorksheet }"
                 >
                     Confirmer
                 </vs-button>
@@ -341,6 +340,7 @@
                     :loading="btnLoadingValidEditWorksheetTemplate"
                     primary
                     transparent
+                    :class="{ disabled: btnLoadingValidEditWorksheetTemplate }"
                 >
                     Confirmer
                 </vs-button>
@@ -368,7 +368,13 @@
                 >
                     Annuler
                 </vs-button>
-                <vs-button @click="validRemoveExercise" danger transparent>
+                <vs-button
+                    @click="validRemoveExercise"
+                    :loading="btnLoadingValidRemoveExercise"
+                    danger
+                    transparent
+                    :class="{ disabled: btnLoadingValidRemoveExercise }"
+                >
                     Confirmer
                 </vs-button>
             </div>
@@ -423,6 +429,7 @@ export default {
             csrfTokenRemoveExerciseFromWorksheet: null,
             btnLoadingValidEditWorksheetTemplate: false,
             modalConfirmEditWorksheetTemplate: false,
+            btnLoadingValidRemoveExercise: false,
         };
     },
     computed: {
@@ -534,6 +541,8 @@ export default {
                 !this.modalConfirmCreateWorksheet);
         },
         validCreateWorksheet() {
+            this.btnLoadingValidCreateWorksheet = true;
+
             this.axios
                 .post(`/kine/${this.doctor.id}/create/worksheet`, {
                     _token: this.csrfTokenCreateWorksheet,
@@ -618,6 +627,8 @@ export default {
                 !this.modalConfirmEditWorksheetTemplate);
         },
         validEditWorksheetTemplate() {
+            this.btnLoadingValidEditWorksheetTemplate = true;
+
             this.axios
                 .post(`/kine/${this.doctor.id}/edit/worksheet-template`, {
                     _token: this.csrfTokenEditWorksheetTemplate,
@@ -706,6 +717,8 @@ export default {
                 !this.modalConfirmRemoveExercise);
         },
         validRemoveExercise() {
+            this.btnLoadingValidRemoveExercise = true;
+
             if (!this.removeExerciseDetails.id || "creation" === this.action) {
                 this.exercisesSelected.splice(
                     this.exercisesSelected.indexOf(this.removeExerciseDetails),
@@ -716,6 +729,7 @@ export default {
                     (e, i) => (e.position = i)
                 );
 
+                this.btnLoadingValidRemoveExercise = false;
                 this.modalConfirmRemoveExercise = false;
             } else {
                 this.axios
@@ -741,6 +755,7 @@ export default {
                             (e, i) => (e.position = i)
                         );
 
+                        this.btnLoadingValidRemoveExercise = false;
                         this.modalConfirmRemoveExercise = false;
                     })
                     .catch((error) => {
@@ -755,6 +770,7 @@ export default {
                             "<i class='fe fe-alert-circle'></i>"
                         );
 
+                        this.btnLoadingValidRemoveExercise = false;
                         this.modalConfirmRemoveExercise = false;
                     });
             }

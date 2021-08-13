@@ -253,6 +253,7 @@
                     :loading="btnLoadingValidRemovePatient"
                     danger
                     transparent
+                    :class="{ disabled: btnLoadingValidRemovePatient }"
                 >
                     Confirmer
                 </vs-button>

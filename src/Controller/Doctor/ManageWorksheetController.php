@@ -301,21 +301,7 @@ class ManageWorksheetController extends AbstractController
                              ->setWorksheet($worksheet)
                 ;
 
-                for (
-                    $execution = 1; $execution <= $worksheet->getDuration()
-                                                * $worksheet->getPerWeek()
-                                                * $worksheet->getPerDay(); $execution++
-                ) {
-                    $worksheetSession = new WorksheetSession();
-                    $worksheetSession->setPrescription($prescription);
-                    $worksheetSession->setExecOrder($execution);
-
-                    foreach ($worksheet->getExercises() as $exercise) {
-                        $this->generateExerciseStatsInit($exercise, $worksheetSession);
-                    }
-
-                    $this->em->persist($worksheetSession);
-                }
+                $this->generateWorksheetSessions($worksheet, $prescription);
 
                 $this->em->persist($prescription);
 
@@ -351,11 +337,16 @@ class ManageWorksheetController extends AbstractController
                 $prescription = $this->prescriptionRepository->findOneBy(
                     ['patient' => $patient, 'worksheet' => $worksheet]
                 );
-                $worksheetSession = $this->worksheetSessionRepository->findBy(['prescription' => $prescription]);
 
-                foreach ($worksheet->getExercises() as $exercise) {
-                    $this->generateExerciseStatsInit($exercise, $worksheetSession[0]);
+                $worksheetSessions = $this->worksheetSessionRepository->findBy(['prescription' => $prescription]);
+
+                foreach ($worksheetSessions as $worksheetSession) {
+                    $this->em->remove($worksheetSession);
                 }
+
+                $this->em->flush();
+
+                $this->generateWorksheetSessions($worksheet, $prescription);
 
                 $this->em->flush();
 
@@ -457,6 +448,25 @@ class ManageWorksheetController extends AbstractController
 
                 $this->em->persist($exerciseStatInit);
             }
+        }
+    }
+
+    private function generateWorksheetSessions(Worksheet $worksheet, Prescription $prescription): void
+    {
+        for (
+            $execution = 1; $execution <= $worksheet->getDuration()
+                                        * $worksheet->getPerWeek()
+                                        * $worksheet->getPerDay(); $execution++
+        ) {
+            $worksheetSession = new WorksheetSession();
+            $worksheetSession->setPrescription($prescription);
+            $worksheetSession->setExecOrder($execution);
+
+            foreach ($worksheet->getExercises() as $exercise) {
+                $this->generateExerciseStatsInit($exercise, $worksheetSession);
+            }
+
+            $this->em->persist($worksheetSession);
         }
     }
 }

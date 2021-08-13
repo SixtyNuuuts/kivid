@@ -347,6 +347,9 @@
                     :loading="btnLoadingValidRemoveWorksheetTemplate"
                     danger
                     transparent
+                    :class="{
+                        disabled: btnLoadingValidRemoveWorksheetTemplate,
+                    }"
                 >
                     Confirmer
                 </vs-button>

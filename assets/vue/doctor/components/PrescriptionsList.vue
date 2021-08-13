@@ -215,6 +215,7 @@
                     :loading="btnLoadingValidRemovePrescription"
                     danger
                     transparent
+                    :class="{ disabled: btnLoadingValidRemovePrescription }"
                 >
                     Confirmer
                 </vs-button>

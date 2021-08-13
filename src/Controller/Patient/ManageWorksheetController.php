@@ -127,18 +127,15 @@ class ManageWorksheetController extends AbstractController
 
             if ($this->isCsrfTokenValid('start_worksheet_session' . $patient->getId(), $data->_token)) {
                 $worksheet = $this->worksheetRepository->findOneBy(['id' => $data->worksheetId]);
-                $worksheetSession = $this->worksheetSessionRepository->findOneBy(['id' => $data->worksheetSessionId]);
 
                 foreach ($worksheet->getExercises() as $exercise) {
                     $exercise->setIsCompleted(false);
                 }
 
-                $worksheetSession->setIsInProgress(true);
-
                 $this->em->flush();
 
                 return $this->json(
-                    $worksheetSession,
+                    'exercices reset',
                     200,
                     [],
                     ['groups' => 'prescription_read']
@@ -161,7 +158,6 @@ class ManageWorksheetController extends AbstractController
             $data = json_decode($request->getContent());
 
             if ($this->isCsrfTokenValid('exercise_completed' . $patient->getId(), $data->_token)) {
-                // set Exercise Completed
                 $exercise = $this->exerciseRepository->findOneBy(['id' => $data->exercise_id]);
 
                 $exercise->setIsCompleted(true);
@@ -231,7 +227,6 @@ class ManageWorksheetController extends AbstractController
         if (empty($exercisesNotCompleted)) {
             $worksheetSession = $this->worksheetSessionRepository->findOneBy(['id' => $worksheetSessionsId]);
 
-            $worksheetSession->setIsInProgress(false);
             $worksheetSession->setIsCompleted(true);
 
             $this->em->flush();

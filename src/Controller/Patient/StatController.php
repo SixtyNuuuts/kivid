@@ -75,11 +75,10 @@ class StatController extends AbstractController
             $data = json_decode($request->getContent());
 
             if ($this->isCsrfTokenValid('save_exercise_stat' . $patient->getId(), $data->_token)) {
-                $exercise = $this->exerciseRepository->findOneBy(['id' => $data->exercise_id]);
-
                 $exerciseStat =  $this->exerciseStatRepository->findOneBy([
                     'criterion' => $statCriterion,
-                    'exercise' => $exercise
+                    'exercise' => $data->exercise_id,
+                    'worksheetSession' => $data->worksheet_session_id
                 ]);
 
                 $exerciseStat->setRating($data->exercise_stat_value);

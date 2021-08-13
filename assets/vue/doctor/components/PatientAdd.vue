@@ -252,6 +252,7 @@
                     :loading="btnLoadingValidAddPatient"
                     primary
                     transparent
+                    :class="{ disabled: btnLoadingValidAddPatient }"
                 >
                     Confirmer
                 </vs-button>
@@ -293,6 +294,7 @@
                     :loading="btnLoadingValidCreatePatient"
                     primary
                     transparent
+                    :class="{ disabled: btnLoadingValidCreatePatient }"
                 >
                     Confirmer
                 </vs-button>
