@@ -2,24 +2,27 @@
 
 namespace App\Controller\Doctor;
 
-use App\Entity\Video;
 use App\Entity\Doctor;
 use App\Entity\Patient;
 use App\Entity\Exercise;
 use App\Entity\Worksheet;
+use App\Entity\ExerciseStat;
 use App\Entity\Prescription;
+use App\Entity\WorksheetSession;
 use App\Repository\VideoRepository;
 use App\Repository\PatientRepository;
+use App\Repository\ExerciseRepository;
 use App\Repository\WorksheetRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\ExerciseStatRepository;
 use App\Repository\PrescriptionRepository;
+use App\Repository\WorksheetSessionRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
@@ -27,10 +30,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
  */
 class ManageWorksheetController extends AbstractController
 {
-    private $worksheetRepository;
     private $patientRepository;
     private $prescriptionRepository;
+    private $worksheetRepository;
+    private $worksheetSessionRepository;
     private $videoRepository;
+    private $exerciseRepository;
+    private $exerciseStatRepository;
     private $mailer;
     private $serializer;
     private $em;
@@ -39,7 +45,10 @@ class ManageWorksheetController extends AbstractController
         PatientRepository $patientRepository,
         PrescriptionRepository $prescriptionRepository,
         WorksheetRepository $worksheetRepository,
+        WorksheetSessionRepository $worksheetSessionRepository,
         VideoRepository $videoRepository,
+        ExerciseRepository $exerciseRepository,
+        ExerciseStatRepository $exerciseStatRepository,
         MailerInterface $mailer,
         SerializerInterface $serializerInterface,
         EntityManagerInterface $em
@@ -47,37 +56,55 @@ class ManageWorksheetController extends AbstractController
         $this->patientRepository = $patientRepository;
         $this->prescriptionRepository = $prescriptionRepository;
         $this->worksheetRepository = $worksheetRepository;
+        $this->worksheetSessionRepository = $worksheetSessionRepository;
         $this->videoRepository = $videoRepository;
+        $this->exerciseRepository = $exerciseRepository;
+        $this->exerciseStatRepository = $exerciseStatRepository;
         $this->mailer = $mailer;
         $this->serializer = $serializerInterface;
         $this->em = $em;
     }
 
     /**
-     * @Route("/{id}/fiches/{list}/{patientForPrescription}", name="app_doctor_worksheets", methods={"GET"})
+     * @Route("/{id}/fiches/{listType}/{patientId}", name="app_doctor_worksheets", methods={"GET"})
      */
     public function worksheetList(
         Doctor $doctor,
-        string $list = 'prescriptions',
-        Patient $patientForPrescription = null
+        string $listType = 'prescriptions',
+        int $patientId = null
     ): Response {
+        $patientForPrescription =
+            $patientId ?
+                $this->patientRepository->findOneBy(['id' => $patientId])
+            : null;
+
         return $this->render('doctor/worksheets_list.html.twig', [
-            'list' => $list,
+            'listType' => $listType,
             'patientForPrescription' => $patientForPrescription,
             'doctor' => $doctor,
         ]);
     }
 
     /**
-     * @Route("/{id}/fiche/{action}/{worksheetTemplate}/{patientForPrescription}",
+     * @Route("/{id}/fiche/{action}/{worksheetTemplateId}/{patientId}",
      * name="app_doctor_worksheet_creation", methods={"GET"})
      */
     public function worksheetCreation(
         Doctor $doctor,
         string $action,
-        Worksheet $worksheetTemplate = null,
-        Patient $patientForPrescription = null
+        int $worksheetTemplateId = null,
+        int $patientId = null
     ): Response {
+        $worksheetTemplate =
+        $worksheetTemplateId ?
+            $this->worksheetRepository->findOneBy(['id' => $worksheetTemplateId])
+        : null;
+
+        $patientForPrescription =
+        $patientId ?
+            $this->patientRepository->findOneBy(['id' => $patientId])
+        : null;
+
         return $this->render('doctor/create_worksheet_page.html.twig', [
             'doctor' => $doctor,
             'action' => $action,
@@ -97,24 +124,16 @@ class ManageWorksheetController extends AbstractController
             if ($this->isCsrfTokenValid('create_worksheet' . $doctor->getId(), $data->_token)) {
                 $worksheet = new Worksheet();
                 $worksheet->setTitle($data->title)
-                  ->setDescription($data->description)
-                  ->setPartOfBody($data->partOfBody)
-                  ->setIsTemplate($data->isTemplate)
-                  ->setDoctor($doctor);
+                          ->setDescription($data->description)
+                          ->setPartOfBody($data->partOfBody)
+                          ->setDuration($data->duration)
+                          ->setPerWeek($data->perWeek)
+                          ->setPerDay($data->perDay)
+                          ->setIsTemplate($data->isTemplate)
+                          ->setPrescriber($doctor);
 
                 foreach ($data->exercises as $dataExercise) {
-                    $exercise = new Exercise();
-                    $exercise->setNumberOfRepetitions($dataExercise->numberOfRepetitions)
-                     ->setNumberOfSeries($dataExercise->numberOfSeries)
-                     ->setOption($dataExercise->option)
-                     ->setPosition($dataExercise->position);
-
-                    $video = $this->videoRepository->findOneById($dataExercise->video->id);
-                    $exercise->setVideo($video);
-
-                    $worksheet->addExercise($exercise);
-
-                    $this->em->persist($exercise);
+                    $this->generateExercise($dataExercise, $worksheet);
                 }
 
                 $this->em->persist($worksheet);
@@ -151,27 +170,24 @@ class ManageWorksheetController extends AbstractController
                 $worksheet = $this->worksheetRepository->findOneBy(['id' => $data->worksheetId]);
 
                 $worksheet->setTitle($data->title)
-                  ->setDescription($data->description)
-                  ->setPartOfBody($data->partOfBody);
-
-
-                foreach ($worksheet->getExercises() as $exercise) {
-                    $worksheet->removeExercise($exercise);
-                }
+                          ->setDescription($data->description)
+                          ->setPartOfBody($data->partOfBody)
+                          ->setDuration($data->duration)
+                          ->setPerWeek($data->perWeek)
+                          ->setPerDay($data->perDay)
+                ;
 
                 foreach ($data->exercises as $dataExercise) {
-                    $exercise = new Exercise();
-                    $exercise->setNumberOfRepetitions($dataExercise->numberOfRepetitions)
-                     ->setNumberOfSeries($dataExercise->numberOfSeries)
-                     ->setOption($dataExercise->option)
-                     ->setPosition($dataExercise->position);
-
-                    $video = $this->videoRepository->findOneById($dataExercise->video->id);
-                    $exercise->setVideo($video);
-
-                    $worksheet->addExercise($exercise);
-
-                    $this->em->persist($exercise);
+                    if ($dataExercise->id) {
+                        $exercise = $this->exerciseRepository->findOneBy(['id' => $dataExercise->id]);
+                        $exercise->setNumberOfRepetitions($dataExercise->numberOfRepetitions)
+                                 ->setNumberOfSeries($dataExercise->numberOfSeries)
+                                 ->setOption($dataExercise->option)
+                                 ->setPosition($dataExercise->position);
+                    }
+                    if (null === $dataExercise->id) {
+                        $this->generateExercise($dataExercise, $worksheet);
+                    }
                 }
 
                 $this->em->flush();
@@ -200,7 +216,7 @@ class ManageWorksheetController extends AbstractController
             if ($this->isCsrfTokenValid('remove_worksheet_template' . $doctor->getId(), $data->_token)) {
                 $worksheetTemplate = $this->worksheetRepository->findOneBy(['id' => $data->worksheetTemplate_id]);
 
-                if ($worksheetTemplate->getDoctor() === $doctor) {
+                if ($worksheetTemplate->getPrescriber() === $doctor) {
                     $this->em->remove($worksheetTemplate);
 
                     $this->em->flush();
@@ -215,6 +231,53 @@ class ManageWorksheetController extends AbstractController
 
         return $this->json(
             'Nous n\'avons pas pu supprimer le modèle de fiche, veuillez réessayer ultérieurement.',
+            500,
+        );
+    }
+
+    /**
+     * @Route("/{id}/remove/exercise-from-worksheet", name="app_doctor_remove_exercise_from_worksheet",
+     * methods={"POST"})
+     */
+    public function removeExerciseFromWorksheet(Request $request, Doctor $doctor): JsonResponse
+    {
+        if ($request->isMethod('post')) {
+            $data = json_decode($request->getContent());
+
+            if ($this->isCsrfTokenValid('remove_exercise_from_worksheet' . $doctor->getId(), $data->_token)) {
+                $worksheet = $this->worksheetRepository->findOneBy(['id' => $data->worksheet_id]);
+                $exercise = $this->exerciseRepository->findOneBy(['id' => $data->exercise_id]);
+                $exerciseStats = $this->exerciseStatRepository->findBy(['exercise' => $exercise]);
+
+                if ($worksheet->getPrescriber() === $doctor) {
+                    $worksheet->removeExercise($exercise);
+
+                    $allStatsNull = true;
+
+                    foreach ($exerciseStats as $exerciseStat) {
+                        if (null === $exerciseStat->getRating()) {
+                            $this->em->remove($exerciseStat);
+                        } else {
+                            $allStatsNull = false;
+                        }
+                    }
+
+                    if ($allStatsNull) {
+                        $this->em->remove($exercise);
+                    }
+
+                    $this->em->flush();
+
+                    return $this->json(
+                        'L\'exercice a bien été retiré de la fiche',
+                        200,
+                    );
+                }
+            }
+        }
+
+        return $this->json(
+            'Nous n\'avons pas pu retirer l\'exercice de la fiche, veuillez réessayer ultérieurement.',
             500,
         );
     }
@@ -238,6 +301,8 @@ class ManageWorksheetController extends AbstractController
                              ->setWorksheet($worksheet)
                 ;
 
+                $this->generateWorksheetSessions($worksheet, $prescription);
+
                 $this->em->persist($prescription);
 
                 $this->em->flush();
@@ -254,6 +319,50 @@ class ManageWorksheetController extends AbstractController
 
         return $this->json(
             'Nous n\'avons pas pu prescrire la fiche, veuillez réessayer ultérieurement.',
+            500,
+        );
+    }
+
+    /**
+     * @Route("/{id}/edit/prescription", name="app_doctor_edit_prescription", methods={"POST"})
+     */
+    public function editPrescription(Request $request, Doctor $doctor): JsonResponse
+    {
+        if ($request->isMethod('post')) {
+            $data = json_decode($request->getContent());
+
+            if ($this->isCsrfTokenValid('edit_prescription' . $doctor->getId(), $data->_token)) {
+                $patient = $this->patientRepository->findOneBy(['id' => $data->patientId]);
+                $worksheet = $this->worksheetRepository->findOneBy(['id' => $data->worksheetId]);
+                $prescription = $this->prescriptionRepository->findOneBy(
+                    ['patient' => $patient, 'worksheet' => $worksheet]
+                );
+
+                $worksheetSessions = $this->worksheetSessionRepository->findBy(['prescription' => $prescription]);
+
+                foreach ($worksheetSessions as $worksheetSession) {
+                    $this->em->remove($worksheetSession);
+                }
+
+                $this->em->flush();
+
+                $this->generateWorksheetSessions($worksheet, $prescription);
+
+                $this->em->flush();
+
+                $gender = $patient->getGender() ? ("male" === $patient->getGender() ? 'M.' : 'Mme') : '';
+
+                return $this->json(
+                    "La fiche <strong>{$worksheet->getTitle()}</strong> prescrite à 
+                    <strong>{$gender} {$patient->getFirstname()} {$patient->getLastname()}</strong> 
+                    a bien été modifiée.",
+                    200,
+                );
+            }
+        }
+
+        return $this->json(
+            'Nous n\'avons pas pu modifier la prescription, veuillez réessayer ultérieurement.',
             500,
         );
     }
@@ -299,5 +408,65 @@ class ManageWorksheetController extends AbstractController
             [],
             ['groups' => 'prescription_read']
         );
+    }
+
+    private function generateExercise(object $dataExercise, Worksheet $worksheet): void
+    {
+        $exercise = new Exercise();
+
+        $exercise->setNumberOfRepetitions($dataExercise->numberOfRepetitions)
+                 ->setNumberOfSeries($dataExercise->numberOfSeries)
+                 ->setOption($dataExercise->option)
+                 ->setPosition($dataExercise->position);
+
+        $video = $this->videoRepository->findOneById($dataExercise->video->id);
+
+        $exercise->setVideo($video);
+
+        $worksheet->addExercise($exercise);
+
+        $this->em->persist($exercise);
+    }
+
+    private function generateExerciseStatsInit(Exercise $exercise, WorksheetSession $worksheetSession): void
+    {
+        $exerciseStatsCriterions = [
+            "sensitivity",
+            "technical",
+            "difficulty",
+        ];
+
+        $exerciseStatsExists = $this->exerciseStatRepository->findBy(['exercise' => $exercise]);
+
+        if (!$exerciseStatsExists) {
+            foreach ($exerciseStatsCriterions as $criterion) {
+                $exerciseStatInit = new ExerciseStat();
+
+                $exerciseStatInit->setCriterion($criterion)
+                                 ->setExercise($exercise)
+                                 ->setWorksheetSession($worksheetSession);
+
+                $this->em->persist($exerciseStatInit);
+            }
+        }
+    }
+
+    private function generateWorksheetSessions(Worksheet $worksheet, Prescription $prescription): void
+    {
+        for (
+            $execution = 1; $execution <= $worksheet->getDuration()
+                                        * $worksheet->getPerWeek()
+                                        * $worksheet->getPerDay(); $execution++
+        ) {
+            $worksheetSession = new WorksheetSession();
+            $worksheetSession->setPrescription($prescription);
+            $worksheetSession->setExecOrder($execution);
+
+            foreach ($worksheet->getExercises() as $exercise) {
+                $this->generateExerciseStatsInit($exercise, $worksheetSession);
+            }
+
+            $this->em->persist($worksheetSession);
+        }
     }
 }

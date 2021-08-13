@@ -2,7 +2,7 @@
     <div id="vue">
         <VideosAdd @videos-selection="addVideosSelection" />
         <div>
-            <div class="vs-input-content new-worksheet-inputs">
+            <div class="vs-input-content new-worksheet-input worksheet-title">
                 <input
                     v-model="worksheet.title"
                     id="title"
@@ -17,17 +17,19 @@
             <vs-select
                 label-placeholder="Partie du corps"
                 v-model="worksheet.partOfBody"
+                class="select-part-of-body"
             >
                 <vs-option label="Genou" value="Genou">Genou</vs-option>
                 <vs-option label="Cheville" value="Cheville"
                     >Cheville</vs-option
                 >
+                <vs-option label="Coude" value="Coude">Coude</vs-option>
                 <vs-option label="Hanche" value="Hanche">Hanche</vs-option>
                 <vs-option label="Epaule " value="Epaule">Epaule</vs-option>
                 <vs-option label="Dos" value="Dos">Dos</vs-option>
             </vs-select>
 
-            <div class="vs-input-content new-worksheet-inputs">
+            <div class="vs-input-content new-worksheet-input">
                 <textarea
                     v-model="worksheet.description"
                     id="description"
@@ -38,6 +40,93 @@
                     for="description"
                     >Description de la fiche</label
                 >
+            </div>
+
+            <div class="durations-inputs">
+                <div class="vs-input-content new-worksheet-input">
+                    <input
+                        v-model="worksheet.duration"
+                        id="duration"
+                        type="number"
+                        class="vs-input vs-input--has-icon form-control"
+                        @keyup="
+                            checkAndFormatDurationValue(
+                                worksheet.duration,
+                                $event
+                            )
+                        "
+                        @blur="
+                            checkIfDurationValueIsEmptyOrNull(
+                                worksheet.duration,
+                                $event
+                            )
+                        "
+                        min="1"
+                        max="52"
+                    />
+                    <label
+                        :class="{ focus: worksheet.duration != '' }"
+                        for="duration"
+                    >
+                        Durée de la prescription en semaine (max: 52)
+                    </label>
+                </div>
+                <div class="vs-input-content new-worksheet-input">
+                    <input
+                        v-model="worksheet.perWeek"
+                        id="perWeek"
+                        type="number"
+                        class="vs-input vs-input--has-icon form-control"
+                        @keyup="
+                            checkAndFormatDurationValue(
+                                worksheet.perWeek,
+                                $event
+                            )
+                        "
+                        @blur="
+                            checkIfDurationValueIsEmptyOrNull(
+                                worksheet.perWeek,
+                                $event
+                            )
+                        "
+                        min="1"
+                        max="7"
+                    />
+                    <label
+                        :class="{ focus: worksheet.perWeek != '' }"
+                        for="perWeek"
+                    >
+                        Nb de fois par semaine (max: 7)
+                    </label>
+                </div>
+                <div class="vs-input-content new-worksheet-input">
+                    <input
+                        v-model="worksheet.perDay"
+                        id="perDay"
+                        type="number"
+                        class="vs-input vs-input--has-icon form-control"
+                        @keyup="
+                            checkAndFormatDurationValue(
+                                worksheet.perDay,
+                                $event
+                            )
+                        "
+                        @blur="
+                            checkIfDurationValueIsEmptyOrNull(
+                                worksheet.perDay,
+                                $event
+                            )
+                        "
+                        min="1"
+                        max="3"
+                    />
+                    <label
+                        :class="{ focus: worksheet.perDay != '' }"
+                        for="perDay"
+                    >
+                        Nb de fois par jour (max: 3)
+                    </label>
+                </div>
             </div>
 
             <transition name="fade">
@@ -65,9 +154,7 @@
                             ></youtube>
                         </template>
                         <template #text>
-                            <p>
-                                {{ exercise.video.description }}
-                            </p>
+                            <p v-html="exercise.video.description"></p>
 
                             <div class="inputs-line first">
                                 <vs-input
@@ -162,13 +249,13 @@
                     size="large"
                     @click="createWorksheet()"
                     ><i class="fe fe-file-plus"></i>
-                    Créer la fiche
+                    Créer le modèle
                 </vs-button>
                 <vs-button
                     v-if="action === 'edition'"
                     size="large"
                     @click="editWorksheetTemplate()"
-                    ><i class="fe fe-edit-3"></i>
+                    ><i class="fe fe-check-circle"></i>
                     Valider les modifications
                 </vs-button>
             </div>
@@ -217,6 +304,7 @@
                     :loading="btnLoadingValidCreateWorksheet"
                     primary
                     transparent
+                    :class="{ disabled: btnLoadingValidCreateWorksheet }"
                 >
                     Confirmer
                 </vs-button>
@@ -252,6 +340,7 @@
                     :loading="btnLoadingValidEditWorksheetTemplate"
                     primary
                     transparent
+                    :class="{ disabled: btnLoadingValidEditWorksheetTemplate }"
                 >
                     Confirmer
                 </vs-button>
@@ -279,7 +368,13 @@
                 >
                     Annuler
                 </vs-button>
-                <vs-button @click="validRemoveExercise" danger transparent>
+                <vs-button
+                    @click="validRemoveExercise"
+                    :loading="btnLoadingValidRemoveExercise"
+                    danger
+                    transparent
+                    :class="{ disabled: btnLoadingValidRemoveExercise }"
+                >
                     Confirmer
                 </vs-button>
             </div>
@@ -305,6 +400,14 @@ export default {
                 title: "",
                 partOfBody: "",
                 description: "",
+                duration: 1,
+                perDay: 1,
+                perWeek: 1,
+            },
+            maxDuration: {
+                duration: 52,
+                perDay: 3,
+                perWeek: 7,
             },
             timeout: false,
             playerVars: {
@@ -322,13 +425,16 @@ export default {
             btnLoadingValidCreateWorksheet: false,
             csrfTokenCreatePrescription: null,
             csrfTokenEditWorksheetTemplate: null,
+            csrfTokenEditPrescription: null,
+            csrfTokenRemoveExerciseFromWorksheet: null,
             btnLoadingValidEditWorksheetTemplate: false,
             modalConfirmEditWorksheetTemplate: false,
+            btnLoadingValidRemoveExercise: false,
         };
     },
     computed: {
         getExercisesSelected() {
-            return f.sortedByPosition(this.exercisesSelected);
+            return f.sortByPosition(this.exercisesSelected);
         },
     },
     methods: {
@@ -336,6 +442,7 @@ export default {
             const is = this.exercisesSelected.length;
             videos.forEach((v, i) => {
                 const exercise = {
+                    id: null,
                     position: is + i,
                     numberOfRepetitions: 0,
                     numberOfSeries: 0,
@@ -376,17 +483,75 @@ export default {
                 }
             }
         },
+        checkAndFormatDurationValue(durationValue, event) {
+            const durationType = event.target.id;
+
+            if (!("Backspace" === event.code)) {
+                if ("duration" === durationType) {
+                    if (durationValue < 1) {
+                        this.worksheet.duration = 1;
+                    }
+                    if (durationValue > this.maxDuration.duration) {
+                        this.worksheet.duration = this.maxDuration.duration;
+                    }
+                }
+
+                if ("perDay" === durationType) {
+                    if (durationValue < 1) {
+                        this.worksheet.perDay = 1;
+                    }
+                    if (durationValue > this.maxDuration.perDay) {
+                        this.worksheet.perDay = this.maxDuration.perDay;
+                    }
+                }
+
+                if ("perWeek" === durationType) {
+                    if (durationValue < 1) {
+                        this.worksheet.perWeek = 1;
+                    }
+                    if (durationValue > this.maxDuration.perWeek) {
+                        this.worksheet.perWeek = this.maxDuration.perWeek;
+                    }
+                }
+            }
+        },
+        checkIfDurationValueIsEmptyOrNull(durationValue, event) {
+            const durationType = event.target.id;
+
+            if ("duration" === durationType) {
+                if ("" === durationValue || null === durationValue) {
+                    this.worksheet.duration = 1;
+                }
+            }
+
+            if ("perDay" === durationType) {
+                if ("" === durationValue || null === durationValue) {
+                    this.worksheet.perDay = 1;
+                }
+            }
+
+            if ("perWeek" === durationType) {
+                if ("" === durationValue || null === durationValue) {
+                    this.worksheet.perWeek = 1;
+                }
+            }
+        },
         createWorksheet() {
             return (this.modalConfirmCreateWorksheet =
                 !this.modalConfirmCreateWorksheet);
         },
         validCreateWorksheet() {
+            this.btnLoadingValidCreateWorksheet = true;
+
             this.axios
                 .post(`/kine/${this.doctor.id}/create/worksheet`, {
                     _token: this.csrfTokenCreateWorksheet,
                     title: this.worksheet.title,
                     description: this.worksheet.description,
                     partOfBody: this.worksheet.partOfBody,
+                    duration: this.worksheet.duration,
+                    perWeek: this.worksheet.perWeek,
+                    perDay: this.worksheet.perDay,
                     exercises: this.getExercisesSelected,
                     isTemplate: this.patientForPrescription ? false : true,
                 })
@@ -440,9 +605,12 @@ export default {
                         } else {
                             document.location.href = `/kine/${this.doctor.id}/fiches/modeles`;
                         }
-                    }, 3000);
+                    }, 2000);
                 })
                 .catch((error) => {
+                    if (error.response) {
+                        console.log(error.response.data.detail);
+                    }
                     this.openNotification(
                         `<strong>Création de la fiche : Erreur</strong>`,
                         `${error.response.data}`,
@@ -459,6 +627,8 @@ export default {
                 !this.modalConfirmEditWorksheetTemplate);
         },
         validEditWorksheetTemplate() {
+            this.btnLoadingValidEditWorksheetTemplate = true;
+
             this.axios
                 .post(`/kine/${this.doctor.id}/edit/worksheet-template`, {
                     _token: this.csrfTokenEditWorksheetTemplate,
@@ -466,6 +636,9 @@ export default {
                     title: this.worksheet.title,
                     description: this.worksheet.description,
                     partOfBody: this.worksheet.partOfBody,
+                    duration: this.worksheet.duration,
+                    perWeek: this.worksheet.perWeek,
+                    perDay: this.worksheet.perDay,
                     exercises: this.getExercisesSelected,
                 })
                 .then((response) => {
@@ -476,14 +649,56 @@ export default {
                         "success",
                         "<i class='fe fe-check-circle'></i>"
                     );
-                    this.btnLoadingValidEditWorksheetTemplate = false;
-                    this.modalConfirmEditWorksheetTemplate = false;
 
-                    setTimeout(() => {
-                        document.location.href = `/kine/${this.doctor.id}/fiches/modeles`;
-                    }, 3000);
+                    if (this.patientForPrescription) {
+                        this.axios
+                            .post(`/kine/${this.doctor.id}/edit/prescription`, {
+                                _token: this.csrfTokenEditPrescription,
+                                patientId: this.patientForPrescription.id,
+                                worksheetId: this.worksheet.id,
+                            })
+                            .then((response) => {
+                                this.openNotification(
+                                    `<strong>Edition de la prescription</strong>`,
+                                    `${response.data}`,
+                                    "top-right",
+                                    "success",
+                                    "<i class='fe fe-check-circle'></i>"
+                                );
+                                this.btnLoadingValidEditWorksheetTemplate = false;
+                                this.modalConfirmEditWorksheetTemplate = false;
+
+                                setTimeout(() => {
+                                    document.location.href = `/kine/${this.doctor.id}/fiches/prescriptions`;
+                                }, 2000);
+                            })
+                            .catch((error) => {
+                                if (error.response) {
+                                    console.log(error.response.data.detail);
+                                }
+                                this.openNotification(
+                                    `<strong>Edition de la prescription : Erreur</strong>`,
+                                    `${error.response.data}`,
+                                    "top-right",
+                                    "danger",
+                                    "<i class='fe fe-alert-circle'></i>"
+                                );
+                                this.btnLoadingValidEditWorksheetTemplate = false;
+                                this.modalConfirmEditWorksheetTemplate = false;
+                            });
+                    } else {
+                        this.btnLoadingValidEditWorksheetTemplate = false;
+                        this.modalConfirmEditWorksheetTemplate = false;
+
+                        setTimeout(() => {
+                            document.location.href = `/kine/${this.doctor.id}/fiches/modeles`;
+                        }, 2000);
+                    }
                 })
                 .catch((error) => {
+                    if (error.response) {
+                        console.log(error.response.data.detail);
+                    }
                     this.openNotification(
                         `<strong>Edition de la fiche : Erreur</strong>`,
                         `${error.response.data}`,
@@ -502,16 +717,63 @@ export default {
                 !this.modalConfirmRemoveExercise);
         },
         validRemoveExercise() {
-            this.exercisesSelected.splice(
-                this.exercisesSelected.indexOf(this.removeExerciseDetails),
-                1
-            );
+            this.btnLoadingValidRemoveExercise = true;
 
-            f.sortedByPosition(this.exercisesSelected).map(
-                (e, i) => (e.position = i)
-            );
+            if (!this.removeExerciseDetails.id || "creation" === this.action) {
+                this.exercisesSelected.splice(
+                    this.exercisesSelected.indexOf(this.removeExerciseDetails),
+                    1
+                );
 
-            this.modalConfirmRemoveExercise = false;
+                f.sortByPosition(this.exercisesSelected).map(
+                    (e, i) => (e.position = i)
+                );
+
+                this.btnLoadingValidRemoveExercise = false;
+                this.modalConfirmRemoveExercise = false;
+            } else {
+                this.axios
+                    .post(
+                        `/kine/${this.doctor.id}/remove/exercise-from-worksheet`,
+                        {
+                            _token: this.csrfTokenRemoveExerciseFromWorksheet,
+                            worksheet_id: this.worksheet.id,
+                            exercise_id: this.removeExerciseDetails.id,
+                        }
+                    )
+                    .then((response) => {
+                        console.log(response.data);
+
+                        this.exercisesSelected.splice(
+                            this.exercisesSelected.indexOf(
+                                this.removeExerciseDetails
+                            ),
+                            1
+                        );
+
+                        f.sortByPosition(this.exercisesSelected).map(
+                            (e, i) => (e.position = i)
+                        );
+
+                        this.btnLoadingValidRemoveExercise = false;
+                        this.modalConfirmRemoveExercise = false;
+                    })
+                    .catch((error) => {
+                        if (error.response) {
+                            console.log(error.response.data.detail);
+                        }
+                        this.openNotification(
+                            `<strong>Erreur lors de la suppression de l'exercice</strong>`,
+                            `${error.response.data}`,
+                            "top-right",
+                            "danger",
+                            "<i class='fe fe-alert-circle'></i>"
+                        );
+
+                        this.btnLoadingValidRemoveExercise = false;
+                        this.modalConfirmRemoveExercise = false;
+                    });
+            }
         },
         openNotification(title, text, position, color, icon) {
             this.$vs.notification({
@@ -535,6 +797,9 @@ export default {
         this.csrfTokenCreatePrescription = data.csrfTokenCreatePrescription;
         this.csrfTokenEditWorksheetTemplate =
             data.csrfTokenEditWorksheetTemplate;
+        this.csrfTokenEditPrescription = data.csrfTokenEditPrescription;
+        this.csrfTokenRemoveExerciseFromWorksheet =
+            data.csrfTokenRemoveExerciseFromWorksheet;
 
         if (data.worksheetTemplate) {
             this.worksheet = {
@@ -542,6 +807,9 @@ export default {
                 title: data.worksheetTemplate.title,
                 partOfBody: data.worksheetTemplate.partOfBody,
                 description: data.worksheetTemplate.description,
+                duration: data.worksheetTemplate.duration,
+                perDay: data.worksheetTemplate.perDay,
+                perWeek: data.worksheetTemplate.perWeek,
             };
 
             this.exercisesSelected = data.worksheetTemplate.exercises;
@@ -588,12 +856,45 @@ $primary: #ffab2c;
     font-size: 0.75em !important;
 }
 
-.new-worksheet-inputs {
+.durations-inputs {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+
+    .new-worksheet-input {
+        flex: 1;
+        margin: 0.7em 0;
+
+        &:first-child {
+            min-width: 100%;
+        }
+
+        @media (min-width: 720px) {
+            &:nth-child(2) {
+                margin-right: 1em;
+            }
+        }
+    }
+
+    @media (min-width: 720px) {
+        flex-direction: row;
+    }
+}
+
+.select-part-of-body {
+    margin: 1.8em 0;
+}
+
+.new-worksheet-input {
     font-size: 1.2em;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     margin: 1.3em 0;
+
+    &.worksheet-title {
+        margin-top: 2.1em;
+    }
 
     label {
         position: absolute;
@@ -629,6 +930,10 @@ $primary: #ffab2c;
         top: -1.5em;
         left: 1.4em;
         font-size: 0.65em;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 93%;
     }
 
     input:focus,

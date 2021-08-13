@@ -17,38 +17,39 @@ class Exercise
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"worksheet_read"})
+     * @Groups({"worksheet_read", "prescription_read"})
      */
     private $id;
 
     /**
      * @ORM\ManyToOne(targetEntity=Video::class, inversedBy="exercises")
-     * @Groups({"worksheet_read"})
+     * @Groups({"worksheet_read", "prescription_read"})
      */
     private $video;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"worksheet_read"})
+     * @Groups({"worksheet_read", "prescription_read"})
      */
     private $numberOfRepetitions;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"worksheet_read"})
+     * @Groups({"worksheet_read", "prescription_read"})
      */
     private $numberOfSeries;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"worksheet_read"})
+     * @Groups({"worksheet_read", "prescription_read"})
      */
     private $option;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Worksheet::class, mappedBy="exercises")
+     * @ORM\ManyToOne(targetEntity=Worksheet::class, inversedBy="exercises")
      */
-    private $worksheets;
+    private $worksheet;
+
 
     /**
      * @ORM\Column(type="datetime_immutable")
@@ -57,14 +58,27 @@ class Exercise
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"worksheet_read"})
+     * @Groups({"worksheet_read", "prescription_read"})
      */
     private $position;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"prescription_read"})
+     */
+    private $isCompleted;
+
+    /**
+     * @ORM\OneToMany(targetEntity=ExerciseStat::class, mappedBy="exercise")
+     * @Groups({"prescription_read"})
+     */
+    private $exerciseStats;
 
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
-        $this->worksheets = new ArrayCollection();
+        $this->isCompleted = false;
+        $this->exerciseStats = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -120,33 +134,6 @@ class Exercise
         return $this;
     }
 
-    /**
-     * @return Collection|Worksheet[]
-     */
-    public function getWorksheets(): Collection
-    {
-        return $this->worksheets;
-    }
-
-    public function addWorksheet(Worksheet $worksheet): self
-    {
-        if (!$this->worksheets->contains($worksheet)) {
-            $this->worksheets[] = $worksheet;
-            $worksheet->addExercise($this);
-        }
-
-        return $this;
-    }
-
-    public function removeWorksheet(Worksheet $worksheet): self
-    {
-        if ($this->worksheets->removeElement($worksheet)) {
-            $worksheet->removeExercise($this);
-        }
-
-        return $this;
-    }
-
     public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
@@ -174,5 +161,59 @@ class Exercise
     public function __toString()
     {
         return $this->getVideo()->getName();
+    }
+
+    public function getIsCompleted(): ?bool
+    {
+        return $this->isCompleted;
+    }
+
+    public function setIsCompleted(?bool $isCompleted): self
+    {
+        $this->isCompleted = $isCompleted;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ExerciseStat[]
+     */
+    public function getExerciseStats(): Collection
+    {
+        return $this->exerciseStats;
+    }
+
+    public function addExerciseStat(ExerciseStat $exerciseStat): self
+    {
+        if (!$this->exerciseStats->contains($exerciseStat)) {
+            $this->exerciseStats[] = $exerciseStat;
+            $exerciseStat->setExercise($this);
+        }
+
+        return $this;
+    }
+
+    public function removeExerciseStat(ExerciseStat $exerciseStat): self
+    {
+        if ($this->exerciseStats->removeElement($exerciseStat)) {
+            // set the owning side to null (unless already changed)
+            if ($exerciseStat->getExercise() === $this) {
+                $exerciseStat->setExercise(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getWorksheet(): ?Worksheet
+    {
+        return $this->worksheet;
+    }
+
+    public function setWorksheet(?Worksheet $worksheet): self
+    {
+        $this->worksheet = $worksheet;
+
+        return $this;
     }
 }

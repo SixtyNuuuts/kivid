@@ -69,7 +69,7 @@ export default {
         const data = JSON.parse(document.getElementById("vueData").innerHTML);
 
         this.doctor = data.doctor;
-        this.activeTab = data.list;
+        this.activeTab = data.listType;
         this.patientForPrescription = data.patientForPrescription;
         this.csrfTokenRemovePrescription = data.csrfTokenRemovePrescription;
         this.csrfTokenRemoveWorksheetTemplate =
@@ -92,7 +92,7 @@ export default {
                     this.loadingDoctorPrescriptionsList = null;
                 })
                 .catch((error) => {
-                    console.log(error);
+                    console.log(error.response);
                     this.loadingDoctorPrescriptionsList.close();
                     this.loadingDoctorPrescriptionsList = null;
                 });
@@ -115,7 +115,10 @@ export default {
                 this.loadingWorksheetTemplatesList = null;
             })
             .catch((error) => {
-                console.log(error);
+                if (error.response) {
+                    console.log(error.response.data.detail);
+                }
+
                 this.loadingWorksheetTemplatesList.close();
                 this.loadingWorksheetTemplatesList = null;
             });

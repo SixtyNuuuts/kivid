@@ -11,7 +11,7 @@
         <vs-dialog
             width="1000px"
             v-model="modalAddVideo"
-            :loading="!videosList.length"
+            :loading="loadingVideosList"
         >
             <h2><i class="fe fe-youtube"></i>Selectionner des vidéos</h2>
 
@@ -38,8 +38,9 @@
                         deselectLabel=""
                     >
                         <span slot="noResult">
-                            Aucun mot-clé ne correspond à ce texte
+                            Aucun mot-clé ne correspond à ce texte.
                         </span>
+                        <span slot="noOptions"> Aucun mot-clé. </span>
                         <template slot="singleLabel" slot-scope="props">
                             <span>{{ props.option }}</span>
                         </template>
@@ -165,8 +166,9 @@
             <div class="buttons">
                 <vs-button
                     @click="validVideosSelection()"
+                    :loading="btnLoadingValidVideosSelection"
                     :class="{
-                        disabled: false,
+                        disabled: btnLoadingValidVideosSelection,
                     }"
                     ><i class="fe fe-check-circle"></i>Valider la
                     selection</vs-button
@@ -210,6 +212,8 @@ export default {
             modalAddVideo: false,
             modalViewVideo: false,
             selectedViewVideo: false,
+            loadingVideosList: false,
+            btnLoadingValidVideosSelection: false,
         };
     },
     computed: {
@@ -248,12 +252,17 @@ export default {
             this.selectedVideos.splice(this.selectedVideos.indexOf(video), 1);
         },
         validVideosSelection() {
+            this.btnLoadingValidVideosSelection = true;
             this.$emit("videos-selection", this.selectedVideos);
 
             this.filter = "";
             this.selectedTags = [];
             this.selectedVideos = [];
             this.modalAddVideo = false;
+
+            setTimeout(() => {
+                this.btnLoadingValidVideosSelection = false;
+            }, 1000);
         },
         getPage(data, page, maxItems) {
             return f.getPage(data, page, maxItems);
@@ -304,13 +313,20 @@ export default {
         },
     },
     created() {
+        this.loadingVideosList = true;
+
         this.axios
             .get(`/get/videos`)
             .then((response) => {
+                this.loadingVideosList = false;
                 this.videosList = response.data;
             })
             .catch((error) => {
-                console.log(error);
+                if (error.response) {
+                    console.log(error.response.data.detail);
+                }
+
+                this.loadingVideosList = false;
             });
 
         window.addEventListener("resize", this.resizeWindowEventHandler);

@@ -17,19 +17,19 @@ class Worksheet
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"worksheet_read", "prescription_read"})
+     * @Groups({"worksheet_read", "prescription_read", "exercise_stats_read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"worksheet_read", "prescription_read", "patient_read"})
+     * @Groups({"worksheet_read", "prescription_read", "patient_read", "exercise_stats_read"})
      */
     private $title;
 
     /**
      * @ORM\Column(type="text", nullable=true)
-     * @Groups({"worksheet_read"})
+     * @Groups({"worksheet_read", "prescription_read"})
      */
     private $description;
 
@@ -40,8 +40,8 @@ class Worksheet
     private $createdAt;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Exercise::class, inversedBy="worksheets")
-     * @Groups({"worksheet_read"})
+     * @ORM\OneToMany(targetEntity=Exercise::class, mappedBy="worksheet", orphanRemoval=true)
+     * @Groups({"worksheet_read", "prescription_read"})
      */
     private $exercises;
 
@@ -54,13 +54,31 @@ class Worksheet
      * @ORM\ManyToOne(targetEntity=Doctor::class, inversedBy="worksheets")
      * @Groups({"worksheet_read"})
      */
-    private $doctor;
+    private $prescriber;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"worksheet_read"})
+     * @Groups({"worksheet_read", "prescription_read", "exercise_stats_read"})
      */
     private $partOfBody;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"worksheet_read", "prescription_read"})
+     */
+    private $duration;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"worksheet_read", "prescription_read"})
+     */
+    private $perDay;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"worksheet_read", "prescription_read"})
+     */
+    private $perWeek;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
@@ -72,6 +90,10 @@ class Worksheet
         $this->createdAt = new \DateTimeImmutable();
         $this->exercises = new ArrayCollection();
         $this->prescriptions = new ArrayCollection();
+        $this->isTemplate = false;
+        $this->duration = 1;
+        $this->perDay = 1;
+        $this->perWeek = 1;
     }
 
     public function getId(): ?int
@@ -127,6 +149,7 @@ class Worksheet
     {
         if (!$this->exercises->contains($exercise)) {
             $this->exercises[] = $exercise;
+            $exercise->setWorksheet($this);
         }
 
         return $this;
@@ -134,7 +157,12 @@ class Worksheet
 
     public function removeExercise(Exercise $exercise): self
     {
-        $this->exercises->removeElement($exercise);
+        if ($this->exercises->removeElement($exercise)) {
+            // set the owning side to null (unless already changed)
+            if ($exercise->getWorksheet() === $this) {
+                $exercise->setWorksheet(null);
+            }
+        }
 
         return $this;
     }
@@ -174,14 +202,14 @@ class Worksheet
         return $this->getTitle();
     }
 
-    public function getDoctor(): ?Doctor
+    public function getPrescriber(): ?Doctor
     {
-        return $this->doctor;
+        return $this->prescriber;
     }
 
-    public function setDoctor(?Doctor $doctor): self
+    public function setPrescriber(?Doctor $prescriber): self
     {
-        $this->doctor = $doctor;
+        $this->prescriber = $prescriber;
 
         return $this;
     }
@@ -206,6 +234,42 @@ class Worksheet
     public function setPartOfBody(?string $partOfBody): self
     {
         $this->partOfBody = $partOfBody;
+
+        return $this;
+    }
+
+    public function getDuration(): ?int
+    {
+        return $this->duration;
+    }
+
+    public function setDuration(?int $duration): self
+    {
+        $this->duration = $duration;
+
+        return $this;
+    }
+
+    public function getPerDay(): ?int
+    {
+        return $this->perDay;
+    }
+
+    public function setPerDay(?int $perDay): self
+    {
+        $this->perDay = $perDay;
+
+        return $this;
+    }
+
+    public function getPerWeek(): ?int
+    {
+        return $this->perWeek;
+    }
+
+    public function setPerWeek(?int $perWeek): self
+    {
+        $this->perWeek = $perWeek;
 
         return $this;
     }

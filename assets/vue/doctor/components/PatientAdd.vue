@@ -11,7 +11,7 @@
         <vs-dialog
             width="450px"
             v-model="modalAddPatient"
-            :loading="!allPatientsList.length"
+            :loading="$parent.loadingAllPatientsList"
         >
             <h2><i class="fe fe-search"></i>Rechercher un patient</h2>
 
@@ -212,7 +212,8 @@
                             validationMessage.email ||
                             !createPatientDetails.email,
                     }"
-                    ><i class="fe fe-user-plus"></i>Créer</vs-button
+                >
+                    <i class="fe fe-file-plus"></i>Créer et Prescrire</vs-button
                 >
             </div>
         </vs-dialog>
@@ -251,6 +252,7 @@
                     :loading="btnLoadingValidAddPatient"
                     primary
                     transparent
+                    :class="{ disabled: btnLoadingValidAddPatient }"
                 >
                     Confirmer
                 </vs-button>
@@ -292,6 +294,7 @@
                     :loading="btnLoadingValidCreatePatient"
                     primary
                     transparent
+                    :class="{ disabled: btnLoadingValidCreatePatient }"
                 >
                     Confirmer
                 </vs-button>

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h2><i class="fe fe-search"></i>Rechercher un patient</h2>
+        <h2><i class="fe fe-search"></i>Rechercher dans vos patients</h2>
 
         <div v-click-outside="resetSearch" class="search">
             <vs-input
@@ -182,6 +182,7 @@
                     :loading="btnLoadingValidCreatePatient"
                     primary
                     transparent
+                    :class="{ disabled: btnLoadingValidCreatePatient }"
                 >
                     Confirmer
                 </vs-button>

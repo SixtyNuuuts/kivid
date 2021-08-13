@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\PrescriptionRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -29,15 +31,22 @@ class Prescription
     /**
      * @ORM\ManyToOne(targetEntity=Doctor::class, inversedBy="prescriptions")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"prescription_read"})
      */
     private $doctor;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Worksheet::class, inversedBy="prescriptions")
+     * @ORM\ManyToOne(targetEntity=Worksheet::class, inversedBy="prescriptions", cascade={"remove"})
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"prescription_read", "patient_read"})
+     * @Groups({"prescription_read", "patient_read", "exercise_stats_read"})
      */
     private $worksheet;
+
+    /**
+     * @ORM\OneToMany(targetEntity=WorksheetSession::class, mappedBy="prescription", orphanRemoval=true)
+     * @Groups({"prescription_read", "exercise_stats_read"})
+     */
+    private $worksheetSessions;
 
     /**
      * @ORM\Column(type="datetime_immutable")
@@ -45,16 +54,10 @@ class Prescription
      */
     private $createdAt;
 
-    /**
-     * @ORM\Column(type="integer")
-     * @Groups({"prescription_read"})
-     */
-    private $progression;
-
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
-        $this->progression = 0;
+        $this->worksheetSessions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -110,14 +113,32 @@ class Prescription
         return $this;
     }
 
-    public function getProgression(): ?int
+    /**
+     * @return Collection|WorksheetSession[]
+     */
+    public function getWorksheetSessions(): Collection
     {
-        return $this->progression;
+        return $this->worksheetSessions;
     }
 
-    public function setProgression(int $progression): self
+    public function addWorksheetSession(WorksheetSession $worksheetSession): self
     {
-        $this->progression = $progression;
+        if (!$this->worksheetSessions->contains($worksheetSession)) {
+            $this->worksheetSessions[] = $worksheetSession;
+            $worksheetSession->setPrescription($this);
+        }
+
+        return $this;
+    }
+
+    public function removeWorksheetSession(WorksheetSession $worksheetSession): self
+    {
+        if ($this->worksheetSessions->removeElement($worksheetSession)) {
+            // set the owning side to null (unless already changed)
+            if ($worksheetSession->getPrescription() === $this) {
+                $worksheetSession->setPrescription(null);
+            }
+        }
 
         return $this;
     }

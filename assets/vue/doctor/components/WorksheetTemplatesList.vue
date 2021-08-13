@@ -13,7 +13,7 @@
                 <vs-input
                     v-model="filter"
                     primary
-                    placeholder="Filtrer par fiche et/ou créateur"
+                    placeholder="Filtrer par fiche et/ou créateur du modèle"
                     @keyup="page = 1"
                 >
                     <template #icon>
@@ -93,7 +93,7 @@
                             worksheetTemplatesListArray = sortData(
                                 $event,
                                 worksheetTemplatesListArray,
-                                'doctor.lastname'
+                                'prescriber.lastname'
                             )
                         "
                     >
@@ -130,20 +130,21 @@
                         </div>
                     </vs-td>
                     <vs-td>
-                        <div v-if="worksheetTemplate.doctor" class="user">
+                        <div v-if="worksheetTemplate.prescriber" class="user">
                             <vs-avatar circle size="25">
                                 <img
                                     :src="
-                                        worksheetTemplate.doctor.avatarUrl
-                                            ? worksheetTemplate.doctor.avatarUrl
+                                        worksheetTemplate.prescriber.avatarUrl
+                                            ? worksheetTemplate.prescriber
+                                                  .avatarUrl
                                             : '/img/avatar-default.svg'
                                     "
                                     alt="avatar du kiné"
                                 />
                             </vs-avatar>
                             <p>
-                                {{ worksheetTemplate.doctor.lastname }}
-                                {{ worksheetTemplate.doctor.firstname }}
+                                {{ worksheetTemplate.prescriber.lastname }}
+                                {{ worksheetTemplate.prescriber.firstname }}
                             </p>
                         </div>
                     </vs-td>
@@ -188,7 +189,7 @@
                                     class="btn-edit"
                                     :class="{
                                         disabled:
-                                            worksheetTemplate.doctor.id !=
+                                            worksheetTemplate.prescriber.id !=
                                             doctor.id,
                                     }"
                                     @click="
@@ -199,7 +200,8 @@
                                 </vs-button>
                                 <template
                                     v-if="
-                                        worksheetTemplate.doctor.id != doctor.id
+                                        worksheetTemplate.prescriber.id !=
+                                        doctor.id
                                     "
                                     #tooltip
                                 >
@@ -214,7 +216,7 @@
                                     class="btn-remove"
                                     :class="{
                                         disabled:
-                                            worksheetTemplate.doctor.id !=
+                                            worksheetTemplate.prescriber.id !=
                                             doctor.id,
                                     }"
                                     @click="
@@ -227,7 +229,8 @@
                                 </vs-button>
                                 <template
                                     v-if="
-                                        worksheetTemplate.doctor.id != doctor.id
+                                        worksheetTemplate.prescriber.id !=
+                                        doctor.id
                                     "
                                     #tooltip
                                 >
@@ -253,7 +256,7 @@
                 />
             </template>
             <template #notFound>
-                <div v-if="worksheetTemplatesListArray.length">
+                <div v-if="!$parent.loadingWorksheetTemplatesList">
                     <div v-if="filter">
                         <i class="fe fe-file-minus"></i>
                         Aucun modèle de fiche n'a été trouvé avec "<strong>{{
@@ -272,7 +275,7 @@
         <vs-dialog
             width="450px"
             v-model="modalPrescription"
-            :loading="!doctorPatientsList.length"
+            :loading="loadingDoctorPatientsList"
         >
             <PrescriptionForPatientSearch
                 :doctor="doctor"
@@ -292,7 +295,7 @@
             />
         </vs-dialog>
         <vs-dialog v-model="modalCreateWorksheetTemplateChoice">
-            <div class="buttons">
+            <div class="buttons template-choice">
                 <vs-button
                     @click="createWorksheetTemplateFromScratch"
                     :loading="btnLoadingValidCreateWorksheetTemplateFromScratch"
@@ -302,8 +305,9 @@
                     <i class="fe fe-file-plus"></i>
                     Créer de zéro
                 </vs-button>
-                <span>ou</span>
+                <span v-if="worksheetTemplatesListArray.length">ou</span>
                 <vs-button
+                    v-if="worksheetTemplatesListArray.length"
                     @click="createWorksheetTemplateFromTemplate"
                     primary
                     size="large"
@@ -343,6 +347,9 @@
                     :loading="btnLoadingValidRemoveWorksheetTemplate"
                     danger
                     transparent
+                    :class="{
+                        disabled: btnLoadingValidRemoveWorksheetTemplate,
+                    }"
                 >
                     Confirmer
                 </vs-button>
@@ -390,6 +397,7 @@ export default {
             modalPrescription: false,
             prescriptiedWorksheetTemplate: {},
             doctorPatientsList: [],
+            loadingDoctorPatientsList: false,
             modalCreateWorksheetFromTemplate: false,
         };
     },
@@ -475,6 +483,9 @@ export default {
                     this.modalConfirmRemoveWorksheetTemplate = false;
                 })
                 .catch((error) => {
+                    if (error.response) {
+                        console.log(error.response.data.detail);
+                    }
                     this.openNotification(
                         `<strong>Suppression du modèle : Erreur</strong>`,
                         `${error.response.data}`,
@@ -526,7 +537,7 @@ export default {
 
             if (this.onlyMyTemplates) {
                 worksheetTemplatesFiltered = worksheetTemplatesFiltered.filter(
-                    (w) => w.doctor.id === this.doctor.id
+                    (w) => w.prescriber.id === this.doctor.id
                 );
             }
 
@@ -540,13 +551,20 @@ export default {
         },
     },
     created() {
+        this.loadingDoctorPatientsList = true;
+
         this.axios
             .get(`/kine/${this.doctor.id}/get/patients/`)
             .then((response) => {
                 this.doctorPatientsList = response.data;
+                this.loadingDoctorPatientsList = false;
             })
             .catch((error) => {
-                console.log(error);
+                if (error.response) {
+                    console.log(error.response.data.detail);
+                }
+
+                this.loadingDoctorPatientsList = false;
             });
     },
 };
@@ -656,6 +674,16 @@ export default {
         margin-bottom: 0;
         margin-left: 0.6em;
         flex: 1;
+    }
+}
+
+.buttons.template-choice {
+    > button {
+        i {
+            margin-right: 3px;
+            margin-top: -1px;
+            font-size: 0.95em;
+        }
     }
 }
 </style>

@@ -9,7 +9,9 @@ use App\Entity\Doctor;
 use App\Entity\Patient;
 use App\Entity\Exercise;
 use App\Entity\Worksheet;
+use App\Entity\ExerciseStat;
 use App\Entity\Prescription;
+use App\Entity\WorksheetSession;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -43,6 +45,7 @@ class AppFixtures extends Fixture
 
         $partOfBody = [
             'Genou',
+            'Coude',
             'Cheville',
             'Hanche',
             'Epaule',
@@ -62,6 +65,12 @@ class AppFixtures extends Fixture
             'female',
         ];
 
+        $exerciseStatsCriterions = [
+            "sensitivity",
+            "technical",
+            "difficulty",
+        ];
+
         foreach ($tagNames as $tagName) {
             $tag = new Tag();
             $tag->setName($tagName);
@@ -69,32 +78,35 @@ class AppFixtures extends Fixture
             $tagArray[] = $tag;
         };
 
-        $worksheetTempleateCreator = new Doctor();
+        $worksheetTempleatePrescriber = new Doctor();
 
-        $worksheetTempleateCreator->setEmail("kine-creator@mail.com")
-            ->setPassword($this->passwordHasher->hashPassword($worksheetTempleateCreator, 'password'))
+        $worksheetTempleatePrescriber->setEmail("kine-prescriber@mail.com")
+            ->setPassword($this->passwordHasher->hashPassword($worksheetTempleatePrescriber, 'password'))
             ->setFirstname($faker->firstName)
             ->setLastname($faker->lastName)
             ->setGender($gender[array_rand($gender)]);
         ;
 
-        $manager->persist($worksheetTempleateCreator);
+        $manager->persist($worksheetTempleatePrescriber);
 
-        for ($wi = 0; $wi < rand(130, 150); $wi++) {
+        for ($wi = 0; $wi < rand(5, 15); $wi++) {
             $worksheetTemplate = new Worksheet();
 
             $worksheetTemplate
-                ->setTitle($faker->sentence(4))
+                ->setTitle($tagNames[array_rand($tagNames)])
                 ->setDescription($faker->text())
                 ->setCreatedAt(\DateTimeImmutable::createFromMutable($faker->dateTimeBetween()))
-                ->setDoctor($worksheetTempleateCreator)
+                ->setPrescriber($worksheetTempleatePrescriber)
                 ->setPartOfBody($partOfBody[array_rand($partOfBody)])
                 ->setIsTemplate(true)
+                ->setDuration(1)
+                ->setPerDay(1)
+                ->setPerWeek(1)
             ;
 
             $randomTags = array_rand($tagArray, rand(2, 3));
 
-            for ($ei = 0; $ei < rand(5, 8); $ei++) {
+            for ($ei = 0; $ei < rand(3, 5); $ei++) {
                 $exercise = new Exercise();
 
                 $exercise->setNumberOfRepetitions(rand(8, 15))
@@ -129,7 +141,7 @@ class AppFixtures extends Fixture
             $manager->persist($worksheetTemplate);
         }
 
-        for ($ki = 0; $ki < rand(4, 8); $ki++) {
+        for ($ki = 0; $ki < 1; $ki++) {
             $kine = new Doctor();
 
             $kine->setCity($faker->city)
@@ -143,17 +155,21 @@ class AppFixtures extends Fixture
                 ->setGender($gender[array_rand($gender)]);
             ;
 
-            for ($wii = 0; $wii < 5; $wii++) {
+            for ($wii = 0; $wii < rand(1, 2); $wii++) {
                 $kine->addWorksheet($worksheetTemplateArray[array_rand($worksheetTemplateArray)]);
             }
 
             $manager->persist($kine);
 
-            for ($pi = 0; $pi < rand(10, 50); $pi++) {
+            for ($pi = 0; $pi < 1; $pi++) {
                 $patient = new Patient();
 
                 $patient
-                    ->setBirthdate(\DateTimeImmutable::createFromMutable($faker->dateTimeBetween('-90 years', 'now')))
+                    ->setBirthdate(
+                        \DateTimeImmutable::createFromMutable(
+                            $faker->dateTimeBetween('-90 years', '-20 years')
+                        )
+                    )
                     ->setDoctor($kine)
                     ->setEmail("patient{$ki}{$pi}@mail.com")
                     ->setPassword($this->passwordHasher->hashPassword($kine, 'password'))
@@ -163,17 +179,76 @@ class AppFixtures extends Fixture
                     ->setGender($gender[array_rand($gender)]);
                 ;
 
-                $prescription = new Prescription();
-                $prescription->setPatient($patient)
-                    ->setDoctor($kine)
-                    ->setWorksheet($worksheetTemplateArray[array_rand($worksheetTemplateArray)]->setIsTemplate(false))
-                    ->setProgression(rand(5, 100))
-                    ->setCreatedAt(\DateTimeImmutable::createFromMutable($faker->dateTimeBetween()))
-                ;
+                for ($wpi = 0; $wpi < 2; $wpi++) {
+                    $worksheetForPrescription = $worksheetTemplateArray[array_rand($worksheetTemplateArray)];
+                    $worksheetForPrescription->setDuration(26)
+                                             ->setPerDay(1)
+                                             ->setPerWeek(7)
+                    ;
 
-                $patient->addPrescription($prescription);
+                    $prescription = new Prescription();
+                    $prescription->setPatient($patient)
+                        ->setDoctor($kine)
+                        ->setWorksheet($worksheetForPrescription)
+                        ->setCreatedAt(\DateTimeImmutable::createFromMutable($faker->dateTimeBetween()))
+                    ;
 
-                $manager->persist($prescription);
+                    $randomStartDate = $faker->dateTimeBetween('-6 months', '-6 months');
+
+                    for (
+                        $ws = 1; $ws <= $worksheetForPrescription->getDuration()
+                                      * $worksheetForPrescription->getPerWeek()
+                                      * $worksheetForPrescription->getPerDay(); $ws++
+                    ) {
+                        $worksheetSession = new WorksheetSession();
+
+                        $worksheetSession->setPrescription($prescription)
+                                         ->setExecOrder($ws);
+
+                        $worksheetSession->setIsCompleted(true);
+
+                        $worksheetSessionStartDate = new \DateTime();
+                        $worksheetSessionStartDate->setTimestamp($randomStartDate->getTimestamp());
+                        $worksheetSession->setStartAt($worksheetSessionStartDate);
+
+                        $inc = 1;
+
+                        foreach ($worksheetForPrescription->getExercises() as $exercise) {
+                            $exercise->setIsCompleted(true);
+
+                            foreach ($exerciseStatsCriterions as $criterion) {
+                                $exerciseStat = new ExerciseStat();
+
+                                $exerciseStat->setCriterion($criterion)
+                                             ->setExercise($exercise)
+                                             ->setWorksheetSession($worksheetSession);
+
+                                $exerciseStatDoneDate = new \DateTime();
+
+                                $exerciseStatDoneDate->setTimestamp(
+                                    $randomStartDate->getTimestamp() + $inc++ * 150
+                                );
+
+                                $exerciseStat->setDoneAt($exerciseStatDoneDate)
+                                             ->setRating(rand(1, 5));
+
+                                $manager->persist($exerciseStat);
+                            }
+                        }
+
+                        $worksheetSessionDeadlineDate = new \DateTime();
+                        $worksheetSessionDeadlineDate->setTimestamp($randomStartDate->getTimestamp() + 86400);
+                        $worksheetSession->setDeadlineAt($worksheetSessionDeadlineDate);
+
+                        $randomStartDate = $worksheetSessionDeadlineDate;
+
+                        $manager->persist($worksheetSession);
+                    }
+
+                    $patient->addPrescription($prescription);
+                    $manager->persist($prescription);
+                }
+
                 $manager->persist($patient);
             }
         }

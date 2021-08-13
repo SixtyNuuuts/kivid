@@ -50,7 +50,7 @@ class Doctor extends User
     private $prescriptions;
 
     /**
-     * @ORM\OneToMany(targetEntity=Worksheet::class, mappedBy="doctor")
+     * @ORM\OneToMany(targetEntity=Worksheet::class, mappedBy="prescriber")
      */
     private $worksheets;
 
@@ -182,7 +182,7 @@ class Doctor extends User
     {
         if (!$this->worksheets->contains($worksheet)) {
             $this->worksheets[] = $worksheet;
-            $worksheet->setDoctor($this);
+            $worksheet->setPrescriber($this);
         }
 
         return $this;
@@ -192,8 +192,8 @@ class Doctor extends User
     {
         if ($this->worksheets->removeElement($worksheet)) {
             // set the owning side to null (unless already changed)
-            if ($worksheet->getDoctor() === $this) {
-                $worksheet->setDoctor(null);
+            if ($worksheet->getPrescriber() === $this) {
+                $worksheet->setPrescriber(null);
             }
         }
 
