@@ -1526,6 +1526,10 @@ export default {
             justify-content: center;
         }
 
+        button {
+            min-height: 2em;
+        }
+
         h2 {
             color: #fab84b;
             margin-top: 0.5em;
