@@ -71,11 +71,6 @@
                     </li>
                     <li class="list-item">
                       <a class="list-link text-reset" href="#!">
-                        Sécurité
-                      </a>
-                    </li>
-                    <li class="list-item">
-                      <a class="list-link text-reset" href="#!">
                         Notifications
                       </a>
                     </li>
@@ -89,7 +84,7 @@
                   <!-- List -->
                   <ul class="card-list list text-gray-700 mb-0">
                     <li class="list-item active">
-                      <a class="list-link text-reset" href="{{ path('app_patient_subscription', {'id':app.user.id})}}">
+                      <a class="list-link text-reset" href="{{ path('app_subscription', {'id':app.user.id})}}">
                         Abonnements <br> et Paiement
                       </a>
                     </li>
@@ -124,9 +119,10 @@
 {% endblock %}
 {% block vueData %}
 	{
-		"patient": {{ patient|serialize('json', {'groups': 'patient_read'})|raw }},
-		"stripePublicKey": {{ stripePublicKey|serialize('json')|raw }},
+    "patient": {{ patient|serialize('json', {'groups': 'patient_read'})|raw }},
+		"stripeSubPlans": {{ stripeSubPlans|serialize('json')|raw }},
   	"status": {{ status|serialize('json')|raw }},
-    "stripeCheckoutSession": {{ stripeCheckoutSession|serialize('json')|raw }}
+    {# "stripeCheckoutSession": {{ stripeCheckoutSession|serialize('json')|raw }}, #}
+    "stripeSubscription": {{ stripeSubscription|serialize('json')|raw }}
 	}
 {% endblock %}

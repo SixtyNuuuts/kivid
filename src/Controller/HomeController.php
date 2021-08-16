@@ -15,4 +15,20 @@ class HomeController extends AbstractController
     {
         return $this->render('home/index.html.twig');
     }
+
+    /**
+     * @Route("/conditions-utilisation", name="app_conditions_utilisation")
+     */
+    public function conditionsUtilisation(): Response
+    {
+        return $this->render('home/conditions-utilisation.html.twig');
+    }
+
+    /**
+     * @Route("/politique-confidentialite", name="app_politique-confidentialite")
+     */
+    public function politiqueConfidentialite(): Response
+    {
+        return $this->render('home/politique-confidentialite.html.twig');
+    }
 }

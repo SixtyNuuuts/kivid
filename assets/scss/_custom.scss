@@ -523,8 +523,24 @@ i[class="fe fe-check-circle"] {
 .user-nav {
     align-items: flex-end;
     .user-status {
-        font-size: 0.7em;
+        font-size: 0.6em;
         font-style: italic;
+        background: #e7ecef;
+        margin-top: 0.4em;
+        padding: 0.2em 0.7em;
+        color: #94a3ba;
+        text-transform: uppercase;
+        border-radius: 0.7em;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        white-space: nowrap;
+        padding-top: 0.4em;
+
+        &.premium {
+            background: linear-gradient(289deg, #fbcc52f5, #ffb049 50%, #ffa71a 100%);
+            color: white;
+        }
     }
     .user-name {
         color: $primary;

@@ -38,10 +38,17 @@ class Patient extends User
      */
     private $lastLoginAt;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Subscription::class, mappedBy="patient", orphanRemoval=true)
+     * @Groups({"patient_read"})
+     */
+    private $subscriptions;
+
     public function __construct()
     {
         parent::__construct(['ROLE_PATIENT']);
         $this->prescriptions = new ArrayCollection();
+        $this->subscriptions = new ArrayCollection();
     }
 
     public function getBirthdate(): ?\DateTimeImmutable
@@ -106,6 +113,36 @@ class Patient extends User
     public function setLastLoginAt(?\DateTimeInterface $lastLoginAt): self
     {
         $this->lastLoginAt = $lastLoginAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Subscription[]
+     */
+    public function getSubscriptions(): Collection
+    {
+        return $this->subscriptions;
+    }
+
+    public function addSubscription(Subscription $subscription): self
+    {
+        if (!$this->subscriptions->contains($subscription)) {
+            $this->subscriptions[] = $subscription;
+            $subscription->setPatient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSubscription(Subscription $subscription): self
+    {
+        if ($this->subscriptions->removeElement($subscription)) {
+            // set the owning side to null (unless already changed)
+            if ($subscription->getPatient() === $this) {
+                $subscription->setPatient(null);
+            }
+        }
 
         return $this;
     }

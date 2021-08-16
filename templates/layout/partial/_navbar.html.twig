@@ -64,9 +64,9 @@
 									{{ app.user.lastname|default('') }}
 								</span>
 								{% if is_granted('ROLE_PATIENT') %}
-									<span class="user-status">Patient</span>
+									<span class="user-status">Membre standard</span>
 								{% elseif is_granted('ROLE_DOCTOR')%}
-									<span class="user-status">kinésithérapeute</span>
+									<span class="user-status">Kinésithérapeute</span>
 								{% elseif is_granted('ROLE_ADMIN')%}
 									<span class="user-status">Admin</span>
 								{% endif %}
