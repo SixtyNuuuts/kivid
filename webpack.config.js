@@ -21,6 +21,7 @@ Encore
      * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
      */
     .addEntry('app', './assets/app.js')
+    .addEntry('navbar', './assets/vue/navbar.js')
     // Doctor
     .addEntry('doctor-my-patients-page', './assets/vue/doctor/my-patients-page.js')
     .addEntry('doctor-my-worksheets-page', './assets/vue/doctor/my-worksheets-page.js')

@@ -54,12 +54,19 @@ class Doctor extends User
      */
     private $worksheets;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Notification::class, mappedBy="doctor")
+     * @Groups({"user_read"})
+     */
+    private $notifications;
+
     public function __construct()
     {
         parent::__construct(['ROLE_DOCTOR']);
         $this->patients = new ArrayCollection();
         $this->prescriptions = new ArrayCollection();
         $this->worksheets = new ArrayCollection();
+        $this->notifications = new ArrayCollection();
     }
 
     public function getDescription(): ?string
@@ -194,6 +201,36 @@ class Doctor extends User
             // set the owning side to null (unless already changed)
             if ($worksheet->getPrescriber() === $this) {
                 $worksheet->setPrescriber(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Notification[]
+     */
+    public function getNotifications(): Collection
+    {
+        return $this->notifications;
+    }
+
+    public function addNotification(Notification $notification): self
+    {
+        if (!$this->notifications->contains($notification)) {
+            $this->notifications[] = $notification;
+            $notification->setDoctor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNotification(Notification $notification): self
+    {
+        if ($this->notifications->removeElement($notification)) {
+            // set the owning side to null (unless already changed)
+            if ($notification->getDoctor() === $this) {
+                $notification->setDoctor(null);
             }
         }
 

@@ -8,9 +8,10 @@ use App\Entity\WorksheetSession;
 use App\Repository\VideoRepository;
 use App\Repository\DoctorRepository;
 use App\Repository\ExerciseRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use App\Repository\PrescriptionRepository;
 use App\Repository\WorksheetRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Notification\NotificationService;
+use App\Repository\PrescriptionRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
 use App\Repository\WorksheetSessionRepository;
@@ -18,6 +19,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
@@ -33,6 +35,7 @@ class ManageWorksheetController extends AbstractController
     private $videoRepository;
     private $mailer;
     private $serializer;
+    private $notificationService;
     private $em;
 
     public function __construct(
@@ -44,6 +47,7 @@ class ManageWorksheetController extends AbstractController
         VideoRepository $videoRepository,
         MailerInterface $mailer,
         SerializerInterface $serializerInterface,
+        NotificationService $notificationService,
         EntityManagerInterface $em
     ) {
         $this->doctorRepository = $doctorRepository;
@@ -54,6 +58,7 @@ class ManageWorksheetController extends AbstractController
         $this->videoRepository = $videoRepository;
         $this->mailer = $mailer;
         $this->serializer = $serializerInterface;
+        $this->notificationService = $notificationService;
         $this->em = $em;
     }
 
@@ -83,8 +88,10 @@ class ManageWorksheetController extends AbstractController
     /**
      * @Route("/{id}/init/worksheet-sessions", name="app_patient_init_worksheet_sessions", methods={"POST"})
      */
-    public function initWorksheetSessions(Request $request, Patient $patient): JsonResponse
-    {
+    public function initWorksheetSessions(
+        Request $request,
+        Patient $patient
+    ): JsonResponse {
         if ($request->isMethod('post')) {
             $data = json_decode($request->getContent());
 
@@ -98,7 +105,7 @@ class ManageWorksheetController extends AbstractController
                     ['execOrder' => 'ASC'],
                 );
 
-                $this->generateSessionDates($worksheet, $worksheetSessions);
+                $this->generateSessionDates($worksheet, $worksheetSessions, $patient);
 
                 $this->em->flush();
 
@@ -185,8 +192,11 @@ class ManageWorksheetController extends AbstractController
         );
     }
 
-    private function generateSessionDates(Worksheet $worksheet, array $worksheetSessions): void
-    {
+    private function generateSessionDates(
+        Worksheet $worksheet,
+        array $worksheetSessions,
+        Patient $patient
+    ): void {
         $executionDuration = (
             (
                 604800 // secondes dans une semaine
@@ -214,6 +224,8 @@ class ManageWorksheetController extends AbstractController
 
             $worksheetPrescriptionStartDate = $worksheetSessionDeadlineDate;
         }
+
+        $this->notificationService->createTimingWorksheetNotification($worksheet, $patient);
     }
 
     private function ifAllExercisesIsCompletedSetWorksheetSessionsCompleted(

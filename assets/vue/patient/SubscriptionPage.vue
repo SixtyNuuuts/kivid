@@ -188,7 +188,12 @@ export default {
 
         if (
             this.stripeSubscription &&
-            !this.stripeSubscription.cancel_at_period_end
+            (!this.stripeSubscription.cancel_at_period_end ||
+                (this.stripeSubscription.cancel_at_period_end &&
+                    new Date() <
+                        new Date(
+                            this.stripeSubscription.current_period_end * 1000
+                        )))
         ) {
             let spanNavbarTopUserStatus =
                 document.querySelector(".user-status");

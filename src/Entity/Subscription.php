@@ -21,7 +21,7 @@ class Subscription
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient_read"})
+     * @Groups({"patient_read", "user_read"})
      */
     private $stripeSubscriptionId;
 
@@ -33,13 +33,13 @@ class Subscription
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"patient_read"})
+     * @Groups({"patient_read", "user_read"})
      */
     private $currentPeriodStart;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"patient_read"})
+     * @Groups({"patient_read", "user_read"})
      */
     private $currentPeriodEnd;
 
@@ -51,7 +51,7 @@ class Subscription
 
     /**
      * @ORM\Column(type="boolean")
-     * @Groups({"patient_read"})
+     * @Groups({"patient_read", "user_read"})
      */
     private $isActive;
 

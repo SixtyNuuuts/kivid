@@ -14,11 +14,12 @@ use App\Repository\PatientRepository;
 use App\Repository\ExerciseRepository;
 use App\Repository\WorksheetRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Notification\NotificationService;
 use App\Repository\ExerciseStatRepository;
 use App\Repository\PrescriptionRepository;
-use App\Repository\WorksheetSessionRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
+use App\Repository\WorksheetSessionRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -39,6 +40,7 @@ class ManageWorksheetController extends AbstractController
     private $exerciseStatRepository;
     private $mailer;
     private $serializer;
+    private $notificationService;
     private $em;
 
     public function __construct(
@@ -51,6 +53,7 @@ class ManageWorksheetController extends AbstractController
         ExerciseStatRepository $exerciseStatRepository,
         MailerInterface $mailer,
         SerializerInterface $serializerInterface,
+        NotificationService $notificationService,
         EntityManagerInterface $em
     ) {
         $this->patientRepository = $patientRepository;
@@ -62,6 +65,7 @@ class ManageWorksheetController extends AbstractController
         $this->exerciseStatRepository = $exerciseStatRepository;
         $this->mailer = $mailer;
         $this->serializer = $serializerInterface;
+        $this->notificationService = $notificationService;
         $this->em = $em;
     }
 
@@ -302,6 +306,8 @@ class ManageWorksheetController extends AbstractController
                 ;
 
                 $this->generateWorksheetSessions($worksheet, $prescription);
+
+                $this->notificationService->createPrescriptionNotification($doctor, $worksheet, $patient);
 
                 $this->em->persist($prescription);
 

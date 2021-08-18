@@ -587,6 +587,10 @@ export default {
                                 );
                             })
                             .catch((error) => {
+                                if (error.response) {
+                                    console.log(error.response.data.detail);
+                                }
+
                                 this.openNotification(
                                     `<strong>Prescription : Erreur</strong>`,
                                     `${error.response.data}`,

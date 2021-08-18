@@ -40,15 +40,21 @@ class Patient extends User
 
     /**
      * @ORM\OneToMany(targetEntity=Subscription::class, mappedBy="patient", orphanRemoval=true)
-     * @Groups({"patient_read"})
+     * @Groups({"patient_read", "user_read"})
      */
     private $subscriptions;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Notification::class, mappedBy="patient")
+     */
+    private $notifications;
 
     public function __construct()
     {
         parent::__construct(['ROLE_PATIENT']);
         $this->prescriptions = new ArrayCollection();
         $this->subscriptions = new ArrayCollection();
+        $this->notifications = new ArrayCollection();
     }
 
     public function getBirthdate(): ?\DateTimeImmutable
@@ -141,6 +147,36 @@ class Patient extends User
             // set the owning side to null (unless already changed)
             if ($subscription->getPatient() === $this) {
                 $subscription->setPatient(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Notification[]
+     */
+    public function getNotifications(): Collection
+    {
+        return $this->notifications;
+    }
+
+    public function addNotification(Notification $notification): self
+    {
+        if (!$this->notifications->contains($notification)) {
+            $this->notifications[] = $notification;
+            $notification->setPatient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNotification(Notification $notification): self
+    {
+        if ($this->notifications->removeElement($notification)) {
+            // set the owning side to null (unless already changed)
+            if ($notification->getPatient() === $this) {
+                $notification->setPatient(null);
             }
         }
 

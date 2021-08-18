@@ -7,6 +7,7 @@ use App\Entity\Patient;
 use Symfony\Component\Mime\Address;
 use App\Repository\PatientRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Notification\NotificationService;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
@@ -31,6 +32,7 @@ class ManagePatientController extends AbstractController
     private $tokenGenerator;
     private $resetPasswordRequestRepository;
     private $resetPasswordCleaner;
+    private $notificationService;
     private $em;
 
     // Le bundle 'ResetPassword' est utilisé dans la génération du mail "création d'un patient" par le kiné,
@@ -41,6 +43,7 @@ class ManagePatientController extends AbstractController
         ResetPasswordRequestRepository $resetPasswordRequestRepository,
         ResetPasswordTokenGenerator $generator,
         ResetPasswordCleaner $cleaner,
+        NotificationService $notificationService,
         EntityManagerInterface $em
     ) {
         $this->patientRepository = $patientRepository;
@@ -48,6 +51,7 @@ class ManagePatientController extends AbstractController
         $this->tokenGenerator = $generator;
         $this->resetPasswordRequestRepository = $resetPasswordRequestRepository;
         $this->resetPasswordCleaner = $cleaner;
+        $this->notificationService = $notificationService;
         $this->em = $em;
     }
 
@@ -123,6 +127,8 @@ class ManagePatientController extends AbstractController
                 $patient = $this->patientRepository->findOneBy(['id' => $data->patient_id]);
 
                 $doctor->addPatient($patient);
+
+                $this->notificationService->addPatientNotification($doctor, $patient);
 
                 $this->em->flush();
 
