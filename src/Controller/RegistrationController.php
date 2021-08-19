@@ -53,6 +53,7 @@ class RegistrationController extends AbstractController
             $user->setPassword(
                 $passwordHasher->hashPassword($user, $data['plainPassword'])
             );
+            $user->setIsVerified(false);
 
             $em->persist($user);
 

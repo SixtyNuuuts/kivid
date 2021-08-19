@@ -2,12 +2,20 @@
     <div>
         <div>
             <h1>Sensibilité</h1>
-            <button @click="changeSensitivityUnitOfTime('day')">Jour</button>
-            <button @click="changeSensitivityUnitOfTime('week')">
-                Semaine
-            </button>
-            <button @click="changeSensitivityUnitOfTime('month')">Mois</button>
-            <button @click="changeSensitivityUnitOfTime('year')">Année</button>
+            <div class="buttons">
+                <vs-button @click="changeSensitivityUnitOfTime('day')"
+                    >Jour</vs-button
+                >
+                <vs-button @click="changeSensitivityUnitOfTime('week')">
+                    Semaine
+                </vs-button>
+                <vs-button @click="changeSensitivityUnitOfTime('month')"
+                    >Mois</vs-button
+                >
+                <vs-button @click="changeSensitivityUnitOfTime('year')"
+                    >Année</vs-button
+                >
+            </div>
 
             <ExerciseStatsLineChart
                 :chartData="sensitivityExerciseStats"
@@ -16,10 +24,20 @@
         </div>
         <div class="mt-5">
             <h1>Technique</h1>
-            <button @click="changeTechnicalUnitOfTime('day')">Jour</button>
-            <button @click="changeTechnicalUnitOfTime('week')">Semaine</button>
-            <button @click="changeTechnicalUnitOfTime('month')">Mois</button>
-            <button @click="changeTechnicalUnitOfTime('year')">Année</button>
+            <div class="buttons">
+                <vs-button @click="changeTechnicalUnitOfTime('day')"
+                    >Jour</vs-button
+                >
+                <vs-button @click="changeTechnicalUnitOfTime('week')"
+                    >Semaine</vs-button
+                >
+                <vs-button @click="changeTechnicalUnitOfTime('month')"
+                    >Mois</vs-button
+                >
+                <vs-button @click="changeTechnicalUnitOfTime('year')"
+                    >Année</vs-button
+                >
+            </div>
 
             <ExerciseStatsLineChart
                 :chartData="technicalExerciseStats"
@@ -28,10 +46,20 @@
         </div>
         <div class="mt-5">
             <h1>Difficultées perçues</h1>
-            <button @click="changeDifficultyUnitOfTime('day')">Jour</button>
-            <button @click="changeDifficultyUnitOfTime('week')">Semaine</button>
-            <button @click="changeDifficultyUnitOfTime('month')">Mois</button>
-            <button @click="changeDifficultyUnitOfTime('year')">Année</button>
+            <div class="buttons">
+                <vs-button @click="changeDifficultyUnitOfTime('day')"
+                    >Jour</vs-button
+                >
+                <vs-button @click="changeDifficultyUnitOfTime('week')"
+                    >Semaine</vs-button
+                >
+                <vs-button @click="changeDifficultyUnitOfTime('month')"
+                    >Mois</vs-button
+                >
+                <vs-button @click="changeDifficultyUnitOfTime('year')"
+                    >Année</vs-button
+                >
+            </div>
 
             <ExerciseStatsLineChart
                 :chartData="difficultyExerciseStats"
@@ -40,10 +68,40 @@
         </div>
         <div class="mt-5">
             <h1>Technique Bar</h1>
-            <button @click="changeTechnicalUnitOfTime('day')">Jour</button>
-            <button @click="changeTechnicalUnitOfTime('week')">Semaine</button>
-            <button @click="changeTechnicalUnitOfTime('month')">Mois</button>
-            <button @click="changeTechnicalUnitOfTime('year')">Année</button>
+            <div class="buttons">
+                <vs-button @click="changeTechnicalUnitOfTime('day')"
+                    >Jour</vs-button
+                >
+                <vs-button @click="changeTechnicalUnitOfTime('week')"
+                    >Semaine</vs-button
+                >
+                <vs-button @click="changeTechnicalUnitOfTime('month')"
+                    >Mois</vs-button
+                >
+                <vs-button @click="changeTechnicalUnitOfTime('year')"
+                    >Année</vs-button
+                >
+            </div>
+
+            <ExerciseStatsLineChart
+                :chartData="difficultyExerciseStats"
+                :options="difficultyChartOptions"
+            />
+        </div>
+        <div class="mt-5">
+            <h1>Technique Bar</h1>
+            <div class="buttons">
+                <button @click="changeTechnicalUnitOfTime('day')">Jour</button>
+                <button @click="changeTechnicalUnitOfTime('week')">
+                    Semaine
+                </button>
+                <button @click="changeTechnicalUnitOfTime('month')">
+                    Mois
+                </button>
+                <button @click="changeTechnicalUnitOfTime('year')">
+                    Année
+                </button>
+            </div>
 
             <ExerciseStatsBarChart
                 :chartData="technicalExerciseStats"
@@ -539,4 +597,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.buttons {
+    display: flex;
+
+    .vs-button {
+        margin: 0.5em 0.2em;
+    }
+}
 </style>

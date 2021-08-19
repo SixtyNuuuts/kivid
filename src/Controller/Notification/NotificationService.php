@@ -84,32 +84,16 @@ class NotificationService
             'dashboard',
             [
                 [
+                    'type' => 'add-patient',
+
+                ],
+                [
                     'type' => 'user',
                     'content' => "{$doctor->getFirstname()} {$doctor->getLastname()}",
                 ],
                 [
                     'type' => 'text',
                     'content' => 'vous a ajouté : ',
-                ],
-                [
-                    'type' => 'link',
-                    'content' => [
-                        'text' => 'Accepter',
-                        'url' => $this->urlGenerator->generate(
-                            'app_patient_worksheets',
-                            ['id' => $patient->getId()]
-                        )
-                    ]
-                ],
-                [
-                    'type' => 'link',
-                    'content' => [
-                        'text' => 'Refuser',
-                        'url' => $this->urlGenerator->generate(
-                            'app_patient_worksheets',
-                            ['id' => $patient->getId()]
-                        )
-                    ]
                 ],
             ],
             $patient

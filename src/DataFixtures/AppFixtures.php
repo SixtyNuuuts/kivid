@@ -170,13 +170,14 @@ class AppFixtures extends Fixture
                             $faker->dateTimeBetween('-90 years', '-20 years')
                         )
                     )
+                    ->setDoctorAddRequest(true)
                     ->setDoctor($kine)
                     ->setEmail("patient{$ki}{$pi}@mail.com")
                     ->setPassword($this->passwordHasher->hashPassword($kine, 'password'))
                     ->setFirstname($faker->firstName)
                     ->setLastname($faker->lastName)
                     ->setIsVerified($faker->boolean())
-                    ->setGender($gender[array_rand($gender)]);
+                    ->setGender($gender[array_rand($gender)])
                 ;
 
                 for ($wpi = 0; $wpi < 2; $wpi++) {

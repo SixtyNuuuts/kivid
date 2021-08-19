@@ -65,10 +65,10 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $avatarUrl;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"patient_read", "doctor_read", "user_read"})
      */
-    private $isVerified = false;
+    private $isVerified;
 
     /**
      * @ORM\Column(type="string", nullable=true)
@@ -235,12 +235,12 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function isVerified(): bool
+    public function isVerified(): ?bool
     {
         return $this->isVerified;
     }
 
-    public function setIsVerified(bool $isVerified): self
+    public function setIsVerified(?bool $isVerified): self
     {
         $this->isVerified = $isVerified;
 

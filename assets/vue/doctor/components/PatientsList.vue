@@ -103,13 +103,32 @@
                     }"
                 >
                     <vs-td class="sm-dnone">
-                        <div v-if="patient.isVerified" class="status">
+                        <div
+                            v-if="
+                                patient.doctorAddRequest &&
+                                false !== patient.isVerified
+                            "
+                            class="status"
+                        >
                             <div class="icon-active-status"></div>
                             <p class="text-status">Actif</p>
                         </div>
-                        <div v-else class="status">
+                        <div
+                            v-if="
+                                patient.doctorAddRequest &&
+                                false === patient.isVerified
+                            "
+                            class="status"
+                        >
                             <div class="icon-inactive-status"></div>
                             <p class="text-status">Inactif</p>
+                        </div>
+                        <div
+                            v-if="null === patient.doctorAddRequest"
+                            class="status"
+                        >
+                            <div class="icon-waiting-status"></div>
+                            <p class="text-status">Attente</p>
                         </div>
                     </vs-td>
                     <vs-td>
@@ -471,7 +490,8 @@ export default {
 
 .status {
     .icon-active-status,
-    .icon-inactive-status {
+    .icon-inactive-status,
+    .icon-waiting-status {
         border-radius: 50%;
     }
 
@@ -480,6 +500,13 @@ export default {
         height: 1em;
         border: 2px solid #d9e2ef;
         background-color: #42ba96;
+    }
+
+    .icon-waiting-status {
+        width: 1em;
+        height: 1em;
+        border: 2px solid #d9e2ef;
+        background-color: #fcc755;
     }
 
     .icon-inactive-status {

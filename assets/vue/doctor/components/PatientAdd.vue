@@ -372,6 +372,7 @@ export default {
                         "success",
                         "<i class='fe fe-check-circle'></i>"
                     );
+                    this.addPatientDetails.doctorAddRequest = null;
                     this.$parent.doctorPatientsListArray.push(
                         this.addPatientDetails
                     );

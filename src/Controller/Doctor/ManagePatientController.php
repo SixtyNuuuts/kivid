@@ -94,6 +94,7 @@ class ManagePatientController extends AbstractController
                 $patient->setGender($data->gender);
                 $patient->setEmail($data->email);
                 $patient->setDoctor($doctor);
+                $patient->setIsVerified(false);
 
                 $this->em->persist($patient);
 
@@ -126,6 +127,8 @@ class ManagePatientController extends AbstractController
             if ($this->isCsrfTokenValid('add_patient' . $doctor->getId(), $data->_token)) {
                 $patient = $this->patientRepository->findOneBy(['id' => $data->patient_id]);
 
+                $patient->setDoctorAddRequest(null);
+
                 $doctor->addPatient($patient);
 
                 $this->notificationService->addPatientNotification($doctor, $patient);
@@ -136,7 +139,7 @@ class ManagePatientController extends AbstractController
 
                 return $this->json(
                     "<strong>{$gender} {$patient->getFirstname()} {$patient->getLastname()}</strong> 
-                     a bien été ajouté à votre liste.",
+                     a bien été ajouté à votre liste, nous lui avons envoyé une demande d'acceptation.",
                     200,
                 );
             }

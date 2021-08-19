@@ -39,6 +39,12 @@ class Patient extends User
     private $lastLoginAt;
 
     /**
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"patient_read"})
+     */
+    private $doctorAddRequest;
+
+    /**
      * @ORM\OneToMany(targetEntity=Subscription::class, mappedBy="patient", orphanRemoval=true)
      * @Groups({"patient_read", "user_read"})
      */
@@ -179,6 +185,18 @@ class Patient extends User
                 $notification->setPatient(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getDoctorAddRequest(): ?bool
+    {
+        return $this->doctorAddRequest;
+    }
+
+    public function setDoctorAddRequest(?bool $doctorAddRequest): self
+    {
+        $this->doctorAddRequest = $doctorAddRequest;
 
         return $this;
     }
