@@ -111,7 +111,6 @@ class ManagePatientController extends AbstractController
                 $patient->setGender($data->gender);
                 $patient->setEmail($data->email);
                 $patient->setDoctor($doctor);
-                $patient->setIsVerified(false);
 
                 $this->em->persist($patient);
 

@@ -74,11 +74,18 @@ class Exercise
      */
     private $exerciseStats;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Commentary::class, mappedBy="exercise")
+     * @Groups({"prescription_read"})
+     */
+    private $commentaries;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->isCompleted = false;
         $this->exerciseStats = new ArrayCollection();
+        $this->commentaries = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -213,6 +220,36 @@ class Exercise
     public function setWorksheet(?Worksheet $worksheet): self
     {
         $this->worksheet = $worksheet;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Commentary[]
+     */
+    public function getCommentaries(): Collection
+    {
+        return $this->commentaries;
+    }
+
+    public function addCommentary(Commentary $commentary): self
+    {
+        if (!$this->commentaries->contains($commentary)) {
+            $this->commentaries[] = $commentary;
+            $commentary->setExercise($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommentary(Commentary $commentary): self
+    {
+        if ($this->commentaries->removeElement($commentary)) {
+            // set the owning side to null (unless already changed)
+            if ($commentary->getExercise() === $this) {
+                $commentary->setExercise(null);
+            }
+        }
 
         return $this;
     }

@@ -90,6 +90,7 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->roles = $roles;
+        $this->isVerified = false;
     }
 
     public function __toString()

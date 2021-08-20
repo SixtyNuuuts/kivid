@@ -99,14 +99,13 @@
                         max
                     )"
                     :class="{
-                        'inactive-status': false === patient.isVerified,
+                        'inactive-status': !patient.isVerified,
                     }"
                 >
                     <vs-td class="sm-dnone">
                         <div
                             v-if="
-                                patient.doctorAddRequest &&
-                                false !== patient.isVerified
+                                patient.doctorAddRequest && patient.isVerified
                             "
                             class="status"
                         >
@@ -115,8 +114,7 @@
                         </div>
                         <div
                             v-if="
-                                patient.doctorAddRequest &&
-                                false === patient.isVerified
+                                patient.doctorAddRequest && !patient.isVerified
                             "
                             class="status"
                         >

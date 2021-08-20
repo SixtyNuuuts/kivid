@@ -1,6 +1,6 @@
 <template>
     <div>
-        <vs-alert v-if="false === patient.isVerified">
+        <vs-alert v-if="!patient.isVerified">
             <template #icon>
                 <i class="fe fe-info"></i>
             </template>

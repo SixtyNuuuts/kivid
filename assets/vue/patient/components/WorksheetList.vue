@@ -265,6 +265,43 @@
                                             <p>{{ exercise.option }}</p>
                                         </div>
                                     </div>
+                                    <div v-if="exercise.commentaries">
+                                        <div
+                                            v-for="(
+                                                commentary, i
+                                            ) in exercise.commentaries"
+                                            :key="i"
+                                            class="w-100 bg-light mt-3"
+                                        >
+                                            {{ commentary.content }}
+                                        </div>
+                                    </div>
+                                    <div
+                                        class="add-commentary mt-3"
+                                        v-if="exercise.isCompleted"
+                                        @click.stop=""
+                                    >
+                                        <label :for="`commentary${exercise.id}`"
+                                            >Ajouter un commentaire</label
+                                        >
+                                        <textarea
+                                            :id="`commentary${exercise.id}`"
+                                            :ref="`commentary${exercise.id}`"
+                                            class="w-100"
+                                        />
+
+                                        <vs-button
+                                            size="small"
+                                            @click="
+                                                addCommentary(
+                                                    exercise,
+                                                    $event.target
+                                                )
+                                            "
+                                            ><i class="fe fe-plus-circle"></i>
+                                            Valider
+                                        </vs-button>
+                                    </div>
                                 </template>
                             </vs-card>
                         </div>
@@ -588,6 +625,7 @@ export default {
         csrfTokenCreateExerciseStats: String,
         csrfTokenInitWorksheetSessions: String,
         csrfTokenStartWorksheetSession: String,
+        csrfTokenCreateCommentary: String,
     },
     data() {
         return {
@@ -688,6 +726,7 @@ export default {
             },
             loadingPatientPrescriptionsList: null,
             loadingGetCurrentWorksheetSession: null,
+            newCommentary: "",
         };
     },
     computed: {
@@ -852,6 +891,46 @@ export default {
                         console.log(error.response.data.detail);
                     }
                     this.btnLoadingValidSensitivityStat = false;
+                });
+        },
+        addCommentary(exercise) {
+            const content = this.$refs[`commentary${exercise.id}`][0].value;
+
+            this.axios
+                .post(`/patient/${this.patient.id}/create/commentary`, {
+                    _token: this.csrfTokenCreateCommentary,
+                    worksheetId: this.activePrescription.worksheet.id,
+                    exerciseId: exercise.id,
+                    content: content,
+                })
+                .then((response) => {
+                    console.log("create commentary ok");
+
+                    exercise.commentaries.push({
+                        id: exercise.id,
+                        content: content,
+                    });
+
+                    this.openNotification(
+                        `<strong>Commentaire enregistré !</strong>`,
+                        `${response.data}`,
+                        "top-right",
+                        "success",
+                        "<i class='fe fe-check-circle'></i>"
+                    );
+                })
+                .catch((error) => {
+                    if (error.response) {
+                        console.log(error.response.data.detail);
+                    }
+
+                    this.openNotification(
+                        `<strong>Erreur</strong>`,
+                        `${error.response.data}`,
+                        "top-right",
+                        "danger",
+                        "<i class='fe fe-alert-circle'></i>"
+                    );
                 });
         },
         setCurrentPrescriptionAndGenerateVideoList(prescription, i) {
@@ -1433,10 +1512,6 @@ export default {
                 align-items: center;
                 justify-content: center;
                 box-shadow: 0 0.3rem 0.5rem rgb(102 113 143 / 31%);
-            }
-
-            > * {
-                opacity: 0.5;
             }
         }
 

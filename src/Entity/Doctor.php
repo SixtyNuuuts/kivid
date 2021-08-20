@@ -60,6 +60,11 @@ class Doctor extends User
      */
     private $notifications;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Commentary::class, mappedBy="doctor")
+     */
+    private $commentaries;
+
     public function __construct()
     {
         parent::__construct(['ROLE_DOCTOR']);
@@ -67,6 +72,7 @@ class Doctor extends User
         $this->prescriptions = new ArrayCollection();
         $this->worksheets = new ArrayCollection();
         $this->notifications = new ArrayCollection();
+        $this->commentaries = new ArrayCollection();
     }
 
     public function getDescription(): ?string
@@ -231,6 +237,36 @@ class Doctor extends User
             // set the owning side to null (unless already changed)
             if ($notification->getDoctor() === $this) {
                 $notification->setDoctor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Commentary[]
+     */
+    public function getCommentaries(): Collection
+    {
+        return $this->commentaries;
+    }
+
+    public function addCommentary(Commentary $commentary): self
+    {
+        if (!$this->commentaries->contains($commentary)) {
+            $this->commentaries[] = $commentary;
+            $commentary->setDoctor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommentary(Commentary $commentary): self
+    {
+        if ($this->commentaries->removeElement($commentary)) {
+            // set the owning side to null (unless already changed)
+            if ($commentary->getDoctor() === $this) {
+                $commentary->setDoctor(null);
             }
         }
 

@@ -85,6 +85,11 @@ class Worksheet
      */
     private $isTemplate;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Commentary::class, mappedBy="worksheet")
+     */
+    private $commentaries;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -94,6 +99,7 @@ class Worksheet
         $this->duration = 1;
         $this->perDay = 1;
         $this->perWeek = 1;
+        $this->commentaries = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -270,6 +276,36 @@ class Worksheet
     public function setPerWeek(?int $perWeek): self
     {
         $this->perWeek = $perWeek;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Commentary[]
+     */
+    public function getCommentaries(): Collection
+    {
+        return $this->commentaries;
+    }
+
+    public function addCommentary(Commentary $commentary): self
+    {
+        if (!$this->commentaries->contains($commentary)) {
+            $this->commentaries[] = $commentary;
+            $commentary->setWorksheet($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommentary(Commentary $commentary): self
+    {
+        if ($this->commentaries->removeElement($commentary)) {
+            // set the owning side to null (unless already changed)
+            if ($commentary->getWorksheet() === $this) {
+                $commentary->setWorksheet(null);
+            }
+        }
 
         return $this;
     }

@@ -6,6 +6,7 @@
             :csrfTokenCreateExerciseStats="csrfTokenCreateExerciseStats"
             :csrfTokenInitWorksheetSessions="csrfTokenInitWorksheetSessions"
             :csrfTokenStartWorksheetSession="csrfTokenStartWorksheetSession"
+            :csrfTokenCreateCommentary="csrfTokenCreateCommentary"
         />
     </div>
 </template>
@@ -26,6 +27,7 @@ export default {
             csrfTokenCreateExerciseStats: null,
             csrfTokenInitWorksheetSessions: null,
             csrfTokenStartWorksheetSession: null,
+            csrfTokenCreateCommentary: null,
         };
     },
     created() {
@@ -38,6 +40,7 @@ export default {
             data.csrfTokenInitWorksheetSessions;
         this.csrfTokenStartWorksheetSession =
             data.csrfTokenStartWorksheetSession;
+        this.csrfTokenCreateCommentary = data.csrfTokenCreateCommentary;
     },
 };
 </script>

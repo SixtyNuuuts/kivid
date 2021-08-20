@@ -55,12 +55,18 @@ class Patient extends User
      */
     private $notifications;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Commentary::class, mappedBy="patient")
+     */
+    private $commentaries;
+
     public function __construct()
     {
         parent::__construct(['ROLE_PATIENT']);
         $this->prescriptions = new ArrayCollection();
         $this->subscriptions = new ArrayCollection();
         $this->notifications = new ArrayCollection();
+        $this->commentaries = new ArrayCollection();
     }
 
     public function getBirthdate(): ?\DateTimeImmutable
@@ -197,6 +203,36 @@ class Patient extends User
     public function setDoctorAddRequest(?bool $doctorAddRequest): self
     {
         $this->doctorAddRequest = $doctorAddRequest;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Commentary[]
+     */
+    public function getCommentaries(): Collection
+    {
+        return $this->commentaries;
+    }
+
+    public function addCommentary(Commentary $commentary): self
+    {
+        if (!$this->commentaries->contains($commentary)) {
+            $this->commentaries[] = $commentary;
+            $commentary->setPatient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommentary(Commentary $commentary): self
+    {
+        if ($this->commentaries->removeElement($commentary)) {
+            // set the owning side to null (unless already changed)
+            if ($commentary->getPatient() === $this) {
+                $commentary->setPatient(null);
+            }
+        }
 
         return $this;
     }

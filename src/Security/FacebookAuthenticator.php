@@ -51,6 +51,7 @@ class FacebookAuthenticator extends AbstractSocialAuthenticator
                  ->setFirstname($facebookUser->getFirstName())
                  ->setLastname($facebookUser->getLastName())
                  ->setAvatarUrl($facebookUser->getPictureUrl())
+                 ->setIsVerified(true);
             ;
 
             $this->em->persist($user);

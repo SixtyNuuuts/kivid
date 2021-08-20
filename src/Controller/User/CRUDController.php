@@ -19,8 +19,10 @@ class CRUDController extends AbstractController
     private $patientRepository;
     private $doctorRepository;
 
-    public function __construct(PatientRepository $patientRepository, DoctorRepository $doctorRepository)
-    {
+    public function __construct(
+        PatientRepository $patientRepository,
+        DoctorRepository $doctorRepository
+    ) {
         $this->patientRepository = $patientRepository;
         $this->doctorRepository = $doctorRepository;
     }
