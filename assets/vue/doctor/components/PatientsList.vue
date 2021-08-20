@@ -132,7 +132,10 @@
                         </div>
                     </vs-td>
                     <vs-td>
-                        <div class="user">
+                        <div
+                            class="user"
+                            @click="redirectToPatientDashboard(patient.id)"
+                        >
                             <vs-avatar circle size="25">
                                 <img
                                     :src="
@@ -402,6 +405,9 @@ export default {
                 text,
             });
         },
+        redirectToPatientDashboard(patientId) {
+            document.location.href = `/kine/${this.doctor.id}/show/patient/${patientId}`;
+        },
         getPage(data, page, maxItems) {
             return f.getPage(data, page, maxItems);
         },
@@ -527,6 +533,7 @@ export default {
 
 .user {
     flex-direction: column;
+    cursor: pointer;
 
     p {
         margin-top: 0.5em;

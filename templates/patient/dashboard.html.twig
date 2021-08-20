@@ -22,6 +22,7 @@
 {% block vueData %}
 	{
 		"patient": {{ patient|serialize('json', {'groups': 'patient_read'})|raw }},
+		"doctorView": {{ doctorView|serialize('json')|raw }},
 		"csrfTokenAcceptAddRequest": {{ csrf_token('accept_add_request' ~ patient.id)|serialize('json')|raw }},
 		"csrfTokenDeclineAddRequest": {{ csrf_token('decline_add_request' ~ patient.id)|serialize('json')|raw }}
 

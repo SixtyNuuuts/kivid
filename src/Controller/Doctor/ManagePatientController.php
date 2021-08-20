@@ -80,6 +80,23 @@ class ManagePatientController extends AbstractController
     }
 
     /**
+     * @Route("/{id}/show/patient/{patientId}", name="app_doctor_show_patient", methods={"GET"})
+     */
+    public function showPatient(
+        int $patientId = null
+    ): Response {
+        $patient =
+            $patientId ?
+                $this->patientRepository->findOneBy(['id' => $patientId])
+            : null;
+
+        return $this->render('patient/dashboard.html.twig', [
+            'patient' => $patient,
+            'doctorView' => true,
+        ]);
+    }
+
+    /**
      * @Route("/{id}/create/patient", name="app_doctor_create_patient", methods={"POST"})
      */
     public function createPatient(Request $request, Doctor $doctor): JsonResponse

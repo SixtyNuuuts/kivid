@@ -44,6 +44,7 @@
                             "
                         >
                             <a
+                                v-if="!$parent.doctorView"
                                 class="
                                     btn btn-lg btn-rounded-circle btn-primary
                                 "
@@ -157,7 +158,12 @@
                                                     avons besoin de connaitre
                                                     votre âge.
                                                 </div>
-                                                <div v-if="!patient.birthdate">
+                                                <div
+                                                    v-if="
+                                                        !patient.birthdate &&
+                                                        !$parent.doctorView
+                                                    "
+                                                >
                                                     <a
                                                         :href="`/patient/${patient.id}/edit`"
                                                     >

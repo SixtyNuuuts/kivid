@@ -20,6 +20,9 @@ class DashboardController extends AbstractController
      */
     public function dashboard(Patient $patient): Response
     {
-        return $this->render('patient/dashboard.html.twig', ['patient' => $patient]);
+        return $this->render('patient/dashboard.html.twig', [
+            'patient' => $patient,
+            'doctorView' => false,
+        ]);
     }
 }
