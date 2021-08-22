@@ -162,7 +162,26 @@ export default {
 
         this.loadingDoctorPatientsList = true;
 
+        this.axios
+            .get(`/kine/${this.doctor.id}/get/patients/`)
+            .then((response) => {
+                this.doctorPatientsList = response.data;
+                this.loadingDoctorPatientsList = false;
+            })
+            .catch((error) => {
+                if (error.response) {
+                    console.log(error.response.data.detail);
+                }
+
+                this.loadingDoctorPatientsList = false;
+            });
+
         if (!this.patientForPrescription) {
+            this.loadingDoctorPrescriptionsList = this.$vs.loading({
+                text: "chargement",
+                type: "border",
+            });
+
             this.axios
                 .get(`/kine/${this.doctor.id}/get/prescriptions`)
                 .then((response) => {
@@ -182,25 +201,6 @@ export default {
             text: "chargement",
             type: "border",
         });
-
-        this.loadingDoctorPrescriptionsList = this.$vs.loading({
-            text: "chargement",
-            type: "border",
-        });
-
-        this.axios
-            .get(`/kine/${this.doctor.id}/get/patients/`)
-            .then((response) => {
-                this.doctorPatientsList = response.data;
-                this.loadingDoctorPatientsList = false;
-            })
-            .catch((error) => {
-                if (error.response) {
-                    console.log(error.response.data.detail);
-                }
-
-                this.loadingDoctorPatientsList = false;
-            });
 
         this.axios
             .get(`/get/worksheet-templates`)
