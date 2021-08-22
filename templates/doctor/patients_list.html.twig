@@ -25,7 +25,7 @@
 {% block vueData %}
 	{
 		"doctor": {{ doctor|serialize('json', {'groups': 'doctor_read'})|raw }},
-		"trigger": {{ trigger|serialize('json')|raw }},
+		"triggerAddPatient": {{ triggerAddPatient|serialize('json')|raw }},
 		"csrfTokenAddPatient": {{ csrf_token('add_patient' ~ doctor.id)|serialize('json')|raw }},
 		"csrfTokenRemovePatient": {{ csrf_token('remove_patient' ~ doctor.id)|serialize('json')|raw }},
 		"csrfTokenCreatePatient": {{ csrf_token('create_patient' ~ doctor.id)|serialize('json')|raw }}

@@ -73,6 +73,7 @@ class ManageWorksheetController extends AbstractController
      * @Route("/{id}/fiches/{listType}/{patientId}", name="app_doctor_worksheets", methods={"GET"})
      */
     public function worksheetList(
+        Request $request,
         Doctor $doctor,
         string $listType = 'prescriptions',
         int $patientId = null
@@ -85,7 +86,30 @@ class ManageWorksheetController extends AbstractController
         return $this->render('doctor/worksheets_list.html.twig', [
             'listType' => $listType,
             'patientForPrescription' => $patientForPrescription,
+            'triggerCreatePrescription' => $request->query->get('create_prescription'),
             'doctor' => $doctor,
+        ]);
+    }
+
+    /**
+     * @Route("/{id}/fiche/commentaires/{worksheetId}/{patientId}",
+     * name="app_doctor_worksheet_show_commentaries", methods={"GET"})
+     */
+    public function worksheetShowCommentaries(
+        Doctor $doctor,
+        int $worksheetId = null,
+        int $patientId = null
+    ): Response {
+        $patient =
+        $patientId ?
+            $this->patientRepository->findOneBy(['id' => $patientId])
+        : null;
+
+        return $this->render('patient/worksheets_list.html.twig', [
+            'doctor' => $doctor,
+            'patient' => $patient,
+            'worksheetId' => $worksheetId,
+            'doctorView' => true,
         ]);
     }
 
@@ -100,7 +124,7 @@ class ManageWorksheetController extends AbstractController
         int $patientId = null
     ): Response {
         $worksheetTemplate =
-        $worksheetTemplateId ?
+        $worksheetTemplateId && $worksheetTemplateId != 0 ?
             $this->worksheetRepository->findOneBy(['id' => $worksheetTemplateId])
         : null;
 

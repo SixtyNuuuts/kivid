@@ -177,7 +177,10 @@
                     <transition name="fade">
                         <div v-if="indiceActiveWorksheet === i">
                             <h1>{{ prescription.worksheet.title }}</h1>
-                            <div class="actions-btns">
+                            <div
+                                class="actions-btns"
+                                v-if="!$parent.doctorView"
+                            >
                                 <vs-button
                                     v-if="
                                         !prescription.worksheet.exercises.filter(
@@ -207,7 +210,11 @@
                                     <span v-else>Reprendre</span>
                                 </vs-button>
                             </div>
-                            <vs-alert closable v-model="alertCommentExercises">
+                            <vs-alert
+                                closable
+                                v-model="alertCommentExercises"
+                                v-if="!$parent.doctorView"
+                            >
                                 <template #icon>
                                     <i class="fe fe-info"></i>
                                 </template>
@@ -278,7 +285,10 @@
                                     </div>
                                     <div
                                         class="add-commentary mt-3"
-                                        v-if="exercise.isCompleted"
+                                        v-if="
+                                            exercise.isCompleted &&
+                                            !$parent.doctorView
+                                        "
                                         @click.stop=""
                                     >
                                         <label :for="`commentary${exercise.id}`"
@@ -1271,9 +1281,22 @@ export default {
                 );
 
                 if (this.patientPrescriptionsSortedByPosition.length) {
+                    let indiceActiveWorksheet = 0;
+
+                    if (this.$parent.doctorView) {
+                        indiceActiveWorksheet =
+                            this.patientPrescriptionsSortedByPosition.indexOf(
+                                this.patientPrescriptionsSortedByPosition.filter(
+                                    (p) =>
+                                        p.worksheet.id ===
+                                        this.$parent.worksheetId
+                                )[0]
+                            );
+                    }
+
                     this.setCurrentPrescriptionAndGenerateVideoList(
                         this.patientPrescriptionsSortedByPosition[0],
-                        0
+                        indiceActiveWorksheet
                     );
                 }
 

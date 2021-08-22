@@ -41,7 +41,8 @@ export default {
 
         this.doctor = data.doctor;
         this.triggerAddPatient =
-            data.trigger === "trigger-add-patient" ? true : false;
+            "true" === data.triggerAddPatient ? true : false;
+
         this.csrfTokenAddPatient = data.csrfTokenAddPatient;
         this.csrfTokenRemovePatient = data.csrfTokenRemovePatient;
         this.csrfTokenCreatePatient = data.csrfTokenCreatePatient;

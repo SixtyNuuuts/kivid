@@ -5,6 +5,8 @@ namespace App\Controller\User;
 use App\Entity\Doctor;
 use App\Entity\Patient;
 use App\Entity\Commentary;
+use App\Entity\Worksheet;
+use App\Repository\CommentaryRepository;
 use App\Repository\DoctorRepository;
 use App\Repository\PatientRepository;
 use App\Repository\ExerciseRepository;
@@ -21,6 +23,7 @@ class CommentaryController extends AbstractController
     private $doctorRepository;
     private $exerciseRepository;
     private $worksheetRepository;
+    private $commentaryRepository;
     private $em;
 
     public function __construct(
@@ -28,12 +31,14 @@ class CommentaryController extends AbstractController
         DoctorRepository $doctorRepository,
         ExerciseRepository $exerciseRepository,
         WorksheetRepository $worksheetRepository,
+        CommentaryRepository $commentaryRepository,
         EntityManagerInterface $entityManagerInterface
     ) {
         $this->patientRepository = $patientRepository;
         $this->doctorRepository = $doctorRepository;
         $this->exerciseRepository = $exerciseRepository;
         $this->worksheetRepository = $worksheetRepository;
+        $this->commentaryRepository = $commentaryRepository;
         $this->em = $entityManagerInterface;
     }
 
@@ -89,6 +94,17 @@ class CommentaryController extends AbstractController
         return $this->json(
             'Nous n\'avons pas pu créer le commentaire, veuillez réessayer ultérieurement.',
             500,
+        );
+    }
+
+    /**
+     * @Route("/worksheet/{id}/get/commentaries-count", name="app_patient_get_commentaries_count", methods={"GET"})
+     */
+    public function getExerciseStats(Worksheet $worksheet): JsonResponse
+    {
+        return $this->json(
+            $this->commentaryRepository->countCommentariesByWorksheet($worksheet),
+            200,
         );
     }
 }

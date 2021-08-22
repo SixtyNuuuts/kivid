@@ -69,6 +69,8 @@ class ManageWorksheetController extends AbstractController
     {
         return $this->render('patient/worksheets_list.html.twig', [
             'patient' => $patient,
+            'doctorView' => false,
+            'worksheetId' => null,
         ]);
     }
 

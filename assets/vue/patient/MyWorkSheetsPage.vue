@@ -28,11 +28,15 @@ export default {
             csrfTokenInitWorksheetSessions: null,
             csrfTokenStartWorksheetSession: null,
             csrfTokenCreateCommentary: null,
+            doctorView: null,
+            worksheetId: null,
         };
     },
     created() {
         const data = JSON.parse(document.getElementById("vueData").innerHTML);
 
+        this.doctorView = data.doctorView;
+        this.worksheetId = data.worksheetId;
         this.patient = data.patient;
         this.csrfTokenExerciseCompleted = data.csrfTokenExerciseCompleted;
         this.csrfTokenCreateExerciseStats = data.csrfTokenCreateExerciseStats;

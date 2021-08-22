@@ -16,7 +16,9 @@
 
 {% block body %}
 	<div class="container my-worksheets my-8">
+			{% if doctorView == false %}
 			<h1><i class="fe fe-file-text"></i>Mes Fiches</h1>
+			{% endif %}
 
 		<div id="vue"></div>
 	</div>
@@ -24,6 +26,8 @@
 {% block vueData %}
 	{
 		"patient": {{ patient|serialize('json', {'groups': 'patient_read'})|raw }},
+		"worksheetId": {{ worksheetId|serialize('json')|raw }},
+		"doctorView": {{ doctorView|serialize('json')|raw }},
 		"csrfTokenExerciseCompleted": {{ csrf_token('exercise_completed' ~ patient.id)|serialize('json')|raw }},
 		"csrfTokenInitWorksheetSessions": {{ csrf_token('init_worksheet_sessions' ~ patient.id)|serialize('json')|raw }},
 		"csrfTokenStartWorksheetSession": {{ csrf_token('start_worksheet_session' ~ patient.id)|serialize('json')|raw }},

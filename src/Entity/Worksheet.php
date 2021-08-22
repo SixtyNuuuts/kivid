@@ -81,14 +81,15 @@ class Worksheet
     private $perWeek;
 
     /**
+     * @ORM\OneToMany(targetEntity=Commentary::class, mappedBy="worksheet")
+     * @Groups({"worksheet_read", "prescription_read"})
+     */
+    private $commentaries;
+
+    /**
      * @ORM\Column(type="boolean", nullable=true)
      */
     private $isTemplate;
-
-    /**
-     * @ORM\OneToMany(targetEntity=Commentary::class, mappedBy="worksheet")
-     */
-    private $commentaries;
 
     public function __construct()
     {
