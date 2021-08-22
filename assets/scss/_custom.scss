@@ -321,6 +321,50 @@ h1 {
     }
 }
 
+.selected-patient-detail {
+    display: flex;
+    justify-content: center;
+    padding: 0.8em 0;
+    border-radius: 0.8em;
+    margin: 1em 0;
+    margin-top: 1.6em;
+    background-color: #fffaf0;
+    position: relative;
+    padding-top: 1.3em;
+    line-height: 1.25;
+    text-align: center;
+
+    p {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 0;
+        align-items: center;
+        font-size: 0.8em;
+
+        span {
+            margin: 0.2em 0;
+            font-weight: 700;
+            font-size: 1.2em;
+        }
+    }
+
+    .selected-patient-icon {
+        position: absolute;
+        top: -0.85em;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 1.8em;
+        height: 1.8em;
+        border-radius: 50%;
+        background-color: $primary;
+
+        i {
+            color: white;
+        }
+    }
+}
+
 .vs-button.btn-primaki,
 .btn-primaki {
     padding: 0.61em 0.95em;
@@ -523,8 +567,24 @@ i[class="fe fe-check-circle"] {
 .user-nav {
     align-items: flex-end;
     .user-status {
-        font-size: 0.7em;
+        font-size: 0.6em;
         font-style: italic;
+        background: #e7ecef;
+        margin-top: 0.4em;
+        padding: 0.2em 0.7em;
+        color: #94a3ba;
+        text-transform: uppercase;
+        border-radius: 0.7em;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        white-space: nowrap;
+        padding-top: 0.4em;
+
+        &.premium {
+            background: linear-gradient(289deg, #fbcc52f5, #ffb049 50%, #ffa71a 100%);
+            color: white;
+        }
     }
     .user-name {
         color: $primary;

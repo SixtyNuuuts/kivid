@@ -99,21 +99,41 @@
                         max
                     )"
                     :class="{
-                        'inactive-status': false === patient.isVerified,
+                        'inactive-status': !patient.isVerified,
                     }"
                 >
                     <vs-td class="sm-dnone">
-                        <div v-if="patient.isVerified" class="status">
+                        <div
+                            v-if="
+                                patient.doctorAddRequest && patient.isVerified
+                            "
+                            class="status"
+                        >
                             <div class="icon-active-status"></div>
                             <p class="text-status">Actif</p>
                         </div>
-                        <div v-else class="status">
+                        <div
+                            v-if="
+                                patient.doctorAddRequest && !patient.isVerified
+                            "
+                            class="status"
+                        >
                             <div class="icon-inactive-status"></div>
                             <p class="text-status">Inactif</p>
                         </div>
+                        <div
+                            v-if="null === patient.doctorAddRequest"
+                            class="status"
+                        >
+                            <div class="icon-waiting-status"></div>
+                            <p class="text-status">Attente</p>
+                        </div>
                     </vs-td>
                     <vs-td>
-                        <div class="user">
+                        <div
+                            class="user"
+                            @click="redirectToPatientDashboard(patient.id)"
+                        >
                             <vs-avatar circle size="25">
                                 <img
                                     :src="
@@ -383,6 +403,9 @@ export default {
                 text,
             });
         },
+        redirectToPatientDashboard(patientId) {
+            document.location.href = `/kine/${this.doctor.id}/show/patient/${patientId}`;
+        },
         getPage(data, page, maxItems) {
             return f.getPage(data, page, maxItems);
         },
@@ -471,7 +494,8 @@ export default {
 
 .status {
     .icon-active-status,
-    .icon-inactive-status {
+    .icon-inactive-status,
+    .icon-waiting-status {
         border-radius: 50%;
     }
 
@@ -480,6 +504,13 @@ export default {
         height: 1em;
         border: 2px solid #d9e2ef;
         background-color: #42ba96;
+    }
+
+    .icon-waiting-status {
+        width: 1em;
+        height: 1em;
+        border: 2px solid #d9e2ef;
+        background-color: #fcc755;
     }
 
     .icon-inactive-status {
@@ -500,6 +531,7 @@ export default {
 
 .user {
     flex-direction: column;
+    cursor: pointer;
 
     p {
         margin-top: 0.5em;

@@ -51,6 +51,7 @@
 	{
 		"doctor": {{ doctor|serialize('json', {'groups': 'doctor_read'})|raw }},
 		"listType": {{ listType|serialize('json')|raw }},
+		"triggerCreatePrescription": {{ triggerCreatePrescription|serialize('json')|raw }},
 		"patientForPrescription": {{ patientForPrescription|serialize('json', {'groups': 'patient_read'})|raw }},
 		"csrfTokenRemovePrescription": {{ csrf_token('remove_prescription' ~ doctor.id)|serialize('json')|raw }},
 		"csrfTokenRemoveWorksheetTemplate": {{ csrf_token('remove_worksheet_template' ~ doctor.id)|serialize('json')|raw }},

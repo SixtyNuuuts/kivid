@@ -61,6 +61,7 @@ class GoogleAuthenticator extends AbstractSocialAuthenticator
                  ->setFirstname($googleUser->getFirstName())
                  ->setLastname($googleUser->getLastName())
                  ->setAvatarUrl($googleUser->getAvatar())
+                 ->setIsVerified(true);
             ;
 
             $this->em->persist($user);

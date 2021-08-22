@@ -1,5 +1,13 @@
 <template>
     <div>
+        <vs-button
+            circle
+            class="btn-top-absolute"
+            @click="$parent.triggerCreatePrescription = true"
+        >
+            <i class="fe fe-file-plus"></i>
+            Créer un traitement
+        </vs-button>
         <vs-table>
             <template #header>
                 <vs-input
@@ -101,10 +109,23 @@
                         </div>
                     </vs-td>
                     <vs-td class="comments-icon">
-                        <div>
+                        <div
+                            @click="
+                                redirectToShowCommentaries(
+                                    prescription.worksheet.id,
+                                    prescription.patient.id
+                                )
+                            "
+                        >
                             <i class="fe fe-message-square"></i>
-                            <div class="comments-count">
-                                {{ Math.floor(Math.random() * 15) }}
+                            <div
+                                v-if="
+                                    prescription.worksheet.commentaries.length >
+                                    0
+                                "
+                                class="comments-count"
+                            >
+                                {{ prescription.worksheet.commentaries.length }}
                             </div>
                         </div>
                     </vs-td>
@@ -263,6 +284,9 @@ export default {
         },
     },
     methods: {
+        redirectToShowCommentaries(worksheetId, PatientId) {
+            document.location.href = `/kine/${this.doctor.id}/fiche/commentaires/${worksheetId}/${PatientId}`;
+        },
         editPrescription(prescription) {
             document.location.href = `/kine/${this.doctor.id}/fiche/edition/${prescription.worksheet.id}/${prescription.patient.id}`;
         },
@@ -380,6 +404,10 @@ export default {
 
 .vs-table__th:nth-child(5) {
     width: 0% !important;
+}
+
+.vs-button.btn-top-absolute {
+    top: -33px;
 }
 
 .user {

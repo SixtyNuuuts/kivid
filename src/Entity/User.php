@@ -18,18 +18,19 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"patient_read", "doctor_read", "prescription_read", "worksheet_read"})
+     * @Groups({"patient_read", "doctor_read", "user_read", "prescription_read", "worksheet_read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
-     * @Groups({"patient_read", "doctor_read", "prescription_read"})
+     * @Groups({"patient_read", "doctor_read", "user_read", "prescription_read"})
      */
     private $email;
 
     /**
      * @ORM\Column(type="json")
+     * @Groups({"user_read"})
      */
     private $roles;
 
@@ -46,28 +47,28 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient_read", "doctor_read", "prescription_read", "worksheet_read"})
+     * @Groups({"patient_read", "doctor_read", "user_read", "prescription_read", "worksheet_read"})
      */
     private $firstname;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient_read", "doctor_read", "prescription_read", "worksheet_read"})
+     * @Groups({"patient_read", "doctor_read", "user_read", "prescription_read", "worksheet_read"})
 
      */
     private $lastname;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient_read", "doctor_read", "prescription_read", "worksheet_read"})
+     * @Groups({"patient_read", "doctor_read", "user_read", "prescription_read", "worksheet_read"})
      */
     private $avatarUrl;
 
     /**
-     * @ORM\Column(type="boolean")
-     * @Groups({"patient_read", "doctor_read"})
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"patient_read", "doctor_read", "user_read"})
      */
-    private $isVerified = false;
+    private $isVerified;
 
     /**
      * @ORM\Column(type="string", nullable=true)
@@ -81,7 +82,7 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient_read", "doctor_read", "worksheet_read"})
+     * @Groups({"patient_read", "doctor_read", "user_read", "worksheet_read"})
      */
     private $gender;
 
@@ -89,6 +90,7 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->roles = $roles;
+        $this->isVerified = false;
     }
 
     public function __toString()
@@ -234,12 +236,12 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function isVerified(): bool
+    public function isVerified(): ?bool
     {
         return $this->isVerified;
     }
 
-    public function setIsVerified(bool $isVerified): self
+    public function setIsVerified(?bool $isVerified): self
     {
         $this->isVerified = $isVerified;
 

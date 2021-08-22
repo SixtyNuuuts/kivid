@@ -3,6 +3,7 @@
 namespace App\Controller\Patient;
 
 use App\Entity\Patient;
+use App\Notification\NotificationService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -19,6 +20,9 @@ class DashboardController extends AbstractController
      */
     public function dashboard(Patient $patient): Response
     {
-        return $this->render('patient/dashboard.html.twig', ['patient' => $patient]);
+        return $this->render('patient/dashboard.html.twig', [
+            'patient' => $patient,
+            'doctorView' => false,
+        ]);
     }
 }

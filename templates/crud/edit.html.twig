@@ -53,13 +53,8 @@
                   <!-- List -->
                   <ul class="card-list list text-gray-700 mb-6">
                     <li class="list-item active">
-                      <a class="list-link text-reset" href="#!">
+                      <a class="list-link text-reset" href="{{ path('app_user_edit',  {'id':app.user.id, 'userType': user.granted('ROLE_DOCTOR') ? 'doctor' : 'patient'})}}">
                         Général
-                      </a>
-                    </li>
-                    <li class="list-item">
-                      <a class="list-link text-reset" href="#!">
-                        Sécurité
                       </a>
                     </li>
                     <li class="list-item">
@@ -77,7 +72,7 @@
                   <!-- List -->
                   <ul class="card-list list text-gray-700 mb-0">
                     <li class="list-item">
-                      <a class="list-link text-reset" href="#!">
+                      <a class="list-link text-reset" href="{{ path('app_subscription', {'id':app.user.id})}}">
                         Abonnements <br> et Paiement
                       </a>
                     </li>

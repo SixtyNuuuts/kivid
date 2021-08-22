@@ -8,3 +8,15 @@
     {% include 'layout/partial/_modal.html.twig' %}
     {% include 'layout/partial/_footer.html.twig' %}
 {% endblock %}
+
+{% block stylesheets %}
+	{{ parent() }}
+
+	{{ encore_entry_link_tags('navbar') }}
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+
+	{{ encore_entry_script_tags('navbar') }}
+{% endblock %}

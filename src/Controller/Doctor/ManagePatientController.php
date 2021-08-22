@@ -7,6 +7,7 @@ use App\Entity\Patient;
 use Symfony\Component\Mime\Address;
 use App\Repository\PatientRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Notification\NotificationService;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
@@ -31,6 +32,7 @@ class ManagePatientController extends AbstractController
     private $tokenGenerator;
     private $resetPasswordRequestRepository;
     private $resetPasswordCleaner;
+    private $notificationService;
     private $em;
 
     // Le bundle 'ResetPassword' est utilisé dans la génération du mail "création d'un patient" par le kiné,
@@ -41,6 +43,7 @@ class ManagePatientController extends AbstractController
         ResetPasswordRequestRepository $resetPasswordRequestRepository,
         ResetPasswordTokenGenerator $generator,
         ResetPasswordCleaner $cleaner,
+        NotificationService $notificationService,
         EntityManagerInterface $em
     ) {
         $this->patientRepository = $patientRepository;
@@ -48,17 +51,18 @@ class ManagePatientController extends AbstractController
         $this->tokenGenerator = $generator;
         $this->resetPasswordRequestRepository = $resetPasswordRequestRepository;
         $this->resetPasswordCleaner = $cleaner;
+        $this->notificationService = $notificationService;
         $this->em = $em;
     }
 
     /**
-     * @Route("/{id}/patients/{trigger}", name="app_doctor_patients", methods={"GET"})
+     * @Route("/{id}/patients", name="app_doctor_patients", methods={"GET"})
      */
-    public function patientsList(Doctor $doctor, string $trigger = ""): Response
+    public function patientsList(Request $request, Doctor $doctor): Response
     {
         return $this->render('doctor/patients_list.html.twig', [
             'doctor' => $doctor,
-            'trigger' => $trigger,
+            'triggerAddPatient' => $request->query->get('add_patient'),
         ]);
     }
 
@@ -73,6 +77,23 @@ class ManagePatientController extends AbstractController
             [],
             ['groups' => 'patient_read']
         );
+    }
+
+    /**
+     * @Route("/{id}/show/patient/{patientId}", name="app_doctor_show_patient", methods={"GET"})
+     */
+    public function showPatient(
+        int $patientId = null
+    ): Response {
+        $patient =
+            $patientId ?
+                $this->patientRepository->findOneBy(['id' => $patientId])
+            : null;
+
+        return $this->render('patient/dashboard.html.twig', [
+            'patient' => $patient,
+            'doctorView' => true,
+        ]);
     }
 
     /**
@@ -122,7 +143,11 @@ class ManagePatientController extends AbstractController
             if ($this->isCsrfTokenValid('add_patient' . $doctor->getId(), $data->_token)) {
                 $patient = $this->patientRepository->findOneBy(['id' => $data->patient_id]);
 
+                $patient->setDoctorAddRequest(null);
+
                 $doctor->addPatient($patient);
+
+                $this->notificationService->addPatientNotification($doctor, $patient);
 
                 $this->em->flush();
 
@@ -130,7 +155,7 @@ class ManagePatientController extends AbstractController
 
                 return $this->json(
                     "<strong>{$gender} {$patient->getFirstname()} {$patient->getLastname()}</strong> 
-                     a bien été ajouté à votre liste.",
+                     a bien été ajouté à votre liste, nous lui avons envoyé une demande d'acceptation.",
                     200,
                 );
             }

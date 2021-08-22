@@ -38,10 +38,35 @@ class Patient extends User
      */
     private $lastLoginAt;
 
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"patient_read"})
+     */
+    private $doctorAddRequest;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Subscription::class, mappedBy="patient", orphanRemoval=true)
+     * @Groups({"patient_read", "user_read"})
+     */
+    private $subscriptions;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Notification::class, mappedBy="patient")
+     */
+    private $notifications;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Commentary::class, mappedBy="patient")
+     */
+    private $commentaries;
+
     public function __construct()
     {
         parent::__construct(['ROLE_PATIENT']);
         $this->prescriptions = new ArrayCollection();
+        $this->subscriptions = new ArrayCollection();
+        $this->notifications = new ArrayCollection();
+        $this->commentaries = new ArrayCollection();
     }
 
     public function getBirthdate(): ?\DateTimeImmutable
@@ -106,6 +131,108 @@ class Patient extends User
     public function setLastLoginAt(?\DateTimeInterface $lastLoginAt): self
     {
         $this->lastLoginAt = $lastLoginAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Subscription[]
+     */
+    public function getSubscriptions(): Collection
+    {
+        return $this->subscriptions;
+    }
+
+    public function addSubscription(Subscription $subscription): self
+    {
+        if (!$this->subscriptions->contains($subscription)) {
+            $this->subscriptions[] = $subscription;
+            $subscription->setPatient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSubscription(Subscription $subscription): self
+    {
+        if ($this->subscriptions->removeElement($subscription)) {
+            // set the owning side to null (unless already changed)
+            if ($subscription->getPatient() === $this) {
+                $subscription->setPatient(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Notification[]
+     */
+    public function getNotifications(): Collection
+    {
+        return $this->notifications;
+    }
+
+    public function addNotification(Notification $notification): self
+    {
+        if (!$this->notifications->contains($notification)) {
+            $this->notifications[] = $notification;
+            $notification->setPatient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNotification(Notification $notification): self
+    {
+        if ($this->notifications->removeElement($notification)) {
+            // set the owning side to null (unless already changed)
+            if ($notification->getPatient() === $this) {
+                $notification->setPatient(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getDoctorAddRequest(): ?bool
+    {
+        return $this->doctorAddRequest;
+    }
+
+    public function setDoctorAddRequest(?bool $doctorAddRequest): self
+    {
+        $this->doctorAddRequest = $doctorAddRequest;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Commentary[]
+     */
+    public function getCommentaries(): Collection
+    {
+        return $this->commentaries;
+    }
+
+    public function addCommentary(Commentary $commentary): self
+    {
+        if (!$this->commentaries->contains($commentary)) {
+            $this->commentaries[] = $commentary;
+            $commentary->setPatient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommentary(Commentary $commentary): self
+    {
+        if ($this->commentaries->removeElement($commentary)) {
+            // set the owning side to null (unless already changed)
+            if ($commentary->getPatient() === $this) {
+                $commentary->setPatient(null);
+            }
+        }
 
         return $this;
     }

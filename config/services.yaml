@@ -33,3 +33,11 @@ services:
                   name: "kernel.event_listener",
                   event: "security.interactive_login",
               }
+
+    App\Stripe\StripeService:
+        arguments:
+            # $stripePublicKey: "%env(STRIPE_PUBLIC_KEY)%"
+            $stripeSecretKey: "%env(STRIPE_SECRET_KEY)%"
+            $stripeWebhookSecretKey: "%env(STRIPE_WEBHOOK_SECRET_KEY)%"
+
+    App\Notification\NotificationService:
