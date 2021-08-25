@@ -2,26 +2,46 @@ name: app
 
 type: php:7.4
 
+runtime:
+    extensions:
+        - apcu
+        - mbstring
+        - sodium
+        - ctype
+        - iconv
+        - pdo_pgsql
+
+relationships:
+    database: "kivid-database:postgresql"
+
 build:
     flavor: none
 
-# Static website usually don't require much ressources. See
-# https://symfony.com/doc/current/cloud/cookbooks/resources_allocation.html
-# for more information
-size: XS
-resources:
-    base_memory: 64
-    memory_ratio: 128
-
 web:
-    commands:
-        start: sleep
     locations:
         "/":
             root: "public"
-            index:
-                - "index.html"
-            scripts: false
-            expires: 10m
+            expires: 1h
+            passthru: "/index.php"
 
 disk: 256
+
+mounts:
+    "/var": { source: local, source_path: var }
+    "/public/uploads": { source: local, source_path: uploads }
+
+hooks:
+    build: |
+        set -x -e
+
+        curl -s https://get.symfony.com/cloud/configurator | (>&2 bash)
+        (>&2 symfony-build)
+
+    deploy: |
+        set -x -e
+
+        (>&2 symfony-deploy)
+
+variables:
+    php:
+        memory_limit: 512M

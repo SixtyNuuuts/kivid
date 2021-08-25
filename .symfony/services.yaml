@@ -1,0 +1,3 @@
+kivid-database:
+  type: postgresql:11
+  disk: 1024
