@@ -31,4 +31,12 @@ class HomeController extends AbstractController
     {
         return $this->render('home/politique-confidentialite.html.twig');
     }
+
+    /**
+     * @Route("/maquette", name="app_maquette")
+     */
+    public function maquette(): Response
+    {
+        return $this->render('home/maquette.html.twig');
+    }
 }

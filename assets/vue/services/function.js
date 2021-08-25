@@ -77,6 +77,34 @@ export default {
     throw new Error('Bad Hex');
   },
 
+  timeForNotification(notificationDate) {
+    const timeNow = new Date().getTime();
+    const timeNotification = new Date(notificationDate).getTime();
+
+    const msDiff = timeNow - timeNotification;
+
+    const dayDiff = msDiff / 86400 / 1000;
+    const nbDays = Math.round(dayDiff);
+
+    const restInHours = (msDiff - 86400 * nbDays * 1000) / 3600 / 1000;
+    const nbHours = Math.round(restInHours);
+
+    const restInMin =
+      (msDiff - (3600 * nbHours * 1000 + 86400 * nbDays * 1000)) /
+      60 /
+      1000;
+    const nbMin = Math.round(restInMin);
+
+    let minutes = nbMin > 0 ? `${nbMin} min.` : `À l'instant`;
+
+    const hoursOrMinutes = nbHours >= 1 ? `${nbHours} h.` : minutes;
+
+    const timeForNotif =
+      nbDays > 1 ? this.formatDate(notificationDate) : hoursOrMinutes;
+
+    return timeForNotif;
+  },
+
   // Vuesax functions
 
   getPage(data, page, maxItems) {

@@ -1,20 +1,9 @@
-// Bootstrap functions
-@import "~bootstrap/scss/functions";
+@import "./utils/normalize";
 
-// Theme functions
-@import "theme/functions";
+@import "./root";
 
-// Theme variables
-@import "theme/variables";
+@import "./fonts";
 
-// Bootstrap core
-@import "~bootstrap/scss/bootstrap";
+@import "./variables";
 
-// Theme core
-@import "theme/theme";
-
-// Libs
-@import "libs";
-
-// custom (Damien)
-@import "custom";
+@import "./vuesax/overload";

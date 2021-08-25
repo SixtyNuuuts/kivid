@@ -1,6 +1,6 @@
 <template>
-    <div class="row">
-        <div class="col-12 col-md-8">
+    <div>
+        <!-- <div class="col-12 col-md-8">
             <DashboardNotifications
                 v-if="!doctorView"
                 :patient="patient"
@@ -11,22 +11,22 @@
         </div>
         <div class="col-12 col-md-4">
             <PatientDetails :patient="patient" />
-        </div>
+        </div> -->
     </div>
 </template>
 
 <script>
-import ExerciseStatsCharts from "./components/ExerciseStatsCharts.vue";
-import DashboardNotifications from "./components/DashboardNotifications.vue";
-import PatientDetails from "./components/PatientDetails.vue";
+// import ExerciseStatsCharts from "./components/ExerciseStatsCharts.vue";
+// import DashboardNotifications from "./components/DashboardNotifications.vue";
+// import PatientDetails from "./components/PatientDetails.vue";
 
 export default {
     name: "DashboardPage",
-    components: {
-        ExerciseStatsCharts,
-        DashboardNotifications,
-        PatientDetails,
-    },
+    // components: {
+    //     ExerciseStatsCharts,
+    //     DashboardNotifications,
+    //     PatientDetails,
+    // },
     data() {
         return {
             patient: null,
