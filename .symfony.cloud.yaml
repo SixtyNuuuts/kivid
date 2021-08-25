@@ -45,3 +45,7 @@ hooks:
 variables:
     php:
         memory_limit: 512M
+
+dependencies:
+    php:
+        composer/composer: '^2'
