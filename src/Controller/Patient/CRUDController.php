@@ -3,9 +3,10 @@
 namespace App\Controller\Patient;
 
 use App\Entity\Patient;
-use App\Repository\NotificationRepository;
 use App\Repository\PatientRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Notification\NotificationService;
+use App\Repository\NotificationRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -15,15 +16,18 @@ class CRUDController extends AbstractController
 {
     private $patientRepository;
     private $notificationRepository;
+    private $notificationService;
     private $em;
 
     public function __construct(
         PatientRepository $patientRepository,
         NotificationRepository $notificationRepository,
+        NotificationService $notificationService,
         EntityManagerInterface $em
     ) {
         $this->patientRepository = $patientRepository;
         $this->notificationRepository = $notificationRepository;
+        $this->notificationService = $notificationService;
         $this->em = $em;
     }
 
@@ -46,6 +50,8 @@ class CRUDController extends AbstractController
             if ($this->isCsrfTokenValid('accept_add_request' . $patient->getId(), $data->_token)) {
                 $patient = $this->patientRepository->findOneBy(['id' => $patient]);
                 $notification = $this->notificationRepository->findOneBy(['id' => $data->notificationId]);
+
+                $this->notificationService->createAddRequestAcceptNotification($patient);
 
                 $patient->setDoctorAddRequest(true);
 
@@ -77,6 +83,8 @@ class CRUDController extends AbstractController
             if ($this->isCsrfTokenValid('decline_add_request' . $patient->getId(), $data->_token)) {
                 $patient = $this->patientRepository->findOneBy(['id' => $patient]);
                 $notification = $this->notificationRepository->findOneBy(['id' => $data->notificationId]);
+
+                $this->notificationService->createAddRequestDeclineNotification($patient);
 
                 $patient->setDoctorAddRequest(false);
 

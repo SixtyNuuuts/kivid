@@ -76,6 +76,44 @@ class NotificationService
         );
     }
 
+    public function createAddRequestAcceptNotification(
+        Patient $patient
+    ): void {
+        $this->createNotification(
+            'add-request-accept',
+            [
+                [
+                    'type' => 'user',
+                    'content' => "{$patient->getFirstname()} {$patient->getLastname()}",
+                ],
+                [
+                    'type' => 'text',
+                    'content' => 'a accepté votre demande d\'ajout',
+                ],
+            ],
+            $patient->getDoctor()
+        );
+    }
+
+    public function createAddRequestDeclineNotification(
+        Patient $patient
+    ): void {
+        $this->createNotification(
+            'add-request-decline',
+            [
+                [
+                    'type' => 'user',
+                    'content' => "{$patient->getFirstname()} {$patient->getLastname()}",
+                ],
+                [
+                    'type' => 'text',
+                    'content' => 'a refusé votre demande d\'ajout',
+                ],
+            ],
+            $patient->getDoctor()
+        );
+    }
+
     public function addPatientNotification(
         Doctor $doctor,
         Patient $patient
