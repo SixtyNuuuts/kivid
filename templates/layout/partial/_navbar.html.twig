@@ -6,6 +6,7 @@
 			"csrfTokenReadNotification": {{ csrf_token('read_notifications')|serialize('json')|raw }},
 			"homePath": {{ path('app_home')|serialize('json')|raw }},
 			"loginPath": {{ path('app_login')|serialize('json')|raw }},
+			"logoutPath": {{ path('app_logout')|serialize('json')|raw }},
 			"adminDashboardPath": {{ path('app_admin_dashboard')|serialize('json')|raw }},
 			"currentUser": {{ app.user|serialize('json', {'groups': 'user_read'})|raw }},
 			"currentRoute": {{ app.request.get('_route')|serialize('json')|raw }},
@@ -20,8 +21,7 @@
 			"doctorDashboardRoute": "app_doctor_dashboard",
 			"patientWorksheetsRoute": "app_patient_worksheets",
 			"doctorWorksheetsRoute": "app_doctor_worksheets",
-			"doctorPatientsRoute": "app_doctor_patients",
-			"logoutPath": {{ path('app_logout')|serialize('json')|raw }}
+			"doctorPatientsRoute": "app_doctor_patients"
 		}
 	</script>
 {% else %}

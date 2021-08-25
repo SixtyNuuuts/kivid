@@ -22,13 +22,15 @@ Encore
      */
     .addEntry('app', './assets/app.js')
     .addEntry('navbar', './assets/vue/navbar.js')
+    .addEntry('maquette', './assets/vue/maquette.js')
+
     // Doctor
     .addEntry('doctor-my-patients-page', './assets/vue/doctor/my-patients-page.js')
     .addEntry('doctor-my-worksheets-page', './assets/vue/doctor/my-worksheets-page.js')
     .addEntry('doctor-create-worksheet-page', './assets/vue/doctor/create-worksheet-page.js')
     // Patient
-    .addEntry('patient-my-worksheets-page', './assets/vue/patient/my-worksheets-page.js')
     .addEntry('patient-dashboard-page', './assets/vue/patient/dashboard-page.js')
+    .addEntry('patient-my-worksheets-page', './assets/vue/patient/my-worksheets-page.js')
     .addEntry('patient-subscription-page', './assets/vue/patient/subscription-page.js')
 
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
