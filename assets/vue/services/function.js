@@ -105,6 +105,10 @@ export default {
     return timeForNotif;
   },
 
+  getCivility(gender) {
+    return "male" === gender ? "M." : "Mme";
+  },
+
   // Vuesax functions
 
   getPage(data, page, maxItems) {

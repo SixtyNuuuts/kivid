@@ -25,6 +25,14 @@
     font-size: 1.5rem;
     font-weight: 600;
     letter-spacing: 0.05rem;
+    line-height: 1.3;
+
+    i {
+        font-size: 1.8rem;
+        position: relative;
+        top: 0rem;
+        margin-right: 0.95rem;
+    }
 
     &.vs-button--active,
     &:hover {
@@ -34,15 +42,17 @@
     &.secondary {
         background: $white;
         color: $orange;
+        border: 0.1rem solid $gray-middle;
 
         &.vs-button--active,
         &:hover {
             background: $orange;
             color: $white;
+            border: 0.1rem solid $orange;
         }
     }
 
-    &:not(:disabled) {
+    &:not(:disabled):not(.secondary):not(.part-of-body) {
         box-shadow: 0rem 0.4rem 1.4rem 0rem rgba(251, 139, 104, 0.5);
     }
 
@@ -53,14 +63,25 @@
     }
 }
 
+.btn-navbar {
+    .vs-button {
+        box-shadow: 0rem 0.2rem 0.6rem 0rem rgba(251, 139, 104, 0.5) !important;
+
+        .vs-button__content {
+            padding: 0.9rem 2rem;
+            font-size: 1.4rem;
+        }
+    }
+}
+
 .vs-button-group {
     display: flex;
-    border: 3px solid $gray-light;
+    border: 0.3rem solid $gray-light;
     border-radius: 0.3rem;
     background: $white;
 
     .vs-button.vs-button--flat {
-        box-shadow: none;
+        box-shadow: none !important;
         flex-grow: 1;
         border-radius: 0.3rem !important;
         background: transparent;
@@ -79,22 +100,72 @@
 
 .vs-button--size-mini.tag {
     border-radius: 0.4rem;
-    box-shadow: none;
 
     .vs-button__content {
         padding: 0.5rem 1rem;
     }
 
     &.part-of-body {
-        background: $gray-light;
+        background: #fb8b6826;
         color: $black;
+
+        &:hover {
+            box-shadow: none;
+            transform: none;
+            cursor: initial;
+        }
 
         .vs-button__content {
             padding: 0.7rem 1rem;
 
             img {
-                height: 1.5rem;
+                position: relative;
                 margin-right: 0.6rem;
+
+                &.icon-pied {
+                    top: -0.1rem;
+                    height: 1.5rem;
+                }
+
+                &.icon-jambe {
+                    top: 0rem;
+                    height: 1.85rem;
+                }
+
+                &.icon-bras {
+                    top: -0.1rem;
+                    height: 1.7rem;
+                }
+
+                &.icon-main {
+                    top: -0.1rem;
+                    height: 1.7rem;
+                }
+
+                &.icon-epaule {
+                    top: -0.1rem;
+                    height: 1.7rem;
+                }
+
+                &.icon-dos {
+                    top: -0.1rem;
+                    height: 1.7rem;
+                }
+
+                &.icon-cervicales {
+                    top: -0.1rem;
+                    height: 1.7rem;
+                }
+
+                &.icon-lombaires {
+                    top: 0rem;
+                    height: 1.8rem;
+                }
+
+                &.icon-thoracique {
+                    top: -0.1rem;
+                    height: 1.7rem;
+                }
             }
         }
     }
@@ -102,22 +173,24 @@
 
 /// INPUT
 .vs-input-content {
-    border-radius: 0.8rem;
+    border-radius: 0.6rem;
 
     .vs-input {
         width: 100%;
         padding: 1.6rem 2rem;
         background: $white;
         color: $black;
+        border: 0.1rem solid $gray-middle;
 
         &:focus {
             background: $white;
-            border: 1px solid $orange;
+            border: 0.1rem solid $orange;
         }
 
         &:hover,
         &:focus:hover {
-            box-shadow: 0px 5px 25px -4px rgba(0, 0, 0, var(--vs-shadow-opacity));
+            border: 0.1rem solid $orange;
+            box-shadow: 0 0.5rem 2.5rem -0.4rem rgba(0, 0, 0, 0.05);
             transform: translate(0, -0.4rem);
 
             ~ .vs-input__label {
@@ -131,16 +204,14 @@
     }
 
     .vs-input__label {
-        top: 1.8rem;
+        top: 1.7rem;
         left: 1.6rem;
         font-size: 1.5rem;
         color: $gray-dark;
-        // color: $black;
         opacity: 1;
         height: initial;
         width: initial;
         padding: 0.05rem 0.5rem;
-        // background-color: white;
         border-radius: 0.4rem;
         text-shadow: 0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white,
             0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white,
@@ -150,7 +221,7 @@
 
     .vs-input:focus ~ .vs-input__label--placeholder {
         transform: none;
-        color: $orange;
+        // color: $orange;
     }
 
     .vs-input__label--hidden.vs-input__label--placeholder {
@@ -169,9 +240,10 @@
     }
 
     .vs-input__icon {
+        left: auto;
         right: 0.8rem;
         box-shadow: none;
-        background: $white;
+        background: transparent;
         color: $black;
 
         i {
@@ -182,7 +254,7 @@
     .vs-input__icon--click:hover {
         box-shadow: none;
         transform: none;
-        background: $white;
+        background: transparent;
     }
 
     .vs-input--has-icon--after {
@@ -206,26 +278,29 @@
     }
 }
 
-.is-filled {
-    input {
-        border: 1px solid $gray-dark;
-    }
-}
-
 .error {
-    input {
-        border: 2px solid $red;
+    .vs-input-content {
+        .vs-input {
+            border: 0.1rem solid $red;
+            padding-right: 3.8rem;
 
-        &::after {
-            content: "\f06a";
-            font-family: "Font Awesome 5 Free";
-            font-weight: 900;
-            color: $red;
+            &:hover {
+                border: 0.1rem solid $red;
+
+                & ~ .vs-input__icon {
+                    transform: translate(0, -0.4rem);
+                }
+            }
+
+            &:focus {
+                border: 0.1rem solid $red;
+            }
         }
-    }
 
-    .vs-input__label {
-        color: $red;
+        .vs-input__icon {
+            color: $red;
+            font-size: 2rem;
+        }
     }
 }
 
@@ -248,8 +323,12 @@
         font-size: 1.5rem;
         color: $black;
         opacity: 1;
-        top: 1.85rem;
+        top: 1.95rem;
         left: 2rem;
+        max-width: 75%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .vs-select__input {
@@ -257,6 +336,14 @@
         padding-right: 3rem;
         border-radius: 0.8rem;
         background: $white;
+        font-size: 1.5rem;
+
+        &:focus {
+            ~ .vs-select__label {
+                margin-left: 0.3rem;
+                color: $gray-middle;
+            }
+        }
 
         &:hover {
             ~ .vs-icon-arrow {
@@ -274,9 +361,21 @@
     }
 }
 
-.vs-select__option {
-    padding: 0.7rem 1rem;
-    font-size: 1.4rem;
+.vs-select__options__content {
+    color: $black;
+
+    .vs-select__option {
+        padding: 0.7rem 1rem;
+        font-size: 1.4rem;
+
+        &.hiddenOption {
+            padding: 0;
+        }
+    }
+
+    .vs-select__options__content__not-data {
+        font-size: 1.2rem;
+    }
 }
 
 /// CHECKBOX
@@ -305,6 +404,15 @@
         .vs-switch__background {
             background: $sanguine;
         }
+    }
+}
+
+/// AVATAR
+
+.vs-avatar {
+    background: #eeebe6;
+    img {
+        color: #eeebe6;
     }
 }
 

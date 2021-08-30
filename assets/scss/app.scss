@@ -1,9 +1,11 @@
 @import "./utils/normalize";
 
+@import "./variables";
+
 @import "./root";
 
 @import "./fonts";
 
-@import "./variables";
-
 @import "./vuesax/overload";
+
+@import "./global";

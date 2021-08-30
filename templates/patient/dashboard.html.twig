@@ -15,14 +15,13 @@
 {% endblock %}
 
 {% block body %}
-	<div>
-		<div id="vue"></div>
-	</div>
+	<div id="vue"></div>
 {% endblock %}
 {% block vueData %}
 	{
 		"patient": {{ patient|serialize('json', {'groups': 'patient_read'})|raw }},
 		"doctorView": {{ doctorView|serialize('json')|raw }},
+		"csrfTokenSelectDoctor": {{ csrf_token('select_doctor' ~ patient.id)|serialize('json')|raw }},
 		"csrfTokenAcceptAddRequest": {{ csrf_token('accept_add_request' ~ patient.id)|serialize('json')|raw }},
 		"csrfTokenDeclineAddRequest": {{ csrf_token('decline_add_request' ~ patient.id)|serialize('json')|raw }}
 	}
