@@ -1,5 +1,10 @@
 <template>
-    <div>
+    <main>
+        <DoctorChoice
+            v-if="!patient.doctor"
+            :patient="patient"
+            :csrfTokenSelectDoctor="csrfTokenSelectDoctor"
+        />
         <!-- <div class="col-12 col-md-8">
             <DashboardNotifications
                 v-if="!doctorView"
@@ -12,27 +17,29 @@
         <div class="col-12 col-md-4">
             <PatientDetails :patient="patient" />
         </div> -->
-    </div>
+    </main>
 </template>
 
 <script>
+import DoctorChoice from "./components/DoctorChoice.vue";
 // import ExerciseStatsCharts from "./components/ExerciseStatsCharts.vue";
 // import DashboardNotifications from "./components/DashboardNotifications.vue";
 // import PatientDetails from "./components/PatientDetails.vue";
 
 export default {
-    name: "DashboardPage",
-    // components: {
-    //     ExerciseStatsCharts,
-    //     DashboardNotifications,
-    //     PatientDetails,
-    // },
+    components: {
+        DoctorChoice,
+        // ExerciseStatsCharts,
+        // DashboardNotifications,
+        // PatientDetails,
+    },
     data() {
         return {
             patient: null,
             doctorView: null,
             csrfTokenAcceptAddRequest: null,
             csrfTokenDeclineAddRequest: null,
+            csrfTokenSelectDoctor: null,
         };
     },
     created() {
@@ -42,9 +49,13 @@ export default {
         this.doctorView = data.doctorView;
         this.csrfTokenAcceptAddRequest = data.csrfTokenAcceptAddRequest;
         this.csrfTokenDeclineAddRequest = data.csrfTokenDeclineAddRequest;
+        this.csrfTokenSelectDoctor = data.csrfTokenSelectDoctor;
     },
 };
 </script>
 
 <style lang="scss" scoped>
+#dashboard {
+    min-height: 100%;
+}
 </style>

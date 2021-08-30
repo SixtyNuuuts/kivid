@@ -15,14 +15,14 @@ trait ConfigureActionsTrait
             ->update(
                 Crud::PAGE_INDEX,
                 Action::EDIT,
-                fn (Action $action) => $action->setIcon('fas fa-pen')
+                fn (Action $action) => $action->setIcone('fas fa-pen')
                                               ->setLabel(false)
                                               ->addCssClass('btn btn-outline-primary')
             )
             ->update(
                 Crud::PAGE_INDEX,
                 Action::DELETE,
-                fn (Action $action) => $action->setIcon('fas fa-trash-alt')
+                fn (Action $action) => $action->setIcone('fas fa-trash-alt')
                                               ->setLabel(false)
                                               ->addCssClass('btn btn-outline-danger')
             )
