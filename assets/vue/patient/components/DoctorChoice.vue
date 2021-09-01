@@ -131,6 +131,7 @@ export default {
             selectBox: false,
             selectInput: null,
             loading: false,
+            footer: null,
         };
     },
     computed: {
@@ -147,22 +148,14 @@ export default {
                     doctor_id: this.doctorSelected.id,
                 })
                 .then((response) => {
-                    this.openNotification(
-                        `<strong>Sélection de votre kinésithérapeute</strong>`,
-                        `${response.data.message}`,
-                        "top-right",
-                        "success",
-                        "<i class='fe fe-check-circle'></i>"
+                    f.openSuccesNotification(
+                        "Choix du kinésithérapeute enregistré",
+                        response.data.message
                     );
+                    this.footer.classList.remove("hidden");
                 })
                 .catch((error) => {
-                    this.openNotification(
-                        `<strong>Sélection de votre kinésithérapeute : Erreur</strong>`,
-                        `${error.response.data}`,
-                        "top-right",
-                        "danger",
-                        "<i class='fe fe-alert-circle'></i>"
-                    );
+                    f.openErrorNotification("Erreur", error.response.data);
                 });
         },
         toggleSelectBox() {
@@ -190,7 +183,7 @@ export default {
                 );
                 this.selectBox = true;
                 this.focusInputSelect();
-            }, 200);
+            }, 100);
         },
         focusInputSelect() {
             this.selectInput.focus();
@@ -198,21 +191,10 @@ export default {
         getCivility(gender) {
             return f.getCivility(gender);
         },
-        openNotification(title, text, position, color, icon) {
-            this.$vs.notification({
-                progress: "auto",
-                flat: true,
-                icon,
-                color,
-                position,
-                title,
-                text,
-            });
-        },
     },
     mounted() {
-        const footer = document.querySelector(".footer");
-        footer.classList.add("hidden");
+        this.footer = document.querySelector(".footer");
+        this.footer.classList.add("hidden");
 
         this.loading = true;
 
@@ -260,8 +242,6 @@ export default {
         border-radius: 0.8rem;
 
         &:hover {
-            // transform: translate(0, -0.4rem);
-
             input {
                 border: 1px solid $white;
                 box-shadow: 0px 5px 25px -4px rgba(0, 0, 0, 0.1);
@@ -270,11 +250,7 @@ export default {
 
         input {
             &.b-r-b-zero {
-                .vs-input-content {
-                    .vs-input {
-                        border-radius: 0.8rem 0.8rem 0 0;
-                    }
-                }
+                border-radius: 0.8rem 0.8rem 0 0;
             }
 
             width: 100%;

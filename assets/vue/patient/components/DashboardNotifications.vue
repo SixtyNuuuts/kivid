@@ -1,52 +1,49 @@
 <template>
-    <div>
-        <vs-alert v-if="!patient.isVerified">
-            <template #icon>
-                <i class="fe fe-info"></i>
-            </template>
-            <template #title> Bienvenue sur Kivid ! </template>
-            <span>
-                Veuillez tout d'abord cliquer sur le lien de vérification que
-                nous vous avons envoyé par e-mail à l'adresse
-                <strong>{{ patient.email }}</strong
-                >.
-            </span>
-        </vs-alert>
-        <div v-if="dashboardNotifications.length" class="dashboard-notif">
-            <div v-for="(notif, i) in dashboardNotifications" :key="i">
-                <div v-if="'add-patient' === notif.content[0].type">
-                    <vs-alert v-if="null === patient.doctorAddRequest">
-                        <template #icon>
-                            <i class="fe fe-info"></i>
-                        </template>
-                        <span v-for="(e, i) in notif.content" :key="i">
-                            <span v-if="'user' === e.type">
-                                <strong>{{ e.content }}</strong>
-                            </span>
-                            <span v-if="'text' === e.type">
-                                {{ e.content }}
-                            </span>
-                        </span>
-                        <a class="link" @click="acceptAddRequest(notif.id)">
-                            Accepter
-                        </a>
-                        <a class="link" @click="declineAddRequest(notif.id)">
-                            Refuser
-                        </a>
-                    </vs-alert>
+    <section id="dashboard-notifications" class="kiv-block">
+        <h2>Notifications</h2>
+        <div class="notifications-list">
+            <div>
+                <p class="notification-label">Vérifier votre adresse email</p>
+                <div class="notification-actions">
+                    <a class="action-link" href="#">
+                        <i class="kiv-pen icon-4"></i>
+                        <span>Compléter</span>
+                    </a>
+                </div>
+            </div>
+            <div>
+                <p class="notification-label">
+                    Un praticien (Jérome Doe) vous a ajouté
+                </p>
+                <div class="notification-actions">
+                    <a class="action-link green" href="#">
+                        <i class="kiv-accept icon-22"></i>
+                        <span>Accepter</span>
+                    </a>
+                    <a class="action-link red" href="#">
+                        <i class="kiv-decline icon-6"></i>
+                        <span>Refuser</span>
+                    </a>
+                </div>
+            </div>
+            <div>
+                <p class="notification-label">Compléter votre profil</p>
+                <div class="notification-actions">
+                    <a class="action-link" href="#">
+                        <i class="kiv-pen icon-4"></i>
+                        <span>Compléter</span>
+                    </a>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 </template>
 
 <script>
 export default {
-    name: "DashboardNotifications",
     data() {
         return {
             dashboardNotifications: [],
-            loadingDashboardNotifications: null,
         };
     },
     props: {
@@ -61,60 +58,32 @@ export default {
     },
     methods: {
         getDashboardNotifications() {
-            this.loadingDashboardNotifications = this.$vs.loading({
-                text: "chargement",
-                type: "border",
-            });
-
             this.axios
                 .get(`/${this.patient.id}/get/patient-dashboard-notifications`)
                 .then((response) => {
                     this.dashboardNotifications = response.data;
-
-                    this.loadingDashboardNotifications.close();
-                    this.loadingDashboardNotifications = null;
                 })
                 .catch((error) => {
                     if (error.response) {
                         console.log(error.response.data.detail);
                     }
-
-                    this.loadingDashboardNotifications.close();
-                    this.loadingDashboardNotifications = null;
                 });
         },
         acceptAddRequest(notificationId) {
-            this.patient.doctorAddRequest = true;
-
             this.axios
                 .post(`/patient/${this.patient.id}/accept/add-request`, {
                     _token: this.csrfTokenAcceptAddRequest,
                     notificationId: notificationId,
                 })
                 .then((response) => {
-                    this.openNotification(
-                        `<strong>Demande d'ajout acceptée</strong>`,
+                    f.openSuccesNotification(
+                        "Demande d'ajout acceptée",
                         `Vous avez accepté la demande d'ajout de 
-                        <strong>${this.patient.doctor.firstname} ${this.patient.doctor.lastname}</strong>`,
-                        "top-right",
-                        "success",
-                        "<i class='fe fe-check-circle'></i>"
+                        <strong>${this.patient.doctor.firstname} ${this.patient.doctor.lastname}</strong>`
                     );
-
-                    this.patient.doctorAddRequest = true;
                 })
                 .catch((error) => {
-                    if (error.response) {
-                        console.log(error.response.data.detail);
-                    }
-
-                    this.openNotification(
-                        `<strong>Erreur</strong>`,
-                        `${error.response.data}`,
-                        "top-right",
-                        "danger",
-                        "<i class='fe fe-alert-circle'></i>"
-                    );
+                    f.openErrorNotification("Erreur", error.response.data);
                 });
         },
         declineAddRequest(notificationId) {
@@ -124,41 +93,15 @@ export default {
                     notificationId: notificationId,
                 })
                 .then((response) => {
-                    this.openNotification(
-                        `<strong>Demande d'ajout refusée</strong>`,
+                    f.openSuccesNotification(
+                        "Demande d'ajout refusée",
                         `Vous avez refusé la demande d'ajout de 
-                        <strong>${this.patient.doctor.firstname} ${this.patient.doctor.lastname}</strong>`,
-                        "top-right",
-                        "success",
-                        "<i class='fe fe-check-circle'></i>"
+                        <strong>${this.patient.doctor.firstname} ${this.patient.doctor.lastname}</strong>`
                     );
-
-                    this.patient.doctorAddRequest = false;
                 })
                 .catch((error) => {
-                    if (error.response) {
-                        console.log(error.response.data.detail);
-                    }
-
-                    this.openNotification(
-                        `<strong>Erreur</strong>`,
-                        `${error.response.data}`,
-                        "top-right",
-                        "danger",
-                        "<i class='fe fe-alert-circle'></i>"
-                    );
+                    f.openErrorNotification("Erreur", error.response.data);
                 });
-        },
-        openNotification(title, text, position, color, icon) {
-            this.$vs.notification({
-                progress: "auto",
-                flat: true,
-                icon,
-                color,
-                position,
-                title,
-                text,
-            });
         },
     },
     created() {
@@ -168,21 +111,94 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.vs-alert {
-    margin-bottom: 1em;
+@import "../../../scss/variables";
 
-    .link {
-        cursor: pointer;
-        font-weight: 600;
-        margin-left: 0.5em;
-    }
-}
+#dashboard-notifications {
+    font-size: 1.4rem;
 
-.dashboard-notif {
-    margin-bottom: 2em;
+    .notifications-list {
+        > div {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 1.5rem 0;
 
-    a {
-        margin-right: 0.5em;
+            &:first-child {
+                margin-top: 0;
+            }
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+
+            .notification-label {
+                margin: 0;
+            }
+
+            .notification-actions {
+                display: flex;
+
+                .action-link {
+                    display: inline-flex;
+                    align-items: center;
+                    padding: 0.5rem;
+                    color: $black;
+                    text-decoration: none;
+                    transition: all 0.15s;
+                    position: relative;
+                    white-space: nowrap;
+
+                    &:hover {
+                        color: darken($black, 5%);
+                    }
+
+                    &:nth-child(2) {
+                        margin-left: 0.6rem;
+                    }
+
+                    &.green {
+                        color: $green;
+
+                        &:hover {
+                            color: darken($green, 5%);
+                        }
+                    }
+
+                    &.red {
+                        color: $red;
+
+                        &:hover {
+                            color: darken($red, 5%);
+                        }
+                    }
+
+                    i {
+                        margin-right: 0.5rem;
+
+                        &.kiv-pen {
+                            font-size: 1.8rem;
+                            position: relative;
+                            top: -0.05rem;
+                        }
+
+                        &.kiv-accept {
+                            font-size: 1.7rem;
+                            position: relative;
+                            top: -0.05rem;
+                        }
+
+                        &.kiv-decline {
+                            font-size: 1.95rem;
+                        }
+                    }
+
+                    span {
+                        font-weight: 600;
+                        text-decoration: underline;
+                    }
+                }
+            }
+        }
     }
 }
 </style>
