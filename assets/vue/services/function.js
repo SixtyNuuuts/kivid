@@ -1,3 +1,5 @@
+import Vue from 'vue';
+
 export default {
 
   getTagsFromAllVideos(videos) {
@@ -41,6 +43,30 @@ export default {
   formatDate(datetime) {
     let date = new Date(Date.parse(datetime));
     return new Intl.DateTimeFormat('fr-FR').format(date);
+  },
+
+  openSuccesNotification(titleText, messageText) {
+    Vue.prototype.$vs.notification({
+      progress: "auto",
+      flat: true,
+      icon: "<i class='fe fe-alert-circle'></i>",
+      color: "success",
+      position: "top-right",
+      title: `<strong>${titleText}</strong>`,
+      text: `${messageText}`,
+    });
+  },
+
+  openErrorNotification(titleText, messageText) {
+    Vue.prototype.$vs.notification({
+      progress: "auto",
+      flat: true,
+      icon: "<i class='fe fe-check-circle'></i>",
+      color: "danger",
+      position: "top-right",
+      title: `<strong>${titleText}</strong>`,
+      text: `${messageText}`,
+    });
   },
 
   generateAgeFromDateOfBirth(dateString) {

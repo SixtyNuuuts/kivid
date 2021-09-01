@@ -17,7 +17,7 @@ class Exercise
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"worksheet_read", "prescription_read"})
+     * @Groups({"worksheet_read", "prescription_read", "patient_read"})
      */
     private $id;
 

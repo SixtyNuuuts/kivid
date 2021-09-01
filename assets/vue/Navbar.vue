@@ -37,7 +37,7 @@
                                 <li class="active">
                                     <div class="notif-icon">
                                         <img
-                                            src="../img/icons/notification/prescription.svg"
+                                            src="../img/icons/colored/prescription.svg"
                                             alt="Icone d'une prescription"
                                             class="icon-prescription"
                                         />
@@ -51,7 +51,7 @@
                                 <li>
                                     <div class="notif-icon">
                                         <img
-                                            src="../img/icons/notification/confettis.svg"
+                                            src="../img/icons/colored/confettis.svg"
                                             alt="Icone de confettis"
                                             class="icon-confettis"
                                         />
@@ -64,7 +64,7 @@
                                 <li>
                                     <div class="notif-icon">
                                         <img
-                                            src="../img/icons/notification/clock.svg"
+                                            src="../img/icons/colored/clock.svg"
                                             alt="Icone d'une montre / horloge"
                                             class="icon-clock"
                                         />
