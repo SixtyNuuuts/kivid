@@ -75,6 +75,25 @@ class ManageWorksheetController extends AbstractController
     }
 
     /**
+     * @Route("/{id}/fiche/{worksheetId}",
+     * name="app_doctor_worksheet_creation", methods={"GET"})
+     */
+    public function worksheetCreation(
+        Patient $patient,
+        int $worksheetId = null
+    ): Response {
+        $worksheet =
+        $worksheetId && $worksheetId != 0 ?
+            $this->worksheetRepository->findOneBy(['id' => $worksheetId])
+        : null;
+
+        return $this->render('patient/show_worksheet.html.twig', [
+            'patient' => $patient,
+            'worksheet' => $worksheet,
+        ]);
+    }
+
+    /**
      * @Route("/{id}/get/prescriptions", name="app_patient_get_prescriptions", methods={"GET"})
      */
     public function getPrescriptions(Patient $patient): JsonResponse

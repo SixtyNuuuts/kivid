@@ -27,6 +27,10 @@
     line-height: 1.3;
     letter-spacing: 0.05rem;
 
+    &.w-100 {
+        width: 100%;
+    }
+
     i {
         font-size: 1.8rem;
         position: relative;
@@ -40,7 +44,7 @@
     }
 
     &.secondary {
-        background: $white;
+        background: transparent;
         color: $orange;
         border: 0.1rem solid $gray-middle;
 
@@ -213,14 +217,29 @@
         &:focus:hover {
             border: 0.1rem solid $orange;
             box-shadow: 0 0.5rem 2.5rem -0.4rem rgba(0, 0, 0, 0.05);
-            transform: translate(0, -0.4rem);
+            // transform: translate(0, -0.4rem);
 
-            ~ .vs-input__label {
-                transform: translate(0, -0.4rem);
+            // ~ .vs-input__label {
+            //     transform: translate(0, -0.4rem);
+            // }
+
+            // ~ .vs-input__icon {
+            //     transform: translate(0, -0.4rem);
+            // }
+        }
+
+        &[disabled] {
+            opacity: 1;
+            background: $gray-middle;
+            border: 0.1rem solid $gray-middle;
+
+            &:hover {
+                border: 0.1rem solid $gray-middle;
+                box-shadow: none;
             }
 
-            ~ .vs-input__icon {
-                transform: translate(0, -0.4rem);
+            & ~ .vs-input__label {
+                text-shadow: none;
             }
         }
     }
@@ -438,6 +457,41 @@
     }
 }
 
+/// DIALOG / MODAL
+
+.vs-dialog-content {
+    background: rgb(34 46 84 / 75%);
+
+    .vs-dialog {
+        border-radius: 0.5rem;
+    }
+
+    .vs-dialog__close {
+        border-radius: 50%;
+    }
+
+    &.modal-mobile {
+        padding: 1.6rem;
+
+        &.vs-dialog-enter-active .vs-dialog:not(.vs-dialog--fullScreen) {
+            animation: none;
+        }
+
+        .vs-dialog {
+            margin: 0;
+            min-width: initial;
+            max-width: initial;
+            width: 100%;
+            height: 100%;
+
+            .vs-dialog__content {
+                padding: 0;
+                width: 100%;
+                height: 100%;
+            }
+        }
+    }
+}
 /* VueSax Overload */
 // :root {
 //   --vs-primary: 25, 91, 255;

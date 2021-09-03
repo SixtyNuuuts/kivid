@@ -440,12 +440,13 @@ export default {
                             &:after {
                                 content: "";
                                 position: absolute;
-                                top: -0.4rem;
-                                right: 1.2rem;
+                                top: -0.5rem;
+                                right: 1.1rem;
                                 border-radius: 50%;
                                 display: block;
-                                width: 0.7rem;
-                                height: 0.7rem;
+                                width: 6px;
+                                height: 6px;
+                                border: 2px solid $white;
                                 background: $orange;
                                 animation: blink 1.5s linear infinite;
                             }

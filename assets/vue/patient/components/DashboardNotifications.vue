@@ -1,41 +1,57 @@
 <template>
-    <section id="dashboard-notifications" class="kiv-block">
-        <h2>Notifications</h2>
-        <div class="notifications-list">
-            <div>
-                <p class="notification-label">Vérifier votre adresse email</p>
-                <div class="notification-actions">
-                    <a class="action-link" href="#">
-                        <i class="kiv-pen icon-4"></i>
-                        <span>Compléter</span>
-                    </a>
-                </div>
-            </div>
-            <div>
-                <p class="notification-label">
-                    Un praticien (Jérome Doe) vous a ajouté
-                </p>
-                <div class="notification-actions">
-                    <a class="action-link green" href="#">
-                        <i class="kiv-accept icon-22"></i>
-                        <span>Accepter</span>
-                    </a>
-                    <a class="action-link red" href="#">
-                        <i class="kiv-decline icon-6"></i>
-                        <span>Refuser</span>
-                    </a>
-                </div>
-            </div>
-            <div>
-                <p class="notification-label">Compléter votre profil</p>
-                <div class="notification-actions">
-                    <a class="action-link" href="#">
-                        <i class="kiv-pen icon-4"></i>
-                        <span>Compléter</span>
-                    </a>
-                </div>
-            </div>
+    <section
+        id="dashboard-notifications"
+        class="kiv-block"
+        :class="{ reduced: !$parent.notificationsContent }"
+    >
+        <div
+            class="toggle-content"
+            @click="
+                $parent.notificationsContent = !$parent.notificationsContent
+            "
+        >
+            <i class="kiv-chevron-down icon-3"></i>
         </div>
+        <h2>Notifications</h2>
+        <transition name="height">
+            <div v-if="$parent.notificationsContent" class="notifications-list">
+                <div>
+                    <p class="notification-label">
+                        Vérifier votre adresse email
+                    </p>
+                    <div class="notification-actions">
+                        <a class="action-link" href="#">
+                            <i class="kiv-pen icon-4"></i>
+                            <span>Compléter</span>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <p class="notification-label">
+                        Un praticien (Jérome Doe) vous a ajouté
+                    </p>
+                    <div class="notification-actions">
+                        <a class="action-link green" href="#">
+                            <i class="kiv-accept icon-22"></i>
+                            <span>Accepter</span>
+                        </a>
+                        <a class="action-link red" href="#">
+                            <i class="kiv-decline icon-6"></i>
+                            <span>Refuser</span>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <p class="notification-label">Compléter votre profil</p>
+                    <div class="notification-actions">
+                        <a class="action-link" href="#">
+                            <i class="kiv-pen icon-4"></i>
+                            <span>Compléter</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </transition>
     </section>
 </template>
 
@@ -115,13 +131,39 @@ export default {
 
 #dashboard-notifications {
     font-size: 1.4rem;
+    margin-bottom: 2rem;
+    width: 100%;
+    margin-right: 0;
+
+    @media (min-width: 576px) {
+        margin-bottom: 0;
+        width: 49%;
+        margin-right: 2rem;
+    }
+
+    @media (min-width: 992px) {
+        margin-bottom: 2rem;
+        width: 100%;
+        margin-right: 0;
+    }
 
     .notifications-list {
         > div {
             display: flex;
+            flex-direction: row;
             justify-content: space-between;
             align-items: center;
             margin: 1.5rem 0;
+
+            @media (min-width: 576px) {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            @media (min-width: 768px) {
+                flex-direction: row;
+                align-items: center;
+            }
 
             &:first-child {
                 margin-top: 0;
@@ -137,6 +179,23 @@ export default {
 
             .notification-actions {
                 display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                margin-left: 2rem;
+
+                @media (min-width: 576px) {
+                    flex-direction: row;
+                    margin-left: 0;
+                }
+
+                @media (min-width: 768px) {
+                    flex-direction: column;
+                    margin-left: 2rem;
+                }
+
+                @media (min-width: 1200px) {
+                    flex-direction: row;
+                }
 
                 .action-link {
                     display: inline-flex;
@@ -147,13 +206,32 @@ export default {
                     transition: all 0.15s;
                     position: relative;
                     white-space: nowrap;
+                    padding-left: 0;
+
+                    @media (min-width: 768px) {
+                        padding-left: 0.5rem;
+                    }
 
                     &:hover {
                         color: darken($black, 5%);
                     }
 
                     &:nth-child(2) {
-                        margin-left: 0.6rem;
+                        margin-left: 0.8rem;
+                        margin-left: -0.1rem;
+
+                        @media (min-width: 576px) {
+                            flex-direction: row;
+                            margin-left: 0.8rem;
+                        }
+
+                        @media (min-width: 768px) {
+                            margin-left: -0.1rem;
+                        }
+
+                        @media (min-width: 1200px) {
+                            margin-left: 0.6rem;
+                        }
                     }
 
                     &.green {
@@ -189,6 +267,7 @@ export default {
 
                         &.kiv-decline {
                             font-size: 1.95rem;
+                            margin-right: 0.3rem;
                         }
                     }
 

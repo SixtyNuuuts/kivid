@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import DashboardPage from './DashboardPage.vue'
+import ShowWorkSheetPage from './ShowWorkSheetPage.vue'
 
 // Axios
 import axios from 'axios'
@@ -8,11 +8,12 @@ Vue.use(VueAxios, axios)
 
 // Vuesax (UX lib)
 import Vuesax from 'vuesax'
+Vue.use(Vuesax)
 
-// Ellipse Progress Bar
-import VueEllipseProgress from 'vue-ellipse-progress';
-Vue.use(VueEllipseProgress);
+// Youtube player
+import VueYoutube from 'vue-youtube'
+Vue.use(VueYoutube)
 
 new Vue({
-    render: h => h(DashboardPage)
+    render: h => h(ShowWorkSheetPage)
 }).$mount('#vue')
