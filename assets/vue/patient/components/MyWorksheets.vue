@@ -1,86 +1,336 @@
 <template>
-    <section id="my-worksheets" class="kiv-block">
+    <section
+        id="my-worksheets"
+        class="kiv-block"
+        :class="{ reduced: !$parent.myWorksheetsContent }"
+    >
+        <div
+            class="toggle-content"
+            @click="$parent.myWorksheetsContent = !$parent.myWorksheetsContent"
+        >
+            <i class="kiv-chevron-down icon-3"></i>
+        </div>
         <h2>Mes fiches</h2>
-        <div class="worksheet-list">
-            <div>
-                <div class="worksheet-header">
-                    <h3 class="worksheet-title">Mobilité</h3>
-                    <vs-button size="mini" class="tag part-of-body">
-                        <img
-                            src="../../../img/icons/part-of-body/jambe.svg"
-                            alt="Icone Jambe"
-                            class="icon-jambe"
-                        />
-                        Jambe
-                    </vs-button>
-                </div>
-                <div class="worksheet-progress-line">
-                    <div class="progressbar-base">
-                        <div
-                            class="progressbar-thumb"
-                            :style="{
-                                width: `${getWorksheetProgression}%`,
-                            }"
-                        ></div>
-                        <div class="progressbar-steps">
-                            <div>
-                                <div class="point end"></div>
-                                <span
-                                    :class="{
-                                        completed:
-                                            getWorksheetProgression === 100,
-                                    }"
-                                    >Vous avez fini la fiche !</span
-                                >
+        <transition name="height">
+            <div v-if="$parent.myWorksheetsContent" class="worksheet-list">
+                <div>
+                    <div class="worksheet-header">
+                        <h3 class="worksheet-title">Mobilité</h3>
+                        <vs-button size="mini" class="tag part-of-body">
+                            <img
+                                src="../../../img/icons/part-of-body/jambe.svg"
+                                alt="Icone Jambe"
+                                class="icon-jambe"
+                            />
+                            Jambe
+                        </vs-button>
+                    </div>
+                    <div class="worksheet-progress-line">
+                        <div class="progressbar-base">
+                            <div
+                                class="progressbar-thumb"
+                                :style="{
+                                    width: `${getWorksheetProgression}%`,
+                                }"
+                            ></div>
+                            <div class="progressbar-steps">
+                                <div>
+                                    <div class="point end"></div>
+                                    <span
+                                        :class="{
+                                            completed:
+                                                getWorksheetProgression === 100,
+                                        }"
+                                        >Vous avez fini la fiche !</span
+                                    >
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="worksheet-content">
-                    <div class="worksheet-details">
-                        <div class="worksheet-exercises-count">
-                            <i class="kiv-exercise icon-7"></i>
-                            <span>8</span> exercices
+                    <div class="worksheet-content">
+                        <div class="worksheet-details">
+                            <div class="worksheet-exercises-count">
+                                <i class="kiv-exercise icon-7"></i>
+                                <span>8</span> exercices
+                            </div>
+                            <div class="worksheet-timing">
+                                <i class="kiv-calendar icon-10"></i>
+                                <span>2x</span> par jour - <span>2x</span> par
+                                semaine
+                            </div>
+                            <div class="worksheet-period">
+                                <i class="kiv-clock icon-11"></i>
+                                Période : <span>3 semaines</span>
+                            </div>
                         </div>
-                        <div class="worksheet-timing">
-                            <i class="kiv-calendar icon-10"></i>
-                            <span>2x</span> par jour - <span>2x</span> par
-                            semaine
-                        </div>
-                        <div class="worksheet-period">
-                            <i class="kiv-clock icon-11"></i>
-                            Période : <span>3 semaines</span>
+                        <div class="buttons">
+                            <vs-button class="btn-go" circle floating>
+                                Go !
+                            </vs-button>
+                            <!-- <vs-button class="btn-consult"> Consulter </vs-button> -->
                         </div>
                     </div>
-                    <div class="buttons">
-                        <vs-button class="btn-go" circle floating>
-                            Go !
+                </div>
+                <div>
+                    <div class="worksheet-header">
+                        <h3 class="worksheet-title">Mobilité</h3>
+                        <vs-button size="mini" class="tag part-of-body">
+                            <img
+                                src="../../../img/icons/part-of-body/jambe.svg"
+                                alt="Icone Jambe"
+                                class="icon-jambe"
+                            />
+                            Jambe
                         </vs-button>
-                        <!-- <vs-button class="btn-consult"> Consulter </vs-button> -->
+                    </div>
+                    <div class="worksheet-content session-completed">
+                        <p>
+                            Bravo, vos exercices d’aujourd’hui ont été faits
+                            avec succès ! Rendez-vous dans les prochains jours
+                            pour ...
+                        </p>
+                        <vs-button class="btn-consult"> Consulter </vs-button>
+                    </div>
+                </div>
+                <div>
+                    <div class="worksheet-header">
+                        <h3 class="worksheet-title">Mobilité</h3>
+                        <vs-button size="mini" class="tag part-of-body">
+                            <img
+                                src="../../../img/icons/part-of-body/jambe.svg"
+                                alt="Icone Jambe"
+                                class="icon-jambe"
+                            />
+                            Jambe
+                        </vs-button>
+                    </div>
+                    <div class="worksheet-progress-line">
+                        <div class="progressbar-base">
+                            <div
+                                class="progressbar-thumb"
+                                :style="{
+                                    width: `${getWorksheetProgression}%`,
+                                }"
+                            ></div>
+                            <div class="progressbar-steps">
+                                <div>
+                                    <div class="point end"></div>
+                                    <span
+                                        :class="{
+                                            completed:
+                                                getWorksheetProgression === 100,
+                                        }"
+                                        >Vous avez fini la fiche !</span
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="worksheet-content">
+                        <div class="worksheet-details">
+                            <div class="worksheet-exercises-count">
+                                <i class="kiv-exercise icon-7"></i>
+                                <span>8</span> exercices
+                            </div>
+                            <div class="worksheet-timing">
+                                <i class="kiv-calendar icon-10"></i>
+                                <span>2x</span> par jour - <span>2x</span> par
+                                semaine
+                            </div>
+                            <div class="worksheet-period">
+                                <i class="kiv-clock icon-11"></i>
+                                Période : <span>3 semaines</span>
+                            </div>
+                        </div>
+                        <div class="buttons">
+                            <vs-button class="btn-go" circle floating>
+                                Go !
+                            </vs-button>
+                            <!-- <vs-button class="btn-consult"> Consulter </vs-button> -->
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="worksheet-header">
+                        <h3 class="worksheet-title">Mobilité</h3>
+                        <vs-button size="mini" class="tag part-of-body">
+                            <img
+                                src="../../../img/icons/part-of-body/jambe.svg"
+                                alt="Icone Jambe"
+                                class="icon-jambe"
+                            />
+                            Jambe
+                        </vs-button>
+                    </div>
+                    <div class="worksheet-content session-completed">
+                        <p>
+                            Bravo, vos exercices d’aujourd’hui ont été faits
+                            avec succès ! Rendez-vous dans les prochains jours
+                            pour ...
+                        </p>
+                        <vs-button class="btn-consult"> Consulter </vs-button>
+                    </div>
+                </div>
+                <div>
+                    <div class="worksheet-header">
+                        <h3 class="worksheet-title">Mobilité</h3>
+                        <vs-button size="mini" class="tag part-of-body">
+                            <img
+                                src="../../../img/icons/part-of-body/jambe.svg"
+                                alt="Icone Jambe"
+                                class="icon-jambe"
+                            />
+                            Jambe
+                        </vs-button>
+                    </div>
+                    <div class="worksheet-progress-line">
+                        <div class="progressbar-base">
+                            <div
+                                class="progressbar-thumb"
+                                :style="{
+                                    width: `${getWorksheetProgression}%`,
+                                }"
+                            ></div>
+                            <div class="progressbar-steps">
+                                <div>
+                                    <div class="point end"></div>
+                                    <span
+                                        :class="{
+                                            completed:
+                                                getWorksheetProgression === 100,
+                                        }"
+                                        >Vous avez fini la fiche !</span
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="worksheet-content">
+                        <div class="worksheet-details">
+                            <div class="worksheet-exercises-count">
+                                <i class="kiv-exercise icon-7"></i>
+                                <span>8</span> exercices
+                            </div>
+                            <div class="worksheet-timing">
+                                <i class="kiv-calendar icon-10"></i>
+                                <span>2x</span> par jour - <span>2x</span> par
+                                semaine
+                            </div>
+                            <div class="worksheet-period">
+                                <i class="kiv-clock icon-11"></i>
+                                Période : <span>3 semaines</span>
+                            </div>
+                        </div>
+                        <div class="buttons">
+                            <vs-button class="btn-go" circle floating>
+                                Go !
+                            </vs-button>
+                            <!-- <vs-button class="btn-consult"> Consulter </vs-button> -->
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="worksheet-header">
+                        <h3 class="worksheet-title">Mobilité</h3>
+                        <vs-button size="mini" class="tag part-of-body">
+                            <img
+                                src="../../../img/icons/part-of-body/jambe.svg"
+                                alt="Icone Jambe"
+                                class="icon-jambe"
+                            />
+                            Jambe
+                        </vs-button>
+                    </div>
+                    <div class="worksheet-content session-completed">
+                        <p>
+                            Bravo, vos exercices d’aujourd’hui ont été faits
+                            avec succès ! Rendez-vous dans les prochains jours
+                            pour ...
+                        </p>
+                        <vs-button class="btn-consult"> Consulter </vs-button>
+                    </div>
+                </div>
+                <div>
+                    <div class="worksheet-header">
+                        <h3 class="worksheet-title">Mobilité</h3>
+                        <vs-button size="mini" class="tag part-of-body">
+                            <img
+                                src="../../../img/icons/part-of-body/jambe.svg"
+                                alt="Icone Jambe"
+                                class="icon-jambe"
+                            />
+                            Jambe
+                        </vs-button>
+                    </div>
+                    <div class="worksheet-progress-line">
+                        <div class="progressbar-base">
+                            <div
+                                class="progressbar-thumb"
+                                :style="{
+                                    width: `${getWorksheetProgression}%`,
+                                }"
+                            ></div>
+                            <div class="progressbar-steps">
+                                <div>
+                                    <div class="point end"></div>
+                                    <span
+                                        :class="{
+                                            completed:
+                                                getWorksheetProgression === 100,
+                                        }"
+                                        >Vous avez fini la fiche !</span
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="worksheet-content">
+                        <div class="worksheet-details">
+                            <div class="worksheet-exercises-count">
+                                <i class="kiv-exercise icon-7"></i>
+                                <span>8</span> exercices
+                            </div>
+                            <div class="worksheet-timing">
+                                <i class="kiv-calendar icon-10"></i>
+                                <span>2x</span> par jour - <span>2x</span> par
+                                semaine
+                            </div>
+                            <div class="worksheet-period">
+                                <i class="kiv-clock icon-11"></i>
+                                Période : <span>3 semaines</span>
+                            </div>
+                        </div>
+                        <div class="buttons">
+                            <vs-button class="btn-go" circle floating>
+                                Go !
+                            </vs-button>
+                            <!-- <vs-button class="btn-consult"> Consulter </vs-button> -->
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="worksheet-header">
+                        <h3 class="worksheet-title">Mobilité</h3>
+                        <vs-button size="mini" class="tag part-of-body">
+                            <img
+                                src="../../../img/icons/part-of-body/jambe.svg"
+                                alt="Icone Jambe"
+                                class="icon-jambe"
+                            />
+                            Jambe
+                        </vs-button>
+                    </div>
+                    <div class="worksheet-content session-completed">
+                        <p>
+                            Bravo, vos exercices d’aujourd’hui ont été faits
+                            avec succès ! Rendez-vous dans les prochains jours
+                            pour ...
+                        </p>
+                        <vs-button class="btn-consult"> Consulter </vs-button>
                     </div>
                 </div>
             </div>
-            <div>
-                <div class="worksheet-header">
-                    <h3 class="worksheet-title">Mobilité</h3>
-                    <vs-button size="mini" class="tag part-of-body">
-                        <img
-                            src="../../../img/icons/part-of-body/jambe.svg"
-                            alt="Icone Jambe"
-                            class="icon-jambe"
-                        />
-                        Jambe
-                    </vs-button>
-                </div>
-                <div class="worksheet-content session-completed">
-                    <p>
-                        Bravo, vos exercices d’aujourd’hui ont été faits avec
-                        succès ! Rendez-vous dans les prochains jours pour ...
-                    </p>
-                    <vs-button class="btn-consult"> Consulter </vs-button>
-                </div>
-            </div>
-        </div>
+        </transition>
     </section>
 </template>
 
@@ -135,26 +385,30 @@ export default {
 @import "../../../scss/variables";
 
 #my-worksheets {
+    grid-area: myworksheets;
+
     .worksheet-list {
-        display: flex;
-        flex-wrap: wrap;
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-gap: 1.5rem;
+
+        @media (min-width: 768px) {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        @media (min-width: 992px) {
+            grid-template-columns: 1fr;
+        }
+
+        @media (min-width: 1200px) {
+            grid-template-columns: 1fr 1fr;
+        }
 
         > div {
             background: #faf8f4;
             border-radius: 0.5rem;
-            flex-grow: 1;
-            max-width: 49%;
-            min-width: 49%;
-            margin: 1%;
             padding: 2rem;
-
-            &:nth-child(odd) {
-                margin-left: 0;
-            }
-
-            &:nth-child(even) {
-                margin-right: 0;
-            }
+            overflow: hidden;
 
             .worksheet-header {
                 display: flex;
@@ -252,6 +506,10 @@ export default {
 
                 .worksheet-details {
                     font-size: 1.4rem;
+
+                    @media (max-width: 380px) {
+                        font-size: 1.2rem;
+                    }
 
                     > div {
                         display: flex;

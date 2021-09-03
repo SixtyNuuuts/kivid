@@ -15,11 +15,9 @@
                     />
                 </i>
             </h1>
-            <div class="content">
-                <main>
-                    <MyScores :patient="patient" />
-                    <MyWorksheets :patient="patient" />
-                </main>
+            <main>
+                <MyScores :patient="patient" />
+                <MyWorksheets :patient="patient" />
                 <aside>
                     <DashboardNotifications
                         v-if="!doctorView"
@@ -27,62 +25,78 @@
                         :csrfTokenAcceptAddRequest="csrfTokenAcceptAddRequest"
                         :csrfTokenDeclineAddRequest="csrfTokenDeclineAddRequest"
                     />
-                    <section id="my-doctor" class="kiv-block">
-                        <h2>Mon praticien</h2>
-                        <div class="doctor-details">
-                            <div class="doctor-avatar">
-                                <vs-avatar
-                                    v-if="true === patient.doctorAddRequest"
-                                    class="avatar"
-                                    circle
-                                    size="116"
-                                >
-                                    <img
-                                        :src="
-                                            patient.doctor.avatarUrl
-                                                ? patient.doctor.avatarUrl
-                                                : '../../img/avatar-default.svg'
-                                        "
-                                        :alt="`Avatar de ${patient.doctor.firstname} ${patient.doctor.lastname}`"
-                                    />
-                                </vs-avatar>
-                                <vs-avatar
-                                    v-if="null === patient.doctorAddRequest"
-                                    class="avatar waiting"
-                                    circle
-                                    size="116"
-                                >
-                                    <img
-                                        src="../../img/icons/smiley/55.svg"
-                                        alt="Smiley Monocle"
-                                    />
-                                </vs-avatar>
-                            </div>
-                            <div class="doctor-infos">
-                                <div v-if="true === patient.doctorAddRequest">
-                                    <p class="name">
-                                        {{
-                                            patient.doctor.gender
-                                                ? getCivility(
-                                                      patient.doctor.gender
-                                                  )
-                                                : ""
-                                        }}
-                                        {{ patient.doctor.lastname }}
-                                        {{ patient.doctor.firstname }}
-                                    </p>
-                                    <p class="city">
-                                        {{ patient.doctor.city }}
-                                    </p>
-                                </div>
-                                <div v-if="null === patient.doctorAddRequest">
-                                    <p>En attente de validation</p>
-                                </div>
-                            </div>
+                    <section
+                        id="my-doctor"
+                        class="kiv-block"
+                        :class="{ reduced: !myDoctorContent }"
+                    >
+                        <div
+                            class="toggle-content"
+                            @click="myDoctorContent = !myDoctorContent"
+                        >
+                            <i class="kiv-chevron-down icon-3"></i>
                         </div>
+                        <h2>Mon praticien</h2>
+                        <transition name="height">
+                            <div v-if="myDoctorContent" class="doctor-details">
+                                <div class="doctor-avatar">
+                                    <vs-avatar
+                                        v-if="true === patient.doctorAddRequest"
+                                        class="avatar"
+                                        circle
+                                        size="116"
+                                    >
+                                        <img
+                                            :src="
+                                                patient.doctor.avatarUrl
+                                                    ? patient.doctor.avatarUrl
+                                                    : '../../img/avatar-default.svg'
+                                            "
+                                            :alt="`Avatar de ${patient.doctor.firstname} ${patient.doctor.lastname}`"
+                                        />
+                                    </vs-avatar>
+                                    <vs-avatar
+                                        v-if="null === patient.doctorAddRequest"
+                                        class="avatar waiting"
+                                        circle
+                                        size="116"
+                                    >
+                                        <img
+                                            src="../../img/icons/smiley/55.svg"
+                                            alt="Smiley Monocle"
+                                        />
+                                    </vs-avatar>
+                                </div>
+                                <div class="doctor-infos">
+                                    <div
+                                        v-if="true === patient.doctorAddRequest"
+                                    >
+                                        <p class="name">
+                                            {{
+                                                patient.doctor.gender
+                                                    ? getCivility(
+                                                          patient.doctor.gender
+                                                      )
+                                                    : ""
+                                            }}
+                                            {{ patient.doctor.lastname }}
+                                            {{ patient.doctor.firstname }}
+                                        </p>
+                                        <p class="city">
+                                            {{ patient.doctor.city }}
+                                        </p>
+                                    </div>
+                                    <div
+                                        v-if="null === patient.doctorAddRequest"
+                                    >
+                                        <p>En attente de validation</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </transition>
                     </section>
                 </aside>
-            </div>
+            </main>
             <!-- <div class="col-12 col-md-8">
             <ExerciseStatsCharts :patient="patient" />
         </div>
@@ -121,15 +135,28 @@ export default {
             csrfTokenAcceptAddRequest: null,
             csrfTokenDeclineAddRequest: null,
             csrfTokenSelectDoctor: null,
+            myScoresContent: true,
+            notificationsContent: true,
+            myDoctorContent: true,
+            myWorksheetsContent: true,
         };
     },
     methods: {
         getCivility(gender) {
             return f.getCivility(gender);
         },
+        onResize() {
+            if (window.innerWidth > 576) {
+                this.myScoresContent = true;
+                this.notificationsContent = true;
+                this.myDoctorContent = true;
+                this.myWorksheetsContent = true;
+            }
+        },
     },
     created() {
         Vue.prototype.$vs = this.$vs;
+        window.addEventListener("resize", this.onResize);
 
         const data = JSON.parse(document.getElementById("vueData").innerHTML);
 
@@ -139,33 +166,66 @@ export default {
         this.csrfTokenDeclineAddRequest = data.csrfTokenDeclineAddRequest;
         this.csrfTokenSelectDoctor = data.csrfTokenSelectDoctor;
     },
+    beforeDestroy() {
+        window.removeEventListener("resize", this.onResize);
+    },
 };
 </script>
 
 <style lang="scss" scoped>
 #dashboard {
-    .content {
-        display: flex;
-        justify-content: space-between;
-        min-height: 20rem;
+    main {
+        display: grid;
+        grid-gap: 2rem;
 
-        main {
-            flex-grow: 2;
-            margin-right: 2rem;
-            max-width: 70%;
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "myscores"
+            "aside"
+            "myworksheets";
+
+        @media (min-width: 992px) {
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-areas:
+                "myscores      myscores      aside"
+                "myworksheets  myworksheets  aside";
         }
 
         aside {
-            flex-grow: 1;
+            grid-area: aside;
+            display: flex;
+            flex-direction: column;
+
+            @media (min-width: 576px) {
+                flex-direction: row;
+            }
+
+            @media (min-width: 992px) {
+                margin-bottom: 2rem;
+                flex-direction: column;
+            }
 
             #my-doctor {
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+
+                @media (min-width: 576px) {
+                    width: 49%;
+                }
+
+                @media (min-width: 992px) {
+                    width: 100%;
+                }
+
                 .doctor-details {
                     display: flex;
                     align-items: center;
+                    flex-grow: 1;
 
                     .doctor-avatar {
                         .avatar {
-                            margin-right: 2.5rem;
+                            margin-right: 1.5vw;
 
                             &.waiting {
                                 img {
