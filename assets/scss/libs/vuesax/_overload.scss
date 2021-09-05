@@ -197,6 +197,11 @@
     }
 }
 
+.btn-next .vs-button {
+    .vs-button__content {
+        padding: 1.2rem 2rem;
+    }
+}
 /// INPUT
 .vs-input-content {
     border-radius: 0.6rem;
@@ -460,7 +465,7 @@
 /// DIALOG / MODAL
 
 .vs-dialog-content {
-    background: rgb(34 46 84 / 75%);
+    background: rgba(34, 46, 84, 0.8);
 
     .vs-dialog {
         border-radius: 0.5rem;
