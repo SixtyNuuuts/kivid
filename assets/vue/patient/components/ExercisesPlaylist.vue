@@ -1,103 +1,142 @@
 <template>
-    <div class="exercises-list">
-        <div class="exercise">
-            <div class="thumbnail"></div>
-            <div class="content">
-                <h2>Flexion plantaire</h2>
-                <div class="details">
-                    <div class="series-reps">
-                        <div class="series">
-                            <i class="kiv-series icon-18"></i
-                            ><span>10</span> séries
-                        </div>
-                        <div class="reps">
-                            <i class="kiv-reps icon-19"></i
-                            ><span>2</span> répétitions
-                        </div>
+    <div>
+        <div class="exercises-list">
+            <div class="exercise">
+                <div class="thumbnail">
+                    <div class="btn-playlist">
+                        <vs-button @click="openVideoPlayer">
+                            Démarrer
+                        </vs-button>
                     </div>
-                    <div class="option">Options : <span>Élastique</span></div>
-                    <div class="tempo">Tempo : <span>2/0/1</span></div>
                 </div>
-                <div class="commentary">
-                    <p>Commentaire</p>
-                    <vs-input
-                        placeholder="Tapez votre commentaire"
-                        disabled
-                        v-model="commentary1"
-                    />
+                <div class="content">
+                    <h2>Flexion plantaire</h2>
+                    <div class="details">
+                        <div class="series-reps">
+                            <div class="series">
+                                <i class="kiv-series icon-18"></i
+                                ><span>10</span> séries
+                            </div>
+                            <div class="reps">
+                                <i class="kiv-reps icon-19"></i
+                                ><span>2</span> répétitions
+                            </div>
+                        </div>
+                        <div class="option">
+                            Options : <span>Élastique</span>
+                        </div>
+                        <div class="tempo">Tempo : <span>2/0/1</span></div>
+                    </div>
+                    <div class="commentary">
+                        <p>Commentaire</p>
+                        <vs-input
+                            placeholder="Tapez votre commentaire"
+                            disabled
+                            v-model="commentary1"
+                        />
+                    </div>
+                </div>
+            </div>
+            <div class="exercise">
+                <div class="thumbnail"></div>
+                <div class="content">
+                    <h2>Flexion plantaire</h2>
+                    <div class="details">
+                        <div class="series-reps">
+                            <div class="series">
+                                <i class="kiv-series icon-18"></i
+                                ><span>10</span> séries
+                            </div>
+                            <div class="reps">
+                                <i class="kiv-reps icon-19"></i
+                                ><span>2</span> répétitions
+                            </div>
+                        </div>
+                        <div class="option">
+                            Options : <span>Élastique</span>
+                        </div>
+                        <div class="tempo">Tempo : <span>2/0/1</span></div>
+                    </div>
+                    <div class="commentary">
+                        <p>Commentaire</p>
+                        <vs-input
+                            placeholder="Tapez votre commentaire"
+                            disabled
+                            v-model="commentary1"
+                        />
+                    </div>
+                </div>
+            </div>
+            <div class="exercise">
+                <div class="thumbnail">
+                    <div class="btn-playlist">
+                        <vs-button @click="openVideoPlayer">
+                            Démarrer
+                        </vs-button>
+                    </div>
+                </div>
+                <div class="content">
+                    <h2>Flexion plantaire</h2>
+                    <div class="details">
+                        <div class="series-reps">
+                            <div class="series">
+                                <i class="kiv-series icon-18"></i
+                                ><span>10</span> séries
+                            </div>
+                            <div class="reps">
+                                <i class="kiv-reps icon-19"></i
+                                ><span>2</span> répétitions
+                            </div>
+                        </div>
+                        <div class="option">
+                            Options : <span>Élastique</span>
+                        </div>
+                        <div class="tempo">Tempo : <span>2/0/1</span></div>
+                    </div>
+                    <div class="commentary">
+                        <p>Commentaire</p>
+                        <vs-input
+                            placeholder="Tapez votre commentaire"
+                            disabled
+                            v-model="commentary1"
+                        />
+                    </div>
+                </div>
+            </div>
+            <div class="request-subscription">
+                <div class="icon-request-subscription">
+                    <i class="kiv-subscription icon-20"></i>
+                </div>
+                <div class="text-request-subscription">
+                    <p>
+                        Pour avoir accès à l’ensemble des vidéos de la
+                        prescription, veuillez vous abonner.
+                    </p>
+                </div>
+                <div class="btn-request-subscription">
+                    <vs-button> Je m’abonne </vs-button>
                 </div>
             </div>
         </div>
-        <div class="exercise">
-            <div class="thumbnail"></div>
-            <div class="content">
-                <h2>Flexion plantaire</h2>
-                <div class="details">
-                    <div class="series-reps">
-                        <div class="series">
-                            <i class="kiv-series icon-18"></i
-                            ><span>10</span> séries
-                        </div>
-                        <div class="reps">
-                            <i class="kiv-reps icon-19"></i
-                            ><span>2</span> répétitions
-                        </div>
-                    </div>
-                    <div class="option">Options : <span>Élastique</span></div>
-                    <div class="tempo">Tempo : <span>2/0/1</span></div>
-                </div>
-                <div class="commentary">
-                    <p>Commentaire</p>
-                    <vs-input
-                        placeholder="Tapez votre commentaire"
-                        disabled
-                        v-model="commentary1"
-                    />
-                </div>
-            </div>
-        </div>
-        <div class="exercise">
-            <div class="thumbnail"></div>
-            <div class="content">
-                <h2>Flexion plantaire</h2>
-                <div class="details">
-                    <div class="series-reps">
-                        <div class="series">
-                            <i class="kiv-series icon-18"></i
-                            ><span>10</span> séries
-                        </div>
-                        <div class="reps">
-                            <i class="kiv-reps icon-19"></i
-                            ><span>2</span> répétitions
-                        </div>
-                    </div>
-                    <div class="option">Options : <span>Élastique</span></div>
-                    <div class="tempo">Tempo : <span>2/0/1</span></div>
-                </div>
-                <div class="commentary">
-                    <p>Commentaire</p>
-                    <vs-input
-                        placeholder="Tapez votre commentaire"
-                        disabled
-                        v-model="commentary1"
-                    />
-                </div>
-            </div>
-        </div>
+        <transition name="fade">
+            <VideoPlayer ref="videoplayer" v-show="videoPlayerToggle" />
+        </transition>
     </div>
 </template>
 
 <script>
 import f from "../../services/function";
+import VideoPlayer from "./VideoPlayer.vue";
 
 export default {
-    // props: {
-    //     patient: Object,
-    // },
+    components: {
+        VideoPlayer,
+    },
     data() {
         return {
             // worksheetProgression: 50,
             commentary1: "",
+            videoPlayerToggle: false,
         };
     },
     computed: {
@@ -106,9 +145,25 @@ export default {
         // },
     },
     methods: {
-        // formatScore(score) {
-        //     return score.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-        // },
+        openVideoPlayer() {
+            this.videoPlayerToggle = true;
+            this.addMaxHeightToBody();
+        },
+        closeVideoPlayer() {
+            this.videoPlayerToggle = false;
+            this.removeMaxHeightToBody();
+        },
+        addMaxHeightToBody() {
+            setTimeout(() => {
+                this.$refs.videoplayer.$refs.bottombar.classList.add("show");
+            }, 300);
+            window.scrollTo(0, 0);
+            document.body.classList.add("max-height-100vh");
+        },
+        removeMaxHeightToBody() {
+            this.$refs.videoplayer.$refs.bottombar.classList.remove("show");
+            document.body.classList.remove("max-height-100vh");
+        },
     },
     mounted() {},
 };
@@ -140,6 +195,19 @@ export default {
             border-radius: 0.8rem;
             margin-right: 0;
             margin-bottom: 2rem;
+            position: relative;
+
+            .btn-playlist {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
 
             @media (min-width: 992px) {
                 height: 28.6rem;
@@ -241,6 +309,50 @@ export default {
                     margin-bottom: 1rem;
                 }
             }
+        }
+    }
+
+    .request-subscription {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        background: $white;
+        border-radius: 1rem;
+        padding: 4.3rem;
+
+        .icon-request-subscription {
+            width: 5rem;
+            height: 5rem;
+            min-width: 5rem;
+            min-height: 5rem;
+            max-height: 5rem;
+            background: rgba($tournesol, 0.25);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            i {
+                color: $sanguine;
+                position: relative;
+                top: 0.1rem;
+                left: 0.05rem;
+                font-size: 2.4rem;
+            }
+        }
+        .text-request-subscription {
+            p {
+                margin-top: 4rem;
+                margin-bottom: 4.5rem;
+                font-size: 2.3rem;
+                font-weight: 700;
+                max-width: 44rem;
+                text-align: center;
+            }
+        }
+
+        .btn-request-subscription {
         }
     }
 }

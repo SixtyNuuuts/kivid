@@ -3,6 +3,11 @@ body {
     display: flex;
     flex-direction: column;
 
+    &.max-height-100vh {
+        max-height: 100vh;
+        overflow: hidden;
+    }
+
     &.fuzzy-balls {
         background: url(../img/ball-1.svg) -10% -1% no-repeat, url(../img/ball-2.svg) 672% 2% no-repeat,
             url(../img/ball-3.svg) 115% 1% no-repeat, url(../img/ball-1.svg) 115% 25% no-repeat,
@@ -84,6 +89,11 @@ body {
         list-style: none;
         padding: 0;
         margin: 0;
+    }
+
+    iframe {
+        width: 100%;
+        height: 100%;
     }
 
     .kiv-block {
@@ -182,6 +192,15 @@ body {
     position: relative;
 }
 
+// @keyframes fadeEnter {
+//     0% {
+//         opacity: 0;
+//     }
+//     100% {
+//         opacity: 1;
+//     }
+// }
+
 @keyframes kivRebound {
     0% {
         transform: scale(0.8);
@@ -191,15 +210,6 @@ body {
     }
     80% {
         transform: scale(0.98);
-    }
-    100% {
-        transform: scale(1);
-    }
-}
-
-@keyframes kivModalMobile {
-    0% {
-        transform: scale(0.8);
     }
     100% {
         transform: scale(1);
@@ -236,6 +246,16 @@ body {
 }
 .fade-enter,
 .fade-leave-to {
+    opacity: 0;
+}
+
+.fade2-enter-active,
+.fade2-leave-active {
+    transition: all 1s 0.3s;
+}
+
+.fade2-enter,
+.fade2-leave-to {
     opacity: 0;
 }
 
