@@ -30,7 +30,7 @@ Encore
     .addEntry('doctor-create-worksheet-page', './assets/vue/doctor/create-worksheet-page.js')
     // Patient
     .addEntry('patient-dashboard-page', './assets/vue/patient/dashboard-page.js')
-    .addEntry('patient-show-worksheet-page', './assets/vue/patient/show-worksheet-page.js')
+    .addEntry('patient-read-worksheet-page', './assets/vue/patient/read-worksheet-page.js')
     .addEntry('patient-subscription-page', './assets/vue/patient/subscription-page.js')
 
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)

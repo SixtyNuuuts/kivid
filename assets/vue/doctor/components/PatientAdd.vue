@@ -362,17 +362,12 @@ export default {
             this.axios
                 .post(`/kine/${this.doctor.id}/add/patient`, {
                     _token: this.csrfTokenAddPatient,
-                    patient_id: this.addPatientDetails.id,
+                    patientId: this.addPatientDetails.id,
                 })
                 .then((response) => {
-                    this.openNotification(
-                        `<strong>Ajout du patient</strong>`,
-                        `${response.data}`,
-                        "top-right",
-                        "success",
-                        "<i class='fe fe-check-circle'></i>"
-                    );
-                    this.addPatientDetails.doctorAddRequest = null;
+                    f.openSuccesNotification("Ajout du patient", response.data);
+
+                    this.addPatientDetails.addRequestDoctor = false;
                     this.$parent.doctorPatientsListArray.push(
                         this.addPatientDetails
                     );
@@ -386,13 +381,12 @@ export default {
                     this.modalAddPatient = false;
                 })
                 .catch((error) => {
-                    this.openNotification(
-                        `<strong>Ajout du patient : Erreur</strong>`,
-                        `${error.response.data}`,
-                        "top-right",
-                        "danger",
-                        "<i class='fe fe-alert-circle'></i>"
-                    );
+                    const errorMess =
+                        "object" === typeof error.response.data
+                            ? error.response.data.detail
+                            : error.response.data;
+
+                    f.openErrorNotification("Erreur", errorMess);
                     this.btnLoadingValidAddPatient = false;
                     this.modalConfirmAddPatient = false;
                     this.modalAddPatient = false;

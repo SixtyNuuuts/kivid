@@ -22,8 +22,8 @@
                     <DashboardNotifications
                         v-if="!doctorView"
                         :patient="patient"
-                        :csrfTokenAcceptAddRequest="csrfTokenAcceptAddRequest"
-                        :csrfTokenDeclineAddRequest="csrfTokenDeclineAddRequest"
+                        :csrfTokenAcceptDoctor="csrfTokenAcceptDoctor"
+                        :csrfTokenDeclineDoctor="csrfTokenDeclineDoctor"
                     />
                     <section
                         id="my-doctor"
@@ -37,11 +37,18 @@
                             <i class="kiv-chevron-down icon-3"></i>
                         </div>
                         <h2>Mon praticien</h2>
-                        <transition name="height">
+                        <transition name="height2">
                             <div v-if="myDoctorContent" class="doctor-details">
                                 <div class="doctor-avatar">
+                                    <div
+                                        v-if="loadingDoctor"
+                                        class="loading avatar"
+                                    ></div>
                                     <vs-avatar
-                                        v-if="true === patient.doctorAddRequest"
+                                        v-if="
+                                            patient.addRequestDoctor &&
+                                            !loadingDoctor
+                                        "
                                         class="avatar"
                                         circle
                                         size="116"
@@ -56,20 +63,31 @@
                                         />
                                     </vs-avatar>
                                     <vs-avatar
-                                        v-if="null === patient.doctorAddRequest"
+                                        v-if="
+                                            false ===
+                                                patient.addRequestDoctor &&
+                                            !loadingDoctor
+                                        "
                                         class="avatar waiting"
                                         circle
                                         size="116"
                                     >
                                         <img
-                                            src="../../img/icons/smiley/55.svg"
+                                            src="../../img/icons/smiley/60.svg"
                                             alt="Smiley Monocle"
                                         />
                                     </vs-avatar>
                                 </div>
                                 <div class="doctor-infos">
+                                    <div v-if="loadingDoctor">
+                                        <p class="loading name w-55"></p>
+                                        <p class="loading city w-45"></p>
+                                    </div>
                                     <div
-                                        v-if="true === patient.doctorAddRequest"
+                                        v-if="
+                                            patient.addRequestDoctor &&
+                                            !loadingDoctor
+                                        "
                                     >
                                         <p class="name">
                                             {{
@@ -87,7 +105,11 @@
                                         </p>
                                     </div>
                                     <div
-                                        v-if="null === patient.doctorAddRequest"
+                                        v-if="
+                                            false ===
+                                                patient.addRequestDoctor &&
+                                            !loadingDoctor
+                                        "
                                     >
                                         <p>En attente de validation</p>
                                     </div>
@@ -113,7 +135,6 @@ import f from "../services/function";
 import DoctorChoice from "./components/DoctorChoice.vue";
 import MyScores from "./components/MyScores.vue";
 import MyWorksheets from "./components/MyWorksheets.vue";
-
 import DashboardNotifications from "./components/DashboardNotifications.vue";
 
 // import ExerciseStatsCharts from "./components/ExerciseStatsCharts.vue";
@@ -132,13 +153,14 @@ export default {
         return {
             patient: null,
             doctorView: null,
-            csrfTokenAcceptAddRequest: null,
-            csrfTokenDeclineAddRequest: null,
             csrfTokenSelectDoctor: null,
-            myScoresContent: true,
+            csrfTokenAcceptDoctor: null,
+            csrfTokenDeclineDoctor: null,
             notificationsContent: true,
+            myScoresContent: true,
             myDoctorContent: true,
             myWorksheetsContent: true,
+            loadingDoctor: false,
         };
     },
     methods: {
@@ -156,14 +178,15 @@ export default {
     },
     created() {
         Vue.prototype.$vs = this.$vs;
+        document.body.classList.add("fuzzy-balls");
         window.addEventListener("resize", this.onResize);
 
         const data = JSON.parse(document.getElementById("vueData").innerHTML);
 
         this.patient = data.patient;
         this.doctorView = data.doctorView;
-        this.csrfTokenAcceptAddRequest = data.csrfTokenAcceptAddRequest;
-        this.csrfTokenDeclineAddRequest = data.csrfTokenDeclineAddRequest;
+        this.csrfTokenAcceptDoctor = data.csrfTokenAcceptDoctor;
+        this.csrfTokenDeclineDoctor = data.csrfTokenDeclineDoctor;
         this.csrfTokenSelectDoctor = data.csrfTokenSelectDoctor;
     },
     beforeDestroy() {
@@ -196,7 +219,7 @@ export default {
             display: flex;
             flex-direction: column;
 
-            @media (min-width: 576px) {
+            @media (min-width: 650px) {
                 flex-direction: row;
             }
 
@@ -210,7 +233,7 @@ export default {
                 flex-direction: column;
                 width: 100%;
 
-                @media (min-width: 576px) {
+                @media (min-width: 650px) {
                     width: 49%;
                 }
 
@@ -225,7 +248,11 @@ export default {
 
                     .doctor-avatar {
                         .avatar {
-                            margin-right: 1.5vw;
+                            margin-right: 1.9rem;
+
+                            @media (min-width: 992px) {
+                                margin-right: 1.5vw;
+                            }
 
                             &.waiting {
                                 img {
@@ -233,14 +260,37 @@ export default {
                                 }
                             }
                         }
+
+                        .avatar.loading {
+                            width: 11.6rem;
+                            height: 11.6rem;
+                            min-width: 11.6rem;
+                            min-height: 11.6rem;
+                            max-height: 11.6rem;
+                            border-radius: 50%;
+                        }
                     }
 
                     .doctor-infos {
                         font-size: 1.8rem;
+                        width: 100%;
+
                         .name {
+                            margin: 0.5rem 0;
+
+                            &.loading {
+                                height: 2.3rem;
+                            }
                         }
 
                         .city {
+                            margin: 0.5rem 0;
+                            font-weight: 200;
+                            font-size: 1.5rem;
+
+                            &.loading {
+                                height: 1.8rem;
+                            }
                         }
                     }
                 }

@@ -3,18 +3,11 @@
 <svg version="1.1" id="Calque_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 1462 1463.7" style="enable-background:new 0 0 1462 1463.7;" xml:space="preserve">
 <style type="text/css">
-	.st0{opacity:0.25;fill:url(#SVGID_1_);enable-background:new    ;}
+	.st0{opacity:0.42;fill:url(#SVGID_1_);enable-background:new    ;}
 </style>
-<radialGradient id="SVGID_1_" cx="868.2868" cy="-3.4147" r="1" gradientTransform="matrix(4.476084e-14 731 -731 4.476084e-14 -1765.1451 -633985.875)" gradientUnits="userSpaceOnUse">
-	<stop  offset="0" style="stop-color:#FECB48"/>
-	<stop  offset="0.325" style="stop-color:#FECC4A;stop-opacity:0.675"/>
-	<stop  offset="0.4794" style="stop-color:#FDCD52;stop-opacity:0.5206"/>
-	<stop  offset="0.5977" style="stop-color:#FDD05F;stop-opacity:0.4023"/>
-	<stop  offset="0.6977" style="stop-color:#FCD571;stop-opacity:0.3023"/>
-	<stop  offset="0.7861" style="stop-color:#FADA89;stop-opacity:0.2139"/>
-	<stop  offset="0.8664" style="stop-color:#F9E1A6;stop-opacity:0.1336"/>
-	<stop  offset="0.9389" style="stop-color:#F7EAC9;stop-opacity:6.114060e-02"/>
-	<stop  offset="1" style="stop-color:#F5F2EC;stop-opacity:0"/>
+<radialGradient id="SVGID_1_" cx="1297.7289" cy="1150.7708" r="1" gradientTransform="matrix(4.476084e-14 731 731 -4.476084e-14 -840482.4375 -947908)" gradientUnits="userSpaceOnUse">
+	<stop  offset="0" style="stop-color:#FFCB46"/>
+	<stop  offset="1" style="stop-color:#F0F4F7;stop-opacity:0.2"/>
 </radialGradient>
 <circle class="st0" cx="731" cy="731.8" r="731"/>
 </svg>

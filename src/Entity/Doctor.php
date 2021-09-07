@@ -22,7 +22,7 @@ class Doctor extends User
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"doctor_read"})
+     * @Groups({"doctor_read", "patient_read"})
      */
     private $city;
 

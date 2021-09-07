@@ -170,7 +170,7 @@ class AppFixtures extends Fixture
                             $faker->dateTimeBetween('-90 years', '-20 years')
                         )
                     )
-                    ->setDoctorAddRequest(true)
+                    ->setAddRequestDoctor(true)
                     ->setDoctor($kine)
                     ->setEmail("patient{$ki}{$pi}@mail.com")
                     ->setPassword($this->passwordHasher->hashPassword($kine, 'password'))

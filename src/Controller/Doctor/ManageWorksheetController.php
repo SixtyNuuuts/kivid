@@ -331,7 +331,7 @@ class ManageWorksheetController extends AbstractController
 
                 $this->generateWorksheetSessions($worksheet, $prescription);
 
-                $this->notificationService->createPrescriptionNotification($doctor, $worksheet, $patient);
+                $this->notificationService->createPrescriptionNotification($worksheet, $patient);
 
                 $this->em->persist($prescription);
 

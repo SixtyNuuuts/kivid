@@ -17,13 +17,13 @@ class Worksheet
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"worksheet_read", "prescription_read", "exercise_stats_read", "patient_read"})
+     * @Groups({"worksheet_read", "prescription_read", "exercise_stats_read", "patient_read", "patient_prescription_read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"worksheet_read", "prescription_read", "patient_read", "exercise_stats_read"})
+     * @Groups({"worksheet_read", "prescription_read", "patient_read", "exercise_stats_read", "patient_prescription_read"})
      */
     private $title;
 
@@ -41,7 +41,7 @@ class Worksheet
 
     /**
      * @ORM\OneToMany(targetEntity=Exercise::class, mappedBy="worksheet", orphanRemoval=true)
-     * @Groups({"worksheet_read", "prescription_read", "patient_read"})
+     * @Groups({"worksheet_read", "prescription_read", "patient_read", "patient_prescription_read"})
      */
     private $exercises;
 
@@ -58,25 +58,25 @@ class Worksheet
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"worksheet_read", "prescription_read", "exercise_stats_read", "patient_read"})
+     * @Groups({"worksheet_read", "prescription_read", "exercise_stats_read", "patient_read", "patient_prescription_read"})
      */
     private $partOfBody;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"worksheet_read", "prescription_read", "patient_read"})
+     * @Groups({"worksheet_read", "prescription_read", "patient_read", "patient_prescription_read"})
      */
     private $duration;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"worksheet_read", "prescription_read", "patient_read"})
+     * @Groups({"worksheet_read", "prescription_read", "patient_read", "patient_prescription_read"})
      */
     private $perDay;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"worksheet_read", "prescription_read", "patient_read"})
+     * @Groups({"worksheet_read", "prescription_read", "patient_read", "patient_prescription_read"})
      */
     private $perWeek;
 

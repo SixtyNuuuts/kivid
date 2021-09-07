@@ -3,6 +3,14 @@
         id="dashboard-notifications"
         class="kiv-block"
         :class="{ reduced: !$parent.notificationsContent }"
+        v-if="
+            getDashboardNotifications.length ||
+            !patient.birthdate ||
+            !patient.gender ||
+            !patient.firstname ||
+            !patient.lastname ||
+            !patient.isVerified
+        "
     >
         <div
             class="toggle-content"
@@ -15,39 +23,87 @@
         <h2>Notifications</h2>
         <transition name="height">
             <div v-if="$parent.notificationsContent" class="notifications-list">
-                <div>
+                <div v-for="(notif, i) in getDashboardNotifications" :key="i">
+                    <div
+                        v-if="
+                            !loading && 'add-patient' === notif.content[0].type
+                        "
+                        class="notifications-item"
+                    >
+                        <p class="notification-label">
+                            <span v-for="(e, i) in notif.content" :key="i">
+                                <span v-if="'text' === e.type">
+                                    {{ e.content }}
+                                </span>
+                                <span v-if="'user' === e.type">
+                                    {{ e.content }}
+                                </span>
+                            </span>
+                        </p>
+                        <div
+                            class="notification-actions"
+                            :class="{ disabled: actionInProgress }"
+                        >
+                            <a
+                                class="action-link green"
+                                @click="acceptDoctor(notif.id)"
+                            >
+                                <i class="kiv-accept icon-22"></i>
+                                <span>Accepter</span>
+                            </a>
+                            <a
+                                class="action-link red"
+                                @click="declineDoctor(notif.id)"
+                            >
+                                <i class="kiv-decline icon-6"></i>
+                                <span>Refuser</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    v-if="!loading && !patient.isVerified"
+                    class="notifications-item"
+                >
                     <p class="notification-label">
                         Vérifier votre adresse email
                     </p>
                     <div class="notification-actions">
-                        <a class="action-link" href="#">
-                            <i class="kiv-pen icon-4"></i>
-                            <span>Compléter</span>
+                        <a class="action-link verif-mail" href="#">
+                            <i class="fas fa-envelope"></i>
+                            <span>Voir email</span>
                         </a>
                     </div>
                 </div>
-                <div>
-                    <p class="notification-label">
-                        Un praticien (Jérome Doe) vous a ajouté
-                    </p>
-                    <div class="notification-actions">
-                        <a class="action-link green" href="#">
-                            <i class="kiv-accept icon-22"></i>
-                            <span>Accepter</span>
-                        </a>
-                        <a class="action-link red" href="#">
-                            <i class="kiv-decline icon-6"></i>
-                            <span>Refuser</span>
-                        </a>
-                    </div>
-                </div>
-                <div>
+                <div
+                    v-if="
+                        !loading &&
+                        (!patient.birthdate ||
+                            !patient.gender ||
+                            !patient.firstname ||
+                            !patient.lastname)
+                    "
+                    class="notifications-item"
+                >
                     <p class="notification-label">Compléter votre profil</p>
                     <div class="notification-actions">
-                        <a class="action-link" href="#">
+                        <a
+                            class="action-link"
+                            :href="`/patient/${this.patient.id}/edit`"
+                        >
                             <i class="kiv-pen icon-4"></i>
                             <span>Compléter</span>
                         </a>
+                    </div>
+                </div>
+                <div v-if="loading">
+                    <div class="loading-block notifications-item">
+                        <p class="loading w-60 notification-label"></p>
+                        <div class="loading w-25 notification-actions"></div>
+                    </div>
+                    <div class="loading-block notifications-item">
+                        <p class="loading w-30 notification-label"></p>
+                        <div class="loading w-30 notification-actions"></div>
                     </div>
                 </div>
             </div>
@@ -56,72 +112,126 @@
 </template>
 
 <script>
+import f from "../../services/function";
+
 export default {
     data() {
         return {
             dashboardNotifications: [],
+            actionInProgress: false,
+            loading: false,
         };
     },
     props: {
         patient: Object,
-        csrfTokenAcceptAddRequest: String,
-        csrfTokenDeclineAddRequest: String,
+        csrfTokenAcceptDoctor: String,
+        csrfTokenDeclineDoctor: String,
     },
     computed: {
-        dashboardNotificationsList() {
-            return dashboardNotifications;
+        getDashboardNotifications() {
+            return this.dashboardNotifications;
         },
     },
     methods: {
-        getDashboardNotifications() {
+        getDBNotifications() {
+            this.loading = true;
+
             this.axios
                 .get(`/${this.patient.id}/get/patient-dashboard-notifications`)
                 .then((response) => {
                     this.dashboardNotifications = response.data;
+
+                    this.loading = false;
                 })
                 .catch((error) => {
-                    if (error.response) {
-                        console.log(error.response.data.detail);
-                    }
+                    const errorMess =
+                        "object" === typeof error.response.data
+                            ? error.response.data.detail
+                            : error.response.data;
+
+                    console.log(errorMess);
+                    this.loading = false;
                 });
         },
-        acceptAddRequest(notificationId) {
+        acceptDoctor(notificationId) {
+            this.actionInProgress = true;
+
             this.axios
-                .post(`/patient/${this.patient.id}/accept/add-request`, {
-                    _token: this.csrfTokenAcceptAddRequest,
+                .post(`/patient/${this.patient.id}/accept/doctor`, {
+                    _token: this.csrfTokenAcceptDoctor,
                     notificationId: notificationId,
+                    doctorId: this.patient.doctor.id,
                 })
                 .then((response) => {
                     f.openSuccesNotification(
                         "Demande d'ajout acceptée",
-                        `Vous avez accepté la demande d'ajout de 
-                        <strong>${this.patient.doctor.firstname} ${this.patient.doctor.lastname}</strong>`
+                        response.data
                     );
+
+                    this.patient.addRequestDoctor = true;
+
+                    this.dashboardNotifications.splice(
+                        this.dashboardNotifications.indexOf(
+                            this.dashboardNotifications.find(
+                                (n) => n.id === notificationId
+                            )
+                        ),
+                        1
+                    );
+
+                    this.actionInProgress = false;
                 })
                 .catch((error) => {
-                    f.openErrorNotification("Erreur", error.response.data);
+                    const errorMess =
+                        "object" === typeof error.response.data
+                            ? error.response.data.detail
+                            : error.response.data;
+
+                    f.openErrorNotification("Erreur", errorMess);
+
+                    this.actionInProgress = false;
                 });
         },
-        declineAddRequest(notificationId) {
+        declineDoctor(notificationId) {
+            this.actionInProgress = true;
+
             this.axios
-                .post(`/patient/${this.patient.id}/decline/add-request`, {
-                    _token: this.csrfTokenDeclineAddRequest,
+                .post(`/patient/${this.patient.id}/decline/doctor`, {
+                    _token: this.csrfTokenDeclineDoctor,
                     notificationId: notificationId,
+                    doctorId: this.patient.doctor.id,
                 })
                 .then((response) => {
                     f.openSuccesNotification(
                         "Demande d'ajout refusée",
-                        `Vous avez refusé la demande d'ajout de 
-                        <strong>${this.patient.doctor.firstname} ${this.patient.doctor.lastname}</strong>`
+                        response.data
                     );
+
+                    this.dashboardNotifications.splice(
+                        this.dashboardNotifications.indexOf(
+                            this.dashboardNotifications.find(
+                                (n) => n.id === notificationId
+                            )
+                        ),
+                        1
+                    );
+
+                    this.actionInProgress = false;
                 })
                 .catch((error) => {
-                    f.openErrorNotification("Erreur", error.response.data);
+                    const errorMess =
+                        "object" === typeof error.response.data
+                            ? error.response.data.detail
+                            : error.response.data;
+
+                    f.openErrorNotification("Erreur", errorMess);
+
+                    this.actionInProgress = false;
                 });
         },
     },
     created() {
-        this.getDashboardNotifications();
+        this.getDBNotifications();
     },
 };
 </script>
@@ -134,8 +244,9 @@ export default {
     margin-bottom: 2rem;
     width: 100%;
     margin-right: 0;
+    line-height: 1.3;
 
-    @media (min-width: 576px) {
+    @media (min-width: 650px) {
         margin-bottom: 0;
         width: 49%;
         margin-right: 2rem;
@@ -148,14 +259,39 @@ export default {
     }
 
     .notifications-list {
-        > div {
+        .notifications-item {
             display: flex;
             flex-direction: row;
             justify-content: space-between;
             align-items: center;
             margin: 1.5rem 0;
 
-            @media (min-width: 576px) {
+            &.loading-block {
+                > * {
+                    border-radius: 0.4rem;
+                    height: 1.5rem;
+                    margin: 0.2rem;
+                }
+                .notification-label {
+                    &.w-60 {
+                        width: 60%;
+                    }
+                    &.w-30 {
+                        width: 30%;
+                    }
+                }
+
+                .notification-actions {
+                    &.w-25 {
+                        width: 25%;
+                    }
+                    &.w-30 {
+                        width: 30%;
+                    }
+                }
+            }
+
+            @media (min-width: 650px) {
                 flex-direction: column;
                 align-items: flex-start;
             }
@@ -203,10 +339,30 @@ export default {
                     padding: 0.5rem;
                     color: $black;
                     text-decoration: none;
-                    transition: all 0.15s;
-                    position: relative;
+                    transition: all 0.1s;
                     white-space: nowrap;
                     padding-left: 0;
+                    cursor: pointer;
+
+                    &.verif-mail {
+                        cursor: initial;
+
+                        &:hover {
+                            color: $black;
+                            transform: none;
+                        }
+
+                        i {
+                            font-size: 1.5rem;
+                            position: relative;
+                            top: 0.05rem;
+                            margin-right: 0.65rem;
+                        }
+
+                        span {
+                            text-decoration: none;
+                        }
+                    }
 
                     @media (min-width: 768px) {
                         padding-left: 0.5rem;
@@ -214,6 +370,7 @@ export default {
 
                     &:hover {
                         color: darken($black, 5%);
+                        transform: translateY(-0.2rem);
                     }
 
                     &:nth-child(2) {

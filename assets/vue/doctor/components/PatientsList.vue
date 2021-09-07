@@ -105,7 +105,7 @@
                     <vs-td class="sm-dnone">
                         <div
                             v-if="
-                                patient.doctorAddRequest && patient.isVerified
+                                patient.addRequestDoctor && patient.isVerified
                             "
                             class="status"
                         >
@@ -114,7 +114,7 @@
                         </div>
                         <div
                             v-if="
-                                patient.doctorAddRequest && !patient.isVerified
+                                patient.addRequestDoctor && !patient.isVerified
                             "
                             class="status"
                         >
@@ -122,7 +122,7 @@
                             <p class="text-status">Inactif</p>
                         </div>
                         <div
-                            v-if="null === patient.doctorAddRequest"
+                            v-if="false === patient.addRequestDoctor"
                             class="status"
                         >
                             <div class="icon-waiting-status"></div>

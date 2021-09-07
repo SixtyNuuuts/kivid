@@ -94,9 +94,11 @@
                         </ul>
                         <div v-else>
                             <p class="no-found">
-                                <i class="fe fe-user-minus"></i>
-                                Aucun praticien n'a été trouvé avec "
-                                <strong> {{ filter }} </strong>"
+                                <i class="fas fa-users-slash"></i>
+                                Aucun praticien n'a été trouvé avec "<strong>{{
+                                    filter
+                                }}</strong
+                                >"
                             </p>
                         </div>
                     </div>
@@ -141,21 +143,30 @@ export default {
     },
     methods: {
         valideDoctorChoice() {
-            this.patient.doctor = this.doctorSelected;
             this.axios
                 .post(`/patient/${this.patient.id}/select/doctor`, {
                     _token: this.csrfTokenSelectDoctor,
-                    doctor_id: this.doctorSelected.id,
+                    doctorId: this.doctorSelected.id,
                 })
                 .then((response) => {
                     f.openSuccesNotification(
-                        "Choix du kinésithérapeute enregistré",
-                        response.data.message
+                        "Choix du praticien enregistré",
+                        response.data
                     );
+
+                    this.patient.addRequestDoctor = true;
+
+                    this.patient.doctor = this.doctorSelected;
+
                     this.footer.classList.remove("hidden");
                 })
                 .catch((error) => {
-                    f.openErrorNotification("Erreur", error.response.data);
+                    const errorMess =
+                        "object" === typeof error.response.data
+                            ? error.response.data.detail
+                            : error.response.data;
+
+                    f.openErrorNotification("Erreur", errorMess);
                 });
         },
         toggleSelectBox() {
@@ -283,10 +294,6 @@ export default {
             overflow: hidden;
             max-width: 70%;
 
-            &.hidden {
-                display: none;
-            }
-
             .gray {
                 color: $gray-middle;
             }
@@ -358,6 +365,7 @@ export default {
             display: flex;
             align-items: center;
             cursor: pointer;
+            animation: fadeEnter 0.5s;
 
             &:hover {
                 background: rgba($gray-middle, 0.15);
@@ -382,6 +390,14 @@ export default {
         .no-found {
             font-size: 1.35rem;
             margin: 2.3rem 0;
+            animation: fadeEnter 0.5s;
+
+            i {
+                font-size: 1.4rem;
+                margin-right: 0.3rem;
+                position: relative;
+                top: 0;
+            }
         }
     }
 
