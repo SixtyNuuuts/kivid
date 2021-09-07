@@ -4,6 +4,7 @@ namespace App\Controller\Doctor;
 
 use App\Entity\Doctor;
 use App\Entity\Patient;
+use App\User\UserService;
 use Symfony\Component\Mime\Address;
 use App\Repository\PatientRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -32,6 +33,7 @@ class ManagePatientController extends AbstractController
     private $tokenGenerator;
     private $resetPasswordRequestRepository;
     private $resetPasswordCleaner;
+    private $userService;
     private $notificationService;
     private $em;
 
@@ -43,6 +45,7 @@ class ManagePatientController extends AbstractController
         ResetPasswordRequestRepository $resetPasswordRequestRepository,
         ResetPasswordTokenGenerator $generator,
         ResetPasswordCleaner $cleaner,
+        UserService $userService,
         NotificationService $notificationService,
         EntityManagerInterface $em
     ) {
@@ -52,6 +55,7 @@ class ManagePatientController extends AbstractController
         $this->resetPasswordRequestRepository = $resetPasswordRequestRepository;
         $this->resetPasswordCleaner = $cleaner;
         $this->notificationService = $notificationService;
+        $this->userService = $userService;
         $this->em = $em;
     }
 
@@ -110,6 +114,7 @@ class ManagePatientController extends AbstractController
                 $patient->setLastname($data->lastname);
                 $patient->setGender($data->gender);
                 $patient->setEmail($data->email);
+                $patient->setAddRequestDoctor(true);
                 $patient->setDoctor($doctor);
 
                 $this->em->persist($patient);
@@ -141,28 +146,36 @@ class ManagePatientController extends AbstractController
             $data = json_decode($request->getContent());
 
             if ($this->isCsrfTokenValid('add_patient' . $doctor->getId(), $data->_token)) {
-                $patient = $this->patientRepository->findOneBy(['id' => $data->patient_id]);
+                $patient = $this->patientRepository->findOneBy(['id' => $data->patientId]);
 
-                $patient->setDoctorAddRequest(null);
+                if (null !== $patient->getAddRequestDoctor()) {
+                    return $this->json(
+                        "Vous ne pouvez pas ajouter 
+                        <strong>{$this->userService->getUserName($patient)}</strong> 
+                        car il est déjà en lien avec un autre praticien",
+                        500,
+                    );
+                }
+
+                $patient->setAddRequestDoctor(false);
 
                 $doctor->addPatient($patient);
 
-                $this->notificationService->addPatientNotification($doctor, $patient);
+                $this->notificationService->createAddPatientNotification($doctor, $patient);
 
                 $this->em->flush();
 
-                $gender = $patient->getGender() ? ("male" === $patient->getGender() ? 'M.' : 'Mme') : '';
-
                 return $this->json(
-                    "<strong>{$gender} {$patient->getFirstname()} {$patient->getLastname()}</strong> 
-                     a bien été ajouté à votre liste, nous lui avons envoyé une demande d'acceptation.",
+                    "<strong>{$this->userService->getUserName($patient)}</strong> 
+                    a bien été ajouté à votre liste, 
+                    nous lui avons envoyé une demande d'approbation",
                     200,
                 );
             }
         }
 
         return $this->json(
-            'Nous n\'avons pas pu ajouter le patient à votre liste, veuillez réessayer ultérieurement.',
+            "Une erreur s'est produite lors de l'ajout du patient à votre liste",
             500,
         );
     }

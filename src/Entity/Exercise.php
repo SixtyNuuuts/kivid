@@ -64,7 +64,7 @@ class Exercise
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"prescription_read"})
+     * @Groups({"prescription_read", "patient_prescription_read"})
      */
     private $isCompleted;
 

@@ -19,11 +19,14 @@
                 </li>
                 <li class="notifications" v-click-outside="hideNotifications">
                     <div
-                        @click="showNotifications = !showNotifications"
+                        @click="openNotifications"
                         :class="{
                             active: showNotifications,
                             'has-notifications':
-                                notificationsNavbarCount.length,
+                                this.getNavbarNotifications.find(
+                                    (n) => !n.isViewed
+                                ),
+                            loading: loadingNotif,
                         }"
                     >
                         <i class="kiv-bell icon-2"></i>
@@ -31,72 +34,124 @@
                     <transition name="height">
                         <div
                             class="user-notification dropdown-frame"
-                            v-if="showNotifications"
+                            v-if="
+                                showNotifications &&
+                                getNavbarNotifications.length
+                            "
                         >
                             <ul>
-                                <li class="active">
+                                <li
+                                    v-for="(notif, i) in getNavbarNotifications"
+                                    :key="i"
+                                    :class="{ active: !notif.isViewed }"
+                                    @mouseover="notif.isViewed = true"
+                                >
                                     <div class="notif-icon">
                                         <img
+                                            v-if="'prescription' === notif.type"
                                             src="../img/icons/colored/prescription.svg"
                                             alt="Icone d'une prescription"
                                             class="icon-prescription"
                                         />
-                                    </div>
-                                    <p>
-                                        Votre kinésithérapeute vous a prescrit
-                                        une fiche
-                                        <a>"Mobilité"</a>
-                                    </p>
-                                </li>
-                                <li>
-                                    <div class="notif-icon">
                                         <img
+                                            v-if="
+                                                'timing-worksheet' ===
+                                                notif.type
+                                            "
+                                            src="../img/icons/colored/clock.svg"
+                                            alt="Icone d'une montre / horloge"
+                                            class="icon-clock"
+                                        />
+                                        <img
+                                            v-if="'score-rank' === notif.type"
                                             src="../img/icons/colored/confettis.svg"
+                                            alt="Icone de confettis"
+                                            class="icon-confettis"
+                                        />
+                                        <img
+                                            v-if="
+                                                'select-doctor' === notif.type
+                                            "
+                                            src="../img/icons/colored/user-add.svg"
+                                            alt="Icone de confettis"
+                                            class="icon-confettis"
+                                        />
+                                        <img
+                                            v-if="
+                                                'accept-doctor' === notif.type
+                                            "
+                                            src="../img/icons/colored/user-add.svg"
+                                            alt="Icone de confettis"
+                                            class="icon-confettis"
+                                        />
+                                        <img
+                                            v-if="
+                                                'decline-doctor' === notif.type
+                                            "
+                                            src="../img/icons/colored/user-decl.svg"
                                             alt="Icone de confettis"
                                             class="icon-confettis"
                                         />
                                     </div>
                                     <p>
-                                        Vous avez atteint le niveau Super
-                                        Patient ! Félicitation !
-                                    </p>
-                                </li>
-                                <li>
-                                    <div class="notif-icon">
-                                        <img
-                                            src="../img/icons/colored/clock.svg"
-                                            alt="Icone d'une montre / horloge"
-                                            class="icon-clock"
-                                        />
-                                    </div>
-                                    <p>
-                                        Plus que quelques heures pour réaliser
-                                        vos exercices, je m'y met maintenant !
+                                        <span
+                                            v-for="(e, i) in notif.content"
+                                            :key="i"
+                                        >
+                                            <span v-if="'text' === e.type">
+                                                {{ e.content }}
+                                            </span>
+                                            <span v-if="'user' === e.type">
+                                                {{ e.content }}
+                                            </span>
+                                        </span>
                                     </p>
                                 </li>
                             </ul>
                         </div>
                     </transition>
                 </li>
-                <li class="user" v-click-outside="hideMenu">
+                <li
+                    class="user"
+                    v-click-outside="hideMenu"
+                    :class="{ loading: loadingUser }"
+                >
                     <div
                         @click="currentUserMenu = !currentUserMenu"
                         :class="{ active: currentUserMenu }"
                     >
-                        <vs-avatar size="26" class="user-avatar" circle>
+                        <vs-avatar
+                            :class="{ loading: loadingUser }"
+                            size="26"
+                            class="user-avatar"
+                            circle
+                        >
                             <img
                                 :src="
                                     currentUser.avatarUrl
                                         ? currentUser.avatarUrl
-                                        : '../img/avatar-default.svg'
+                                        : '/img/avatar-default.svg'
                                 "
                                 :alt="`Avatar de ${currentUser.firstname} ${currentUser.lastname}`"
                             />
                         </vs-avatar>
                         <div class="user-name">
-                            <div>
-                                {{ currentUser.firstname }}
-                                {{ currentUser.lastname }}
+                            <div v-if="loadingUser" class="loading-block">
+                                <div class="loading"></div>
+                            </div>
+                            <div v-else>
+                                <div
+                                    v-if="
+                                        currentUser.firstname ||
+                                        currentUser.lastname
+                                    "
+                                >
+                                    {{ currentUser.firstname }}
+                                    {{ currentUser.lastname }}
+                                </div>
+                                <div v-else>
+                                    {{ currentUser.email }}
+                                </div>
                             </div>
                             <i class="kiv-chevron-down icon-3"></i>
                         </div>
@@ -166,8 +221,6 @@ export default {
             adminDashboardPath: null,
             patientDashboardRoute: null,
             patientDashboardPath: null,
-            // patientWorksheetsRoute: null,
-            // patientWorksheetsPath: null,
             patientEditPath: null,
             doctorDashboardPath: null,
             doctorDashboardRoute: null,
@@ -177,37 +230,47 @@ export default {
             doctorWorksheetsRoute: null,
             doctorEditPath: null,
             csrfTokenReadNotification: null,
+            loadingNotif: false,
+            loadingUser: false,
         };
     },
     directives: {
         ClickOutside,
     },
     computed: {
-        notificationsNavbar() {
+        getNavbarNotifications() {
             return this.currentUserNotifications.filter(
                 (n) => "dashboard" !== n.type
-            );
-        },
-        notificationsNavbarCount() {
-            return this.currentUserNotifications.filter(
-                (n) => false === n.isViewed && "dashboard" !== n.type
             );
         },
     },
     methods: {
         getNotifications() {
+            this.loadingNotif = true;
+
             this.axios
                 .get(
                     `/${this.currentUserType}/${this.currentUser.id}/get/notifications`
                 )
                 .then((response) => {
                     this.currentUserNotifications = response.data;
+
+                    this.loadingNotif = false;
                 })
                 .catch((error) => {
-                    if (error.response) {
-                        console.log(error.response.data.detail);
-                    }
+                    const errorMess =
+                        "object" === typeof error.response.data
+                            ? error.response.data.detail
+                            : error.response.data;
+
+                    console.log(errorMess);
+
+                    this.loadingNotif = false;
                 });
+        },
+        openNotifications() {
+            this.showNotifications = !this.showNotifications;
+            this.readNotifications();
         },
         readNotifications() {
             this.axios
@@ -221,9 +284,12 @@ export default {
                     // console.log(response.data);
                 })
                 .catch((error) => {
-                    if (error.response) {
-                        console.log(error.response.data.detail);
-                    }
+                    const errorMess =
+                        "object" === typeof error.response.data
+                            ? error.response.data.detail
+                            : error.response.data;
+
+                    console.log(errorMess);
                 });
         },
         hideNotifications() {
@@ -233,7 +299,6 @@ export default {
             this.currentUserMenu = false;
         },
         dashboard() {
-            console.log(this.currentUserType);
             if ("admin" === this.currentUser) {
                 document.location.href = this.adminDashboardPath;
             }
@@ -264,12 +329,6 @@ export default {
         logout() {
             document.location.href = this.logoutPath;
         },
-        timeForNotification(notificationDate) {
-            return f.timeForNotification(notificationDate);
-        },
-        formatDate(datetime) {
-            return f.formatDate(datetime);
-        },
     },
     created() {
         const data = JSON.parse(
@@ -291,8 +350,6 @@ export default {
             this.logoutPath = data.logoutPath;
             this.patientDashboardPath = data.patientDashboardPath;
             this.patientDashboardRoute = data.patientDashboardRoute;
-            // this.patientWorksheetsPath = data.patientWorksheetsPath;
-            // this.patientWorksheetsRoute = data.patientWorksheetsRoute;
             this.patientEditPath = data.patientEditPath;
             this.doctorDashboardPath = data.doctorDashboardPath;
             this.doctorDashboardRoute = data.doctorDashboardRoute;
@@ -322,7 +379,7 @@ export default {
     border-radius: 0 0 2rem 2rem;
     font-weight: 600;
     position: relative;
-    z-index: 10;
+    z-index: 11;
 
     @media (min-width: 576px) {
         padding: 1.25rem 3rem;
@@ -407,7 +464,7 @@ export default {
                 .dropdown-frame {
                     position: absolute;
                     z-index: 1;
-                    top: 2.6rem;
+                    top: 3.4rem;
                     right: -0.2rem;
                     background: $white;
                     border: 1px solid $gray-middle;
@@ -457,22 +514,40 @@ export default {
                             color: $orange;
                             background-color: rgba(251, 138, 104, 0.1);
                         }
+
+                        &.loading {
+                            pointer-events: none;
+
+                            i {
+                                opacity: 0.08;
+                            }
+                        }
                     }
 
                     .user-notification {
-                        min-width: 28rem;
-                        padding: 1rem 0;
+                        min-width: 27.4rem;
 
                         ul {
                             list-style: none;
                             padding: 0;
+                            max-height: 28.8rem;
+                            overflow: auto;
 
                             li {
                                 display: flex;
-                                padding: 1rem 1.8rem;
+                                padding: 1rem 1.7rem;
                                 transition: all 0.2s;
+
                                 &:hover {
                                     background: rgba($gray-middle, 0.2);
+                                }
+
+                                &:first-child {
+                                    padding-top: 1.5rem;
+                                }
+
+                                &:last-child {
+                                    padding-bottom: 1.5rem;
                                 }
 
                                 &.active {
@@ -488,9 +563,12 @@ export default {
                                             right: 0.1rem;
                                             border-radius: 50%;
                                             display: block;
-                                            width: 0.8rem;
-                                            height: 0.8rem;
+                                            width: 6px;
+                                            height: 6px;
+                                            min-width: 6px;
+                                            min-height: 6px;
                                             background: $orange;
+                                            border: 1.1px solid $orange;
                                         }
                                     }
                                 }
@@ -508,6 +586,7 @@ export default {
                                     align-items: center;
                                     justify-content: center;
                                     margin-right: 1.1rem;
+                                    transition: all 0.2s;
 
                                     img {
                                         height: 60%;
@@ -543,6 +622,15 @@ export default {
                     padding-right: 0;
                     position: relative;
 
+                    &.loading {
+                        pointer-events: none;
+                        background: transparent;
+
+                        i {
+                            color: #f0f0f0;
+                        }
+                    }
+
                     > div {
                         display: flex;
                         cursor: pointer;
@@ -568,6 +656,14 @@ export default {
 
                             @media (min-width: 576px) {
                                 display: flex;
+                            }
+
+                            .loading-block {
+                                > * {
+                                    border-radius: 0.4rem;
+                                    height: 1.5rem;
+                                    width: 11rem;
+                                }
                             }
                         }
 

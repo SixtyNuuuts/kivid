@@ -22,7 +22,7 @@
 		"patient": {{ patient|serialize('json', {'groups': 'patient_read'})|raw }},
 		"doctorView": {{ doctorView|serialize('json')|raw }},
 		"csrfTokenSelectDoctor": {{ csrf_token('select_doctor' ~ patient.id)|serialize('json')|raw }},
-		"csrfTokenAcceptAddRequest": {{ csrf_token('accept_add_request' ~ patient.id)|serialize('json')|raw }},
-		"csrfTokenDeclineAddRequest": {{ csrf_token('decline_add_request' ~ patient.id)|serialize('json')|raw }}
+		"csrfTokenAcceptDoctor": {{ csrf_token('accept_doctor' ~ patient.id)|serialize('json')|raw }},
+		"csrfTokenDeclineDoctor": {{ csrf_token('decline_doctor' ~ patient.id)|serialize('json')|raw }}
 	}
 {% endblock %}

@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import ShowWorkSheetPage from './ShowWorkSheetPage.vue'
+import ReadWorkSheetPage from './ReadWorkSheetPage.vue'
 
 // Axios
 import axios from 'axios'
@@ -15,5 +15,5 @@ import VueYoutube from 'vue-youtube'
 Vue.use(VueYoutube)
 
 new Vue({
-    render: h => h(ShowWorkSheetPage)
+    render: h => h(ReadWorkSheetPage)
 }).$mount('#vue')

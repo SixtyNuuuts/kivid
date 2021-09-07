@@ -76,9 +76,9 @@ class ManageWorksheetController extends AbstractController
 
     /**
      * @Route("/{id}/fiche/{worksheetId}",
-     * name="app_doctor_worksheet_creation", methods={"GET"})
+     * name="app_patient_prescription_read", methods={"GET"})
      */
-    public function worksheetCreation(
+    public function worksheetRead(
         Patient $patient,
         int $worksheetId = null
     ): Response {
@@ -87,7 +87,7 @@ class ManageWorksheetController extends AbstractController
             $this->worksheetRepository->findOneBy(['id' => $worksheetId])
         : null;
 
-        return $this->render('patient/show_worksheet.html.twig', [
+        return $this->render('patient/read_worksheet.html.twig', [
             'patient' => $patient,
             'worksheet' => $worksheet,
         ]);
@@ -102,7 +102,7 @@ class ManageWorksheetController extends AbstractController
             $this->prescriptionRepository->findBy(['patient' => $patient]),
             200,
             [],
-            ['groups' => 'prescription_read']
+            ['groups' => 'patient_prescription_read']
         );
     }
 

@@ -9,10 +9,17 @@ body {
     }
 
     &.fuzzy-balls {
-        background: url(../img/ball-1.svg) -10% -1% no-repeat, url(../img/ball-2.svg) 672% 2% no-repeat,
-            url(../img/ball-3.svg) 115% 1% no-repeat, url(../img/ball-1.svg) 115% 25% no-repeat,
-            url(../img/ball-2.svg) 463% 35% no-repeat, url(../img/ball-3.svg) -48% 57% no-repeat;
-        background-size: 25%, 105%, 30%, 30%, 98%, 50%;
+        background: url(../img/ball-1.svg) top -10.4rem left -11rem no-repeat,
+            url(../img/ball-2.svg) top 20.4rem left -25rem no-repeat,
+            url(../img/ball-3.svg) top 11rem right -19rem no-repeat;
+        background-size: 30rem, 70rem, 30rem;
+
+        @media (min-width: 768px) {
+            background: url(../img/ball-1.svg) top -22.4rem left -20rem no-repeat,
+                url(../img/ball-2.svg) top 21.4rem left -48rem no-repeat,
+                url(../img/ball-3.svg) top 10rem right -25rem no-repeat;
+            background-size: 57rem, 135rem, 57rem;
+        }
     }
 
     .container {
@@ -185,21 +192,52 @@ body {
     animation-iteration-count: infinite;
     animation-name: placeHolderShimmer;
     animation-timing-function: linear;
-    background: #f6f7f8;
-    background: linear-gradient(to right, #fff5e2 8%, rgb(219, 210, 201) 38%, #fff5e2 54%);
+    background: linear-gradient(to right, #fafafa 8%, #f5f3ef 38%, #fafafa 54%);
     background-size: 1000px 640px;
-    opacity: 0.5;
+    opacity: 1;
     position: relative;
 }
 
-// @keyframes fadeEnter {
-//     0% {
-//         opacity: 0;
-//     }
-//     100% {
-//         opacity: 1;
-//     }
-// }
+.text-success {
+    color: $green;
+}
+
+.text-danger {
+    color: $danger;
+}
+
+.hidden {
+    opacity: 0 !important;
+    display: none !important;
+}
+
+.visible {
+    opacity: 1 !important;
+    display: flex !important;
+}
+
+.disabled {
+    pointer-events: none !important;
+    opacity: 0.5 !important;
+}
+
+@keyframes fadeEnter {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes placeHolderShimmer {
+    0% {
+        background-position: -468px 0;
+    }
+    100% {
+        background-position: 468px 0;
+    }
+}
 
 @keyframes kivRebound {
     0% {
@@ -231,15 +269,6 @@ body {
     }
 }
 
-@keyframes placeHolderShimmer {
-    0% {
-        background-position: -468px 0;
-    }
-    100% {
-        background-position: 468px 0;
-    }
-}
-
 .fade-enter-active,
 .fade-leave-active {
     transition: all 0.2s;
@@ -247,6 +276,7 @@ body {
 .fade-enter,
 .fade-leave-to {
     opacity: 0;
+    display: none;
 }
 
 .fade2-enter-active,
@@ -270,6 +300,50 @@ body {
     max-height: 0 !important;
     padding: 0;
     opacity: 0.2;
+}
+
+.height2-enter-active,
+.height2-leave-active {
+    transition: all 0.1s cubic-bezier(0.19, 1.03, 0.79, 1.02);
+    max-height: 30rem !important;
+}
+
+.height2-enter,
+.height2-leave-to {
+    max-height: 0 !important;
+    padding: 0;
+    opacity: 0;
+}
+.w-15 {
+    width: 15%;
+}
+
+.w-25 {
+    width: 25%;
+}
+
+.w-35 {
+    width: 35%;
+}
+
+.w-45 {
+    width: 45%;
+}
+
+.w-55 {
+    width: 55%;
+}
+
+.w-65 {
+    width: 65%;
+}
+
+.w-75 {
+    width: 75%;
+}
+
+.w-85 {
+    width: 55%;
 }
 
 @keyframes blink {
@@ -297,11 +371,6 @@ body {
     white-space: nowrap;
     opacity: 1;
     transition: all 0.2s;
-
-    &.hidden {
-        opacity: 0;
-        display: none;
-    }
 
     > div:first-child {
         display: flex;

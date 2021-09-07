@@ -5,15 +5,9 @@
 <style type="text/css">
 	.st0{opacity:0.25;fill:url(#SVGID_1_);enable-background:new    ;}
 </style>
-<radialGradient id="SVGID_1_" cx="115.8935" cy="-69.2911" r="1" gradientTransform="matrix(1.757368e-14 287 -287 1.757368e-14 -19599.5449 -32974.4336)" gradientUnits="userSpaceOnUse">
-	<stop  offset="0" style="stop-color:#F18969"/>
-	<stop  offset="0.2038" style="stop-color:#F18C6C;stop-opacity:0.7962"/>
-	<stop  offset="0.3762" style="stop-color:#F19477;stop-opacity:0.6238"/>
-	<stop  offset="0.5372" style="stop-color:#F2A288;stop-opacity:0.4628"/>
-	<stop  offset="0.6913" style="stop-color:#F3B6A1;stop-opacity:0.3087"/>
-	<stop  offset="0.8405" style="stop-color:#F4CFC1;stop-opacity:0.1595"/>
-	<stop  offset="0.9842" style="stop-color:#F5EEE7;stop-opacity:1.583350e-02"/>
-	<stop  offset="1" style="stop-color:#F5F2EC;stop-opacity:0"/>
+<radialGradient id="SVGID_1_" cx="-19.0648" cy="-7.141871e-02" r="1" gradientTransform="matrix(1.757368e-14 287 -287 1.757368e-14 267.0028 5759)" gradientUnits="userSpaceOnUse">
+	<stop  offset="0" style="stop-color:#FB8B68"/>
+	<stop  offset="1" style="stop-color:#F0F4F7"/>
 </radialGradient>
-<circle class="st0" cx="287" cy="287" r="287"/>
+<circle class="st0" cx="287.5" cy="287.4" r="287"/>
 </svg>

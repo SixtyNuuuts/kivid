@@ -425,7 +425,7 @@ export default {
                 }
 
                 &:hover {
-                    border: 1px solid rgba($orange, 0.6);
+                    border: 1px solid rgba($gray-dark, 0.85);
                 }
 
                 &.selected {

@@ -198,8 +198,8 @@
                                                 <a
                                                     v-if="
                                                         patient.doctor &&
-                                                        false !==
-                                                            patient.doctorAddRequest
+                                                        null !==
+                                                            patient.addRequestDoctor
                                                     "
                                                     href=""
                                                     class="text-gray-400"
@@ -229,8 +229,8 @@
                                                         }}
                                                         <div
                                                             v-if="
-                                                                null ===
-                                                                patient.doctorAddRequest
+                                                                false ===
+                                                                patient.addRequestDoctor
                                                             "
                                                         >
                                                             (EN ATTENTE)

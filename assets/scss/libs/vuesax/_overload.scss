@@ -116,6 +116,12 @@
     .vs-button__content {
         padding: 0;
     }
+
+    &:disabled {
+        box-shadow: none;
+        background: $gray-middle;
+        color: $gray-dark;
+    }
 }
 
 .vs-button.btn-consult {
@@ -132,8 +138,9 @@
     }
 
     &.part-of-body {
-        background: #fb8b6826;
+        background: #feeee8;
         color: $black;
+        letter-spacing: 0.02rem;
 
         &:hover {
             box-shadow: none;
@@ -457,8 +464,15 @@
 
 .vs-avatar {
     background: #f6f4f0;
+
     img {
         color: #f6f4f0;
+    }
+}
+
+.vs-avatar-content.loading {
+    .vs-avatar {
+        background: transparent;
     }
 }
 
@@ -495,6 +509,49 @@
                 height: 100%;
             }
         }
+    }
+}
+
+/// notification
+.vs-notification {
+    border-radius: 1rem;
+    background-color: $black;
+    color: $white;
+    box-shadow: 0px 1rem 1.3rem -0.5rem rgba(24, 7, 4, 0.5);
+    max-width: 250px;
+
+    .vs-notification__content__header h4 {
+        font-size: 1.2rem;
+    }
+    .vs-notification__content__text p {
+        font-size: 1.2rem;
+        line-height: 1.6rem;
+    }
+
+    .vs-notification__icon i {
+        font-size: 1.7rem;
+    }
+
+    .vs-icon-close:before {
+        background: $white;
+    }
+
+    .vs-icon-close:after {
+        background: $white;
+    }
+}
+
+.vs-notification__progress {
+    background: $white;
+    background: rgba($white, 0.3);
+}
+
+.vs-notification-parent--top-right {
+    top: 5.8rem;
+    right: 1.9rem;
+
+    @media (max-width: 600px) {
+        right: 0;
     }
 }
 /* VueSax Overload */

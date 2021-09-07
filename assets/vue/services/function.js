@@ -48,11 +48,10 @@ export default {
   openSuccesNotification(titleText, messageText) {
     Vue.prototype.$vs.notification({
       progress: "auto",
-      flat: true,
-      icon: "<i class='fe fe-alert-circle'></i>",
-      color: "success",
+      icon: "<i class='far fa-check-circle text-success'></i>",
+      color: null,
       position: "top-right",
-      title: `<strong>${titleText}</strong>`,
+      title: `<strong class='text-success'>${titleText}</strong>`,
       text: `${messageText}`,
     });
   },
@@ -60,11 +59,10 @@ export default {
   openErrorNotification(titleText, messageText) {
     Vue.prototype.$vs.notification({
       progress: "auto",
-      flat: true,
-      icon: "<i class='fe fe-check-circle'></i>",
-      color: "danger",
+      icon: "<i class='far fa-times-circle text-danger'></i>",
+      color: null,
       position: "top-right",
-      title: `<strong>${titleText}</strong>`,
+      title: `<strong class='text-danger'>${titleText}</strong>`,
       text: `${messageText}`,
     });
   },

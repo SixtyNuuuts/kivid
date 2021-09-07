@@ -1,5 +1,5 @@
 <template>
-    <div class="container" id="show-worksheet">
+    <div class="container" id="read-worksheet">
         <header>
             <div class="title">
                 <i class="kiv-arrow-left icon-31"></i>
@@ -98,7 +98,7 @@ export default {
 <style lang="scss" scoped>
 @import "../../scss/variables";
 
-#show-worksheet {
+#read-worksheet {
     header {
         display: flex;
         align-items: flex-start;

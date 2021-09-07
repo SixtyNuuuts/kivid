@@ -17,7 +17,7 @@ class Prescription
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"prescription_read"})
+     * @Groups({"prescription_read", "patient_prescription_read"})
      */
     private $id;
 
@@ -38,7 +38,7 @@ class Prescription
     /**
      * @ORM\ManyToOne(targetEntity=Worksheet::class, inversedBy="prescriptions", cascade={"remove"})
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"prescription_read", "patient_read", "exercise_stats_read"})
+     * @Groups({"prescription_read", "patient_read", "exercise_stats_read", "patient_prescription_read"})
      */
     private $worksheet;
 
@@ -50,7 +50,7 @@ class Prescription
 
     /**
      * @ORM\Column(type="datetime_immutable")
-     * @Groups({"prescription_read"})
+     * @Groups({"prescription_read", "patient_prescription_read"})
      */
     private $createdAt;
 
