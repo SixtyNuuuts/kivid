@@ -17,51 +17,50 @@ class WorksheetSession
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"prescription_read", "exercise_stats_read"})
+     * @Groups({"worksheet_read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"prescription_read", "exercise_stats_read"})
+     * @Groups({"worksheet_read"})
      */
     private $startAt;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"prescription_read", "exercise_stats_read"})
+     * @Groups({"worksheet_read"})
      */
     private $deadlineAt;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"prescription_read", "exercise_stats_read"})
+     * @Groups({"worksheet_read"})
      */
     private $isInProgress;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"prescription_read", "exercise_stats_read"})
+     * @Groups({"worksheet_read"})
      */
     private $isCompleted;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"prescription_read", "exercise_stats_read"})
+     * @Groups({"worksheet_read"})
      */
     private $execOrder;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Prescription::class, inversedBy="worksheetSessions")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $prescription;
-
-    /**
      * @ORM\OneToMany(targetEntity=ExerciseStat::class, mappedBy="worksheetSession", orphanRemoval=true)
-     * @Groups({"exercise_stats_read"})
      */
     private $exerciseStats;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Worksheet::class, inversedBy="worksheetSessions")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $worksheet;
 
     public function __construct()
     {
@@ -123,18 +122,6 @@ class WorksheetSession
         return $this;
     }
 
-    public function getPrescription(): ?Prescription
-    {
-        return $this->prescription;
-    }
-
-    public function setPrescription(?Prescription $prescription): self
-    {
-        $this->prescription = $prescription;
-
-        return $this;
-    }
-
     public function getExecOrder(): ?int
     {
         return $this->execOrder;
@@ -173,6 +160,18 @@ class WorksheetSession
                 $exerciseStat->setWorksheetSession(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getWorksheet(): ?Worksheet
+    {
+        return $this->worksheet;
+    }
+
+    public function setWorksheet(?Worksheet $worksheet): self
+    {
+        $this->worksheet = $worksheet;
 
         return $this;
     }

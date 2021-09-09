@@ -17,39 +17,51 @@ class Exercise
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"worksheet_read", "prescription_read", "patient_read"})
+     * @Groups({"worksheet_read"})
      */
     private $id;
 
     /**
      * @ORM\ManyToOne(targetEntity=Video::class, inversedBy="exercises")
-     * @Groups({"worksheet_read", "prescription_read"})
+     * @Groups({"worksheet_read"})
      */
     private $video;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"worksheet_read", "prescription_read"})
+     * @Groups({"worksheet_read"})
      */
     private $numberOfRepetitions;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"worksheet_read", "prescription_read"})
+     * @Groups({"worksheet_read"})
      */
     private $numberOfSeries;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"worksheet_read", "prescription_read"})
+     * @Groups({"worksheet_read"})
      */
     private $option;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"worksheet_read"})
+     */
+    private $tempo;
+
+    
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"worksheet_read"})
+     */
+    private $hold;
 
     /**
      * @ORM\ManyToOne(targetEntity=Worksheet::class, inversedBy="exercises")
      */
     private $worksheet;
-
 
     /**
      * @ORM\Column(type="datetime_immutable")
@@ -58,25 +70,25 @@ class Exercise
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"worksheet_read", "prescription_read"})
+     * @Groups({"worksheet_read"})
      */
     private $position;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"prescription_read", "patient_prescription_read"})
+     * @Groups({"worksheet_read"})
      */
     private $isCompleted;
 
     /**
      * @ORM\OneToMany(targetEntity=ExerciseStat::class, mappedBy="exercise")
-     * @Groups({"prescription_read"})
+     * @Groups({"worksheet_read"})
      */
     private $exerciseStats;
 
     /**
      * @ORM\OneToMany(targetEntity=Commentary::class, mappedBy="exercise")
-     * @Groups({"prescription_read"})
+     * @Groups({"worksheet_read"})
      */
     private $commentaries;
 
@@ -137,6 +149,30 @@ class Exercise
     public function setOption(?string $option): self
     {
         $this->option = $option;
+
+        return $this;
+    }
+
+    public function getTempo(): ?string
+    {
+        return $this->tempo;
+    }
+
+    public function setTempo(?string $tempo): self
+    {
+        $this->tempo = $tempo;
+
+        return $this;
+    }
+
+    public function getHold(): ?int
+    {
+        return $this->hold;
+    }
+
+    public function setHold(?int $hold): self
+    {
+        $this->hold = $hold;
 
         return $this;
     }

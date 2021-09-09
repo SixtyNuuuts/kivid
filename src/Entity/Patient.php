@@ -27,12 +27,6 @@ class Patient extends User
     private $doctor;
 
     /**
-     * @ORM\OneToMany(targetEntity=Prescription::class, mappedBy="patient")
-     * @Groups({"patient_read"})
-     */
-    private $prescriptions;
-
-    /**
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"patient_read"})
      */
@@ -46,7 +40,7 @@ class Patient extends User
 
     /**
      * @ORM\OneToMany(targetEntity=Subscription::class, mappedBy="patient", orphanRemoval=true)
-     * @Groups({"patient_read", "user_read"})
+     * @Groups({"patient_read"})
      */
     private $subscriptions;
 
@@ -60,13 +54,18 @@ class Patient extends User
      */
     private $commentaries;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Worksheet::class, mappedBy="patient")
+     */
+    private $worksheets;
+
     public function __construct()
     {
         parent::__construct(['ROLE_PATIENT']);
-        $this->prescriptions = new ArrayCollection();
         $this->subscriptions = new ArrayCollection();
         $this->notifications = new ArrayCollection();
         $this->commentaries = new ArrayCollection();
+        $this->worksheets = new ArrayCollection();
     }
 
     public function getBirthdate(): ?\DateTimeImmutable
@@ -89,36 +88,6 @@ class Patient extends User
     public function setDoctor(?Doctor $doctor): self
     {
         $this->doctor = $doctor;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Prescription[]
-     */
-    public function getPrescriptions(): Collection
-    {
-        return $this->prescriptions;
-    }
-
-    public function addPrescription(Prescription $prescription): self
-    {
-        if (!$this->prescriptions->contains($prescription)) {
-            $this->prescriptions[] = $prescription;
-            $prescription->setPatient($this);
-        }
-
-        return $this;
-    }
-
-    public function removePrescription(Prescription $prescription): self
-    {
-        if ($this->prescriptions->removeElement($prescription)) {
-            // set the owning side to null (unless already changed)
-            if ($prescription->getPatient() === $this) {
-                $prescription->setPatient(null);
-            }
-        }
 
         return $this;
     }
@@ -231,6 +200,36 @@ class Patient extends User
             // set the owning side to null (unless already changed)
             if ($commentary->getPatient() === $this) {
                 $commentary->setPatient(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Worksheet[]
+     */
+    public function getWorksheets(): Collection
+    {
+        return $this->worksheets;
+    }
+
+    public function addWorksheet(Worksheet $worksheet): self
+    {
+        if (!$this->worksheets->contains($worksheet)) {
+            $this->worksheets[] = $worksheet;
+            $worksheet->setPatient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeWorksheet(Worksheet $worksheet): self
+    {
+        if ($this->worksheets->removeElement($worksheet)) {
+            // set the owning side to null (unless already changed)
+            if ($worksheet->getPatient() === $this) {
+                $worksheet->setPatient(null);
             }
         }
 

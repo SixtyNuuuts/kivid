@@ -10,7 +10,6 @@ use App\Repository\DoctorRepository;
 use App\Repository\ExerciseRepository;
 use App\Repository\ExerciseStatRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Repository\PrescriptionRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -35,7 +34,6 @@ class StatController extends AbstractController
 
     public function __construct(
         DoctorRepository $doctorRepository,
-        PrescriptionRepository $prescriptionRepository,
         ExerciseRepository $exerciseRepository,
         ExerciseStatRepository $exerciseStatRepository,
         VideoRepository $videoRepository,
@@ -44,7 +42,6 @@ class StatController extends AbstractController
         EntityManagerInterface $em
     ) {
         $this->doctorRepository = $doctorRepository;
-        $this->prescriptionRepository = $prescriptionRepository;
         $this->exerciseRepository = $exerciseRepository;
         $this->exerciseStatRepository = $exerciseStatRepository;
         $this->videoRepository = $videoRepository;

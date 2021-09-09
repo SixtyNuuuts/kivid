@@ -8,7 +8,8 @@
 .vue-slider-dot {
     width: 3.4rem !important;
     height: 3.4rem !important;
-    transition: left 0.3s !important;
+    transition: none !important;
+    // transition: left 0.1s ease 0s !important;
 
     .vue-slider-dot-handle {
         background: $white;

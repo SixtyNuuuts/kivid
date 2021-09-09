@@ -15,25 +15,25 @@ class ExerciseStat
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"prescription_read", "exercise_stats_read"})
+     * @Groups({"worksheet_read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"prescription_read", "exercise_stats_read"})
+     * @Groups({"worksheet_read"})
      */
     private $doneAt;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"prescription_read", "exercise_stats_read"})
+     * @Groups({"worksheet_read"})
      */
     private $criterion;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"prescription_read", "exercise_stats_read"})
+     * @Groups({"worksheet_read"})
      */
     private $rating;
 
@@ -45,7 +45,7 @@ class ExerciseStat
 
     /**
      * @ORM\ManyToOne(targetEntity=WorksheetSession::class, inversedBy="exerciseStats")
-     * @Groups({"prescription_read"})
+     * @Groups({"worksheet_read"})
      */
     private $worksheetSession;
 

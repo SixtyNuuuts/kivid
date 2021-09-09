@@ -149,7 +149,7 @@ export default {
                             ? error.response.data.detail
                             : error.response.data;
 
-                    console.log(errorMess);
+                    console.error(errorMess);
                     this.loading = false;
                 });
         },

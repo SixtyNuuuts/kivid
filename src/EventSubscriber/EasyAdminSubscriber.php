@@ -33,7 +33,7 @@ class EasyAdminSubscriber implements EventSubscriberInterface
         }
 
         $url = "https://www.youtube.com/watch?v={$entity->getYoutubeId()}";
-        $thumbnailUrl = "https://img.youtube.com/vi/{$entity->getYoutubeId()}/mqdefault.jpg";
+        $thumbnailUrl = "https://img.youtube.com/vi/{$entity->getYoutubeId()}/maxresdefault.jpg";
 
         $entity->setUrl($url);
         $entity->setThumbnailUrl($thumbnailUrl);

@@ -224,10 +224,6 @@ export default {
             patientEditPath: null,
             doctorDashboardPath: null,
             doctorDashboardRoute: null,
-            doctorPatientsPath: null,
-            doctorPatientsRoute: null,
-            doctorWorksheetsPath: null,
-            doctorWorksheetsRoute: null,
             doctorEditPath: null,
             csrfTokenReadNotification: null,
             loadingNotif: false,
@@ -263,7 +259,7 @@ export default {
                             ? error.response.data.detail
                             : error.response.data;
 
-                    console.log(errorMess);
+                    console.error(errorMess);
 
                     this.loadingNotif = false;
                 });
@@ -289,7 +285,7 @@ export default {
                             ? error.response.data.detail
                             : error.response.data;
 
-                    console.log(errorMess);
+                    console.error(errorMess);
                 });
         },
         hideNotifications() {
@@ -353,10 +349,6 @@ export default {
             this.patientEditPath = data.patientEditPath;
             this.doctorDashboardPath = data.doctorDashboardPath;
             this.doctorDashboardRoute = data.doctorDashboardRoute;
-            this.doctorWorksheetsPath = data.doctorWorksheetsPath;
-            this.doctorWorksheetsRoute = data.doctorWorksheetsRoute;
-            this.doctorPatientsPath = data.doctorPatientsPath;
-            this.doctorPatientsRoute = data.doctorPatientsRoute;
             this.doctorEditPath = data.doctorEditPath;
             this.csrfTokenReadNotification = data.csrfTokenReadNotification;
 

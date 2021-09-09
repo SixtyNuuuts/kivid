@@ -208,7 +208,25 @@
                 </div>
             </div>
         </div>
-        <div class="btn-eval-valid-and-next">
+        <div
+            v-if="'technical' === type"
+            class="btn-eval-valid-and-next"
+            @click="validTechnical"
+        >
+            <vs-button> Suivant </vs-button>
+        </div>
+        <div
+            v-if="'difficulty' === type"
+            class="btn-eval-valid-and-next"
+            @click="validDifficulty"
+        >
+            <vs-button> Suivant </vs-button>
+        </div>
+        <div
+            v-if="'sensitivity' === type"
+            class="btn-eval-valid-and-next"
+            @click="validSensitivity"
+        >
             <vs-button> Suivant </vs-button>
         </div>
     </div>
@@ -227,20 +245,25 @@ export default {
     },
     data() {
         return {
-            // worksheetProgression: 50,
-            // commentary1: "",
             technicalValue: 50,
             difficultyValue: 50,
             sensitivityValue: 50,
         };
     },
-    computed: {
-        // getWorksheetProgression() {
-        //     return this.worksheetProgression;
-        // },
+    methods: {
+        validTechnical() {
+            this.$emit("validTechnicalValue", this.technicalValue);
+            this.technicalValue = 50;
+        },
+        validDifficulty() {
+            this.$emit("validDifficultyValue", this.difficultyValue);
+            this.difficultyValue = 50;
+        },
+        validSensitivity() {
+            this.$emit("validSensitivityValue", this.sensitivityValue);
+            this.sensitivityValue = 50;
+        },
     },
-    methods: {},
-    mounted() {},
 };
 </script>
 
@@ -249,30 +272,34 @@ export default {
 
 .eval-frame {
     background: $gray-light;
-    padding: 4rem;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
     text-align: center;
+    height: 100%;
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    height: 100%;
-    width: 100%;
+    padding: 4rem;
     border-radius: initial;
-    max-width: 120rem;
+    max-height: initial;
+    width: 100%;
+    transform: translate(0, 0);
+    overflow: hidden;
+    overflow-y: auto;
 
     @media (min-width: 768px) {
         justify-content: space-between;
-        position: relative;
-        top: -0.6rem;
-        left: auto;
+        top: 50%;
+        left: 50%;
         right: auto;
-        height: initial;
+        padding: 12vh 10vw;
         border-radius: 1rem;
-        padding: 8.5rem;
+        max-height: 60rem;
+        width: 80%;
+        transform: translate(-50%, -50%);
     }
 
     h1 {
@@ -390,16 +417,14 @@ export default {
                 background: $white;
                 border: 1px solid $gray-middle;
                 border-radius: 0.4rem;
-                padding: 15% 16%;
-                padding-bottom: 13.8%;
                 cursor: pointer;
                 transition: border 0.2s;
                 position: relative;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                max-height: 8rem;
-                max-width: 8rem;
+                height: 8rem;
+                width: 8rem;
 
                 @media (max-width: 768px) {
                     &:first-child {
@@ -412,9 +437,6 @@ export default {
                 }
 
                 @media (min-width: 768px) {
-                    padding: 2% 2.1%;
-                    padding-bottom: 1.9%;
-
                     &:first-child {
                         margin-left: 0;
                     }
@@ -438,7 +460,7 @@ export default {
             }
 
             i:not(.kiv-selected) {
-                width: 100%;
+                width: 55%;
 
                 img {
                     width: 100%;

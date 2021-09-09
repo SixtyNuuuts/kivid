@@ -141,6 +141,7 @@
         background: #feeee8;
         color: $black;
         letter-spacing: 0.02rem;
+        overflow: visible;
 
         &:hover {
             box-shadow: none;
@@ -148,8 +149,47 @@
             cursor: initial;
         }
 
+        &.completed {
+            background: rgba($green, 0.15);
+            color: $green;
+
+            i.kiv-completed {
+                opacity: 1;
+            }
+        }
+
+        i.kiv-completed {
+            position: absolute;
+            top: -0.7rem;
+            right: -1.8rem;
+            font-size: 1.7rem;
+            border-radius: 50%;
+            color: $green;
+            opacity: 0;
+            transition: opacity 0.2s;
+
+            &::before {
+                position: relative;
+                z-index: 1;
+            }
+
+            &::after {
+                content: "";
+                background: #fff;
+                position: absolute;
+                top: 0.125rem;
+                right: 0.125rem;
+                z-index: 0;
+                border-radius: 50%;
+                display: block;
+                width: 1.5rem;
+                height: 1.5rem;
+            }
+        }
+
         .vs-button__content {
             padding: 0.4rem 1rem;
+            padding-top: 0.5rem;
 
             img {
                 position: relative;
@@ -479,6 +519,7 @@
 /// DIALOG / MODAL
 
 .vs-dialog-content {
+    backdrop-filter: blur(0.5rem);
     background: rgba(34, 46, 84, 0.8);
 
     .vs-dialog {
