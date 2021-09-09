@@ -1,25 +1,48 @@
 <template>
     <div class="container" id="read-worksheet">
         <header>
-            <div class="title">
-                <i class="kiv-arrow-left icon-31"></i>
-                <h1>Mobilité</h1>
+            <div v-if="loadingWorksheet" class="loading-block">
+                <div class="title">
+                    <i class="kiv-arrow-left icon-31"></i>
+                    <div class="loading-gray h1"></div>
+                </div>
+                <div class="loading-gray part-of-body"></div>
             </div>
-            <vs-button size="mini" class="tag part-of-body">
-                <img
-                    src="../../img/icons/part-of-body/jambe.svg"
-                    alt="Icone Jambe"
-                    class="icon-jambe"
+            <div v-else>
+                <div class="title">
+                    <i class="kiv-arrow-left icon-31"></i>
+                    <h1>{{ getWorksheet.title }}</h1>
+                </div>
+                <TagPartOfBody
+                    v-if="getWorksheet.partOfBody"
+                    :class="{ completed: allExercisesIsCompleted }"
+                    :partOfBody="getWorksheet.partOfBody.toLowerCase()"
                 />
-                Jambe
-            </vs-button>
+            </div>
         </header>
         <div class="info">
-            <i class="kiv-info icon-17"></i>
-            <p>
-                À la fin de vos exercices, vous aurez la possiblité d’écrire un
-                bref commentaire.
-            </p>
+            <transition name="fade">
+                <div v-if="allExercisesIsCompleted">
+                    <i class="kiv-confettis">
+                        <img
+                            src="../../img/icons/colored/confettis.svg"
+                            alt="Icone de confettis"
+                        />
+                    </i>
+                    <p>
+                        Félicitation, vous avez fait tous les exercices de la
+                        fiche. Vous pouvez laisser un commentaire à votre
+                        praticien !
+                    </p>
+                </div>
+                <div v-else>
+                    <i class="kiv-info icon-17"></i>
+                    <p>
+                        À la fin de vos exercices, vous aurez la possiblité
+                        d’écrire un bref commentaire.
+                    </p>
+                </div>
+            </transition>
         </div>
         <div class="btn-timing-frieze-mobile">
             <vs-button
@@ -31,13 +54,22 @@
         </div>
         <main>
             <vs-dialog class="modal-mobile" v-model="modalTimingFriezeMobile">
-                <TimingFrieze />
+                <TimingFrieze
+                    :loading="loadingWorksheet"
+                    :worksheet="getWorksheet"
+                />
             </vs-dialog>
             <section id="timing-frieze">
-                <TimingFrieze />
+                <TimingFrieze
+                    :loading="loadingWorksheet"
+                    :worksheet="getWorksheet"
+                />
             </section>
             <section id="exercises-playlist">
-                <ExercisesPlaylist />
+                <ExercisesPlaylist
+                    :exercises="getWorksheet.exercises"
+                    :loading="loadingWorksheet"
+                />
                 <!-- <ExercisesPlaylist
                     :patient="patient"
                     :csrfTokenExerciseCompleted="csrfTokenExerciseCompleted"
@@ -56,34 +88,50 @@
 </template>
 
 <script>
+import f from "../services/function";
 import TimingFrieze from "./components/TimingFrieze.vue";
 import ExercisesPlaylist from "./components/ExercisesPlaylist.vue";
-import f from "../services/function";
+import TagPartOfBody from "./components/TagPartOfBody.vue";
 
 export default {
     components: {
         ExercisesPlaylist,
         TimingFrieze,
+        TagPartOfBody,
     },
     data() {
         return {
             patient: null,
             worksheetId: null,
-            doctorView: null,
+            worksheet: {},
+            // doctorView: null,
             csrfTokenInitWorksheetSessions: null,
             csrfTokenStartWorksheetSession: null,
             csrfTokenExerciseCompleted: null,
             csrfTokenCreateExerciseStats: null,
             csrfTokenCreateCommentary: null,
             modalTimingFriezeMobile: false,
+            loadingWorksheet: false,
         };
+    },
+    computed: {
+        getWorksheet() {
+            return this.worksheet;
+        },
+        allExercisesIsCompleted() {
+            if (this.getWorksheet.exercises) {
+                return !this.getWorksheet.exercises.filter(
+                    (e) => !e.isCompleted
+                ).length;
+            }
+        },
     },
     created() {
         const data = JSON.parse(document.getElementById("vueData").innerHTML);
 
         this.patient = data.patient;
         this.worksheetId = data.worksheetId;
-        this.doctorView = data.doctorView;
+        // this.doctorView = data.doctorView;
         this.csrfTokenInitWorksheetSessions =
             data.csrfTokenInitWorksheetSessions;
         this.csrfTokenStartWorksheetSession =
@@ -91,6 +139,32 @@ export default {
         this.csrfTokenExerciseCompleted = data.csrfTokenExerciseCompleted;
         this.csrfTokenCreateExerciseStats = data.csrfTokenCreateExerciseStats;
         this.csrfTokenCreateCommentary = data.csrfTokenCreateCommentary;
+
+        this.loadingWorksheet = true;
+
+        this.axios
+            .get(
+                `/patient/${this.patient.id}/get/worksheet/${this.worksheetId}`
+            )
+            .then((response) => {
+                this.worksheet = response.data;
+
+                this.worksheet.exercises = f.sortByPosition(
+                    this.worksheet.exercises
+                );
+
+                this.loadingWorksheet = false;
+            })
+            .catch((error) => {
+                const errorMess =
+                    "object" === typeof error.response.data
+                        ? error.response.data.detail
+                        : error.response.data;
+
+                console.error(errorMess);
+
+                this.loadingWorksheet = false;
+            });
     },
 };
 </script>
@@ -100,28 +174,55 @@ export default {
 
 #read-worksheet {
     header {
-        display: flex;
-        align-items: flex-start;
-
-        .title {
+        > div {
             display: flex;
-            align-items: center;
-            margin-bottom: 2rem;
+            align-items: flex-start;
 
-            i {
-                font-size: 1.6rem;
-                margin-right: 1.8rem;
-                cursor: pointer;
+            &.loading-block {
+                min-height: 6rem;
+
+                .title {
+                    i {
+                        color: $gray-dark;
+                    }
+
+                    .h1 {
+                        height: 3.5rem;
+                        width: 18rem;
+                        margin: 0;
+                        border-radius: 0.5rem;
+                    }
+                }
+
+                .part-of-body {
+                    height: 2.7rem;
+                    width: 9rem;
+                    margin-top: 0.5rem;
+                    margin-left: 2rem;
+                    border-radius: 0.4rem;
+                }
             }
 
-            h1 {
-                margin: 0;
-            }
-        }
+            .title {
+                display: flex;
+                align-items: center;
+                margin-bottom: 2rem;
 
-        .part-of-body {
-            margin-top: 0.5rem;
-            margin-left: 2rem;
+                i {
+                    font-size: 1.6rem;
+                    margin-right: 1.8rem;
+                    cursor: pointer;
+                }
+
+                h1 {
+                    margin: 0;
+                }
+            }
+
+            .part-of-body {
+                margin-top: 0.5rem;
+                margin-left: 2rem;
+            }
         }
     }
 
@@ -129,23 +230,35 @@ export default {
         border-radius: 0.5rem;
         background: $white;
         padding: 2.1rem;
-        display: flex;
-        align-items: center;
         margin-bottom: 2.5rem;
 
         @media (min-width: 992px) {
             margin-bottom: 3.5rem;
         }
 
-        i.kiv-info {
-            color: $gray-dark;
-            font-size: 1.7rem;
-            margin-right: 1rem;
-        }
+        > div {
+            display: flex;
+            align-items: center;
 
-        p {
-            margin: 0;
-            font-size: 1.4rem;
+            i.kiv-info {
+                color: $gray-dark;
+                font-size: 1.7rem;
+                margin-right: 1rem;
+            }
+
+            i.kiv-confettis {
+                width: 2.2rem;
+                margin-right: 0.8rem;
+
+                img {
+                    width: 100%;
+                }
+            }
+
+            p {
+                margin: 0;
+                font-size: 1.4rem;
+            }
         }
     }
 

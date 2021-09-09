@@ -13,7 +13,7 @@
         <h2>Mes fiches</h2>
         <transition name="height">
             <div v-if="$parent.myWorksheetsContent" class="worksheet-list">
-                <div v-if="loadingPatientPrescriptions">
+                <div v-if="loadingPatientWorksheets">
                     <div class="loading loading-block">
                         <div class="worksheet-header">
                             <div class="loading worksheet-title w-25"></div>
@@ -69,34 +69,32 @@
                         </div>
                     </div>
                 </div>
-                <div v-else>
+                <div
+                    v-if="
+                        !loadingPatientWorksheets && getPatientWorksheets.length
+                    "
+                >
                     <div
-                        v-for="(prescription, i) in getPatientPrescriptions"
+                        v-for="(worksheet, i) in getPatientWorksheets"
                         :key="i"
                     >
                         <div class="worksheet-header">
                             <h3 class="worksheet-title">
-                                {{ prescription.worksheet.title }}
+                                {{ worksheet.title }}
                             </h3>
                             <TagPartOfBody
-                                :partOfBody="
-                                    prescription.worksheet.partOfBody.toLowerCase()
-                                "
+                                :partOfBody="worksheet.partOfBody.toLowerCase()"
                             />
                         </div>
                         <div
-                            v-if="
-                                prescription.worksheet.worksheetProgression <
-                                100
-                            "
+                            v-if="worksheet.worksheetProgression < 100"
                             class="worksheet-progress-line"
                         >
                             <div class="progressbar-base">
                                 <div
                                     class="progressbar-thumb"
                                     :style="{
-                                        width: prescription.worksheet
-                                            .worksheetProgression,
+                                        width: worksheet.worksheetProgression,
                                     }"
                                 ></div>
                                 <div class="progressbar-steps">
@@ -108,10 +106,7 @@
                             </div>
                         </div>
                         <div
-                            v-if="
-                                prescription.worksheet.worksheetProgression ===
-                                100
-                            "
+                            v-if="worksheet.worksheetProgression === 100"
                             class="worksheet-content session-completed"
                         >
                             <p>
@@ -120,15 +115,8 @@
                                 jours pour...
                             </p>
                             <vs-button
-                                :disabled="
-                                    redirectInProgress ===
-                                    prescription.worksheet.id
-                                "
-                                @click="
-                                    redirectToWorksheetPage(
-                                        prescription.worksheet.id
-                                    )
-                                "
+                                :disabled="redirectInProgress === worksheet.id"
+                                @click="redirectToWorksheetPage(worksheet.id)"
                                 class="btn-consult"
                             >
                                 Consulter
@@ -139,46 +127,32 @@
                                 <div class="worksheet-exercises-count">
                                     <i class="kiv-exercise icon-7"></i>
                                     <span>{{
-                                        prescription.worksheet.exercises.length
+                                        worksheet.exercises.length
                                     }}</span>
                                     exercices
                                 </div>
                                 <div class="worksheet-timing">
                                     <i class="kiv-calendar icon-10"></i>
-                                    <span
-                                        >{{
-                                            prescription.worksheet.perDay
-                                        }}x</span
-                                    >
+                                    <span>{{ worksheet.perDay }}x</span>
                                     par jour -
-                                    <span
-                                        >{{
-                                            prescription.worksheet.perWeek
-                                        }}x</span
-                                    >
+                                    <span>{{ worksheet.perWeek }}x</span>
                                     par semaine
                                 </div>
                                 <div class="worksheet-period">
                                     <i class="kiv-clock icon-11"></i>
                                     Période :
                                     <span
-                                        >{{
-                                            prescription.worksheet.duration
-                                        }}
-                                        semaines</span
+                                        >{{ worksheet.duration }} semaines</span
                                     >
                                 </div>
                             </div>
                             <div class="buttons">
                                 <vs-button
                                     :disabled="
-                                        redirectInProgress ===
-                                        prescription.worksheet.id
+                                        redirectInProgress === worksheet.id
                                     "
                                     @click="
-                                        redirectToWorksheetPage(
-                                            prescription.worksheet.id
-                                        )
+                                        redirectToWorksheetPage(worksheet.id)
                                     "
                                     class="btn-go"
                                     circle
@@ -190,6 +164,12 @@
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="not-found" v-else>
+                    <p>
+                        <i class="fas fa-folder-minus"></i>
+                        <span>Vous n'avez pas encore de fiche</span>
+                    </p>
                 </div>
             </div>
         </transition>
@@ -209,14 +189,14 @@ export default {
     },
     data() {
         return {
-            loadingPatientPrescriptions: false,
-            patientPrescriptions: [],
+            loadingPatientWorksheets: false,
+            patientWorksheets: [],
             redirectInProgress: null,
         };
     },
     computed: {
-        getPatientPrescriptions() {
-            return this.patientPrescriptions;
+        getPatientWorksheets() {
+            return this.patientWorksheets;
         },
     },
     methods: {
@@ -226,37 +206,36 @@ export default {
             document.location.href = `/patient/${this.patient.id}/fiche/${worksheetId}`;
         },
         calculWorksheetProgression(worksheet) {
-            const exercisePercentPart = 100 / worksheet.exercises.length;
+            let progression = 0;
 
-            const exercisesCompletedCount = worksheet.exercises.filter(
-                (e) => e.isCompleted
-            ).length;
+            if (worksheet.exercises.length) {
+                const exercisePercentPart = 100 / worksheet.exercises.length;
 
-            return exercisePercentPart * exercisesCompletedCount;
+                const exercisesCompletedCount = worksheet.exercises.filter(
+                    (e) => e.isCompleted
+                ).length;
+
+                progression = exercisePercentPart * exercisesCompletedCount;
+            }
+
+            return progression;
         },
     },
     created() {
-        this.loadingPatientPrescriptions = true;
+        this.loadingPatientWorksheets = true;
 
         this.axios
-            .get(`/patient/${this.patient.id}/get/prescriptions`)
+            .get(`/patient/${this.patient.id}/get/worksheets`)
             .then((response) => {
-                this.patientPrescriptions = response.data.map(
-                    (prescription) => {
-                        return {
-                            ...prescription,
-                            worksheet: {
-                                ...prescription.worksheet,
-                                worksheetProgression:
-                                    this.calculWorksheetProgression(
-                                        prescription.worksheet
-                                    ),
-                            },
-                        };
-                    }
-                );
+                this.patientWorksheets = response.data.map((worksheet) => {
+                    return {
+                        ...worksheet,
+                        worksheetProgression:
+                            this.calculWorksheetProgression(worksheet),
+                    };
+                });
 
-                this.loadingPatientPrescriptions = false;
+                this.loadingPatientWorksheets = false;
             })
             .catch((error) => {
                 const errorMess =
@@ -264,9 +243,9 @@ export default {
                         ? error.response.data.detail
                         : error.response.data;
 
-                console.log(errorMess);
+                console.error(errorMess);
 
-                this.loadingPatientPrescriptions = false;
+                this.loadingPatientWorksheets = false;
             });
     },
 };
@@ -279,7 +258,7 @@ export default {
     grid-area: myworksheets;
 
     .worksheet-list {
-        > div {
+        > div:not(.not-found) {
             display: grid;
             grid-template-columns: 1fr;
             grid-gap: 1.5rem;

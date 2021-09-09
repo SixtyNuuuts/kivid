@@ -45,16 +45,6 @@ class Doctor extends User
     private $patients;
 
     /**
-     * @ORM\OneToMany(targetEntity=Prescription::class, mappedBy="doctor")
-     */
-    private $prescriptions;
-
-    /**
-     * @ORM\OneToMany(targetEntity=Worksheet::class, mappedBy="prescriber")
-     */
-    private $worksheets;
-
-    /**
      * @ORM\OneToMany(targetEntity=Notification::class, mappedBy="doctor")
      * @Groups({"user_read"})
      */
@@ -65,14 +55,18 @@ class Doctor extends User
      */
     private $commentaries;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Worksheet::class, mappedBy="doctor")
+     */
+    private $worksheets;
+
     public function __construct()
     {
         parent::__construct(['ROLE_DOCTOR']);
         $this->patients = new ArrayCollection();
-        $this->prescriptions = new ArrayCollection();
-        $this->worksheets = new ArrayCollection();
         $this->notifications = new ArrayCollection();
         $this->commentaries = new ArrayCollection();
+        $this->worksheets = new ArrayCollection();
     }
 
     public function getDescription(): ?string
@@ -154,66 +148,6 @@ class Doctor extends User
     }
 
     /**
-     * @return Collection|Prescription[]
-     */
-    public function getPrescriptions(): Collection
-    {
-        return $this->prescriptions;
-    }
-
-    public function addPrescription(Prescription $prescription): self
-    {
-        if (!$this->prescriptions->contains($prescription)) {
-            $this->prescriptions[] = $prescription;
-            $prescription->setDoctor($this);
-        }
-
-        return $this;
-    }
-
-    public function removePrescription(Prescription $prescription): self
-    {
-        if ($this->prescriptions->removeElement($prescription)) {
-            // set the owning side to null (unless already changed)
-            if ($prescription->getDoctor() === $this) {
-                $prescription->setDoctor(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Worksheet[]
-     */
-    public function getWorksheets(): Collection
-    {
-        return $this->worksheets;
-    }
-
-    public function addWorksheet(Worksheet $worksheet): self
-    {
-        if (!$this->worksheets->contains($worksheet)) {
-            $this->worksheets[] = $worksheet;
-            $worksheet->setPrescriber($this);
-        }
-
-        return $this;
-    }
-
-    public function removeWorksheet(Worksheet $worksheet): self
-    {
-        if ($this->worksheets->removeElement($worksheet)) {
-            // set the owning side to null (unless already changed)
-            if ($worksheet->getPrescriber() === $this) {
-                $worksheet->setPrescriber(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection|Notification[]
      */
     public function getNotifications(): Collection
@@ -267,6 +201,36 @@ class Doctor extends User
             // set the owning side to null (unless already changed)
             if ($commentary->getDoctor() === $this) {
                 $commentary->setDoctor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Worksheet[]
+     */
+    public function getWorksheets(): Collection
+    {
+        return $this->worksheets;
+    }
+
+    public function addWorksheet(Worksheet $worksheet): self
+    {
+        if (!$this->worksheets->contains($worksheet)) {
+            $this->worksheets[] = $worksheet;
+            $worksheet->setDoctor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeWorksheet(Worksheet $worksheet): self
+    {
+        if ($this->worksheets->removeElement($worksheet)) {
+            // set the owning side to null (unless already changed)
+            if ($worksheet->getDoctor() === $this) {
+                $worksheet->setDoctor(null);
             }
         }
 

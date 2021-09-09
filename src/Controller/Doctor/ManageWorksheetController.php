@@ -7,7 +7,6 @@ use App\Entity\Patient;
 use App\Entity\Exercise;
 use App\Entity\Worksheet;
 use App\Entity\ExerciseStat;
-use App\Entity\Prescription;
 use App\Entity\WorksheetSession;
 use App\Repository\VideoRepository;
 use App\Repository\PatientRepository;
@@ -16,7 +15,6 @@ use App\Repository\WorksheetRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Notification\NotificationService;
 use App\Repository\ExerciseStatRepository;
-use App\Repository\PrescriptionRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
 use App\Repository\WorksheetSessionRepository;
@@ -32,7 +30,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class ManageWorksheetController extends AbstractController
 {
     private $patientRepository;
-    private $prescriptionRepository;
     private $worksheetRepository;
     private $worksheetSessionRepository;
     private $videoRepository;
@@ -45,7 +42,6 @@ class ManageWorksheetController extends AbstractController
 
     public function __construct(
         PatientRepository $patientRepository,
-        PrescriptionRepository $prescriptionRepository,
         WorksheetRepository $worksheetRepository,
         WorksheetSessionRepository $worksheetSessionRepository,
         VideoRepository $videoRepository,
@@ -57,7 +53,6 @@ class ManageWorksheetController extends AbstractController
         EntityManagerInterface $em
     ) {
         $this->patientRepository = $patientRepository;
-        $this->prescriptionRepository = $prescriptionRepository;
         $this->worksheetRepository = $worksheetRepository;
         $this->worksheetSessionRepository = $worksheetSessionRepository;
         $this->videoRepository = $videoRepository;
@@ -157,8 +152,8 @@ class ManageWorksheetController extends AbstractController
                           ->setDuration($data->duration)
                           ->setPerWeek($data->perWeek)
                           ->setPerDay($data->perDay)
-                          ->setIsTemplate($data->isTemplate)
-                          ->setPrescriber($doctor);
+                          ->setIsTemplate($data->isTemplate);
+                //   ->setCreator($doctor);
 
                 foreach ($data->exercises as $dataExercise) {
                     $this->generateExercise($dataExercise, $worksheet);
@@ -244,16 +239,16 @@ class ManageWorksheetController extends AbstractController
             if ($this->isCsrfTokenValid('remove_worksheet_template' . $doctor->getId(), $data->_token)) {
                 $worksheetTemplate = $this->worksheetRepository->findOneBy(['id' => $data->worksheetTemplate_id]);
 
-                if ($worksheetTemplate->getPrescriber() === $doctor) {
-                    $this->em->remove($worksheetTemplate);
+                // if ($worksheetTemplate->getCreator() === $doctor) {
+                $this->em->remove($worksheetTemplate);
 
-                    $this->em->flush();
+                $this->em->flush();
 
-                    return $this->json(
-                        'Le modèle de fiche a bien été supprimé',
-                        200,
-                    );
-                }
+                return $this->json(
+                    'Le modèle de fiche a bien été supprimé',
+                    200,
+                );
+                // }
             }
         }
 
@@ -277,30 +272,30 @@ class ManageWorksheetController extends AbstractController
                 $exercise = $this->exerciseRepository->findOneBy(['id' => $data->exercise_id]);
                 $exerciseStats = $this->exerciseStatRepository->findBy(['exercise' => $exercise]);
 
-                if ($worksheet->getPrescriber() === $doctor) {
-                    $worksheet->removeExercise($exercise);
+                // if ($worksheet->getCreator() === $doctor) {
+                $worksheet->removeExercise($exercise);
 
-                    $allStatsNull = true;
+                $allStatsNull = true;
 
-                    foreach ($exerciseStats as $exerciseStat) {
-                        if (null === $exerciseStat->getRating()) {
-                            $this->em->remove($exerciseStat);
-                        } else {
-                            $allStatsNull = false;
-                        }
+                foreach ($exerciseStats as $exerciseStat) {
+                    if (null === $exerciseStat->getRating()) {
+                        $this->em->remove($exerciseStat);
+                    } else {
+                        $allStatsNull = false;
                     }
-
-                    if ($allStatsNull) {
-                        $this->em->remove($exercise);
-                    }
-
-                    $this->em->flush();
-
-                    return $this->json(
-                        'L\'exercice a bien été retiré de la fiche',
-                        200,
-                    );
                 }
+
+                if ($allStatsNull) {
+                    $this->em->remove($exercise);
+                }
+
+                $this->em->flush();
+
+                return $this->json(
+                    'L\'exercice a bien été retiré de la fiche',
+                    200,
+                );
+                // }
             }
         }
 
@@ -313,132 +308,132 @@ class ManageWorksheetController extends AbstractController
     /**
      * @Route("/{id}/create/prescription", name="app_doctor_create_prescription", methods={"POST"})
      */
-    public function createPrescription(Request $request, Doctor $doctor): JsonResponse
-    {
-        if ($request->isMethod('post')) {
-            $data = json_decode($request->getContent());
+    // public function createPrescription(Request $request, Doctor $doctor): JsonResponse
+    // {
+    //     if ($request->isMethod('post')) {
+    //         $data = json_decode($request->getContent());
 
-            if ($this->isCsrfTokenValid('create_prescription' . $doctor->getId(), $data->_token)) {
-                $patient = $this->patientRepository->findOneBy(['id' => $data->patientId]);
-                $worksheet = $this->worksheetRepository->findOneBy(['id' => $data->worksheetId]);
+    //         if ($this->isCsrfTokenValid('create_prescription' . $doctor->getId(), $data->_token)) {
+    //             $patient = $this->patientRepository->findOneBy(['id' => $data->patientId]);
+    //             $worksheet = $this->worksheetRepository->findOneBy(['id' => $data->worksheetId]);
 
-                $prescription = new Prescription();
+    //             $prescription = new Prescription();
 
-                $prescription->setDoctor($doctor)
-                             ->setPatient($patient)
-                             ->setWorksheet($worksheet)
-                ;
+    //             $prescription->setDoctor($doctor)
+    //                          ->setPatient($patient)
+    //                          ->setWorksheet($worksheet)
+    //             ;
 
-                $this->generateWorksheetSessions($worksheet, $prescription);
+    //             $this->generateWorksheetSessions($worksheet, $prescription);
 
-                $this->notificationService->createPrescriptionNotification($worksheet, $patient);
+    //             $this->notificationService->createPrescriptionNotification($worksheet, $patient);
 
-                $this->em->persist($prescription);
+    //             $this->em->persist($prescription);
 
-                $this->em->flush();
+    //             $this->em->flush();
 
-                $gender = $patient->getGender() ? ("male" === $patient->getGender() ? 'M.' : 'Mme') : '';
+    //             $gender = $patient->getGender() ? ("male" === $patient->getGender() ? 'M.' : 'Mme') : '';
 
-                return $this->json(
-                    "La fiche <strong>{$worksheet->getTitle()}</strong> a bien été prescrite à 
-                    <strong>{$gender} {$patient->getFirstname()} {$patient->getLastname()}</strong>.",
-                    200,
-                );
-            }
-        }
+    //             return $this->json(
+    //                 "La fiche <strong>{$worksheet->getTitle()}</strong> a bien été prescrite à
+    //                 <strong>{$gender} {$patient->getFirstname()} {$patient->getLastname()}</strong>.",
+    //                 200,
+    //             );
+    //         }
+    //     }
 
-        return $this->json(
-            'Nous n\'avons pas pu prescrire la fiche, veuillez réessayer ultérieurement.',
-            500,
-        );
-    }
+    //     return $this->json(
+    //         'Nous n\'avons pas pu prescrire la fiche, veuillez réessayer ultérieurement.',
+    //         500,
+    //     );
+    // }
 
     /**
      * @Route("/{id}/edit/prescription", name="app_doctor_edit_prescription", methods={"POST"})
      */
-    public function editPrescription(Request $request, Doctor $doctor): JsonResponse
-    {
-        if ($request->isMethod('post')) {
-            $data = json_decode($request->getContent());
+    // public function editPrescription(Request $request, Doctor $doctor): JsonResponse
+    // {
+    //     if ($request->isMethod('post')) {
+    //         $data = json_decode($request->getContent());
 
-            if ($this->isCsrfTokenValid('edit_prescription' . $doctor->getId(), $data->_token)) {
-                $patient = $this->patientRepository->findOneBy(['id' => $data->patientId]);
-                $worksheet = $this->worksheetRepository->findOneBy(['id' => $data->worksheetId]);
-                $prescription = $this->prescriptionRepository->findOneBy(
-                    ['patient' => $patient, 'worksheet' => $worksheet]
-                );
+    //         if ($this->isCsrfTokenValid('edit_prescription' . $doctor->getId(), $data->_token)) {
+    //             $patient = $this->patientRepository->findOneBy(['id' => $data->patientId]);
+    //             $worksheet = $this->worksheetRepository->findOneBy(['id' => $data->worksheetId]);
+    //             $prescription = $this->prescriptionRepository->findOneBy(
+    //                 ['patient' => $patient, 'worksheet' => $worksheet]
+    //             );
 
-                $worksheetSessions = $this->worksheetSessionRepository->findBy(['prescription' => $prescription]);
+    //             $worksheetSessions = $this->worksheetSessionRepository->findBy(['prescription' => $prescription]);
 
-                foreach ($worksheetSessions as $worksheetSession) {
-                    $this->em->remove($worksheetSession);
-                }
+    //             foreach ($worksheetSessions as $worksheetSession) {
+    //                 $this->em->remove($worksheetSession);
+    //             }
 
-                $this->em->flush();
+    //             $this->em->flush();
 
-                $this->generateWorksheetSessions($worksheet, $prescription);
+    //             $this->generateWorksheetSessions($worksheet, $prescription);
 
-                $this->em->flush();
+    //             $this->em->flush();
 
-                $gender = $patient->getGender() ? ("male" === $patient->getGender() ? 'M.' : 'Mme') : '';
+    //             $gender = $patient->getGender() ? ("male" === $patient->getGender() ? 'M.' : 'Mme') : '';
 
-                return $this->json(
-                    "La fiche <strong>{$worksheet->getTitle()}</strong> prescrite à 
-                    <strong>{$gender} {$patient->getFirstname()} {$patient->getLastname()}</strong> 
-                    a bien été modifiée.",
-                    200,
-                );
-            }
-        }
+    //             return $this->json(
+    //                 "La fiche <strong>{$worksheet->getTitle()}</strong> prescrite à
+    //                 <strong>{$gender} {$patient->getFirstname()} {$patient->getLastname()}</strong>
+    //                 a bien été modifiée.",
+    //                 200,
+    //             );
+    //         }
+    //     }
 
-        return $this->json(
-            'Nous n\'avons pas pu modifier la prescription, veuillez réessayer ultérieurement.',
-            500,
-        );
-    }
+    //     return $this->json(
+    //         'Nous n\'avons pas pu modifier la prescription, veuillez réessayer ultérieurement.',
+    //         500,
+    //     );
+    // }
 
     /**
      * @Route("/{id}/remove/prescription", name="app_doctor_remove_prescription", methods={"POST"})
      */
-    public function removePrescription(Request $request, Doctor $doctor): JsonResponse
-    {
-        if ($request->isMethod('post')) {
-            $data = json_decode($request->getContent());
+    // public function removePrescription(Request $request, Doctor $doctor): JsonResponse
+    // {
+    //     if ($request->isMethod('post')) {
+    //         $data = json_decode($request->getContent());
 
-            if ($this->isCsrfTokenValid('remove_prescription' . $doctor->getId(), $data->_token)) {
-                $prescription = $this->prescriptionRepository->findOneBy(['id' => $data->prescription_id]);
+    //         if ($this->isCsrfTokenValid('remove_prescription' . $doctor->getId(), $data->_token)) {
+    //             $prescription = $this->prescriptionRepository->findOneBy(['id' => $data->prescription_id]);
 
-                if ($prescription->getDoctor() === $doctor) {
-                    $this->em->remove($prescription);
+    //             if ($prescription->getDoctor() === $doctor) {
+    //                 $this->em->remove($prescription);
 
-                    $this->em->flush();
+    //                 $this->em->flush();
 
-                    return $this->json(
-                        'La prescription a bien été supprimée',
-                        200,
-                    );
-                }
-            }
-        }
+    //                 return $this->json(
+    //                     'La prescription a bien été supprimée',
+    //                     200,
+    //                 );
+    //             }
+    //         }
+    //     }
 
-        return $this->json(
-            'Nous n\'avons pas pu supprimer la prescription, veuillez réessayer ultérieurement.',
-            500,
-        );
-    }
+    //     return $this->json(
+    //         'Nous n\'avons pas pu supprimer la prescription, veuillez réessayer ultérieurement.',
+    //         500,
+    //     );
+    // }
 
     /**
      * @Route("/{id}/get/prescriptions", name="app_doctor_get_prescriptions", methods={"GET"})
      */
-    public function getPrescriptions(Doctor $doctor): JsonResponse
-    {
-        return $this->json(
-            $this->prescriptionRepository->findBy(['doctor' => $doctor]),
-            200,
-            [],
-            ['groups' => 'prescription_read']
-        );
-    }
+    // public function getPrescriptions(Doctor $doctor): JsonResponse
+    // {
+    //     return $this->json(
+    //         $this->prescriptionRepository->findBy(['doctor' => $doctor]),
+    //         200,
+    //         [],
+    //         ['groups' => 'prescription_read']
+    //     );
+    // }
 
     private function generateExercise(object $dataExercise, Worksheet $worksheet): void
     {
@@ -489,7 +484,7 @@ class ManageWorksheetController extends AbstractController
                                         * $worksheet->getPerDay(); $execution++
         ) {
             $worksheetSession = new WorksheetSession();
-            $worksheetSession->setPrescription($prescription);
+            // $worksheetSession->setPrescription($prescription);
             $worksheetSession->setExecOrder($execution);
 
             foreach ($worksheet->getExercises() as $exercise) {

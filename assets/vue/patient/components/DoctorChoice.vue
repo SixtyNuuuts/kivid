@@ -93,7 +93,7 @@
                             </li>
                         </ul>
                         <div v-else>
-                            <p class="no-found">
+                            <p class="not-found">
                                 <i class="fas fa-users-slash"></i>
                                 Aucun praticien n'a été trouvé avec "<strong>{{
                                     filter
@@ -387,7 +387,7 @@ export default {
             }
         }
 
-        .no-found {
+        .not-found {
             font-size: 1.35rem;
             margin: 2.3rem 0;
             animation: fadeEnter 0.5s;

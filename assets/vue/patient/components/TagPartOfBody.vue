@@ -59,6 +59,7 @@
                 ? "Épaule"
                 : partOfBody.charAt(0).toUpperCase() + partOfBody.slice(1)
         }}
+        <i class="kiv-completed icon-22"></i>
     </vs-button>
 </template>
 

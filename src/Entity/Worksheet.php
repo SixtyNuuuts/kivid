@@ -17,72 +17,58 @@ class Worksheet
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"worksheet_read", "prescription_read", "exercise_stats_read", "patient_read", "patient_prescription_read"})
+     * @Groups({"worksheet_read", "dashboard_worksheet_read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"worksheet_read", "prescription_read", "patient_read", "exercise_stats_read", "patient_prescription_read"})
+     * @Groups({"worksheet_read", "dashboard_worksheet_read"})
      */
     private $title;
 
     /**
      * @ORM\Column(type="text", nullable=true)
-     * @Groups({"worksheet_read", "prescription_read"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="datetime_immutable")
-     * @Groups({"worksheet_read"})
      */
     private $createdAt;
 
     /**
      * @ORM\OneToMany(targetEntity=Exercise::class, mappedBy="worksheet", orphanRemoval=true)
-     * @Groups({"worksheet_read", "prescription_read", "patient_read", "patient_prescription_read"})
+     * @Groups({"worksheet_read", "dashboard_worksheet_read"})
      */
     private $exercises;
 
     /**
-     * @ORM\OneToMany(targetEntity=Prescription::class, mappedBy="worksheet")
-     */
-    private $prescriptions;
-
-    /**
-     * @ORM\ManyToOne(targetEntity=Doctor::class, inversedBy="worksheets")
-     * @Groups({"worksheet_read"})
-     */
-    private $prescriber;
-
-    /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"worksheet_read", "prescription_read", "exercise_stats_read", "patient_read", "patient_prescription_read"})
+     * @Groups({"worksheet_read", "dashboard_worksheet_read"})
      */
     private $partOfBody;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"worksheet_read", "prescription_read", "patient_read", "patient_prescription_read"})
+     * @Groups({"worksheet_read", "dashboard_worksheet_read"})
      */
     private $duration;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"worksheet_read", "prescription_read", "patient_read", "patient_prescription_read"})
+     * @Groups({"worksheet_read", "dashboard_worksheet_read"})
      */
     private $perDay;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"worksheet_read", "prescription_read", "patient_read", "patient_prescription_read"})
+     * @Groups({"worksheet_read", "dashboard_worksheet_read"})
      */
     private $perWeek;
 
     /**
      * @ORM\OneToMany(targetEntity=Commentary::class, mappedBy="worksheet")
-     * @Groups({"worksheet_read", "prescription_read"})
      */
     private $commentaries;
 
@@ -91,16 +77,32 @@ class Worksheet
      */
     private $isTemplate;
 
+    /**
+     * @ORM\OneToMany(targetEntity=WorksheetSession::class, mappedBy="worksheet", orphanRemoval=true)
+     * @Groups({"worksheet_read"})
+     */
+    private $worksheetSessions;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Doctor::class, inversedBy="worksheets")
+     */
+    private $doctor;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Patient::class, inversedBy="worksheets")
+     */
+    private $patient;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->exercises = new ArrayCollection();
-        $this->prescriptions = new ArrayCollection();
         $this->isTemplate = false;
         $this->duration = 1;
         $this->perDay = 1;
         $this->perWeek = 1;
         $this->commentaries = new ArrayCollection();
+        $this->worksheetSessions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -174,51 +176,9 @@ class Worksheet
         return $this;
     }
 
-    /**
-     * @return Collection|Prescription[]
-     */
-    public function getPrescriptions(): Collection
-    {
-        return $this->prescriptions;
-    }
-
-    public function addPrescription(Prescription $prescription): self
-    {
-        if (!$this->prescriptions->contains($prescription)) {
-            $this->prescriptions[] = $prescription;
-            $prescription->setWorksheet($this);
-        }
-
-        return $this;
-    }
-
-    public function removePrescription(Prescription $prescription): self
-    {
-        if ($this->prescriptions->removeElement($prescription)) {
-            // set the owning side to null (unless already changed)
-            if ($prescription->getWorksheet() === $this) {
-                $prescription->setWorksheet(null);
-            }
-        }
-
-        return $this;
-    }
-
     public function __toString()
     {
         return $this->getTitle();
-    }
-
-    public function getPrescriber(): ?Doctor
-    {
-        return $this->prescriber;
-    }
-
-    public function setPrescriber(?Doctor $prescriber): self
-    {
-        $this->prescriber = $prescriber;
-
-        return $this;
     }
 
     public function getIsTemplate(): ?bool
@@ -307,6 +267,60 @@ class Worksheet
                 $commentary->setWorksheet(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|WorksheetSession[]
+     */
+    public function getWorksheetSessions(): Collection
+    {
+        return $this->worksheetSessions;
+    }
+
+    public function addWorksheetSession(WorksheetSession $worksheetSession): self
+    {
+        if (!$this->worksheetSessions->contains($worksheetSession)) {
+            $this->worksheetSessions[] = $worksheetSession;
+            $worksheetSession->setWorksheet($this);
+        }
+
+        return $this;
+    }
+
+    public function removeWorksheetSession(WorksheetSession $worksheetSession): self
+    {
+        if ($this->worksheetSessions->removeElement($worksheetSession)) {
+            // set the owning side to null (unless already changed)
+            if ($worksheetSession->getWorksheet() === $this) {
+                $worksheetSession->setWorksheet(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getDoctor(): ?Doctor
+    {
+        return $this->doctor;
+    }
+
+    public function setDoctor(?Doctor $doctor): self
+    {
+        $this->doctor = $doctor;
+
+        return $this;
+    }
+
+    public function getPatient(): ?Patient
+    {
+        return $this->patient;
+    }
+
+    public function setPatient(?Patient $patient): self
+    {
+        $this->patient = $patient;
 
         return $this;
     }

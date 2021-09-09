@@ -15,13 +15,12 @@ class Commentary
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"patient_read", "doctor_read", "user_read", "prescription_read"})
+     * @Groups({"worksheet_read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="datetime_immutable")
-     * @Groups({"patient_read", "doctor_read", "user_read", "prescription_read"})
      */
     private $createdAt;
 
@@ -37,7 +36,7 @@ class Commentary
 
     /**
      * @ORM\Column(type="text")
-     * @Groups({"patient_read", "doctor_read", "user_read", "prescription_read"})
+     * @Groups({"worksheet_read"})
      */
     private $content;
 
