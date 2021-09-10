@@ -165,7 +165,13 @@
                         </div>
                     </div>
                 </div>
-                <div class="not-found" v-else>
+                <div
+                    class="not-found"
+                    v-if="
+                        !loadingPatientWorksheets &&
+                        !getPatientWorksheets.length
+                    "
+                >
                     <p>
                         <i class="fas fa-folder-minus"></i>
                         <span>Vous n'avez pas encore de fiche</span>
@@ -177,8 +183,7 @@
 </template>
 
 <script>
-import f from "../../services/function";
-import TagPartOfBody from "./TagPartOfBody.vue";
+import TagPartOfBody from "../Components/TagPartOfBody.vue";
 
 export default {
     props: {
@@ -244,8 +249,6 @@ export default {
                         : error.response.data;
 
                 console.error(errorMess);
-
-                this.loadingPatientWorksheets = false;
             });
     },
 };

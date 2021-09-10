@@ -67,243 +67,243 @@ class ManageWorksheetController extends AbstractController
     /**
      * @Route("/{id}/fiches/{listType}/{patientId}", name="app_doctor_worksheets", methods={"GET"})
      */
-    public function worksheetList(
-        Request $request,
-        Doctor $doctor,
-        string $listType = 'prescriptions',
-        int $patientId = null
-    ): Response {
-        $patientForPrescription =
-            $patientId ?
-                $this->patientRepository->findOneBy(['id' => $patientId])
-            : null;
+    // public function worksheetList(
+    //     Request $request,
+    //     Doctor $doctor,
+    //     string $listType = 'prescriptions',
+    //     int $patientId = null
+    // ): Response {
+    //     $patientForPrescription =
+    //         $patientId ?
+    //             $this->patientRepository->findOneBy(['id' => $patientId])
+    //         : null;
 
-        return $this->render('doctor/worksheets_list.html.twig', [
-            'listType' => $listType,
-            'patientForPrescription' => $patientForPrescription,
-            'triggerCreatePrescription' => $request->query->get('create_prescription'),
-            'doctor' => $doctor,
-        ]);
-    }
+    //     return $this->render('doctor/worksheets_list.html.twig', [
+    //         'listType' => $listType,
+    //         'patientForPrescription' => $patientForPrescription,
+    //         'triggerCreatePrescription' => $request->query->get('create_prescription'),
+    //         'doctor' => $doctor,
+    //     ]);
+    // }
 
     /**
      * @Route("/{id}/fiche/commentaires/{worksheetId}/{patientId}",
      * name="app_doctor_worksheet_show_commentaries", methods={"GET"})
      */
-    public function worksheetShowCommentaries(
-        Doctor $doctor,
-        int $worksheetId = null,
-        int $patientId = null
-    ): Response {
-        $patient =
-        $patientId ?
-            $this->patientRepository->findOneBy(['id' => $patientId])
-        : null;
+    // public function worksheetShowCommentaries(
+    //     Doctor $doctor,
+    //     int $worksheetId = null,
+    //     int $patientId = null
+    // ): Response {
+    //     $patient =
+    //     $patientId ?
+    //         $this->patientRepository->findOneBy(['id' => $patientId])
+    //     : null;
 
-        return $this->render('patient/worksheets_list.html.twig', [
-            'doctor' => $doctor,
-            'patient' => $patient,
-            'worksheetId' => $worksheetId,
-            'doctorView' => true,
-        ]);
-    }
+    //     return $this->render('patient/worksheets_list.html.twig', [
+    //         'doctor' => $doctor,
+    //         'patient' => $patient,
+    //         'worksheetId' => $worksheetId,
+    //         'doctorView' => true,
+    //     ]);
+    // }
 
     /**
      * @Route("/{id}/fiche/{action}/{worksheetTemplateId}/{patientId}",
      * name="app_doctor_worksheet_creation", methods={"GET"})
      */
-    public function worksheetCreation(
-        Doctor $doctor,
-        string $action,
-        int $worksheetTemplateId = null,
-        int $patientId = null
-    ): Response {
-        $worksheetTemplate =
-        $worksheetTemplateId && $worksheetTemplateId != 0 ?
-            $this->worksheetRepository->findOneBy(['id' => $worksheetTemplateId])
-        : null;
+    // public function worksheetCreation(
+    //     Doctor $doctor,
+    //     string $action,
+    //     int $worksheetTemplateId = null,
+    //     int $patientId = null
+    // ): Response {
+    //     $worksheetTemplate =
+    //     $worksheetTemplateId && $worksheetTemplateId != 0 ?
+    //         $this->worksheetRepository->findOneBy(['id' => $worksheetTemplateId])
+    //     : null;
 
-        $patientForPrescription =
-        $patientId ?
-            $this->patientRepository->findOneBy(['id' => $patientId])
-        : null;
+    //     $patientForPrescription =
+    //     $patientId ?
+    //         $this->patientRepository->findOneBy(['id' => $patientId])
+    //     : null;
 
-        return $this->render('doctor/create_worksheet_page.html.twig', [
-            'doctor' => $doctor,
-            'action' => $action,
-            'patientForPrescription' => $patientForPrescription,
-            'worksheetTemplate' => $worksheetTemplate,
-        ]);
-    }
+    //     return $this->render('doctor/create_worksheet_page.html.twig', [
+    //         'doctor' => $doctor,
+    //         'action' => $action,
+    //         'patientForPrescription' => $patientForPrescription,
+    //         'worksheetTemplate' => $worksheetTemplate,
+    //     ]);
+    // }
 
     /**
      * @Route("/{id}/create/worksheet", name="app_doctor_create_worksheet", methods={"POST"})
      */
-    public function createWorksheet(Request $request, Doctor $doctor): JsonResponse
-    {
-        if ($request->isMethod('post')) {
-            $data = json_decode($request->getContent());
+    // public function createWorksheet(Request $request, Doctor $doctor): JsonResponse
+    // {
+    //     if ($request->isMethod('post')) {
+    //         $data = json_decode($request->getContent());
 
-            if ($this->isCsrfTokenValid('create_worksheet' . $doctor->getId(), $data->_token)) {
-                $worksheet = new Worksheet();
-                $worksheet->setTitle($data->title)
-                          ->setDescription($data->description)
-                          ->setPartOfBody($data->partOfBody)
-                          ->setDuration($data->duration)
-                          ->setPerWeek($data->perWeek)
-                          ->setPerDay($data->perDay)
-                          ->setIsTemplate($data->isTemplate);
-                //   ->setCreator($doctor);
+    //         if ($this->isCsrfTokenValid('create_worksheet' . $doctor->getId(), $data->_token)) {
+    //             $worksheet = new Worksheet();
+    //             $worksheet->setTitle($data->title)
+    //                       ->setDescription($data->description)
+    //                       ->setPartOfBody($data->partOfBody)
+    //                       ->setDuration($data->duration)
+    //                       ->setPerWeek($data->perWeek)
+    //                       ->setPerDay($data->perDay)
+    //                       ->setIsTemplate($data->isTemplate);
+    //             //   ->setCreator($doctor);
 
-                foreach ($data->exercises as $dataExercise) {
-                    $this->generateExercise($dataExercise, $worksheet);
-                }
+    //             foreach ($data->exercises as $dataExercise) {
+    //                 $this->generateExercise($dataExercise, $worksheet);
+    //             }
 
-                $this->em->persist($worksheet);
+    //             $this->em->persist($worksheet);
 
-                $this->em->flush();
+    //             $this->em->flush();
 
-                return $this->json(
-                    [
-                        "message" => "La fiche <strong>{$worksheet->getTitle()}</strong> a été créée",
-                        "worksheet" => $worksheet
-                    ],
-                    200,
-                    [],
-                    ['groups' => 'worksheet_read']
-                );
-            }
-        }
+    //             return $this->json(
+    //                 [
+    //                     "message" => "La fiche <strong>{$worksheet->getTitle()}</strong> a été créée",
+    //                     "worksheet" => $worksheet
+    //                 ],
+    //                 200,
+    //                 [],
+    //                 ['groups' => 'worksheet_read']
+    //             );
+    //         }
+    //     }
 
-        return $this->json(
-            'Nous n\'avons pas pu créer la fiche, veuillez réessayer ultérieurement.',
-            500,
-        );
-    }
+    //     return $this->json(
+    //         'Nous n\'avons pas pu créer la fiche, veuillez réessayer ultérieurement.',
+    //         500,
+    //     );
+    // }
 
     /**
      * @Route("/{id}/edit/worksheet-template", name="app_doctor_edit_worksheet_template", methods={"POST"})
      */
-    public function editWorksheetTemplate(Request $request, Doctor $doctor): JsonResponse
-    {
-        if ($request->isMethod('post')) {
-            $data = json_decode($request->getContent());
+    // public function editWorksheetTemplate(Request $request, Doctor $doctor): JsonResponse
+    // {
+    //     if ($request->isMethod('post')) {
+    //         $data = json_decode($request->getContent());
 
-            if ($this->isCsrfTokenValid('edit_worksheet_template' . $doctor->getId(), $data->_token)) {
-                $worksheet = $this->worksheetRepository->findOneBy(['id' => $data->worksheetId]);
+    //         if ($this->isCsrfTokenValid('edit_worksheet_template' . $doctor->getId(), $data->_token)) {
+    //             $worksheet = $this->worksheetRepository->findOneBy(['id' => $data->worksheetId]);
 
-                $worksheet->setTitle($data->title)
-                          ->setDescription($data->description)
-                          ->setPartOfBody($data->partOfBody)
-                          ->setDuration($data->duration)
-                          ->setPerWeek($data->perWeek)
-                          ->setPerDay($data->perDay)
-                ;
+    //             $worksheet->setTitle($data->title)
+    //                       ->setDescription($data->description)
+    //                       ->setPartOfBody($data->partOfBody)
+    //                       ->setDuration($data->duration)
+    //                       ->setPerWeek($data->perWeek)
+    //                       ->setPerDay($data->perDay)
+    //             ;
 
-                foreach ($data->exercises as $dataExercise) {
-                    if ($dataExercise->id) {
-                        $exercise = $this->exerciseRepository->findOneBy(['id' => $dataExercise->id]);
-                        $exercise->setNumberOfRepetitions($dataExercise->numberOfRepetitions)
-                                 ->setNumberOfSeries($dataExercise->numberOfSeries)
-                                 ->setOption($dataExercise->option)
-                                 ->setPosition($dataExercise->position);
-                    }
-                    if (null === $dataExercise->id) {
-                        $this->generateExercise($dataExercise, $worksheet);
-                    }
-                }
+    //             foreach ($data->exercises as $dataExercise) {
+    //                 if ($dataExercise->id) {
+    //                     $exercise = $this->exerciseRepository->findOneBy(['id' => $dataExercise->id]);
+    //                     $exercise->setNumberOfRepetitions($dataExercise->numberOfRepetitions)
+    //                              ->setNumberOfSeries($dataExercise->numberOfSeries)
+    //                              ->setOption($dataExercise->option)
+    //                              ->setPosition($dataExercise->position);
+    //                 }
+    //                 if (null === $dataExercise->id) {
+    //                     $this->generateExercise($dataExercise, $worksheet);
+    //                 }
+    //             }
 
-                $this->em->flush();
+    //             $this->em->flush();
 
-                return $this->json(
-                    "Le modèle de fiche a bien été modifié",
-                    200,
-                );
-            }
-        }
+    //             return $this->json(
+    //                 "Le modèle de fiche a bien été modifié",
+    //                 200,
+    //             );
+    //         }
+    //     }
 
-        return $this->json(
-            'Nous n\'avons pas pu modifier le modèle de fiche, veuillez réessayer ultérieurement.',
-            500,
-        );
-    }
+    //     return $this->json(
+    //         'Nous n\'avons pas pu modifier le modèle de fiche, veuillez réessayer ultérieurement.',
+    //         500,
+    //     );
+    // }
 
     /**
      * @Route("/{id}/remove/worksheet-template", name="app_doctor_remove_worksheet_template", methods={"POST"})
      */
-    public function removeWorksheetTemplate(Request $request, Doctor $doctor): JsonResponse
-    {
-        if ($request->isMethod('post')) {
-            $data = json_decode($request->getContent());
+    // public function removeWorksheetTemplate(Request $request, Doctor $doctor): JsonResponse
+    // {
+    //     if ($request->isMethod('post')) {
+    //         $data = json_decode($request->getContent());
 
-            if ($this->isCsrfTokenValid('remove_worksheet_template' . $doctor->getId(), $data->_token)) {
-                $worksheetTemplate = $this->worksheetRepository->findOneBy(['id' => $data->worksheetTemplate_id]);
+    //         if ($this->isCsrfTokenValid('remove_worksheet_template' . $doctor->getId(), $data->_token)) {
+    //             $worksheetTemplate = $this->worksheetRepository->findOneBy(['id' => $data->worksheetTemplate_id]);
 
-                // if ($worksheetTemplate->getCreator() === $doctor) {
-                $this->em->remove($worksheetTemplate);
+    //             // if ($worksheetTemplate->getCreator() === $doctor) {
+    //             $this->em->remove($worksheetTemplate);
 
-                $this->em->flush();
+    //             $this->em->flush();
 
-                return $this->json(
-                    'Le modèle de fiche a bien été supprimé',
-                    200,
-                );
-                // }
-            }
-        }
+    //             return $this->json(
+    //                 'Le modèle de fiche a bien été supprimé',
+    //                 200,
+    //             );
+    //             // }
+    //         }
+    //     }
 
-        return $this->json(
-            'Nous n\'avons pas pu supprimer le modèle de fiche, veuillez réessayer ultérieurement.',
-            500,
-        );
-    }
+    //     return $this->json(
+    //         'Nous n\'avons pas pu supprimer le modèle de fiche, veuillez réessayer ultérieurement.',
+    //         500,
+    //     );
+    // }
 
     /**
      * @Route("/{id}/remove/exercise-from-worksheet", name="app_doctor_remove_exercise_from_worksheet",
      * methods={"POST"})
      */
-    public function removeExerciseFromWorksheet(Request $request, Doctor $doctor): JsonResponse
-    {
-        if ($request->isMethod('post')) {
-            $data = json_decode($request->getContent());
+    // public function removeExerciseFromWorksheet(Request $request, Doctor $doctor): JsonResponse
+    // {
+    //     if ($request->isMethod('post')) {
+    //         $data = json_decode($request->getContent());
 
-            if ($this->isCsrfTokenValid('remove_exercise_from_worksheet' . $doctor->getId(), $data->_token)) {
-                $worksheet = $this->worksheetRepository->findOneBy(['id' => $data->worksheet_id]);
-                $exercise = $this->exerciseRepository->findOneBy(['id' => $data->exercise_id]);
-                $exerciseStats = $this->exerciseStatRepository->findBy(['exercise' => $exercise]);
+    //         if ($this->isCsrfTokenValid('remove_exercise_from_worksheet' . $doctor->getId(), $data->_token)) {
+    //             $worksheet = $this->worksheetRepository->findOneBy(['id' => $data->worksheet_id]);
+    //             $exercise = $this->exerciseRepository->findOneBy(['id' => $data->exercise_id]);
+    //             $exerciseStats = $this->exerciseStatRepository->findBy(['exercise' => $exercise]);
 
-                // if ($worksheet->getCreator() === $doctor) {
-                $worksheet->removeExercise($exercise);
+    //             // if ($worksheet->getCreator() === $doctor) {
+    //             $worksheet->removeExercise($exercise);
 
-                $allStatsNull = true;
+    //             $allStatsNull = true;
 
-                foreach ($exerciseStats as $exerciseStat) {
-                    if (null === $exerciseStat->getRating()) {
-                        $this->em->remove($exerciseStat);
-                    } else {
-                        $allStatsNull = false;
-                    }
-                }
+    //             foreach ($exerciseStats as $exerciseStat) {
+    //                 if (null === $exerciseStat->getRating()) {
+    //                     $this->em->remove($exerciseStat);
+    //                 } else {
+    //                     $allStatsNull = false;
+    //                 }
+    //             }
 
-                if ($allStatsNull) {
-                    $this->em->remove($exercise);
-                }
+    //             if ($allStatsNull) {
+    //                 $this->em->remove($exercise);
+    //             }
 
-                $this->em->flush();
+    //             $this->em->flush();
 
-                return $this->json(
-                    'L\'exercice a bien été retiré de la fiche',
-                    200,
-                );
-                // }
-            }
-        }
+    //             return $this->json(
+    //                 'L\'exercice a bien été retiré de la fiche',
+    //                 200,
+    //             );
+    //             // }
+    //         }
+    //     }
 
-        return $this->json(
-            'Nous n\'avons pas pu retirer l\'exercice de la fiche, veuillez réessayer ultérieurement.',
-            500,
-        );
-    }
+    //     return $this->json(
+    //         'Nous n\'avons pas pu retirer l\'exercice de la fiche, veuillez réessayer ultérieurement.',
+    //         500,
+    //     );
+    // }
 
     /**
      * @Route("/{id}/create/prescription", name="app_doctor_create_prescription", methods={"POST"})
@@ -435,63 +435,44 @@ class ManageWorksheetController extends AbstractController
     //     );
     // }
 
-    private function generateExercise(object $dataExercise, Worksheet $worksheet): void
-    {
-        $exercise = new Exercise();
+    // private function generateExercise(object $dataExercise, Worksheet $worksheet): void
+    // {
+    //     $exercise = new Exercise();
 
-        $exercise->setNumberOfRepetitions($dataExercise->numberOfRepetitions)
-                 ->setNumberOfSeries($dataExercise->numberOfSeries)
-                 ->setOption($dataExercise->option)
-                 ->setPosition($dataExercise->position);
+    //     $exercise->setNumberOfRepetitions($dataExercise->numberOfRepetitions)
+    //              ->setNumberOfSeries($dataExercise->numberOfSeries)
+    //              ->setOption($dataExercise->option)
+    //              ->setPosition($dataExercise->position);
 
-        $video = $this->videoRepository->findOneById($dataExercise->video->id);
+    //     $video = $this->videoRepository->findOneById($dataExercise->video->id);
 
-        $exercise->setVideo($video);
+    //     $exercise->setVideo($video);
 
-        $worksheet->addExercise($exercise);
+    //     $worksheet->addExercise($exercise);
 
-        $this->em->persist($exercise);
-    }
+    //     $this->em->persist($exercise);
+    // }
 
-    private function generateExerciseStatsInit(Exercise $exercise, WorksheetSession $worksheetSession): void
-    {
-        $exerciseStatsCriterions = [
-            "sensitivity",
-            "technical",
-            "difficulty",
-        ];
+    // private function generateExerciseStatsInit(Exercise $exercise, WorksheetSession $worksheetSession): void
+    // {
+    //     $exerciseStatsCriterions = [
+    //         "sensitivity",
+    //         "technical",
+    //         "difficulty",
+    //     ];
 
-        $exerciseStatsExists = $this->exerciseStatRepository->findBy(['exercise' => $exercise]);
+    //     $exerciseStatsExists = $this->exerciseStatRepository->findBy(['exercise' => $exercise]);
 
-        if (!$exerciseStatsExists) {
-            foreach ($exerciseStatsCriterions as $criterion) {
-                $exerciseStatInit = new ExerciseStat();
+    //     if (!$exerciseStatsExists) {
+    //         foreach ($exerciseStatsCriterions as $criterion) {
+    //             $exerciseStatInit = new ExerciseStat();
 
-                $exerciseStatInit->setCriterion($criterion)
-                                 ->setExercise($exercise)
-                                 ->setWorksheetSession($worksheetSession);
+    //             $exerciseStatInit->setCriterion($criterion)
+    //                              ->setExercise($exercise)
+    //                              ->setWorksheetSession($worksheetSession);
 
-                $this->em->persist($exerciseStatInit);
-            }
-        }
-    }
-
-    private function generateWorksheetSessions(Worksheet $worksheet, Prescription $prescription): void
-    {
-        for (
-            $execution = 1; $execution <= $worksheet->getDuration()
-                                        * $worksheet->getPerWeek()
-                                        * $worksheet->getPerDay(); $execution++
-        ) {
-            $worksheetSession = new WorksheetSession();
-            // $worksheetSession->setPrescription($prescription);
-            $worksheetSession->setExecOrder($execution);
-
-            foreach ($worksheet->getExercises() as $exercise) {
-                $this->generateExerciseStatsInit($exercise, $worksheetSession);
-            }
-
-            $this->em->persist($worksheetSession);
-        }
-    }
+    //             $this->em->persist($exerciseStatInit);
+    //         }
+    //     }
+    // }
 }

@@ -236,11 +236,11 @@ class AppFixtures extends Fixture
                             }
                         }
 
-                        $worksheetSessionDeadlineDate = new \DateTime();
-                        $worksheetSessionDeadlineDate->setTimestamp($randomStartDate->getTimestamp() + 86400);
-                        $worksheetSession->setDeadlineAt($worksheetSessionDeadlineDate);
+                        $worksheetSessionEndDate = new \DateTime();
+                        $worksheetSessionEndDate->setTimestamp($randomStartDate->getTimestamp() + 86400);
+                        $worksheetSession->setEndAt($worksheetSessionEndDate);
 
-                        $randomStartDate = $worksheetSessionDeadlineDate;
+                        $randomStartDate = $worksheetSessionEndDate;
 
                         $manager->persist($worksheetSession);
                     }

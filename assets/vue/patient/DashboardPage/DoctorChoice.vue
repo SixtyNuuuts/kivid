@@ -223,8 +223,6 @@ export default {
                             : error.response.data
                     );
                 }
-
-                this.loading = false;
             });
 
         this.selectInput = document.getElementById("doctor-choice-select");

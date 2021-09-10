@@ -173,7 +173,7 @@ export default {
             return score.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
         },
     },
-    mounted() {
+    created() {
         setTimeout(() => {
             this.score = 5000;
         }, 500);

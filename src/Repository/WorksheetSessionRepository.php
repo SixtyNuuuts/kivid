@@ -19,32 +19,29 @@ class WorksheetSessionRepository extends ServiceEntityRepository
         parent::__construct($registry, WorksheetSession::class);
     }
 
-    // /**
-    //  * @return WorksheetSession[] Returns an array of WorksheetSession objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function findCurrentWorksheetSession($worksheet): ?WorksheetSession
     {
-        return $this->createQueryBuilder('w')
-            ->andWhere('w.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('w.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+        $now = new \DateTime();
 
-    /*
-    public function findOneBySomeField($value): ?WorksheetSession
-    {
-        return $this->createQueryBuilder('w')
-            ->andWhere('w.exampleField = :val')
-            ->setParameter('val', $value)
+        return $this->createQueryBuilder('ws')
+            ->where('ws.startAt <= :now')
+            ->andWhere('ws.endAt >= :now')
+            ->andWhere('ws.worksheet = :worksheet')
+            ->setParameter('now', $now)
+            ->setParameter('worksheet', $worksheet)
             ->getQuery()
             ->getOneOrNullResult()
         ;
     }
-    */
+
+    public function countWorksheetSessions($worksheet): int
+    {
+        return $this->createQueryBuilder('ws')
+            ->select('count(ws.id)')
+            ->where('ws.worksheet = :worksheet')
+            ->setParameter('worksheet', $worksheet)
+            ->getQuery()
+            ->getSingleScalarResult();
+        ;
+    }
 }

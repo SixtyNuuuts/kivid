@@ -17,37 +17,43 @@ class WorksheetSession
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"worksheet_read"})
+     * @Groups({"session_read", "worksheet_read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"worksheet_read"})
+     * @Groups({"session_read"})
      */
     private $startAt;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"worksheet_read"})
+     * @Groups({"session_read"})
      */
-    private $deadlineAt;
+    private $endAt;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"session_read"})
+     */
+    private $doneAt;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"worksheet_read"})
+     * @Groups({"session_read"})
      */
     private $isInProgress;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"worksheet_read"})
+     * @Groups({"session_read"})
      */
     private $isCompleted;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"worksheet_read"})
+     * @Groups({"session_read"})
      */
     private $execOrder;
 
@@ -62,11 +68,17 @@ class WorksheetSession
      */
     private $worksheet;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Commentary::class, mappedBy="worksheetSession", orphanRemoval=true)
+     */
+    private $commentaries;
+
     public function __construct()
     {
         $this->isInProgress = false;
         $this->isCompleted = false;
         $this->exerciseStats = new ArrayCollection();
+        $this->commentaries = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -86,14 +98,26 @@ class WorksheetSession
         return $this;
     }
 
-    public function getDeadlineAt(): ?\DateTimeInterface
+    public function getEndAt(): ?\DateTimeInterface
     {
-        return $this->deadlineAt;
+        return $this->endAt;
     }
 
-    public function setDeadlineAt(?\DateTimeInterface $deadlineAt): self
+    public function setEndAt(?\DateTimeInterface $endAt): self
     {
-        $this->deadlineAt = $deadlineAt;
+        $this->endAt = $endAt;
+
+        return $this;
+    }
+
+    public function getDoneAt(): ?\DateTimeInterface
+    {
+        return $this->doneAt;
+    }
+
+    public function setDoneAt(?\DateTimeInterface $doneAt): self
+    {
+        $this->doneAt = $doneAt;
 
         return $this;
     }
@@ -172,6 +196,36 @@ class WorksheetSession
     public function setWorksheet(?Worksheet $worksheet): self
     {
         $this->worksheet = $worksheet;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Commentary[]
+     */
+    public function getCommentaries(): Collection
+    {
+        return $this->commentaries;
+    }
+
+    public function addCommentary(Commentary $commentary): self
+    {
+        if (!$this->commentaries->contains($commentary)) {
+            $this->commentaries[] = $commentary;
+            $commentary->setWorksheetSession($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommentary(Commentary $commentary): self
+    {
+        if ($this->commentaries->removeElement($commentary)) {
+            // set the owning side to null (unless already changed)
+            if ($commentary->getWorksheetSession() === $this) {
+                $commentary->setWorksheetSession(null);
+            }
+        }
 
         return $this;
     }

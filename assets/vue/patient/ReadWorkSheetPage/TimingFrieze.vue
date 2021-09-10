@@ -16,18 +16,36 @@
                             alt="Icone d'une basket"
                         />
                     </i>
-                    <h2>0 session</h2>
-                    <div class="total-sessions">sur 50</div>
+                    <h2>
+                        Session n°{{ getCurrentWorksheetSession.execOrder }}
+                    </h2>
+                    <div class="total-sessions">
+                        sur {{ getTotalWorksheetSessions }}
+                    </div>
                 </div>
                 <div class="session-timing-line">
                     <div class="progressbar-steps">
                         <div class="session-start-date">
                             <i class="kiv-calendar icon-10"></i>
-                            <div class="date">16/07/2021</div>
+                            <div class="date-hours">
+                                <div class="date">
+                                    {{ getWorksheetSessionStartDate }}
+                                </div>
+                                <div class="hours">
+                                    {{ getWorksheetSessionStartHours }}
+                                </div>
+                            </div>
                         </div>
                         <div class="session-end-date">
                             <i class="kiv-calendar icon-10"></i>
-                            <div class="date">16/08/2021</div>
+                            <div class="date-hours">
+                                <div class="date">
+                                    {{ getWorksheetSessionEndDate }}
+                                </div>
+                                <div class="hours">
+                                    {{ getWorksheetSessionEndHours }}
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -58,8 +76,15 @@
                                     <span>{{ `${getTimingPercentage}%` }}</span
                                     >de la fiche est fait
                                 </div>
-                                <div class="final-goal">
-                                    <span>60</span>jours restants
+                                <div
+                                    v-if="!getWorksheetSessionDoneDate"
+                                    class="final-goal"
+                                >
+                                    {{ getTimeLeft }}
+                                </div>
+                                <div v-else class="final-goal">
+                                    Terminé le
+                                    {{ getWorksheetSessionDoneDate }}
                                 </div>
                             </div>
                             <div class="point"></div>
@@ -73,11 +98,14 @@
 
 <script>
 import f from "../../services/function";
+import moment from "moment";
 
 export default {
     props: {
         loading: Boolean,
         worksheet: Object,
+        currentWorksheetSession: Object,
+        totalWorksheetSessions: Number,
     },
     data() {
         return {
@@ -88,10 +116,19 @@ export default {
         getWorksheet() {
             return this.worksheet;
         },
+        getCurrentWorksheetSession() {
+            return this.currentWorksheetSession;
+        },
+        getTotalWorksheetSessions() {
+            return this.totalWorksheetSessions;
+        },
         getTimingPercentage() {
             let progression = 0;
 
-            if (this.getWorksheet && this.getWorksheet.exercises.length) {
+            if (
+                this.getWorksheet.exercises &&
+                this.getWorksheet.exercises.length
+            ) {
                 const exercisePercentPart =
                     100 / this.getWorksheet.exercises.length;
 
@@ -107,16 +144,88 @@ export default {
 
             return progression;
         },
+        getWorksheetSessionStartDate() {
+            return moment(this.getCurrentWorksheetSession.startAt).format(
+                "DD/MM/YYYY"
+            );
+        },
+        getWorksheetSessionStartHours() {
+            return moment(this.getCurrentWorksheetSession.startAt).format(
+                "HH:mm:ss"
+            );
+        },
+        getWorksheetSessionEndDate() {
+            return moment(this.getCurrentWorksheetSession.endAt).format(
+                "DD/MM/YYYY"
+            );
+        },
+        getWorksheetSessionEndHours() {
+            return moment(this.getCurrentWorksheetSession.endAt).format(
+                "HH:mm:ss"
+            );
+        },
+        getWorksheetSessionDoneDate() {
+            if (this.getCurrentWorksheetSession.doneAt) {
+                return moment(this.getCurrentWorksheetSession.donetAt).format(
+                    "DD/MM/YYYY"
+                );
+            }
+            return null;
+        },
+        getWorksheetSessionDoneHours() {
+            if (this.getCurrentWorksheetSession.doneAt) {
+                return moment(this.getCurrentWorksheetSession.donetAt).format(
+                    "HH:mm:ss"
+                );
+            }
+            return null;
+        },
+        getTimeLeft() {
+            const start = moment().format("DD/MM/YYYY HH:mm:ss");
+
+            const end = moment(this.getCurrentWorksheetSession.endAt).format(
+                "DD/MM/YYYY HH:mm:ss"
+            );
+
+            const days = this.getDiffBetweenTwoDates(start, end).asDays();
+
+            const hours = this.getDiffBetweenTwoDates(start, end).asHours();
+
+            const minutes = this.getDiffBetweenTwoDates(start, end).asMinutes();
+
+            const seconds = this.getDiffBetweenTwoDates(start, end).asSeconds();
+
+            if (days >= 1) {
+                return Math.round(days) === 1
+                    ? `${Math.round(days)} jour restant`
+                    : `${Math.round(days)} jours restants`;
+            }
+
+            if (hours >= 1) {
+                return hours === 1
+                    ? `${Math.round(hours)} heure restante`
+                    : `${Math.round(hours)} heures restantes`;
+            }
+
+            if (minutes >= 1) {
+                return minutes === 1
+                    ? `${Math.round(minutes)} minute restante`
+                    : `${Math.round(minutes)} minutes restantes`;
+            }
+
+            if (seconds >= 1) {
+                return seconds === 1
+                    ? `${Math.round(seconds)} seconde restante`
+                    : `${Math.round(seconds)} secondes restantes`;
+            }
+
+            return null;
+        },
     },
     methods: {
-        // formatTiming(session-timing) {
-        //     return session-timing.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-        // },
-    },
-    mounted() {
-        setTimeout(() => {
-            this.score = 50;
-        }, 500);
+        getDiffBetweenTwoDates(start, end) {
+            return f.getDiffBetweenTwoDates(start, end);
+        },
     },
 };
 </script>
@@ -274,30 +383,50 @@ export default {
                         color: $sanguine;
                         font-size: 2.2rem;
                         position: relative;
-                        top: -0.05rem;
+                        top: -0.95rem;
                         margin-right: 0.6rem;
 
                         @media (min-width: 576px) {
                             font-size: 1.7rem;
-                            top: -0.1rem;
+                            top: -0.715rem;
                         }
 
                         @media (min-width: 650px) {
                             font-size: 1.85rem;
-                            top: -0.25rem;
+                            top: -1rem;
                         }
                     }
 
-                    .date {
-                        font-weight: 700;
-                        font-size: 1.9rem;
+                    .date-hours {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: flex-start;
 
-                        @media (min-width: 576px) {
-                            font-size: 1.6rem;
+                        .date {
+                            font-weight: 700;
+                            font-size: 1.9rem;
+
+                            @media (min-width: 576px) {
+                                font-size: 1.6rem;
+                            }
+
+                            @media (min-width: 650px) {
+                                font-size: 1.7rem;
+                            }
                         }
 
-                        @media (min-width: 650px) {
-                            font-size: 1.7rem;
+                        .hours {
+                            font-weight: 400;
+                            font-size: 1.4rem;
+                            margin-top: 0.1rem;
+
+                            @media (min-width: 576px) {
+                                font-size: 1.1rem;
+                            }
+
+                            @media (min-width: 650px) {
+                                font-size: 1.2rem;
+                            }
                         }
                     }
                 }
@@ -337,12 +466,12 @@ export default {
                     position: absolute;
                     z-index: 11;
                     display: flex;
-                    right: -0.5rem;
+                    right: -0.55rem;
                     transition: all 1s ease;
 
                     &.start {
                         .legend {
-                            transform: translateY(52%);
+                            transform: translateY(62%);
                         }
                         .point {
                             transform: translateY(-0.2rem);
@@ -351,13 +480,13 @@ export default {
 
                     &.end {
                         .legend {
-                            transform: translateY(-133%);
+                            transform: translateY(-140%);
                         }
                     }
 
                     &.max {
                         .legend {
-                            transform: translateY(-155%);
+                            transform: translateY(-165.8%);
                         }
                         .point {
                             transform: translateY(-1.9rem);
@@ -403,7 +532,7 @@ export default {
 
                         @media (min-width: 768px) {
                             font-size: 1.4rem;
-                            margin-right: 1.3rem;
+                            margin-right: 1.8rem;
                             padding: 1.3rem 1.6rem;
                         }
 

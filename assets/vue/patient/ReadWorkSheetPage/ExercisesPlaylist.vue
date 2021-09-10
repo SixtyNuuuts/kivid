@@ -124,9 +124,12 @@
                         <div class="commentary">
                             <p>Commentaire</p>
                             <vs-input
+                                v-if="exercise.commentary"
                                 placeholder="Tapez votre commentaire"
-                                disabled
-                                v-model="exercise.commentaries[0].content"
+                                :disabled="!exercise.isCompleted"
+                                v-model="exercise.commentary.content"
+                                @keyup="setCommentaryWithDebounce(exercise)"
+                                @blur="setCommentary(exercise)"
                             />
                         </div>
                     </div>
@@ -150,12 +153,17 @@
         <transition name="fade">
             <VideoPlayer
                 v-if="videoPlayerToggle"
+                :patient="patient"
+                :worksheet="getWorksheet"
                 :exercise="getCurrentExercise"
+                :exercises="getExercises"
                 :lastExercise="getTheLastExercise"
-                @setTechnicalValue="setTechnicalValue"
-                @setDifficultyValue="setDifficultyValue"
-                @setSensitivityValue="setSensitivityValue"
-                @exerciseCompleted="exerciseCompleted"
+                :currentWorksheetSession="getCurrentWorksheetSession"
+                :csrfTokenCompleteWorksheetSession="
+                    csrfTokenCompleteWorksheetSession
+                "
+                :csrfTokenCompleteExercise="csrfTokenCompleteExercise"
+                :csrfTokenCreateExerciseStat="csrfTokenCreateExerciseStat"
                 @closeVideoPlayer="closeVideoPlayer"
             />
         </transition>
@@ -163,16 +171,22 @@
 </template>
 
 <script>
-import f from "../../services/function";
-import VideoPlayer from "./VideoPlayer.vue";
+import VideoPlayer from "./ExercisesPlaylist/VideoPlayer.vue";
 
 export default {
     components: {
         VideoPlayer,
     },
     props: {
-        exercises: Array,
+        patient: Object,
         loading: Boolean,
+        worksheet: Object,
+        currentWorksheetSession: Object,
+        csrfTokenStartWorksheetSession: String,
+        csrfTokenCompleteWorksheetSession: String,
+        csrfTokenCompleteExercise: String,
+        csrfTokenCreateExerciseStat: String,
+        csrfTokenCreateCommentary: String,
     },
     data() {
         return {
@@ -186,27 +200,37 @@ export default {
                     youtubeId: null,
                 },
             },
+            loadingBtnStartSession: false,
+            timeoutSetCommentary: null,
         };
     },
     computed: {
+        getWorksheet() {
+            return this.worksheet;
+        },
+        getExercises() {
+            return this.getWorksheet.exercises;
+        },
         getCurrentExercise() {
             let currentExercise = this.emptyExercise;
 
             if (
-                this.exercises &&
-                this.exercises.find((e) => e.isCompleted === false)
+                this.getWorksheet.exercises &&
+                this.getWorksheet.exercises.find((e) => e.isCompleted === false)
             ) {
-                currentExercise = this.exercises.find(
+                currentExercise = this.getWorksheet.exercises.find(
                     (e) => e.isCompleted === false
                 );
             }
             return currentExercise;
         },
-        getTheLastExercise() {
-            return this.exercises[this.exercises.length - 1];
+        getCurrentWorksheetSession() {
+            return this.currentWorksheetSession;
         },
-        getExercises() {
-            return this.exercises;
+        getTheLastExercise() {
+            return this.getWorksheet.exercises[
+                this.getWorksheet.exercises.length - 1
+            ];
         },
     },
     methods: {
@@ -218,19 +242,35 @@ export default {
             this.videoPlayerToggle = false;
             this.removeMaxHeightToBody();
         },
-        setTechnicalValue(value) {
-            console.log("setTechnicalValue", value);
+        setCommentary(exercise) {
+            this.axios
+                .post(`/patient/${this.patient.id}/create/commentary`, {
+                    _token: this.csrfTokenCreateCommentary,
+                    exerciseId: exercise.id,
+                    worksheetId: this.getWorksheet.id,
+                    worksheetSessionId: this.getCurrentWorksheetSession.id,
+                    commentaryId: exercise.commentary.id,
+                    commentaryContent: exercise.commentary.content,
+                })
+                .then((response) => {
+                    console.log(response.data);
+
+                    exercise.commentary.id = response.data.commentaryId;
+                    console.log(exercise.commentary.id);
+                })
+                .catch((error) => {
+                    const errorMess =
+                        "object" === typeof error.response.data
+                            ? error.response.data.detail
+                            : error.response.data;
+                    console.error(errorMess);
+                });
         },
-        setDifficultyValue(value) {
-            console.log("setDifficultyValue", value);
-        },
-        setSensitivityValue(value) {
-            console.log("setSensitivityValue", value);
-        },
-        exerciseCompleted(exerciseId) {
-            this.getExercises.find(
-                (e) => e.id === exerciseId
-            ).isCompleted = true;
+        setCommentaryWithDebounce(exercise) {
+            clearTimeout(this.timeoutSetCommentary);
+            this.timeoutSetCommentary = setTimeout(() => {
+                this.setCommentary(exercise);
+            }, 1500);
         },
         addMaxHeightToBody() {
             window.scrollTo(0, 0);
@@ -256,8 +296,8 @@ export default {
         flex-direction: column;
 
         &:not(:last-child) {
-            margin-bottom: 2.5rem;
-            padding-bottom: 2.5rem;
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
         }
 
         @media (min-width: 992px) {
@@ -364,7 +404,7 @@ export default {
                 background-size: cover;
                 background-position: center center;
                 transform: scale(1.1);
-                transition: all 5s;
+                transition: all 3s;
                 opacity: 0.9;
             }
         }
@@ -446,9 +486,9 @@ export default {
                         }
                     }
                 }
-                .option {
-                }
-                .tempo {
+                .option,
+                .tempo,
+                .hold {
                 }
             }
             .commentary {

@@ -103,7 +103,7 @@
                 >
                     <i>
                         <img
-                            src="../../../img/icons/smiley/46.svg"
+                            src="../../../../../img/icons/smiley/46.svg"
                             alt="Smiley qui va très mal"
                         />
                     </i>
@@ -115,7 +115,7 @@
                 >
                     <i>
                         <img
-                            src="../../../img/icons/smiley/47.svg"
+                            src="../../../../../img/icons/smiley/47.svg"
                             alt="Smiley qui va mal"
                         />
                     </i>
@@ -128,7 +128,7 @@
                 >
                     <i>
                         <img
-                            src="../../../img/icons/smiley/48.svg"
+                            src="../../../../../img/icons/smiley/48.svg"
                             alt="Smiley qui va pas bien"
                         />
                     </i>
@@ -140,7 +140,7 @@
                 >
                     <i>
                         <img
-                            src="../../../img/icons/smiley/49.svg"
+                            src="../../../../../img/icons/smiley/49.svg"
                             alt="Smiley qui va bof"
                         />
                     </i>
@@ -152,7 +152,7 @@
                 >
                     <i>
                         <img
-                            src="../../../img/icons/smiley/50.svg"
+                            src="../../../../../img/icons/smiley/50.svg"
                             alt="Smiley perplexe"
                         />
                     </i>
@@ -164,7 +164,7 @@
                 >
                     <i>
                         <img
-                            src="../../../img/icons/smiley/51.svg"
+                            src="../../../../../img/icons/smiley/51.svg"
                             alt="Smiley qui va bien"
                         />
                     </i>
@@ -176,7 +176,7 @@
                 >
                     <i>
                         <img
-                            src="../../../img/icons/smiley/52.svg"
+                            src="../../../../../img/icons/smiley/52.svg"
                             alt="Smiley qui va très bien"
                         />
                     </i>
@@ -188,7 +188,7 @@
                 >
                     <i>
                         <img
-                            src="../../../img/icons/smiley/53.svg"
+                            src="../../../../../img/icons/smiley/53.svg"
                             alt="Smiley très content"
                         />
                     </i>
@@ -200,7 +200,7 @@
                 >
                     <i>
                         <img
-                            src="../../../img/icons/smiley/54.svg"
+                            src="../../../../../img/icons/smiley/54.svg"
                             alt="Smiley aux anges"
                         />
                     </i>
@@ -233,7 +233,6 @@
 </template>
 
 <script>
-import f from "../../services/function";
 import VueSlider from "vue-slider-component";
 
 export default {
@@ -253,22 +252,28 @@ export default {
     methods: {
         validTechnical() {
             this.$emit("validTechnicalValue", this.technicalValue);
-            this.technicalValue = 50;
+            setTimeout(() => {
+                this.technicalValue = 50;
+            }, 1000);
         },
         validDifficulty() {
             this.$emit("validDifficultyValue", this.difficultyValue);
-            this.difficultyValue = 50;
+            setTimeout(() => {
+                this.difficultyValue = 50;
+            }, 1000);
         },
         validSensitivity() {
             this.$emit("validSensitivityValue", this.sensitivityValue);
-            this.sensitivityValue = 50;
+            setTimeout(() => {
+                this.sensitivityValue = 50;
+            }, 1000);
         },
     },
 };
 </script>
 
 <style lang="scss" scoped>
-@import "../../../scss/variables";
+@import "../../../../../scss/variables";
 
 .eval-frame {
     background: $gray-light;

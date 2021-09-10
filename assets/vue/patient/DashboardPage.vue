@@ -132,10 +132,10 @@
 <script>
 import Vue from "vue";
 import f from "../services/function";
-import DoctorChoice from "./components/DoctorChoice.vue";
-import MyScores from "./components/MyScores.vue";
-import MyWorksheets from "./components/MyWorksheets.vue";
-import DashboardNotifications from "./components/DashboardNotifications.vue";
+import DoctorChoice from "./DashboardPage/DoctorChoice.vue";
+import MyScores from "./DashboardPage/MyScores.vue";
+import MyWorksheets from "./DashboardPage/MyWorksheets.vue";
+import DashboardNotifications from "./DashboardPage/DashboardNotifications.vue";
 
 // import ExerciseStatsCharts from "./components/ExerciseStatsCharts.vue";
 // import PatientDetails from "./components/PatientDetails.vue";
