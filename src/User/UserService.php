@@ -16,7 +16,7 @@ class UserService
         $name = $user->getFirstname() || $user->getLastname()
                 ? "{$user->getFirstname()} {$user->getLastname()}"
                 : $user->getEmail();
-        
-        return $this->getCivility($user->getGender()).$name;
+
+        return $this->getCivility($user->getGender()) . $name;
     }
 }

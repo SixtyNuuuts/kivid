@@ -150,7 +150,6 @@ export default {
                             : error.response.data;
 
                     console.error(errorMess);
-                    this.loading = false;
                 });
         },
         acceptDoctor(notificationId) {

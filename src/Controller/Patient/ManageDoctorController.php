@@ -2,12 +2,12 @@
 
 namespace App\Controller\Patient;
 
+use App\User\UserService;
 use App\Entity\Patient;
 use App\Repository\DoctorRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use App\Notification\NotificationService;
 use App\Repository\NotificationRepository;
-use App\User\UserService;
+use App\Notification\NotificationService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -60,14 +60,14 @@ class ManageDoctorController extends AbstractController
                 return $this->json(
                     "<strong>{$this->userService->getUserName($doctor)}</strong> 
                     est maintenant votre praticien",
-                    200,
+                    200
                 );
             }
         }
 
         return $this->json(
             "Une erreur s'est produite lors de l'ajout du praticien",
-            500,
+            500
         );
     }
 
@@ -95,14 +95,14 @@ class ManageDoctorController extends AbstractController
                 return $this->json(
                     "<strong>{$this->userService->getUserName($doctor)}</strong> 
                     est maintenant votre praticien",
-                    200,
+                    200
                 );
             }
         }
 
         return $this->json(
             "Une erreur s'est produite lors de l'acceptation de la demande d'ajout du praticien",
-            500,
+            500
         );
     }
 
@@ -132,14 +132,14 @@ class ManageDoctorController extends AbstractController
                 return $this->json(
                     "Vous avez refusé la demande d'ajout de 
                     <strong>{$this->userService->getUserName($doctor)}</strong>",
-                    200,
+                    200
                 );
             }
         }
 
         return $this->json(
             "Une erreur s'est produite lors du refus de la demande d'ajout du praticien",
-            500,
+            500
         );
     }
 }

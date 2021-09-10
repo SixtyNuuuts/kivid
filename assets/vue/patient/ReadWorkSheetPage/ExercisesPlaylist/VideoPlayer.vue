@@ -43,16 +43,16 @@
         <transition name="fade">
             <div v-if="scoreFrame" class="score-frame">
                 <div class="score-top-elip">
-                    <img src="../../../img/score-elip.svg" alt="ovale" />
+                    <img src="../../../../img/score-elip.svg" alt="ovale" />
                 </div>
                 <div class="score-stars-confettis">
                     <img
-                        src="../../../img/score-stars-confettis.svg"
+                        src="../../../../img/score-stars-confettis.svg"
                         alt="Confettis"
                     />
                 </div>
                 <div class="score-fanion">
-                    <img src="../../../img/score-fanion.svg" alt="fanion" />
+                    <img src="../../../../img/score-fanion.svg" alt="fanion" />
                 </div>
                 <div class="score-text">
                     <div class="label">Félicitation !</div>
@@ -74,9 +74,7 @@
                     <div class="exercise-details">
                         <div class="exercise-count">
                             Exercice {{ getExercise.position }}/{{
-                                $parent.getExercises
-                                    ? $parent.getExercises.length
-                                    : 0
+                                getExercises ? getExercises.length : 0
                             }}
                         </div>
                         <span class="tiret">-</span>
@@ -126,13 +124,19 @@
 </template>
 
 <script>
-import f from "../../services/function";
-import EvalFrame from "./EvalFrame.vue";
+import EvalFrame from "./VideoPlayer/EvalFrame.vue";
 
 export default {
     props: {
+        patient: Object,
         exercise: Object,
+        exercises: Array,
+        worksheet: Object,
         lastExercise: Object,
+        currentWorksheetSession: Object,
+        csrfTokenCompleteWorksheetSession: String,
+        csrfTokenCompleteExercise: String,
+        csrfTokenCreateExerciseStat: String,
     },
     components: {
         EvalFrame,
@@ -157,8 +161,17 @@ export default {
         getExercise() {
             return this.exercise;
         },
+        getExercises() {
+            return this.exercises;
+        },
+        getWorksheet() {
+            return this.worksheet;
+        },
         getTheLastExercise() {
             return this.lastExercise;
+        },
+        getCurrentWorksheetSession() {
+            return this.currentWorksheetSession;
         },
     },
     methods: {
@@ -171,22 +184,22 @@ export default {
             this.technicalEvalFrame = true;
         },
         validTechnicalValue(value) {
-            this.$emit("setTechnicalValue", value);
+            this.setTechnicalValue(value);
             this.technicalEvalFrame = false;
             this.difficultyEvalFrame = true;
         },
         validDifficultyValue(value) {
-            this.$emit("setDifficultyValue", value);
+            this.setDifficultyValue(value);
             this.difficultyEvalFrame = false;
             this.sensitivityEvalFrame = true;
         },
         validSensitivityValue(value) {
-            this.$emit("setSensitivityValue", value);
+            this.setSensitivityValue(value);
             this.sensitivityEvalFrame = false;
             this.scoreFrame = true;
         },
         confirmScore() {
-            this.exerciseCompleted(this.getExercise.id);
+            this.setExerciseCompleted(this.getExercise.id);
             this.scoreFrame = false;
             if (this.getExercise === this.getTheLastExercise) {
                 this.closeVideoPlayer();
@@ -194,22 +207,103 @@ export default {
                 this.videoFrame = true;
             }
         },
-        exerciseCompleted(exerciseId) {
-            this.$emit("exerciseCompleted", exerciseId);
+        setTechnicalValue(value) {
+            this.createExerciseStat("technical", value / 10);
+        },
+        setDifficultyValue(value) {
+            this.createExerciseStat("difficulty", value / 10);
+        },
+        setSensitivityValue(value) {
+            this.createExerciseStat("sensitivity", value / 10);
+        },
+        createExerciseStat(criterion, value) {
+            this.axios
+                .post(
+                    `/patient/${this.patient.id}/create/exercise-stat/${criterion}`,
+                    {
+                        _token: this.csrfTokenCreateExerciseStat,
+                        exerciseId: this.getExercise.id,
+                        worksheetId: this.getWorksheet.id,
+                        worksheetSessionId: this.getCurrentWorksheetSession.id,
+                        exerciseStatValue: value,
+                    }
+                )
+                .then((response) => {
+                    console.log(response.data);
+                })
+                .catch((error) => {
+                    const errorMess =
+                        "object" === typeof error.response.data
+                            ? error.response.data.detail
+                            : error.response.data;
+
+                    console.error(errorMess);
+                });
+        },
+        setExerciseCompleted(exerciseId) {
+            this.axios
+                .post(`/patient/${this.patient.id}/complete/exercise`, {
+                    _token: this.csrfTokenCompleteExercise,
+                    exerciseId: exerciseId,
+                })
+                .then((response) => {
+                    console.log(response.data);
+
+                    this.getExercises.find(
+                        (e) => e.id === exerciseId
+                    ).isCompleted = true;
+
+                    if (this.getExercise === this.getTheLastExercise) {
+                        this.axios
+                            .post(
+                                `/patient/${this.patient.id}/complete/worksheet-session`,
+                                {
+                                    _token: this
+                                        .csrfTokenCompleteWorksheetSession,
+                                    worksheetSessionId:
+                                        this.getCurrentWorksheetSession.id,
+                                }
+                            )
+                            .then((response) => {
+                                console.log(response.data);
+
+                                this.getCurrentWorksheetSession.isInProgress = false;
+                                this.getCurrentWorksheetSession.isCompleted = true;
+                                this.getCurrentWorksheetSession.doneAt =
+                                    new Date();
+                            })
+                            .catch((error) => {
+                                const errorMess =
+                                    "object" === typeof error.response.data
+                                        ? error.response.data.detail
+                                        : error.response.data;
+
+                                console.error(errorMess);
+                            });
+                    }
+                })
+                .catch((error) => {
+                    const errorMess =
+                        "object" === typeof error.response.data
+                            ? error.response.data.detail
+                            : error.response.data;
+
+                    console.error(errorMess);
+                });
         },
         closeVideoPlayer() {
             this.$emit("closeVideoPlayer", true);
         },
         closeVideoPlayerAndCompleteExercise() {
             this.$emit("closeVideoPlayer", true);
-            this.exerciseCompleted(this.getExercise.id);
+            this.setExerciseCompleted(this.getExercise.id);
         },
     },
 };
 </script>
 
 <style lang="scss" scoped>
-@import "../../../scss/variables";
+@import "../../../../scss/variables";
 
 .video-player {
     position: absolute;
@@ -282,6 +376,10 @@ export default {
             align-items: center;
             position: relative;
 
+            @media (min-width: 768px) {
+                padding: 12% 11%;
+            }
+
             @media (min-width: 992px) {
                 padding: 10% 10%;
             }
@@ -302,18 +400,9 @@ export default {
                 border-radius: 1rem;
                 overflow: hidden;
 
-                @media (min-width: 992px) {
-                    transform: none;
+                @media (min-width: 768px) {
                     height: 100%;
-                    transform: translateY(-4.3rem);
-                }
-
-                @media (min-width: 1100px) {
-                    transform: translateY(-4.3rem);
-                }
-
-                @media (min-width: 1500px) {
-                    transform: translateY(-4.3rem);
+                    transform: translateY(-4.7rem);
                 }
             }
         }
@@ -652,7 +741,11 @@ export default {
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                margin-top: 0.5rem;
+                margin-top: 0.8rem;
+
+                @media (min-width: 768px) {
+                    margin-top: 0.25rem;
+                }
 
                 > div {
                     margin: 0 0.7rem;

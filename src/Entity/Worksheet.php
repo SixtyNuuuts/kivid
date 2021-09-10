@@ -17,13 +17,13 @@ class Worksheet
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"worksheet_read", "dashboard_worksheet_read"})
+     * @Groups({"worksheet_read", "reduced_worksheet_read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"worksheet_read", "dashboard_worksheet_read"})
+     * @Groups({"worksheet_read", "reduced_worksheet_read"})
      */
     private $title;
 
@@ -39,31 +39,31 @@ class Worksheet
 
     /**
      * @ORM\OneToMany(targetEntity=Exercise::class, mappedBy="worksheet", orphanRemoval=true)
-     * @Groups({"worksheet_read", "dashboard_worksheet_read"})
+     * @Groups({"worksheet_read", "reduced_worksheet_read"})
      */
     private $exercises;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"worksheet_read", "dashboard_worksheet_read"})
+     * @Groups({"worksheet_read", "reduced_worksheet_read"})
      */
     private $partOfBody;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"worksheet_read", "dashboard_worksheet_read"})
+     * @Groups({"worksheet_read", "reduced_worksheet_read"})
      */
     private $duration;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"worksheet_read", "dashboard_worksheet_read"})
+     * @Groups({"worksheet_read", "reduced_worksheet_read"})
      */
     private $perDay;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"worksheet_read", "dashboard_worksheet_read"})
+     * @Groups({"worksheet_read", "reduced_worksheet_read"})
      */
     private $perWeek;
 
@@ -79,7 +79,6 @@ class Worksheet
 
     /**
      * @ORM\OneToMany(targetEntity=WorksheetSession::class, mappedBy="worksheet", orphanRemoval=true)
-     * @Groups({"worksheet_read"})
      */
     private $worksheetSessions;
 
@@ -93,6 +92,11 @@ class Worksheet
      */
     private $patient;
 
+    /**
+     * @ORM\OneToMany(targetEntity=ExerciseStat::class, mappedBy="worksheet")
+     */
+    private $exerciseStats;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -103,6 +107,7 @@ class Worksheet
         $this->perWeek = 1;
         $this->commentaries = new ArrayCollection();
         $this->worksheetSessions = new ArrayCollection();
+        $this->exerciseStats = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -321,6 +326,36 @@ class Worksheet
     public function setPatient(?Patient $patient): self
     {
         $this->patient = $patient;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ExerciseStat[]
+     */
+    public function getExerciseStats(): Collection
+    {
+        return $this->exerciseStats;
+    }
+
+    public function addExerciseStat(ExerciseStat $exerciseStat): self
+    {
+        if (!$this->exerciseStats->contains($exerciseStat)) {
+            $this->exerciseStats[] = $exerciseStat;
+            $exerciseStat->setWorksheet($this);
+        }
+
+        return $this;
+    }
+
+    public function removeExerciseStat(ExerciseStat $exerciseStat): self
+    {
+        if ($this->exerciseStats->removeElement($exerciseStat)) {
+            // set the owning side to null (unless already changed)
+            if ($exerciseStat->getWorksheet() === $this) {
+                $exerciseStat->setWorksheet(null);
+            }
+        }
 
         return $this;
     }

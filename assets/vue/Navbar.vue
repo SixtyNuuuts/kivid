@@ -260,8 +260,6 @@ export default {
                             : error.response.data;
 
                     console.error(errorMess);
-
-                    this.loadingNotif = false;
                 });
         },
         openNotifications() {

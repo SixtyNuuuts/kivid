@@ -1,7 +1,7 @@
 <template>
     <div class="container" id="read-worksheet">
         <header>
-            <div v-if="loadingWorksheet" class="loading-block">
+            <div v-if="loading" class="loading-block">
                 <div class="title">
                     <i class="kiv-arrow-left icon-31"></i>
                     <div class="loading-gray h1"></div>
@@ -55,33 +55,36 @@
         <main>
             <vs-dialog class="modal-mobile" v-model="modalTimingFriezeMobile">
                 <TimingFrieze
-                    :loading="loadingWorksheet"
+                    :loading="loading"
                     :worksheet="getWorksheet"
+                    :currentWorksheetSession="getCurrentWorksheetSession"
+                    :totalWorksheetSessions="getTotalWorksheetSessions"
                 />
             </vs-dialog>
             <section id="timing-frieze">
                 <TimingFrieze
-                    :loading="loadingWorksheet"
+                    :loading="loading"
                     :worksheet="getWorksheet"
+                    :currentWorksheetSession="getCurrentWorksheetSession"
+                    :totalWorksheetSessions="getTotalWorksheetSessions"
                 />
             </section>
             <section id="exercises-playlist">
                 <ExercisesPlaylist
-                    :exercises="getWorksheet.exercises"
-                    :loading="loadingWorksheet"
-                />
-                <!-- <ExercisesPlaylist
                     :patient="patient"
-                    :csrfTokenExerciseCompleted="csrfTokenExerciseCompleted"
-                    :csrfTokenCreateExerciseStats="csrfTokenCreateExerciseStats"
-                    :csrfTokenInitWorksheetSessions="
-                        csrfTokenInitWorksheetSessions
-                    "
+                    :loading="loading"
+                    :worksheet="getWorksheet"
+                    :currentWorksheetSession="getCurrentWorksheetSession"
                     :csrfTokenStartWorksheetSession="
                         csrfTokenStartWorksheetSession
                     "
+                    :csrfTokenCompleteWorksheetSession="
+                        csrfTokenCompleteWorksheetSession
+                    "
+                    :csrfTokenCompleteExercise="csrfTokenCompleteExercise"
+                    :csrfTokenCreateExerciseStat="csrfTokenCreateExerciseStat"
                     :csrfTokenCreateCommentary="csrfTokenCreateCommentary"
-                /> -->
+                />
             </section>
         </main>
     </div>
@@ -89,9 +92,9 @@
 
 <script>
 import f from "../services/function";
-import TimingFrieze from "./components/TimingFrieze.vue";
-import ExercisesPlaylist from "./components/ExercisesPlaylist.vue";
-import TagPartOfBody from "./components/TagPartOfBody.vue";
+import TimingFrieze from "./ReadWorkSheetPage/TimingFrieze.vue";
+import ExercisesPlaylist from "./ReadWorkSheetPage/ExercisesPlaylist.vue";
+import TagPartOfBody from "./Components/TagPartOfBody.vue";
 
 export default {
     components: {
@@ -104,19 +107,27 @@ export default {
             patient: null,
             worksheetId: null,
             worksheet: {},
+            currentWorksheetSession: {},
+            totalWorksheetSessions: null,
             // doctorView: null,
-            csrfTokenInitWorksheetSessions: null,
             csrfTokenStartWorksheetSession: null,
-            csrfTokenExerciseCompleted: null,
-            csrfTokenCreateExerciseStats: null,
+            csrfTokenCompleteWorksheetSession: null,
+            csrfTokenCompleteExercise: null,
+            csrfTokenCreateExerciseStat: null,
             csrfTokenCreateCommentary: null,
             modalTimingFriezeMobile: false,
-            loadingWorksheet: false,
+            loading: false,
         };
     },
     computed: {
         getWorksheet() {
             return this.worksheet;
+        },
+        getCurrentWorksheetSession() {
+            return this.currentWorksheetSession;
+        },
+        getTotalWorksheetSessions() {
+            return this.totalWorksheetSessions;
         },
         allExercisesIsCompleted() {
             if (this.getWorksheet.exercises) {
@@ -126,21 +137,40 @@ export default {
             }
         },
     },
+    methods: {
+        getCurrentCommentary(exerciseCommentaries) {
+            let commentary = {
+                content: "",
+                id: null,
+            };
+
+            const commentaryExist = exerciseCommentaries.find(
+                (c) =>
+                    c.worksheetSession.id === this.getCurrentWorksheetSession.id
+            );
+
+            if (commentaryExist) {
+                commentary = commentaryExist;
+            }
+
+            return commentary;
+        },
+    },
     created() {
         const data = JSON.parse(document.getElementById("vueData").innerHTML);
 
         this.patient = data.patient;
         this.worksheetId = data.worksheetId;
         // this.doctorView = data.doctorView;
-        this.csrfTokenInitWorksheetSessions =
-            data.csrfTokenInitWorksheetSessions;
         this.csrfTokenStartWorksheetSession =
             data.csrfTokenStartWorksheetSession;
-        this.csrfTokenExerciseCompleted = data.csrfTokenExerciseCompleted;
-        this.csrfTokenCreateExerciseStats = data.csrfTokenCreateExerciseStats;
+        this.csrfTokenCompleteWorksheetSession =
+            data.csrfTokenCompleteWorksheetSession;
+        this.csrfTokenCompleteExercise = data.csrfTokenCompleteExercise;
+        this.csrfTokenCreateExerciseStat = data.csrfTokenCreateExerciseStat;
         this.csrfTokenCreateCommentary = data.csrfTokenCreateCommentary;
 
-        this.loadingWorksheet = true;
+        this.loading = true;
 
         this.axios
             .get(
@@ -149,11 +179,93 @@ export default {
             .then((response) => {
                 this.worksheet = response.data;
 
-                this.worksheet.exercises = f.sortByPosition(
-                    this.worksheet.exercises
-                );
+                this.axios
+                    .get(
+                        `/patient/${this.patient.id}/get/current-worksheet-session/${this.worksheetId}`
+                    )
+                    .then((response) => {
+                        this.currentWorksheetSession = response.data;
 
-                this.loadingWorksheet = false;
+                        this.worksheet.exercises = f.sortByPosition(
+                            this.worksheet.exercises.map((exercise) => {
+                                return {
+                                    ...exercise,
+                                    commentary: this.getCurrentCommentary(
+                                        exercise.commentaries
+                                    ),
+                                };
+                            })
+                        );
+
+                        this.axios
+                            .get(
+                                `/patient/${this.patient.id}/get/total-worksheet-sessions/${this.worksheetId}`
+                            )
+                            .then((response) => {
+                                this.totalWorksheetSessions = response.data;
+
+                                if (
+                                    !this.currentWorksheetSession
+                                        .isInProgress &&
+                                    !this.currentWorksheetSession.isCompleted
+                                ) {
+                                    this.axios
+                                        .post(
+                                            `/patient/${this.patient.id}/start/worksheet-session`,
+                                            {
+                                                _token: this
+                                                    .csrfTokenStartWorksheetSession,
+                                                worksheetId:
+                                                    this.getWorksheet.id,
+                                                worksheetSessionId:
+                                                    this
+                                                        .getCurrentWorksheetSession
+                                                        .id,
+                                            }
+                                        )
+                                        .then((response) => {
+                                            console.log(response.data);
+
+                                            this.getCurrentWorksheetSession.isInProgress = true;
+
+                                            this.getWorksheet.exercises.forEach(
+                                                (exercise) => {
+                                                    exercise.isCompleted = false;
+                                                }
+                                            );
+
+                                            this.loading = false;
+                                        })
+                                        .catch((error) => {
+                                            const errorMess =
+                                                "object" ===
+                                                typeof error.response.data
+                                                    ? error.response.data.detail
+                                                    : error.response.data;
+
+                                            console.error(errorMess);
+                                        });
+                                } else {
+                                    this.loading = false;
+                                }
+                            })
+                            .catch((error) => {
+                                const errorMess =
+                                    "object" === typeof error.response.data
+                                        ? error.response.data.detail
+                                        : error.response.data;
+
+                                console.error(errorMess);
+                            });
+                    })
+                    .catch((error) => {
+                        const errorMess =
+                            "object" === typeof error.response.data
+                                ? error.response.data.detail
+                                : error.response.data;
+
+                        console.error(errorMess);
+                    });
             })
             .catch((error) => {
                 const errorMess =
@@ -162,8 +274,6 @@ export default {
                         : error.response.data;
 
                 console.error(errorMess);
-
-                this.loadingWorksheet = false;
             });
     },
 };
@@ -207,6 +317,29 @@ export default {
                 display: flex;
                 align-items: center;
                 margin-bottom: 2rem;
+                max-width: 60%;
+                position: relative;
+                top: 0.3rem;
+
+                @media (min-width: 768px) {
+                    top: 0;
+                }
+
+                @media (min-width: 330px) {
+                    max-width: 65%;
+                }
+
+                @media (min-width: 410px) {
+                    max-width: 70%;
+                }
+
+                @media (min-width: 500px) {
+                    max-width: 75%;
+                }
+
+                @media (min-width: 768px) {
+                    max-width: 85%;
+                }
 
                 i {
                     font-size: 1.6rem;
@@ -216,6 +349,9 @@ export default {
 
                 h1 {
                     margin: 0;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
                 }
             }
 
@@ -229,11 +365,11 @@ export default {
     .info {
         border-radius: 0.5rem;
         background: $white;
-        padding: 2.1rem;
+        padding: 1.9rem 2.1rem;
         margin-bottom: 2.5rem;
 
         @media (min-width: 992px) {
-            margin-bottom: 3.5rem;
+            margin-bottom: 2.5rem;
         }
 
         > div {

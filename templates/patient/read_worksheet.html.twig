@@ -21,10 +21,10 @@
 	{
 		"patient": {{ patient|serialize('json', {'groups': 'patient_read'})|raw }},
 		"worksheetId": {{ worksheetId|serialize('json')|raw }},
-		"csrfTokenInitWorksheetSessions": {{ csrf_token('init_worksheet_sessions' ~ patient.id)|serialize('json')|raw }},
 		"csrfTokenStartWorksheetSession": {{ csrf_token('start_worksheet_session' ~ patient.id)|serialize('json')|raw }},
-		"csrfTokenExerciseCompleted": {{ csrf_token('exercise_completed' ~ patient.id)|serialize('json')|raw }},
-		"csrfTokenCreateExerciseStats": {{ csrf_token('save_exercise_stat' ~ patient.id)|serialize('json')|raw }},
+		"csrfTokenCompleteWorksheetSession": {{ csrf_token('complete_worksheet_session' ~ patient.id)|serialize('json')|raw }},
+		"csrfTokenCompleteExercise": {{ csrf_token('complete_exercise' ~ patient.id)|serialize('json')|raw }},
+		"csrfTokenCreateExerciseStat": {{ csrf_token('create_exercise_stat' ~ patient.id)|serialize('json')|raw }},
 		"csrfTokenCreateCommentary": {{ csrf_token('create_commentary' ~ patient.id)|serialize('json')|raw }}
 	}
 {% endblock %}

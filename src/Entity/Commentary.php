@@ -51,6 +51,13 @@ class Commentary
      */
     private $doctor;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=WorksheetSession::class, inversedBy="commentaries")
+     * @ORM\JoinColumn(nullable=false)
+     * @Groups({"worksheet_read"})
+     */
+    private $worksheetSession;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -129,6 +136,18 @@ class Commentary
     public function setDoctor(?Doctor $doctor): self
     {
         $this->doctor = $doctor;
+
+        return $this;
+    }
+
+    public function getWorksheetSession(): ?WorksheetSession
+    {
+        return $this->worksheetSession;
+    }
+
+    public function setWorksheetSession(?WorksheetSession $worksheetSession): self
+    {
+        $this->worksheetSession = $worksheetSession;
 
         return $this;
     }

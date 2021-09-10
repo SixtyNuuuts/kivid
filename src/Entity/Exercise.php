@@ -51,7 +51,7 @@ class Exercise
      */
     private $tempo;
 
-    
+
     /**
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"worksheet_read"})
@@ -82,7 +82,6 @@ class Exercise
 
     /**
      * @ORM\OneToMany(targetEntity=ExerciseStat::class, mappedBy="exercise")
-     * @Groups({"worksheet_read"})
      */
     private $exerciseStats;
 
