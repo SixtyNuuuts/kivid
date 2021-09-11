@@ -3,15 +3,14 @@
 namespace App\Controller\Patient;
 
 use App\Entity\Patient;
-use App\Entity\Worksheet;
-use App\Entity\WorksheetSession;
 use App\Repository\WorksheetRepository;
 use App\Repository\WorksheetSessionRepository;
+use App\Service\WorksheetSessionService;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
  * @Route("/patient")
@@ -20,15 +19,18 @@ class WorksheetSessionController extends AbstractController
 {
     private $worksheetRepository;
     private $worksheetSessionRepository;
+    private $worksheetSessionService;
     private $em;
 
     public function __construct(
         WorksheetRepository $worksheetRepository,
         WorksheetSessionRepository $worksheetSessionRepository,
+        WorksheetSessionService $worksheetSessionService,
         EntityManagerInterface $em
     ) {
         $this->worksheetRepository = $worksheetRepository;
         $this->worksheetSessionRepository = $worksheetSessionRepository;
+        $this->worksheetSessionService = $worksheetSessionService;
         $this->em = $em;
     }
 
@@ -47,7 +49,8 @@ class WorksheetSessionController extends AbstractController
         $currentWorksheetSession = $this->worksheetSessionRepository->findCurrentWorksheetSession($worksheet);
 
         if (!$currentWorksheetSession) {
-            $firstGenerateWorksheetSession = $this->generateWorksheetSessionsAndGetFirst($worksheet);
+            $firstGenerateWorksheetSession =
+                $this->worksheetSessionService->generateWorksheetSessionsAndGetFirst($worksheet);
 
             if (!$firstGenerateWorksheetSession) {
                 return $this->json(
@@ -148,72 +151,5 @@ class WorksheetSessionController extends AbstractController
             "Une erreur s'est produite lors de la clôture de la session",
             500
         );
-    }
-
-    private function generateWorksheetSessionsAndGetFirst(Worksheet $worksheet): ?WorksheetSession
-    {
-        $checkIfWorksheetSessionsExist = $this->worksheetSessionRepository->findOneBy(
-            ['worksheet' => $worksheet, 'execOrder' => 1]
-        );
-
-        if ($checkIfWorksheetSessionsExist) {
-            return null;
-        }
-
-        $firstGenerateWorksheetSession = $this->generateWorksheetSessions($worksheet);
-
-        return $firstGenerateWorksheetSession;
-    }
-
-    private function generateWorksheetSessions(Worksheet $worksheet): ?WorksheetSession
-    {
-        $sessionDuration = (
-            (
-                604800 // secondes dans une semaine
-                / $worksheet->getPerWeek()
-            )
-            / $worksheet->getPerDay()
-        );
-
-        $refDate = new \DateTime();
-
-        $firstGenerateWorksheetSession = null;
-
-        for (
-            $session = 1; $session <= $worksheet->getDuration()
-                                    * $worksheet->getPerWeek()
-                                    * $worksheet->getPerDay(); $session++
-        ) {
-            $worksheetSession = new WorksheetSession();
-
-            $worksheetSession->setWorksheet($worksheet);
-            $worksheetSession->setExecOrder($session);
-
-            $worksheetSessionStartDate = new \DateTime();
-            $worksheetSessionStartDate->setTimestamp(
-                $refDate->getTimestamp()
-                + 1
-            );
-            $worksheetSession->setStartAt($worksheetSessionStartDate);
-
-            $worksheetSessionEndDate = new \DateTime();
-            $worksheetSessionEndDate->setTimestamp(
-                $worksheetSessionStartDate->getTimestamp()
-                + $sessionDuration
-            );
-            $worksheetSession->setEndAt($worksheetSessionEndDate);
-
-            $refDate = $worksheetSessionEndDate;
-
-            if (1 === $session) {
-                $firstGenerateWorksheetSession = $worksheetSession;
-            }
-
-            $this->em->persist($worksheetSession);
-        }
-
-        $this->em->flush();
-
-        return $firstGenerateWorksheetSession;
     }
 }

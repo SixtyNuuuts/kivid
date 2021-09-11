@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Subscription;
+namespace App\Service;
 
-use App\Subscription\SubscriptionPlan;
+use App\Modele\SubscriptionPlan;
 
-class SubscriptionHelper
+class SubscriptionService
 {
     private $plans = [];
 

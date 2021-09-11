@@ -59,6 +59,11 @@ class Patient extends User
      */
     private $worksheets;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Score::class, mappedBy="patient", orphanRemoval=true)
+     */
+    private $scores;
+
     public function __construct()
     {
         parent::__construct(['ROLE_PATIENT']);
@@ -66,6 +71,7 @@ class Patient extends User
         $this->notifications = new ArrayCollection();
         $this->commentaries = new ArrayCollection();
         $this->worksheets = new ArrayCollection();
+        $this->scores = new ArrayCollection();
     }
 
     public function getBirthdate(): ?\DateTimeImmutable
@@ -230,6 +236,36 @@ class Patient extends User
             // set the owning side to null (unless already changed)
             if ($worksheet->getPatient() === $this) {
                 $worksheet->setPatient(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Score[]
+     */
+    public function getScores(): Collection
+    {
+        return $this->scores;
+    }
+
+    public function addScore(Score $score): self
+    {
+        if (!$this->scores->contains($score)) {
+            $this->scores[] = $score;
+            $score->setPatient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeScore(Score $score): self
+    {
+        if ($this->scores->removeElement($score)) {
+            // set the owning side to null (unless already changed)
+            if ($score->getPatient() === $this) {
+                $score->setPatient(null);
             }
         }
 

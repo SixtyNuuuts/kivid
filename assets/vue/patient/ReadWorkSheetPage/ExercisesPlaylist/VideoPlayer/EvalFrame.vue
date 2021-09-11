@@ -212,22 +212,31 @@
             v-if="'technical' === type"
             class="btn-eval-valid-and-next"
             @click="validTechnical"
+            :class="{ disabled: loading }"
         >
-            <vs-button> Suivant </vs-button>
+            <vs-button :loading="loading" :disabled="loading">
+                Suivant
+            </vs-button>
         </div>
         <div
             v-if="'difficulty' === type"
             class="btn-eval-valid-and-next"
             @click="validDifficulty"
+            :class="{ disabled: loading }"
         >
-            <vs-button> Suivant </vs-button>
+            <vs-button :loading="loading" :disabled="loading">
+                Suivant
+            </vs-button>
         </div>
         <div
             v-if="'sensitivity' === type"
             class="btn-eval-valid-and-next"
             @click="validSensitivity"
+            :class="{ disabled: loading }"
         >
-            <vs-button> Suivant </vs-button>
+            <vs-button :loading="loading" :disabled="loading">
+                Suivant
+            </vs-button>
         </div>
     </div>
 </template>
@@ -238,6 +247,7 @@ import VueSlider from "vue-slider-component";
 export default {
     props: {
         type: String,
+        loading: Boolean,
     },
     components: {
         VueSlider,
@@ -305,6 +315,7 @@ export default {
         max-height: 60rem;
         width: 80%;
         transform: translate(-50%, -50%);
+        overflow-y: hidden;
     }
 
     h1 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Stripe;
+namespace App\Service;
 
 use App\Entity\Subscription;
 use App\Repository\SubscriptionRepository;

@@ -3,9 +3,12 @@
 namespace App\Controller\Patient;
 
 use App\Repository\PatientRepository;
+<<<<<<< HEAD
+=======
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+>>>>>>> f22952b (integration design step 8)
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class CRUDController extends AbstractController
 {

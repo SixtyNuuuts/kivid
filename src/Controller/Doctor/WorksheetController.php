@@ -8,26 +8,26 @@ use App\Entity\Exercise;
 use App\Entity\Worksheet;
 use App\Entity\ExerciseStat;
 use App\Entity\WorksheetSession;
+use App\Service\NotificationService;
 use App\Repository\VideoRepository;
 use App\Repository\PatientRepository;
 use App\Repository\ExerciseRepository;
-use App\Repository\WorksheetRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use App\Notification\NotificationService;
 use App\Repository\ExerciseStatRepository;
+use App\Repository\WorksheetRepository;
+use App\Repository\WorksheetSessionRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
-use App\Repository\WorksheetSessionRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
- * @Route("/kine")
+ * @Route("/praticien")
  */
-class ManageWorksheetController extends AbstractController
+class WorksheetController extends AbstractController
 {
     private $patientRepository;
     private $worksheetRepository;
@@ -433,46 +433,5 @@ class ManageWorksheetController extends AbstractController
     //         [],
     //         ['groups' => 'prescription_read']
     //     );
-    // }
-
-    // private function generateExercise(object $dataExercise, Worksheet $worksheet): void
-    // {
-    //     $exercise = new Exercise();
-
-    //     $exercise->setNumberOfRepetitions($dataExercise->numberOfRepetitions)
-    //              ->setNumberOfSeries($dataExercise->numberOfSeries)
-    //              ->setOption($dataExercise->option)
-    //              ->setPosition($dataExercise->position);
-
-    //     $video = $this->videoRepository->findOneById($dataExercise->video->id);
-
-    //     $exercise->setVideo($video);
-
-    //     $worksheet->addExercise($exercise);
-
-    //     $this->em->persist($exercise);
-    // }
-
-    // private function generateExerciseStatsInit(Exercise $exercise, WorksheetSession $worksheetSession): void
-    // {
-    //     $exerciseStatsCriterions = [
-    //         "sensitivity",
-    //         "technical",
-    //         "difficulty",
-    //     ];
-
-    //     $exerciseStatsExists = $this->exerciseStatRepository->findBy(['exercise' => $exercise]);
-
-    //     if (!$exerciseStatsExists) {
-    //         foreach ($exerciseStatsCriterions as $criterion) {
-    //             $exerciseStatInit = new ExerciseStat();
-
-    //             $exerciseStatInit->setCriterion($criterion)
-    //                              ->setExercise($exercise)
-    //                              ->setWorksheetSession($worksheetSession);
-
-    //             $this->em->persist($exerciseStatInit);
-    //         }
-    //     }
     // }
 }

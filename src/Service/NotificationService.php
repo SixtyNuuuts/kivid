@@ -1,11 +1,15 @@
 <?php
 
-namespace App\Notification;
+namespace App\Service;
 
 use App\Entity\User;
 use App\Entity\Doctor;
 use App\Entity\Patient;
 use App\Entity\Worksheet;
+<<<<<<< HEAD:src/Notification/NotificationService.php
+=======
+use App\Service\UserService;
+>>>>>>> f22952b (integration design step 8):src/Service/NotificationService.php
 use App\Entity\Notification;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
