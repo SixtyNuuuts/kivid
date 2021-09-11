@@ -4,56 +4,34 @@ namespace App\Controller\Doctor;
 
 use App\Entity\Doctor;
 use App\Entity\Patient;
-use App\User\UserService;
-use Symfony\Component\Mime\Address;
+use App\Service\UserService;
+use App\Service\NotificationService;
 use App\Repository\PatientRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Notification\NotificationService;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-use App\Repository\ResetPasswordRequestRepository;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
-use SymfonyCasts\Bundle\ResetPassword\Model\ResetPasswordToken;
-use SymfonyCasts\Bundle\ResetPassword\Util\ResetPasswordCleaner;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use SymfonyCasts\Bundle\ResetPassword\Generator\ResetPasswordTokenGenerator;
-use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/kine")
+ * @Route("/praticien")
  */
-class ManagePatientController extends AbstractController
+class PatientController extends AbstractController
 {
     private $patientRepository;
-    private $mailer;
-    private $tokenGenerator;
-    private $resetPasswordRequestRepository;
-    private $resetPasswordCleaner;
     private $userService;
     private $notificationService;
     private $em;
 
-    // Le bundle 'ResetPassword' est utilisé dans la génération du mail "création d'un patient" par le kiné,
-    // et lors de la création du mot de passe par ce client.
     public function __construct(
         PatientRepository $patientRepository,
-        MailerInterface $mailer,
-        ResetPasswordRequestRepository $resetPasswordRequestRepository,
-        ResetPasswordTokenGenerator $generator,
-        ResetPasswordCleaner $cleaner,
         UserService $userService,
         NotificationService $notificationService,
         EntityManagerInterface $em
     ) {
         $this->patientRepository = $patientRepository;
-        $this->mailer = $mailer;
-        $this->tokenGenerator = $generator;
-        $this->resetPasswordRequestRepository = $resetPasswordRequestRepository;
-        $this->resetPasswordCleaner = $cleaner;
         $this->notificationService = $notificationService;
         $this->userService = $userService;
         $this->em = $em;
@@ -128,7 +106,7 @@ class ManagePatientController extends AbstractController
                     );
                 }
 
-                return $this->processSendingPasswordCreationEmail($patient, $doctor);
+                return $this->userService->processSendingPasswordCreationEmail($patient, $doctor);
             }
         }
         return $this->json(
@@ -210,73 +188,6 @@ class ManagePatientController extends AbstractController
         return $this->json(
             'Nous n\'avons pas pu retirer le patient de votre liste, veuillez réessayer ultérieurement.',
             500,
-        );
-    }
-
-    private function processSendingPasswordCreationEmail(Patient $patient, Doctor $doctor): JsonResponse
-    {
-        // Le bundle 'ResetPassword' est utilisé pour la génération du token.
-        try {
-            $passToken = $this->generatePasswordCreationToken($patient);
-        } catch (ResetPasswordExceptionInterface $e) {
-            return $this->json(
-                "Un problème est survenu lors de la génération du token de création de mot 
-                de passe du patient {$e->getReason()}",
-                500,
-            );
-        }
-
-        $email = (new TemplatedEmail())
-            ->from(new Address('contact@kivid.fr', '"Kivid Contact"'))
-            ->to($patient->getEmail())
-            ->subject("Vous avez été ajouté comme patient par {$doctor->getFirstname()} {$doctor->getLastname()}")
-            ->htmlTemplate('patient/create_pass/email.html.twig')
-            ->context([
-                'passToken' => $passToken,
-                'doctor' => $doctor,
-            ])
-        ;
-
-        $this->mailer->send($email);
-
-        return $this->json(
-            ["message" => "<strong>{$patient->getFirstname()} {$patient->getLastname()}</strong> 
-            a été créé et ajouté à vos patients, 
-            Nous lui avons envoyé un email pour qu'il valide son inscription.", "patient" => $patient],
-            200,
-            [],
-            ['groups' => 'patient_read']
-        );
-    }
-
-    public function generatePasswordCreationToken(Patient $patient): ResetPasswordToken
-    {
-        $this->resetPasswordCleaner->handleGarbageCollection();
-
-        // 604800 : 7 jours
-        $expiresAt = new \DateTimeImmutable(sprintf('+%d seconds', 604800));
-
-        $generatedAt = ($expiresAt->getTimestamp() - 604800);
-
-        $tokenComponents = $this->tokenGenerator->createToken(
-            $expiresAt,
-            $this->resetPasswordRequestRepository->getUserIdentifier($patient)
-        );
-
-        // Le bundle 'ResetPassword' est utilisé pour la persistence du token.
-        $passwordResetRequest = $this->resetPasswordRequestRepository->createResetPasswordRequest(
-            $patient,
-            $expiresAt,
-            $tokenComponents->getSelector(),
-            $tokenComponents->getHashedToken()
-        );
-
-        $this->resetPasswordRequestRepository->persistResetPasswordRequest($passwordResetRequest);
-
-        return new ResetPasswordToken(
-            $tokenComponents->getPublicToken(),
-            $expiresAt,
-            $generatedAt
         );
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\User;
+namespace App\Controller;
 
 use App\Form\DoctorFormType;
 use App\Form\PatientFormType;
@@ -14,7 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
-class CRUDController extends AbstractController
+class UserEditController extends AbstractController
 {
     private $patientRepository;
     private $doctorRepository;

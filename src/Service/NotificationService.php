@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Notification;
+namespace App\Service;
 
 use App\Entity\User;
 use App\Entity\Doctor;
 use App\Entity\Patient;
 use App\Entity\Worksheet;
-use App\User\UserService;
+use App\Service\UserService;
 use App\Entity\Notification;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;

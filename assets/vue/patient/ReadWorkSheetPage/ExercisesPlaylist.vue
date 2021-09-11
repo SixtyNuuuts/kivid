@@ -253,10 +253,9 @@ export default {
                     commentaryContent: exercise.commentary.content,
                 })
                 .then((response) => {
-                    console.log(response.data);
+                    // console.log(response.data);
 
                     exercise.commentary.id = response.data.commentaryId;
-                    console.log(exercise.commentary.id);
                 })
                 .catch((error) => {
                     const errorMess =

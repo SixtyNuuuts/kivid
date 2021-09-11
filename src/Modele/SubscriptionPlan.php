@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Subscription;
+namespace App\Modele;
 
 class SubscriptionPlan
 {

@@ -2,14 +2,16 @@
 
 namespace App\Controller\Patient;
 
+use App\Entity\Score;
 use App\Entity\Patient;
 use App\Entity\Commentary;
 use App\Repository\ExerciseRepository;
 use App\Repository\WorksheetRepository;
 use App\Repository\CommentaryRepository;
-use App\Repository\WorksheetSessionRepository;
+use App\Repository\ScoreRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use App\Repository\WorksheetSessionRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -24,6 +26,7 @@ class WorksheetController extends AbstractController
     private $commentaryRepository;
     private $worksheetRepository;
     private $worksheetSessionRepository;
+    private $scoreRepository;
     private $em;
 
     public function __construct(
@@ -31,12 +34,14 @@ class WorksheetController extends AbstractController
         CommentaryRepository $commentaryRepository,
         WorksheetRepository $worksheetRepository,
         WorksheetSessionRepository $worksheetSessionRepository,
+        ScoreRepository $scoreRepository,
         EntityManagerInterface $em
     ) {
         $this->exerciseRepository = $exerciseRepository;
         $this->commentaryRepository = $commentaryRepository;
         $this->worksheetRepository = $worksheetRepository;
         $this->worksheetSessionRepository = $worksheetSessionRepository;
+        $this->scoreRepository = $scoreRepository;
         $this->em = $em;
     }
 
@@ -102,11 +107,35 @@ class WorksheetController extends AbstractController
 
                 $exercise->setIsCompleted(true);
 
+                $uniqScoreLabel = "exercise_completed_{$data->exerciseId}_{$data->worksheetSessionId}";
+
+                $score = $this->scoreRepository->findOneBy(['label' => $uniqScoreLabel]);
+
+                if (!$score) {
+                    $score = new Score();
+                    $points = $exercise->getNumberOfRepetitions()
+                            * $exercise->getNumberOfSeries()
+                            * $data->ponderationForScore
+                    ;
+
+                    $score->setPatient($patient)
+                          ->setLabel($uniqScoreLabel)
+                          ->setPoints($points)
+                    ;
+
+                    $this->em->persist($score);
+                }
+
                 $this->em->flush();
 
                 return $this->json(
-                    'Exercice terminé',
-                    200
+                    [
+                        'message' => 'Exercice terminé',
+                        'score' => $score,
+                    ],
+                    200,
+                    [],
+                    ['groups' => 'score_read']
                 );
             }
         }

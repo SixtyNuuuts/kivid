@@ -25,18 +25,21 @@
                     @validTechnicalValue="validTechnicalValue"
                     type="technical"
                     key="technical"
+                    :loading="loadingBtnEvalNext"
                 />
                 <EvalFrame
                     v-show="difficultyEvalFrame"
                     @validDifficultyValue="validDifficultyValue"
                     type="difficulty"
                     key="difficulty"
+                    :loading="loadingBtnEvalNext"
                 />
                 <EvalFrame
                     v-show="sensitivityEvalFrame"
                     @validSensitivityValue="validSensitivityValue"
                     type="sensitivity"
                     key="sensitivity"
+                    :loading="loadingBtnEvalNext"
                 />
             </transition-group>
         </div>
@@ -56,7 +59,9 @@
                 </div>
                 <div class="score-text">
                     <div class="label">Félicitation !</div>
-                    <div class="score">+ 3 560 Points</div>
+                    <div v-if="exerciseScorePoints" class="score">
+                        {{ exerciseScorePoints }} points
+                    </div>
                     <div class="btn-next">
                         <vs-button @click="confirmScore">
                             <span v-if="getExercise !== getTheLastExercise">
@@ -155,6 +160,9 @@ export default {
             sensitivityEvalFrame: false,
             scoreFrame: false,
             btnValidVideoCompleted: false,
+            ponderation: [],
+            loadingBtnEvalNext: false,
+            exerciseScorePoints: null,
         };
     },
     computed: {
@@ -173,6 +181,12 @@ export default {
         getCurrentWorksheetSession() {
             return this.currentWorksheetSession;
         },
+        getPonderation() {
+            return (
+                this.ponderation.reduce((r, p) => r + p, 0) /
+                this.ponderation.length
+            );
+        },
     },
     methods: {
         videoEnded() {
@@ -184,39 +198,26 @@ export default {
             this.technicalEvalFrame = true;
         },
         validTechnicalValue(value) {
-            this.setTechnicalValue(value);
-            this.technicalEvalFrame = false;
-            this.difficultyEvalFrame = true;
+            this.createExerciseStat("technical", value / 10);
         },
         validDifficultyValue(value) {
-            this.setDifficultyValue(value);
-            this.difficultyEvalFrame = false;
-            this.sensitivityEvalFrame = true;
+            this.createExerciseStat("difficulty", value / 10);
         },
         validSensitivityValue(value) {
-            this.setSensitivityValue(value);
-            this.sensitivityEvalFrame = false;
-            this.scoreFrame = true;
+            this.createExerciseStat("sensitivity", value / 10);
         },
         confirmScore() {
-            this.setExerciseCompleted(this.getExercise.id);
             this.scoreFrame = false;
             if (this.getExercise === this.getTheLastExercise) {
                 this.closeVideoPlayer();
             } else {
                 this.videoFrame = true;
             }
-        },
-        setTechnicalValue(value) {
-            this.createExerciseStat("technical", value / 10);
-        },
-        setDifficultyValue(value) {
-            this.createExerciseStat("difficulty", value / 10);
-        },
-        setSensitivityValue(value) {
-            this.createExerciseStat("sensitivity", value / 10);
+            this.getExercise.isCompleted = true;
         },
         createExerciseStat(criterion, value) {
+            this.loadingBtnEvalNext = true;
+
             this.axios
                 .post(
                     `/patient/${this.patient.id}/create/exercise-stat/${criterion}`,
@@ -230,6 +231,25 @@ export default {
                 )
                 .then((response) => {
                     console.log(response.data);
+
+                    this.ponderation.push(response.data.ponderation);
+
+                    if ("technical" === criterion) {
+                        this.technicalEvalFrame = false;
+                        this.difficultyEvalFrame = true;
+                    }
+
+                    if ("difficulty" === criterion) {
+                        this.difficultyEvalFrame = false;
+                        this.sensitivityEvalFrame = true;
+                    }
+
+                    if ("sensitivity" === criterion) {
+                        this.sensitivityEvalFrame = false;
+                        this.setExerciseCompleted(this.getExercise.id);
+                    }
+
+                    this.loadingBtnEvalNext = false;
                 })
                 .catch((error) => {
                     const errorMess =
@@ -245,13 +265,15 @@ export default {
                 .post(`/patient/${this.patient.id}/complete/exercise`, {
                     _token: this.csrfTokenCompleteExercise,
                     exerciseId: exerciseId,
+                    worksheetSessionId: this.getCurrentWorksheetSession.id,
+                    ponderationForScore: this.getPonderation,
                 })
                 .then((response) => {
-                    console.log(response.data);
+                    // console.log(response.data);
 
-                    this.getExercises.find(
-                        (e) => e.id === exerciseId
-                    ).isCompleted = true;
+                    this.exerciseScorePoints = response.data.score.points;
+
+                    this.scoreFrame = true;
 
                     if (this.getExercise === this.getTheLastExercise) {
                         this.axios
@@ -265,7 +287,7 @@ export default {
                                 }
                             )
                             .then((response) => {
-                                console.log(response.data);
+                                // console.log(response.data);
 
                                 this.getCurrentWorksheetSession.isInProgress = false;
                                 this.getCurrentWorksheetSession.isCompleted = true;
@@ -277,7 +299,6 @@ export default {
                                     "object" === typeof error.response.data
                                         ? error.response.data.detail
                                         : error.response.data;
-
                                 console.error(errorMess);
                             });
                     }
@@ -287,7 +308,6 @@ export default {
                         "object" === typeof error.response.data
                             ? error.response.data.detail
                             : error.response.data;
-
                     console.error(errorMess);
                 });
         },
@@ -296,7 +316,7 @@ export default {
         },
         closeVideoPlayerAndCompleteExercise() {
             this.$emit("closeVideoPlayer", true);
-            this.setExerciseCompleted(this.getExercise.id);
+            this.getExercise.isCompleted = true;
         },
     },
 };
@@ -425,7 +445,7 @@ export default {
             top: -12rem;
             left: 50%;
             transform: translate(-50%, 0);
-            animation: 0.5s ease 0.2s forwards elipDown;
+            animation: 0.5s ease 0s forwards elipDown;
             opacity: 0;
 
             @media (min-width: 576px) {
@@ -491,7 +511,7 @@ export default {
             left: 50%;
             transform: translate(-48%, -50%) scale(0.3);
             opacity: 0;
-            animation: 0.5s ease 0.5s forwards starsConfettis;
+            animation: 0.5s ease 0.3s forwards starsConfettis;
 
             @media (min-width: 576px) {
                 top: 28%;
@@ -522,7 +542,7 @@ export default {
             left: 50%;
             transform: translate(-47.7%, -50%);
             opacity: 0;
-            animation: 0.5s ease 0.5s forwards fanionBounce;
+            animation: 0.5s ease 0.3s forwards fanionBounce;
 
             @media (min-width: 576px) {
                 top: 33.9%;
@@ -573,7 +593,7 @@ export default {
             max-width: 80%;
             white-space: nowrap;
             opacity: 0;
-            animation: 0.5s ease 1s forwards fadeEnter;
+            animation: 0.5s ease 0.7s forwards fadeEnter;
 
             .label {
                 font-size: 2.5rem;

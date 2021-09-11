@@ -34,7 +34,7 @@ services:
                   event: "security.interactive_login",
               }
 
-    App\Stripe\StripeService:
+    App\Service\StripeService:
         arguments:
             # $stripePublicKey: "%env(STRIPE_PUBLIC_KEY)%"
             $stripeSecretKey: "%env(STRIPE_SECRET_KEY)%"

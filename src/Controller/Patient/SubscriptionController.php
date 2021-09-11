@@ -1,23 +1,25 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Patient;
 
 use App\Entity\Patient;
 use App\Entity\Subscription;
 use App\Repository\SubscriptionRepository;
-use App\Stripe\StripeService;
-use App\Subscription\SubscriptionHelper;
+use App\Service\StripeService;
+use App\Service\SubscriptionService;
 use Stripe\Checkout\Session as StripeCheckoutSession;
 use Stripe\Subscription as StripeSubscription;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Generator\UrlGenerator;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
+/**
+ * @Route("/patient")
+ */
 class SubscriptionController extends AbstractController
 {
     private $stripeService;
@@ -41,7 +43,7 @@ class SubscriptionController extends AbstractController
         Patient $patient,
         Request $request,
         string $status = null,
-        SubscriptionHelper $subscriptionHelper
+        SubscriptionService $subscriptionService
     ): Response {
         $subscription = 'success' === $status
                       ? new Subscription()
@@ -77,7 +79,7 @@ class SubscriptionController extends AbstractController
 
         return $this->render('patient/subscription.html.twig', [
             'patient' => $patient,
-            'stripeSubPlans' => $subscriptionHelper->getPlans(),
+            'stripeSubPlans' => $subscriptionService->getPlans(),
             'status' => $status,
             'stripeCheckoutSession' => $stripeCheckoutSession ?? null,
             'stripeSubscription' => $stripeSubscription ?? null,

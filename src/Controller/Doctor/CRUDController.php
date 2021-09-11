@@ -3,9 +3,9 @@
 namespace App\Controller\Doctor;
 
 use App\Repository\DoctorRepository;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class CRUDController extends AbstractController
 {

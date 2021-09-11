@@ -2,14 +2,10 @@
 
 namespace App\Controller\Patient;
 
-use App\Entity\Patient;
-use App\Repository\NotificationRepository;
 use App\Repository\PatientRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class CRUDController extends AbstractController
 {
