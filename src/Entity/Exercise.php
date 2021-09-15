@@ -76,7 +76,7 @@ class Exercise
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"worksheet_read"})
+     * @Groups({"worksheet_read", "dashboard_worksheet_read"})
      */
     private $isCompleted;
 

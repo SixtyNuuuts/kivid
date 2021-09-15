@@ -63,10 +63,6 @@ class WorksheetController extends AbstractController
     {
         $worksheet = $this->worksheetRepository->findOneBy(['id' => $worksheetId]);
 
-        if (!$worksheet) {
-            return $this->json("Fiche non trouvée", 500);
-        }
-
         return $this->json(
             $worksheet,
             200,
@@ -82,15 +78,11 @@ class WorksheetController extends AbstractController
     {
         $worksheets = $this->worksheetRepository->findBy(['patient' => $patient]);
 
-        if (!$worksheets) {
-            return $this->json("Fiches non trouvées", 500);
-        }
-
         return $this->json(
             $worksheets,
             200,
             [],
-            ['groups' => 'reduced_worksheet_read']
+            ['groups' => 'dashboard_worksheet_read']
         );
     }
 

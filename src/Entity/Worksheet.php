@@ -17,20 +17,15 @@ class Worksheet
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"worksheet_read", "reduced_worksheet_read"})
+     * @Groups({"worksheet_read", "dashboard_worksheet_read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"worksheet_read", "reduced_worksheet_read"})
+     * @Groups({"worksheet_read", "dashboard_worksheet_read"})
      */
     private $title;
-
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
-    private $description;
 
     /**
      * @ORM\Column(type="datetime_immutable")
@@ -39,31 +34,31 @@ class Worksheet
 
     /**
      * @ORM\OneToMany(targetEntity=Exercise::class, mappedBy="worksheet", orphanRemoval=true)
-     * @Groups({"worksheet_read", "reduced_worksheet_read"})
+     * @Groups({"worksheet_read", "dashboard_worksheet_read"})
      */
     private $exercises;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"worksheet_read", "reduced_worksheet_read"})
+     * @Groups({"worksheet_read", "dashboard_worksheet_read"})
      */
     private $partOfBody;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"worksheet_read", "reduced_worksheet_read"})
+     * @Groups({"worksheet_read", "dashboard_worksheet_read"})
      */
     private $duration;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"worksheet_read", "reduced_worksheet_read"})
+     * @Groups({"worksheet_read", "dashboard_worksheet_read"})
      */
     private $perDay;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"worksheet_read", "reduced_worksheet_read"})
+     * @Groups({"worksheet_read", "dashboard_worksheet_read"})
      */
     private $perWeek;
 
@@ -94,6 +89,7 @@ class Worksheet
 
     /**
      * @ORM\OneToMany(targetEntity=ExerciseStat::class, mappedBy="worksheet")
+     * @Groups({"dashboard_worksheet_read"})
      */
     private $exerciseStats;
 
@@ -123,18 +119,6 @@ class Worksheet
     public function setTitle(string $title): self
     {
         $this->title = $title;
-
-        return $this;
-    }
-
-    public function getDescription(): ?string
-    {
-        return $this->description;
-    }
-
-    public function setDescription(?string $description): self
-    {
-        $this->description = $description;
 
         return $this;
     }

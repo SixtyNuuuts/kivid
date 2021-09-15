@@ -54,8 +54,8 @@ class WorksheetSessionController extends AbstractController
 
             if (!$firstGenerateWorksheetSession) {
                 return $this->json(
-                    "Une erreur s'est produite lors de la création des sessions",
-                    500
+                    false,
+                    200
                 );
             }
 

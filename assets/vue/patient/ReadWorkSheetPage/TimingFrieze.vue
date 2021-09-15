@@ -16,16 +16,23 @@
                             alt="Icone d'une basket"
                         />
                     </i>
-                    <h2>
+                    <h2 v-if="getCurrentWorksheetSession">
                         Session n°{{ getCurrentWorksheetSession.execOrder }}
                     </h2>
-                    <div class="total-sessions">
+                    <div
+                        v-if="getCurrentWorksheetSession"
+                        class="total-sessions"
+                    >
                         sur {{ getTotalWorksheetSessions }}
                     </div>
+                    <h3 v-if="!getCurrentWorksheetSession">Aucune Session</h3>
                 </div>
                 <div class="session-timing-line">
                     <div class="progressbar-steps">
-                        <div class="session-start-date">
+                        <div
+                            v-if="getCurrentWorksheetSession"
+                            class="session-start-date"
+                        >
                             <i class="kiv-calendar icon-10"></i>
                             <div class="date-hours">
                                 <div class="date">
@@ -36,7 +43,10 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="session-end-date">
+                        <div
+                            v-if="getCurrentWorksheetSession"
+                            class="session-end-date"
+                        >
                             <i class="kiv-calendar icon-10"></i>
                             <div class="date-hours">
                                 <div class="date">
@@ -77,12 +87,18 @@
                                     >de la fiche est fait
                                 </div>
                                 <div
-                                    v-if="!getWorksheetSessionDoneDate"
+                                    v-if="
+                                        !getWorksheetSessionDoneDate &&
+                                        getCurrentWorksheetSession
+                                    "
                                     class="final-goal"
                                 >
-                                    {{ getTimeLeft }}
+                                    {{ getTimeLeftBeforeNextSession }}
                                 </div>
-                                <div v-else class="final-goal">
+                                <div
+                                    v-if="getWorksheetSessionDoneDate"
+                                    class="final-goal"
+                                >
                                     Terminé le
                                     {{ getWorksheetSessionDoneDate }}
                                 </div>
@@ -104,7 +120,7 @@ export default {
     props: {
         loading: Boolean,
         worksheet: Object,
-        currentWorksheetSession: Object,
+        currentWorksheetSession: [Object, Boolean],
         totalWorksheetSessions: Number,
     },
     data() {
@@ -180,51 +196,36 @@ export default {
             }
             return null;
         },
-        getTimeLeft() {
-            const start = moment().format("DD/MM/YYYY HH:mm:ss");
-
-            const end = moment(this.getCurrentWorksheetSession.endAt).format(
-                "DD/MM/YYYY HH:mm:ss"
+        getTimeLeftBeforeNextSession() {
+            const timeLeft = f.getTimeLeftBeforeNextSession(
+                this.getCurrentWorksheetSession.endAt
             );
 
-            const days = this.getDiffBetweenTwoDates(start, end).asDays();
-
-            const hours = this.getDiffBetweenTwoDates(start, end).asHours();
-
-            const minutes = this.getDiffBetweenTwoDates(start, end).asMinutes();
-
-            const seconds = this.getDiffBetweenTwoDates(start, end).asSeconds();
-
-            if (days >= 1) {
-                return Math.round(days) === 1
-                    ? `${Math.round(days)} jour restant`
-                    : `${Math.round(days)} jours restants`;
+            if (timeLeft.days >= 1) {
+                return Math.round(timeLeft.days) === 1
+                    ? `${Math.round(timeLeft.days)} jour restant`
+                    : `${Math.round(timeLeft.days)} jours restants`;
             }
 
-            if (hours >= 1) {
-                return hours === 1
-                    ? `${Math.round(hours)} heure restante`
-                    : `${Math.round(hours)} heures restantes`;
+            if (timeLeft.hours >= 1) {
+                return timeLeft.hours === 1
+                    ? `${Math.round(timeLeft.hours)} heure restante`
+                    : `${Math.round(timeLeft.hours)} heures restantes`;
             }
 
-            if (minutes >= 1) {
-                return minutes === 1
-                    ? `${Math.round(minutes)} minute restante`
-                    : `${Math.round(minutes)} minutes restantes`;
+            if (timeLeft.minutes >= 1) {
+                return timeLeft.minutes === 1
+                    ? `${Math.round(timeLeft.minutes)} minute restante`
+                    : `${Math.round(timeLeft.minutes)} minutes restantes`;
             }
 
-            if (seconds >= 1) {
-                return seconds === 1
-                    ? `${Math.round(seconds)} seconde restante`
-                    : `${Math.round(seconds)} secondes restantes`;
+            if (timeLeft.seconds >= 1) {
+                return timeLeft.seconds === 1
+                    ? `${Math.round(timeLeft.seconds)} seconde restante`
+                    : `${Math.round(timeLeft.seconds)} secondes restantes`;
             }
 
             return null;
-        },
-    },
-    methods: {
-        getDiffBetweenTwoDates(start, end) {
-            return f.getDiffBetweenTwoDates(start, end);
         },
     },
 };

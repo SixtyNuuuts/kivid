@@ -20,16 +20,21 @@
                     >
                     </vue-ellipse-progress>
                     <div class="score-circle-text">
-                        <span class="score">{{ formatScore(getScore) }}</span>
+                        <span class="score">{{
+                            formatNumbThousand(getScore)
+                        }}</span>
                         <p class="unit">Points</p>
                     </div>
                 </div>
 
                 <div class="score-line">
-                    <div class="progressbar-base">
+                    <div
+                        class="progressbar-base"
+                        :class="{ 'loading-gray-dark': loading }"
+                    >
                         <div
                             class="progressbar-thumb"
-                            :class="{ max: score > scoreMax }"
+                            :class="{ max: score >= scoreMax }"
                             :style="{ width: `${getScorePercentage}%` }"
                         ></div>
                         <div class="progressbar-steps">
@@ -50,8 +55,8 @@
                                 <span>40 000 pts</span>
                             </div>
                         </div>
-
                         <div
+                            v-if="!loading"
                             class="progressbar-current-score"
                             :class="{
                                 start: getScorePercentage < 20,
@@ -67,7 +72,7 @@
                             <span
                                 >Votre niveau
                                 <span class="score">{{
-                                    `(${formatScore(getScore)} pts)`
+                                    `(${formatNumbThousand(getScore)} pts)`
                                 }}</span></span
                             >
                         </div>
@@ -84,8 +89,13 @@
                     </div>
                     <h4 class="stat-label">Nombre d’exercices faits</h4>
                     <div class="stat-result">
-                        <h3>459</h3>
-                        <div class="stat-variation"></div>
+                        <h3 v-if="!loadingPatientWorksheets">
+                            {{ getTotalExerciseCompleted }}
+                        </h3>
+                        <div
+                            v-if="loadingPatientWorksheets"
+                            class="loading-gray loading-block-h3 w-25"
+                        ></div>
                     </div>
                 </div>
                 <div class="sensitivity-block score-block">
@@ -94,11 +104,55 @@
                     </div>
                     <h4 class="stat-label">Votre sensibilité</h4>
                     <div class="stat-result">
-                        <h3>En amélioration</h3>
-                        <div class="stat-variation green">
+                        <h3 v-if="!loadingPatientWorksheets">
+                            <span
+                                v-if="
+                                    'up' === getSensitivityVariation.variation
+                                "
+                            >
+                                En amélioration
+                            </span>
+                            <span
+                                v-if="
+                                    'down' === getSensitivityVariation.variation
+                                "
+                            >
+                                En baisse
+                            </span>
+                            <span
+                                v-if="
+                                    'equal' === getTechnicalVariation.variation
+                                "
+                            >
+                                Stable
+                            </span>
+                        </h3>
+                        <div
+                            v-if="
+                                !loadingPatientWorksheets &&
+                                'up' === getSensitivityVariation.variation
+                            "
+                            class="stat-variation green"
+                        >
                             (<i class="kiv-variation-up icon-27"></i
-                            ><span>+5%</span>)
+                            ><span>+{{ getSensitivityVariation.result }}%</span
+                            >)
                         </div>
+                        <div
+                            v-if="
+                                !loadingPatientWorksheets &&
+                                'down' === getSensitivityVariation.variation
+                            "
+                            class="stat-variation red"
+                        >
+                            (<i class="kiv-variation-down icon-28"></i
+                            ><span>{{ getSensitivityVariation.result }}%</span>)
+                        </div>
+
+                        <div
+                            v-if="loadingPatientWorksheets"
+                            class="loading-gray loading-block-h3 w-75"
+                        ></div>
                     </div>
                 </div>
                 <div class="technical-block score-block">
@@ -107,29 +161,54 @@
                     </div>
                     <h4 class="stat-label">Votre technique</h4>
                     <div class="stat-result">
-                        <h3>En baisse</h3>
-                        <div class="stat-variation"></div>
+                        <h3 v-if="!loadingPatientWorksheets">
+                            <span
+                                v-if="'up' === getTechnicalVariation.variation"
+                            >
+                                En amélioration
+                            </span>
+                            <span
+                                v-if="
+                                    'down' === getTechnicalVariation.variation
+                                "
+                            >
+                                En baisse
+                            </span>
+                            <span
+                                v-if="
+                                    'equal' === getTechnicalVariation.variation
+                                "
+                            >
+                                Stable
+                            </span>
+                        </h3>
+                        <div
+                            v-if="
+                                !loadingPatientWorksheets &&
+                                'up' === getTechnicalVariation.variation
+                            "
+                            class="stat-variation green"
+                        >
+                            (<i class="kiv-variation-up icon-27"></i
+                            ><span>+{{ getTechnicalVariation.result }}%</span>)
+                        </div>
+                        <div
+                            v-if="
+                                !loadingPatientWorksheets &&
+                                'down' === getTechnicalVariation.variation
+                            "
+                            class="stat-variation red"
+                        >
+                            (<i class="kiv-variation-down icon-28"></i
+                            ><span>{{ getTechnicalVariation.result }}%</span>)
+                        </div>
+                        <div
+                            v-if="loadingPatientWorksheets"
+                            class="loading-gray loading-block-h3 w-75"
+                        ></div>
                     </div>
                 </div>
-                <div class="score-rang-block score-block expert">
-                    <h4>Votre niveau</h4>
-                    <i class="rang-img">
-                        <img
-                            src="../../../img/icons/colored/reward.svg"
-                            alt="Icone 1 du rang expert"
-                        />
-                        <img
-                            src="../../../img/icons/colored/reward.svg"
-                            alt="Icone 2 du rang expert"
-                        />
-                        <img
-                            src="../../../img/icons/colored/reward.svg"
-                            alt="Icone 3 du rang expert"
-                        />
-                    </i>
-                    <p class="rang-label">Patient Expert</p>
-                    <p class="rang-result">Vous êtes trop fort(e) !</p>
-                </div>
+                <ScoreRankBlock :rank="getRank" :loading="loading" />
             </div>
         </transition>
     </section>
@@ -137,15 +216,20 @@
 
 <script>
 import f from "../../services/function";
+import ScoreRankBlock from "../Components/ScoreRankBlock.vue";
 
 export default {
     props: {
         patient: Object,
+        patientWorksheets: Array,
+        loadingPatientWorksheets: Boolean,
+    },
+    components: {
+        ScoreRankBlock,
     },
     data() {
         return {
-            // doctors: [],
-            // loading: false,
+            loading: false,
             score: 0,
             scoreMax: 50000,
             options: {
@@ -165,35 +249,126 @@ export default {
             return this.score;
         },
         getScorePercentage() {
-            return (this.score * 100) / this.scoreMax;
+            if (this.score > 0) {
+                const scorePercentage = (this.score * 100) / this.scoreMax;
+
+                return scorePercentage > 1 ? scorePercentage : 1;
+            }
+            return 1;
+        },
+        getRank() {
+            if (this.score >= 0 && this.score < 10000) {
+                return "nouveau";
+            }
+
+            if (this.score >= 10000 && this.score < 20000) {
+                return "debutant";
+            }
+
+            if (this.score >= 20000 && this.score < 30000) {
+                return "amateur";
+            }
+
+            if (this.score >= 30000 && this.score < 40000) {
+                return "intermediaire";
+            }
+
+            if (this.score >= 40000 && this.score < 50000) {
+                return "confirme";
+            }
+
+            if (this.score >= 50000) {
+                return "expert";
+            }
+        },
+        getTotalExerciseCompleted() {
+            let countStats = 0;
+
+            this.patientWorksheets.forEach((w) => {
+                countStats += w.exerciseStats.length;
+            });
+
+            return this.formatNumbThousand(countStats / 3);
+        },
+        getSensitivityVariation() {
+            return this.calculVariation("sensitivity");
+        },
+        getTechnicalVariation() {
+            return this.calculVariation("technical");
         },
     },
     methods: {
-        formatScore(score) {
+        calculVariation(criterion) {
+            let stats = [];
+
+            this.patientWorksheets.forEach((w) => {
+                stats = [
+                    ...stats,
+                    ...w.exerciseStats.filter(
+                        (es) => es.criterion === criterion
+                    ),
+                ];
+            });
+
+            const variationSlice = 1;
+
+            const lastStats = stats.filter(
+                (es, i) => i > stats.length - 1 - variationSlice
+            );
+            const lastStatsAverage = this.statsAverage(lastStats);
+
+            const oldStats = stats.filter(
+                (es, i) => i <= stats.length - 1 - variationSlice
+            );
+            const oldStatsAverage = this.statsAverage(oldStats);
+
+            const result = Math.round(lastStatsAverage - oldStatsAverage) * 10;
+
+            return {
+                variation:
+                    result === 0
+                        ? "equal"
+                        : Math.sign(result) === 1
+                        ? "up"
+                        : "down",
+                result,
+            };
+        },
+        formatNumbThousand(score) {
             return score.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+        },
+        statsAverage(stats) {
+            return (
+                Math.round(
+                    (stats.reduce((r, s) => {
+                        r = parseInt(r + s.rating);
+
+                        return r;
+                    }, []) /
+                        stats.length) *
+                        10
+                ) / 10
+            );
         },
     },
     created() {
-        setTimeout(() => {
-            this.score = 5000;
-        }, 500);
-        // this.loading = true;
-        // this.axios
-        //     .get(`/get/doctors`)
-        //     .then((response) => {
-        //         this.doctors = response.data;
-        //         this.loading = false;
-        //     })
-        //     .catch((error) => {
-        //         if (error.response) {
-        //             console.log(
-        //                 error.response.data.detail
-        //                     ? error.response.data.detail
-        //                     : error.response.data
-        //             );
-        //         }
-        //         this.loading = false;
-        //     });
+        this.loading = true;
+
+        this.axios
+            .get(`/patient/${this.patient.id}/get/score`)
+            .then((response) => {
+                this.score = response.data ? response.data : 0;
+
+                this.loading = false;
+            })
+            .catch((error) => {
+                const errorMess =
+                    "object" === typeof error.response.data
+                        ? error.response.data.detail
+                        : error.response.data;
+
+                console.error(errorMess);
+            });
     },
 };
 </script>
@@ -303,6 +478,22 @@ export default {
                 background: $gray-middle;
                 position: relative;
 
+                &.loading-gray-dark {
+                    animation-duration: 1.2s;
+                    animation-fill-mode: forwards;
+                    animation-iteration-count: infinite;
+                    animation-name: placeHolderShimmer;
+                    animation-timing-function: linear;
+                    background: linear-gradient(
+                        to right,
+                        #e7dfcd 8%,
+                        #d3c9b6 38%,
+                        #e7dfcd 54%
+                    );
+                    background-size: 1000px 640px;
+                    position: relative;
+                }
+
                 .progressbar-base-end-decoration {
                     position: absolute;
                     z-index: 1;
@@ -330,7 +521,7 @@ export default {
                     border-radius: 0 0.8rem 0.8rem 0;
                     width: 0%;
                     height: 100%;
-                    transition: width 1s ease;
+                    transition: width 1s ease, border-radius 1s ease 0.8s;
                     position: relative;
                     z-index: 2;
                     max-width: 100%;
@@ -387,13 +578,17 @@ export default {
                     }
                 }
                 .progressbar-current-score {
-                    background: $white;
+                    background-color: $white;
                     padding: 0.7rem 0.9rem;
                     display: inline-flex;
                     position: absolute;
                     top: 5.8rem;
                     left: 0%;
                     transition: left 1s ease;
+                    min-height: 3rem;
+                    min-width: 16rem;
+                    animation: 0.5s ease 0s forwards fadeEnter;
+                    opacity: 0;
 
                     &::before {
                         content: "";
@@ -462,6 +657,11 @@ export default {
             justify-content: space-between;
             overflow: hidden;
 
+            .loading-block-h3 {
+                height: 2.1rem;
+                border-radius: 0.4rem;
+            }
+
             @media (min-width: 576px) {
                 min-height: initial;
             }
@@ -496,7 +696,8 @@ export default {
                 display: flex;
                 flex-wrap: wrap;
 
-                h3 {
+                h3,
+                .loading-block-h3 {
                     margin-right: 1rem;
                     position: relative;
 
@@ -550,7 +751,8 @@ export default {
                     }
                 }
 
-                h3::before {
+                h3::before,
+                .loading-block-h3::before {
                     background: $sanguine;
                 }
             }
@@ -567,7 +769,8 @@ export default {
                     }
                 }
 
-                h3::before {
+                h3::before,
+                .loading-block-h3::before {
                     background: $yellow;
                 }
             }
@@ -586,109 +789,9 @@ export default {
                     }
                 }
 
-                h3::before {
+                h3::before,
+                .loading-block-h3::before {
                     background: $tournesol;
-                }
-            }
-
-            &.score-rang-block {
-                grid-area: scorerangblock;
-                background-color: $orange;
-                color: $white;
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-                align-items: center;
-                text-align: center;
-                position: relative;
-                padding: 2rem 1rem;
-
-                @media (min-width: 576px) {
-                    padding: 2rem;
-                }
-
-                > * {
-                    position: relative;
-                    z-index: 3;
-                }
-
-                &::before {
-                    content: "";
-                    background: url(../../../img/ball-4.svg) top -8.1rem right -7.3rem
-                            no-repeat,
-                        url(../../../img/ball-4.svg) bottom -15.4rem left -9.4rem
-                            no-repeat;
-                    background-size: 17.7rem, 26.7rem;
-                    display: block;
-                    position: absolute;
-                    z-index: 2;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                }
-
-                &::after {
-                    content: "";
-                    background: $orange;
-                    opacity: 0.89;
-                    display: block;
-                    position: absolute;
-                    z-index: 1;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                }
-
-                &.expert {
-                    background-image: url(../../../img/icons/colored/reward.svg);
-                    background-position: top 0rem left -4rem;
-                    background-repeat: no-repeat;
-
-                    i.rang-img {
-                        img {
-                            width: 23%;
-                            margin: 0 0.5rem;
-                        }
-                    }
-                }
-
-                h4 {
-                    line-height: 1.1;
-                }
-
-                i.rang-img {
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    width: 100%;
-                    max-width: 18rem;
-
-                    img {
-                        width: 23%;
-                        margin: 0 0.5rem;
-                    }
-                }
-
-                .rang-label {
-                    white-space: nowrap;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    padding: 0.5rem 1rem;
-                    background: $white;
-                    border-radius: 0.4rem;
-                    color: $black;
-                    font-size: 1.4rem;
-                    font-weight: 700;
-                    margin: 0;
-                }
-
-                .rang-result {
-                    font-size: 1.3rem;
-                    font-weight: 700;
-                    margin: 0;
                 }
             }
         }

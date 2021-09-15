@@ -13,62 +13,6 @@
         <h2>Mes fiches</h2>
         <transition name="height">
             <div v-if="$parent.myWorksheetsContent" class="worksheet-list">
-                <div v-if="loadingPatientWorksheets">
-                    <div class="loading loading-block">
-                        <div class="worksheet-header">
-                            <div class="loading worksheet-title w-25"></div>
-                            <div class="loading part-of-body"></div>
-                        </div>
-                        <div class="loading worksheet-progress-line"></div>
-                        <div class="worksheet-content">
-                            <div class="worksheet-details">
-                                <div
-                                    class="
-                                        loading
-                                        worksheet-exercises-count
-                                        w-35
-                                    "
-                                ></div>
-                                <div
-                                    class="loading worksheet-timing w-25"
-                                ></div>
-                                <div
-                                    class="loading worksheet-period w-35"
-                                ></div>
-                            </div>
-                            <div class="buttons">
-                                <div class="loading btn-go"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="loading loading-block">
-                        <div class="worksheet-header">
-                            <div class="loading worksheet-title w-45"></div>
-                            <div class="loading part-of-body"></div>
-                        </div>
-                        <div class="loading worksheet-progress-line"></div>
-                        <div class="worksheet-content">
-                            <div class="worksheet-details">
-                                <div
-                                    class="
-                                        loading
-                                        worksheet-exercises-count
-                                        w-15
-                                    "
-                                ></div>
-                                <div
-                                    class="loading worksheet-timing w-35"
-                                ></div>
-                                <div
-                                    class="loading worksheet-period w-25"
-                                ></div>
-                            </div>
-                            <div class="buttons">
-                                <div class="loading btn-go"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 <div
                     v-if="
                         !loadingPatientWorksheets && getPatientWorksheets.length
@@ -84,17 +28,29 @@
                             </h3>
                             <TagPartOfBody
                                 :partOfBody="worksheet.partOfBody.toLowerCase()"
+                                :class="{
+                                    completed:
+                                        (worksheet.currentWorksheetSession &&
+                                            worksheet.currentWorksheetSession
+                                                .isCompleted) ||
+                                        !worksheet.currentWorksheetSession,
+                                }"
                             />
                         </div>
                         <div
-                            v-if="worksheet.worksheetProgression < 100"
                             class="worksheet-progress-line"
+                            v-if="
+                                worksheet.currentWorksheetSession &&
+                                !worksheet.currentWorksheetSession
+                                    .isCompleted &&
+                                worksheet.currentWorksheetSession.isInProgress
+                            "
                         >
                             <div class="progressbar-base">
                                 <div
                                     class="progressbar-thumb"
                                     :style="{
-                                        width: worksheet.worksheetProgression,
+                                        width: `${worksheet.worksheetProgression}%`,
                                     }"
                                 ></div>
                                 <div class="progressbar-steps">
@@ -106,13 +62,57 @@
                             </div>
                         </div>
                         <div
-                            v-if="worksheet.worksheetProgression === 100"
+                            class="worksheet-progress-line"
+                            v-if="
+                                worksheet.currentWorksheetSession &&
+                                !worksheet.currentWorksheetSession
+                                    .isCompleted &&
+                                !worksheet.currentWorksheetSession.isInProgress
+                            "
+                        >
+                            <div class="progressbar-base">
+                                <div
+                                    class="progressbar-thumb"
+                                    :style="{
+                                        width: '0%',
+                                    }"
+                                ></div>
+                                <div class="progressbar-steps">
+                                    <div>
+                                        <div class="point"></div>
+                                        <span>Vous avez fini la fiche !</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            v-if="
+                                (worksheet.currentWorksheetSession &&
+                                    worksheet.currentWorksheetSession
+                                        .isCompleted) ||
+                                !worksheet.currentWorksheetSession
+                            "
                             class="worksheet-content session-completed"
                         >
-                            <p>
-                                Bravo, vos exercices d’aujourd’hui ont été faits
-                                avec succès ! Rendez-vous dans les prochains
-                                jours pour...
+                            <p v-if="worksheet.currentWorksheetSession">
+                                Bravo, vos exercices de cette session ont été
+                                faits avec succès ! <br />
+                                <transition name="fade">
+                                    <span
+                                        v-if="
+                                            worksheet.timeLeftBeforeNextSession
+                                        "
+                                    >
+                                        Rendez-vous dans
+                                        <strong>{{
+                                            worksheet.timeLeftBeforeNextSession
+                                        }}</strong>
+                                        pour une nouvelle session.
+                                    </span>
+                                </transition>
+                            </p>
+                            <p v-if="!worksheet.currentWorksheetSession">
+                                Traitement terminé<br />
                             </p>
                             <vs-button
                                 :disabled="redirectInProgress === worksheet.id"
@@ -174,8 +174,64 @@
                 >
                     <p>
                         <i class="fas fa-folder-minus"></i>
-                        <span>Vous n'avez pas encore de fiche</span>
+                        <span>Vous n'avez pas de fiche</span>
                     </p>
+                </div>
+                <div v-if="loadingPatientWorksheets">
+                    <div class="loading loading-block">
+                        <div class="worksheet-header">
+                            <div class="loading worksheet-title w-25"></div>
+                            <div class="loading part-of-body"></div>
+                        </div>
+                        <div class="loading worksheet-progress-line"></div>
+                        <div class="worksheet-content">
+                            <div class="worksheet-details">
+                                <div
+                                    class="
+                                        loading
+                                        worksheet-exercises-count
+                                        w-35
+                                    "
+                                ></div>
+                                <div
+                                    class="loading worksheet-timing w-25"
+                                ></div>
+                                <div
+                                    class="loading worksheet-period w-35"
+                                ></div>
+                            </div>
+                            <div class="buttons">
+                                <div class="loading btn-go"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="loading loading-block">
+                        <div class="worksheet-header">
+                            <div class="loading worksheet-title w-45"></div>
+                            <div class="loading part-of-body"></div>
+                        </div>
+                        <div class="loading worksheet-progress-line"></div>
+                        <div class="worksheet-content">
+                            <div class="worksheet-details">
+                                <div
+                                    class="
+                                        loading
+                                        worksheet-exercises-count
+                                        w-15
+                                    "
+                                ></div>
+                                <div
+                                    class="loading worksheet-timing w-35"
+                                ></div>
+                                <div
+                                    class="loading worksheet-period w-25"
+                                ></div>
+                            </div>
+                            <div class="buttons">
+                                <div class="loading btn-go"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </transition>
@@ -183,19 +239,20 @@
 </template>
 
 <script>
+import f from "../../services/function";
 import TagPartOfBody from "../Components/TagPartOfBody.vue";
 
 export default {
     props: {
         patient: Object,
+        patientWorksheets: Array,
+        loadingPatientWorksheets: Boolean,
     },
     components: {
         TagPartOfBody,
     },
     data() {
         return {
-            loadingPatientWorksheets: false,
-            patientWorksheets: [],
             redirectInProgress: null,
         };
     },
@@ -210,46 +267,6 @@ export default {
 
             document.location.href = `/patient/${this.patient.id}/fiche/${worksheetId}`;
         },
-        calculWorksheetProgression(worksheet) {
-            let progression = 0;
-
-            if (worksheet.exercises.length) {
-                const exercisePercentPart = 100 / worksheet.exercises.length;
-
-                const exercisesCompletedCount = worksheet.exercises.filter(
-                    (e) => e.isCompleted
-                ).length;
-
-                progression = exercisePercentPart * exercisesCompletedCount;
-            }
-
-            return progression;
-        },
-    },
-    created() {
-        this.loadingPatientWorksheets = true;
-
-        this.axios
-            .get(`/patient/${this.patient.id}/get/worksheets`)
-            .then((response) => {
-                this.patientWorksheets = response.data.map((worksheet) => {
-                    return {
-                        ...worksheet,
-                        worksheetProgression:
-                            this.calculWorksheetProgression(worksheet),
-                    };
-                });
-
-                this.loadingPatientWorksheets = false;
-            })
-            .catch((error) => {
-                const errorMess =
-                    "object" === typeof error.response.data
-                        ? error.response.data.detail
-                        : error.response.data;
-
-                console.error(errorMess);
-            });
     },
 };
 </script>
@@ -283,6 +300,9 @@ export default {
                 border-radius: 0.5rem;
                 padding: 2rem;
                 overflow: hidden;
+                animation: 0.6s ease 0.5s forwards fadeEnter;
+                opacity: 0;
+                min-height: 19rem;
 
                 .worksheet-header {
                     display: flex;
@@ -352,6 +372,7 @@ export default {
                             );
                             border-radius: 1rem;
                             width: 0%;
+                            min-width: 0.8rem;
                             height: 100%;
                             transition: width 1s ease;
                             position: relative;
@@ -413,6 +434,17 @@ export default {
                             margin: 0;
                             margin-top: 1.2rem;
                             margin-bottom: 2.2rem;
+                            line-height: 1.3;
+
+                            i.kiv-confettis {
+                                display: inline-block;
+                                width: 1.7rem;
+                                margin-right: 0.8rem;
+
+                                img {
+                                    width: 100%;
+                                }
+                            }
                         }
 
                         .btn-consult {
@@ -490,8 +522,8 @@ export default {
 
             .loading-block {
                 border-radius: 0.5rem;
-                height: 18.6rem;
-                background: #fcfcfc;
+                height: 19rem;
+                background: #fdfcfa;
 
                 .worksheet-header {
                     .worksheet-title {

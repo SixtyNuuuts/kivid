@@ -13,6 +13,14 @@ import Vuesax from 'vuesax'
 import VueEllipseProgress from 'vue-ellipse-progress';
 Vue.use(VueEllipseProgress);
 
+// Vue-Chartist
+// + Plugin for tooltips
+import * as ChartistTooltips from 'chartist-plugin-tooltips';
+Vue.use(require('vue-chartist'), {
+    messageNoData: "Aucune donnée",
+    classNoData: "empty"
+})
+
 new Vue({
     render: h => h(DashboardPage)
 }).$mount('#vue')

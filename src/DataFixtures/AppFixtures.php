@@ -93,9 +93,7 @@ class AppFixtures extends Fixture
 
             $worksheetTemplate
                 ->setTitle($tagNames[array_rand($tagNames)])
-                ->setDescription($faker->text())
                 ->setCreatedAt(\DateTimeImmutable::createFromMutable($faker->dateTimeBetween()))
-                // ->setCreator($worksheetTempleateCreator)
                 ->setPartOfBody($partOfBody[array_rand($partOfBody)])
                 ->setIsTemplate(true)
                 ->setDuration(1)
@@ -184,6 +182,7 @@ class AppFixtures extends Fixture
                     $worksheetForPrescription->setDuration(26)
                                              ->setPerDay(1)
                                              ->setPerWeek(7)
+                                             ->setPatient($patient)
                     ;
 
                     // $prescription = new Prescription();
@@ -205,7 +204,9 @@ class AppFixtures extends Fixture
                         // $worksheetSession->setPrescription($prescription)
                         $worksheetSession->setExecOrder($ws);
 
-                        $worksheetSession->setIsCompleted(true);
+                        $worksheetSession->setIsCompleted(true)
+                                         ->setWorksheet($worksheetForPrescription);
+
 
                         $worksheetSessionStartDate = new \DateTime();
                         $worksheetSessionStartDate->setTimestamp($randomStartDate->getTimestamp());
@@ -221,7 +222,8 @@ class AppFixtures extends Fixture
 
                                 $exerciseStat->setCriterion($criterion)
                                              ->setExercise($exercise)
-                                             ->setWorksheetSession($worksheetSession);
+                                             ->setWorksheetSession($worksheetSession)
+                                             ->setWorksheet($worksheetForPrescription);
 
                                 $exerciseStatDoneDate = new \DateTime();
 
@@ -230,7 +232,7 @@ class AppFixtures extends Fixture
                                 );
 
                                 $exerciseStat->setDoneAt($exerciseStatDoneDate)
-                                             ->setRating(rand(1, 5));
+                                             ->setRating(rand(1, 10));
 
                                 $manager->persist($exerciseStat);
                             }
