@@ -68,10 +68,16 @@
                     <p class="notification-label">
                         Vérifier votre adresse email
                     </p>
-                    <div class="notification-actions">
-                        <a class="action-link verif-mail" href="#">
+                    <div
+                        class="notification-actions"
+                        :class="{ disabled: actionInProgress }"
+                    >
+                        <a
+                            class="action-link verif-mail"
+                            @click="resendVerifEmail()"
+                        >
                             <i class="fas fa-envelope"></i>
-                            <span>Voir email</span>
+                            <span>Renvoyer lien</span>
                         </a>
                     </div>
                 </div>
@@ -137,7 +143,9 @@ export default {
             this.loading = true;
 
             this.axios
-                .get(`/${this.patient.id}/get/patient-dashboard-notifications`)
+                .get(
+                    `/patient/${this.patient.id}/get/patient-dashboard-notifications`
+                )
                 .then((response) => {
                     this.dashboardNotifications = response.data;
 
@@ -213,6 +221,30 @@ export default {
                             )
                         ),
                         1
+                    );
+
+                    this.actionInProgress = false;
+                })
+                .catch((error) => {
+                    const errorMess =
+                        "object" === typeof error.response.data
+                            ? error.response.data.detail
+                            : error.response.data;
+
+                    f.openErrorNotification("Erreur", errorMess);
+
+                    this.actionInProgress = false;
+                });
+        },
+        resendVerifEmail() {
+            this.actionInProgress = true;
+
+            this.axios
+                .get(`/patient/${this.patient.id}/resend/verify-email`)
+                .then((response) => {
+                    f.openSuccesNotification(
+                        "E-mail de vérification envoyé",
+                        response.data
                     );
 
                     this.actionInProgress = false;
@@ -344,23 +376,23 @@ export default {
                     cursor: pointer;
 
                     &.verif-mail {
-                        cursor: initial;
+                        // cursor: initial;
 
-                        &:hover {
-                            color: $black;
-                            transform: none;
-                        }
+                        // &:hover {
+                        //     color: $black;
+                        //     transform: none;
+                        // }
 
                         i {
                             font-size: 1.5rem;
                             position: relative;
                             top: 0.05rem;
-                            margin-right: 0.65rem;
+                            margin-right: 0.8rem;
                         }
 
-                        span {
-                            text-decoration: none;
-                        }
+                        // span {
+                        //     text-decoration: none;
+                        // }
                     }
 
                     @media (min-width: 768px) {

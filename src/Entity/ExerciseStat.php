@@ -20,19 +20,19 @@ class ExerciseStat
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"exercise_stat_read"})
+     * @Groups({"dashboard_worksheet_read"})
      */
     private $doneAt;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"exercise_stat_read"})
+     * @Groups({"dashboard_worksheet_read"})
      */
     private $criterion;
 
     /**
      * @ORM\Column(type="float")
-     * @Groups({"exercise_stat_read"})
+     * @Groups({"dashboard_worksheet_read"})
      */
     private $rating;
 

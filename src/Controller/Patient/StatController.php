@@ -44,25 +44,6 @@ class StatController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/get/exercise-stats", name="app_patient_get_exercise_stats", methods={"GET"})
-     */
-    public function getExerciseStats(Patient $patient): JsonResponse
-    {
-        $exerciseStats = $this->exerciseStatRepository->findBy(['patient' => $patient]);
-
-        if (!$exerciseStats) {
-            return $this->json("Stats non trouvées", 500);
-        }
-
-        return $this->json(
-            $exerciseStats,
-            200,
-            [],
-            ['groups' => 'exercise_stats_read']
-        );
-    }
-
-    /**
      * @Route("/{id}/create/exercise-stat/{statCriterion}", name="app_patient_create_exercise_stat", methods={"POST"})
      */
     public function createExerciseStat(Request $request, Patient $patient, string $statCriterion): JsonResponse

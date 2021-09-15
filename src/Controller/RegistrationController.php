@@ -6,17 +6,20 @@ use App\Entity\Doctor;
 use App\Entity\Patient;
 use App\Security\EmailVerifier;
 use App\Form\RegistrationFormType;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Repository\DoctorRepository;
+use App\Repository\PatientRepository;
 use Symfony\Component\Mime\Address;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 
 class RegistrationController extends AbstractController
 {
@@ -75,7 +78,11 @@ class RegistrationController extends AbstractController
                     ->htmlTemplate('registration/confirmation_email.html.twig')
             );
 
-            $this->addFlash('success', 'Nous vous avons envoyé un email contenant un lien de confirmation');
+            $this->addFlash(
+                'success',
+                "Nous vous avons envoyé un email à l'adresse <strong>{$user->getEmail()}</strong> 
+                contenant un lien de confirmation"
+            );
 
             return $this->redirectToRoute('app_home');
         }
@@ -103,5 +110,41 @@ class RegistrationController extends AbstractController
         $this->addFlash('success', 'Votre adresse e-mail a été vérifiée.');
 
         return $this->redirectFromIsGranted();
+    }
+
+    /**
+     * @Route("/{userType}/{id}/resend/verify-email", name="app_user_resend_verify_email", methods={"GET"})
+     */
+    public function resendVerifyEmail(
+        string $userType,
+        int $id,
+        PatientRepository $patientRepository,
+        DoctorRepository $doctorRepository
+    ): JsonResponse {
+        $repository = $patientRepository;
+
+        if ('doctor' === $userType) {
+            $repository = $doctorRepository;
+        }
+
+        $user = $repository->findOneBy(['id' => $id]);
+
+        // generate a signed url and email it to the user
+        $this->emailVerifier->sendEmailConfirmation(
+            'app_verify_email',
+            $user,
+            (new TemplatedEmail())
+            ->from(new Address('contact@kivid.fr', '"Kivid Contact"'))
+            ->to($user->getEmail())
+            ->subject('Veuillez confirmer votre email')
+            ->htmlTemplate('registration/confirmation_email.html.twig')
+        );
+
+        return $this->json(
+            "Nous vous avons envoyé un email à l'adresse <strong>{$user->getEmail()}</strong> 
+            contenant un lien de confirmation",
+            200,
+            [],
+        );
     }
 }

@@ -10,7 +10,10 @@
             </div>
             <div v-else>
                 <div class="title">
-                    <i class="kiv-arrow-left icon-31"></i>
+                    <i
+                        class="kiv-arrow-left icon-31"
+                        @click="rederictToDashboard()"
+                    ></i>
                     <h1>{{ getWorksheet.title }}</h1>
                 </div>
                 <TagPartOfBody
@@ -22,7 +25,7 @@
         </header>
         <div class="info">
             <transition name="fade">
-                <div v-if="allExercisesIsCompleted">
+                <div v-if="!loading && allExercisesIsCompleted">
                     <i class="kiv-confettis">
                         <img
                             src="../../img/icons/colored/confettis.svg"
@@ -31,16 +34,23 @@
                     </i>
                     <p>
                         Félicitation, vous avez fait tous les exercices de la
-                        fiche. Vous pouvez laisser un commentaire à votre
-                        praticien !
+                        fiche.
+                        <span v-if="currentWorksheetSession"
+                            >Vous pouvez laisser un commentaire à votre
+                            praticien !</span
+                        >
                     </p>
                 </div>
-                <div v-else>
+                <div v-if="!loading && !allExercisesIsCompleted">
                     <i class="kiv-info icon-17"></i>
                     <p>
                         À la fin de vos exercices, vous aurez la possiblité
                         d’écrire un bref commentaire.
                     </p>
+                </div>
+                <div v-if="loading" class="loading-block">
+                    <i class="kiv-info icon-17"></i>
+                    <div class="loading-gray w-55 p"></div>
                 </div>
             </transition>
         </div>
@@ -155,6 +165,9 @@ export default {
 
             return commentary;
         },
+        rederictToDashboard() {
+            document.location.href = `/patient/${this.patient.id}/dashboard`;
+        },
     },
     created() {
         const data = JSON.parse(document.getElementById("vueData").innerHTML);
@@ -205,6 +218,7 @@ export default {
                                 this.totalWorksheetSessions = response.data;
 
                                 if (
+                                    this.currentWorksheetSession &&
                                     !this.currentWorksheetSession
                                         .isInProgress &&
                                     !this.currentWorksheetSession.isCompleted
@@ -293,7 +307,7 @@ export default {
 
                 .title {
                     i {
-                        color: $gray-dark;
+                        color: $gray-middle !important;
                     }
 
                     .h1 {
@@ -367,6 +381,19 @@ export default {
         background: $white;
         padding: 1.9rem 2.1rem;
         margin-bottom: 2.5rem;
+
+        .loading-block {
+            i {
+                color: rgba($gray-middle, 0.9) !important;
+            }
+
+            .p {
+                height: 1.5rem;
+                margin: 0;
+                font-size: 1.4rem;
+                border-radius: 0.4rem;
+            }
+        }
 
         @media (min-width: 992px) {
             margin-bottom: 2.5rem;

@@ -138,7 +138,7 @@ export default {
         exercises: Array,
         worksheet: Object,
         lastExercise: Object,
-        currentWorksheetSession: Object,
+        currentWorksheetSession: [Object, Boolean],
         csrfTokenCompleteWorksheetSession: String,
         csrfTokenCompleteExercise: String,
         csrfTokenCreateExerciseStat: String,

@@ -41,6 +41,24 @@ export default {
     });
   },
 
+  getTimeLeftBeforeNextSession(endDateCurrentSession) {
+    const start = moment().format("DD/MM/YYYY HH:mm:ss");
+
+    const end = moment(endDateCurrentSession).format(
+      "DD/MM/YYYY HH:mm:ss"
+    );
+
+    const days = this.getDiffBetweenTwoDates(start, end).asDays();
+
+    const hours = this.getDiffBetweenTwoDates(start, end).asHours();
+
+    const minutes = this.getDiffBetweenTwoDates(start, end).asMinutes();
+
+    const seconds = this.getDiffBetweenTwoDates(start, end).asSeconds();
+
+    return { days, hours, minutes, seconds };
+  },
+
   getDiffBetweenTwoDates(start, end) {
     return moment.duration(
       moment(end, "DD/MM/YYYY HH:mm:ss").diff(

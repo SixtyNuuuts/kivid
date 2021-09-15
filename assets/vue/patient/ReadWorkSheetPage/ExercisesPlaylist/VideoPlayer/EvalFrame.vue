@@ -264,19 +264,19 @@ export default {
             this.$emit("validTechnicalValue", this.technicalValue);
             setTimeout(() => {
                 this.technicalValue = 50;
-            }, 1000);
+            }, 6000);
         },
         validDifficulty() {
             this.$emit("validDifficultyValue", this.difficultyValue);
             setTimeout(() => {
                 this.difficultyValue = 50;
-            }, 1000);
+            }, 6000);
         },
         validSensitivity() {
             this.$emit("validSensitivityValue", this.sensitivityValue);
             setTimeout(() => {
                 this.sensitivityValue = 50;
-            }, 1000);
+            }, 6000);
         },
     },
 };

@@ -126,7 +126,10 @@
                             <vs-input
                                 v-if="exercise.commentary"
                                 placeholder="Tapez votre commentaire"
-                                :disabled="!exercise.isCompleted"
+                                :disabled="
+                                    !exercise.isCompleted ||
+                                    !getCurrentWorksheetSession
+                                "
                                 v-model="exercise.commentary.content"
                                 @keyup="setCommentaryWithDebounce(exercise)"
                                 @blur="setCommentary(exercise)"
@@ -181,7 +184,7 @@ export default {
         patient: Object,
         loading: Boolean,
         worksheet: Object,
-        currentWorksheetSession: Object,
+        currentWorksheetSession: [Object, Boolean],
         csrfTokenStartWorksheetSession: String,
         csrfTokenCompleteWorksheetSession: String,
         csrfTokenCompleteExercise: String,

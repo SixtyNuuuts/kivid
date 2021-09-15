@@ -365,10 +365,11 @@ export default {
     align-items: center;
     justify-content: space-between;
     padding: 1.25rem 1.6rem;
-    box-shadow: 0px 0.4rem 0.7rem rgba(78, 25, 8, 0.02);
+    box-shadow: 0px 0.4rem 0.7rem rgba(148, 96, 77, 0.04);
     border-radius: 0 0 2rem 2rem;
     font-weight: 600;
-    position: relative;
+    position: sticky;
+    top: 0;
     z-index: 11;
 
     @media (min-width: 576px) {

@@ -2,9 +2,10 @@
 
 namespace App\Repository;
 
+use App\Entity\Worksheet;
 use App\Entity\WorksheetSession;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method WorksheetSession|null find($id, $lockMode = null, $lockVersion = null)
@@ -19,7 +20,7 @@ class WorksheetSessionRepository extends ServiceEntityRepository
         parent::__construct($registry, WorksheetSession::class);
     }
 
-    public function findCurrentWorksheetSession($worksheet): ?WorksheetSession
+    public function findCurrentWorksheetSession(Worksheet $worksheet): ?WorksheetSession
     {
         $now = new \DateTime();
 
@@ -34,7 +35,7 @@ class WorksheetSessionRepository extends ServiceEntityRepository
         ;
     }
 
-    public function countWorksheetSessions($worksheet): int
+    public function countWorksheetSessions(Worksheet $worksheet): int
     {
         return $this->createQueryBuilder('ws')
             ->select('count(ws.id)')
