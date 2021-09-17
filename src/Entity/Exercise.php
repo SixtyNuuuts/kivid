@@ -23,7 +23,7 @@ class Exercise
 
     /**
      * @ORM\ManyToOne(targetEntity=Video::class, inversedBy="exercises")
-     * @Groups({"worksheet_read"})
+     * @Groups({"worksheet_read", "dashboard_worksheet_read"})
      */
     private $video;
 

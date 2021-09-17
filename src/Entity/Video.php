@@ -45,7 +45,7 @@ class Video
 
     /**
      * @ORM\ManyToMany(targetEntity=Tag::class, inversedBy="videos")
-     * @Groups({"video_read"})
+     * @Groups({"video_read", "dashboard_worksheet_read"})
      */
     private $tags;
 

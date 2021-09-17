@@ -81,6 +81,21 @@ class WorksheetController extends AbstractController
     }
 
     /**
+     * @Route("/{id}/get/all/worksheets", name="app_doctor_get_all_worksheets", methods={"GET"})
+     */
+    public function getAllWorksheets(Doctor $doctor): JsonResponse
+    {
+        $worksheets = $this->worksheetRepository->findAll();
+
+        return $this->json(
+            $worksheets,
+            200,
+            [],
+            ['groups' => 'dashboard_worksheet_read']
+        );
+    }
+
+    /**
      * @Route("/{id}/fiches/{listType}/{patientId}", name="app_doctor_worksheets", methods={"GET"})
      */
     // public function worksheetList(

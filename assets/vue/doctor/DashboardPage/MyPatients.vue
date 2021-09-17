@@ -15,14 +15,17 @@
             <div v-if="$parent.myPatientsContent">
                 <div class="primary-actions">
                     <div class="search">
-                        <vs-input label-placeholder="Filtrer par nom" />
+                        <vs-input
+                            v-model="search"
+                            @keyup="page = 1"
+                            label-placeholder="Filtrer par nom ou email"
+                        />
                     </div>
                     <div>
                         <div class="btn-primary-action add">
                             <vs-tooltip>
                                 <vs-button
-                                    :disabled="redirectInProgress === true"
-                                    @click="true"
+                                    @click="modalAddPatient = true"
                                     class="btn-action add"
                                     circle
                                     floating
@@ -33,10 +36,21 @@
                                 </template>
                             </vs-tooltip>
                         </div>
+                        <PatientAdd
+                            :doctor="doctor"
+                            :modalAddPatient="modalAddPatient"
+                            :allPatients="allPatients"
+                            :csrfTokenAddPatient="csrfTokenAddPatient"
+                            :csrfTokenCreatePatient="csrfTokenCreatePatient"
+                        />
                     </div>
                 </div>
                 <div class="patients-list">
-                    <div class="patient-block">
+                    <div
+                        v-for="(patient, i) in getDoctorPatients"
+                        :key="i"
+                        class="patient-block"
+                    >
                         <div class="remove-user">
                             <i class="fas fa-user-minus"></i>
                         </div>
@@ -44,54 +58,46 @@
                             <div>
                                 <vs-avatar class="avatar" circle size="70">
                                     <img
-                                        :src="'../../img/avatar-default.svg'"
-                                        :alt="`Avatar de Damien Dupuy`"
+                                        :src="
+                                            patient.avatarUrl
+                                                ? patient.avatarUrl
+                                                : '/img/avatar-default.svg'
+                                        "
+                                        :alt="`Avatar de ${patient.firstname} ${patient.lastname}`"
                                     />
-                                    <div class="age">27 ans</div>
-                                </vs-avatar>
 
-                                <!-- <div
-                                    class="user-name"
-                                    v-if="
-                                        worksheet.patient.firstname ||
-                                        worksheet.patient.lastname
-                                    "
-                                >
-                                    {{ worksheet.patient.firstname }}
-                                    {{ worksheet.patient.lastname }}
-                                </div>
-                                <div v-else>
-                                    {{ worksheet.patient.email }}
-                                </div> -->
-                                <!-- <img
-                                    :src="
-                                        patient.doctor.avatarUrl
-                                            ? patient.doctor.avatarUrl
-                                            : '../../img/avatar-default.svg'
-                                    "
-                                    :alt="`Avatar de ${patient.doctor.firstname} ${patient.doctor.lastname}`"
-                                /> -->
+                                    <div v-if="patient.birthdate" class="age">
+                                        {{ getAge(patient.birthdate) }} ans
+                                    </div>
+                                </vs-avatar>
                                 <div class="user-name">
-                                    <div class="name">Damien Dupuy</div>
-                                    <div class="mail">sixty.nuts@gmail.com</div>
-                                    <div class="prescriptions">
+                                    <div
+                                        class="name"
+                                        v-if="
+                                            patient.firstname ||
+                                            patient.lastname
+                                        "
+                                    >
+                                        {{ patient.firstname }}
+                                        {{ patient.lastname }}
+                                    </div>
+                                    <div class="mail">{{ patient.email }}</div>
+                                    <div
+                                        v-if="patient.worksheets.length"
+                                        class="prescriptions"
+                                    >
                                         <h4>Prescriptions :</h4>
                                         <div class="prescriptions-patient-list">
-                                            <div class="prescription">
-                                                Fiche Test
-                                            </div>
-
-                                            <div class="prescription">
-                                                Fiche Test 2
-                                            </div>
-                                            <div class="prescription">
-                                                Fiche Test 3
-                                            </div>
+                                            <BtnChartWorksheetPartOfBody
+                                                class="prescription"
+                                                v-for="(
+                                                    worksheet, i
+                                                ) in patient.worksheets"
+                                                :key="i"
+                                                :worksheet="worksheet"
+                                            />
                                         </div>
                                     </div>
-                                    <!-- <BtnChartWorksheetPartOfBody
-                                    :worksheet="worksheet"
-                                /> -->
                                 </div>
                             </div>
                             <div class="btn-prescription-action">
@@ -103,18 +109,50 @@
                         </div>
                         <div class="account-infos">
                             <div class="status">
-                                <div class="icon-active-status"></div>
-                                <p class="text-status">Actif</p>
+                                <div
+                                    v-if="
+                                        patient.addRequestDoctor &&
+                                        patient.isVerified
+                                    "
+                                    class="status"
+                                >
+                                    <div class="icon-active-status"></div>
+                                    <p class="text-status">Actif</p>
+                                </div>
+                                <div
+                                    v-if="
+                                        patient.addRequestDoctor &&
+                                        !patient.isVerified
+                                    "
+                                    class="status"
+                                >
+                                    <div class="icon-inactive-status"></div>
+                                    <p class="text-status">Inactif</p>
+                                </div>
+                                <div
+                                    v-if="false === patient.addRequestDoctor"
+                                    class="status"
+                                >
+                                    <div class="icon-waiting-status"></div>
+                                    <p class="text-status">Attente</p>
+                                </div>
                             </div>
-                            <div class="last-login">
+                            <div v-if="patient.lastLoginAt" class="last-login">
                                 <span>Dernière connexion :</span>
-                                <strong>20/06/2021</strong>
+                                <strong>{{
+                                    formatDate(patient.lastLoginAt)
+                                }}</strong>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="pagination">
-                    <vs-pagination v-model="page" :length="2" />
+                    <vs-pagination
+                        v-model="page"
+                        :length="
+                            getLength(getSearch(doctorPatients, search), max)
+                        "
+                    />
                 </div>
             </div>
         </transition>
@@ -124,32 +162,97 @@
 <script>
 import f from "../../services/function";
 import BtnChartWorksheetPartOfBody from "../../components/BtnChartWorksheetPartOfBody.vue";
+import PatientAdd from "./MyPatients/PatientAdd.vue";
+import moment from "moment";
 
 export default {
     props: {
         doctor: Object,
-        doctorPatients: Array,
-        loadingDoctorPatients: Boolean,
+        csrfTokenAddPatient: String,
+        csrfTokenRemovePatient: String,
+        csrfTokenCreatePatient: String,
     },
     components: {
         BtnChartWorksheetPartOfBody,
-    },
-    computed: {
-        getDoctorPatients() {
-            return this.doctorPatients;
-        },
+        PatientAdd,
     },
     data() {
         return {
-            redirectInProgress: null,
+            search: "",
             page: 1,
+            max: 4,
+            doctorPatients: [],
+            allPatients: [],
+            modalAddPatient: false,
+            loadingDoctorPatients: false,
+            loadingAllPatients: false,
         };
     },
+    computed: {
+        getDoctorPatients() {
+            return this.getPage(
+                this.getSearch(this.doctorPatients, this.search),
+                this.page,
+                this.max
+            );
+        },
+        getAllPatients() {
+            return this.allPatients;
+        },
+    },
     methods: {
-        // redirectToWorksheetPage(worksheetId) {
-        //     this.redirectInProgress = worksheetId;
-        //     document.location.href = `/doctor/${this.doctor.id}/fiche/${worksheetId}`;
-        // },
+        getAge(birthdate) {
+            return f.generateAgeFromDateOfBirth(birthdate);
+        },
+        formatDate(datetime) {
+            return moment(datetime).format("DD/MM/YYYY");
+        },
+        getPage(data, page, maxItems) {
+            return f.getPage(data, page, maxItems);
+        },
+        getLength(data, maxItems) {
+            return f.getLength(data, maxItems);
+        },
+        getSearch(data, filter) {
+            return f.getSearch(data, filter);
+        },
+    },
+    created() {
+        this.loadingDoctorPatients = true;
+
+        this.axios
+            .get(`/doctor/${this.doctor.id}/get/patients`)
+            .then((response) => {
+                this.doctorPatients = response.data;
+
+                this.loadingDoctorPatients = false;
+            })
+            .catch((error) => {
+                const errorMess =
+                    "object" === typeof error.response.data
+                        ? error.response.data.detail
+                        : error.response.data;
+
+                console.error(errorMess);
+            });
+
+        this.loadingAllPatients = true;
+
+        this.axios
+            .get(`/doctor/${this.doctor.id}/get/all/patients`)
+            .then((response) => {
+                this.allPatients = response.data;
+
+                this.loadingAllPatients = false;
+            })
+            .catch((error) => {
+                const errorMess =
+                    "object" === typeof error.response.data
+                        ? error.response.data.detail
+                        : error.response.data;
+
+                console.error(errorMess);
+            });
     },
 };
 </script>
@@ -246,13 +349,15 @@ export default {
                                 bottom: -0.6rem;
                                 left: 50%;
                                 transform: translateX(-50%);
-                                background-color: #c1b79f;
+                                background-color: $white;
                                 padding: 0.2rem 0.5rem;
                                 white-space: nowrap;
                                 border-radius: 0.4rem;
-                                color: $white;
+                                color: $black;
                                 padding-top: 0.3rem;
-                                font-size: 0.9rem;
+                                font-size: 0.8rem;
+                                box-shadow: 0rem 0rem 0.8rem
+                                    rgba(34, 46, 84, 0.09);
                             }
                         }
 
@@ -318,11 +423,72 @@ export default {
                                     overflow: hidden;
 
                                     .prescription {
-                                        height: 1.4rem;
-                                        background-color: white;
+                                        background-color: $white;
                                         border-radius: 0.5rem;
-                                        padding: 0.2rem;
+                                        font-size: 1rem;
                                         margin: 0.2rem 0.3rem;
+                                        max-height: 2.15rem;
+                                        box-shadow: 0rem 0rem 0.8rem
+                                            rgba(34, 46, 84, 0.09);
+                                        cursor: initial;
+
+                                        &.vs-button--size-mini.btn-chart.part-of-body {
+                                            .vs-button__content {
+                                                padding: 0.25rem 0.6rem;
+                                                padding-top: 0.4rem;
+                                                padding-left: 0.6rem;
+                                            }
+                                        }
+
+                                        img {
+                                            position: relative;
+                                            margin-right: 0.4rem;
+
+                                            &.icon-pied {
+                                                top: -0.1rem;
+                                                height: 0.9rem;
+                                            }
+
+                                            &.icon-jambe {
+                                                top: 0rem;
+                                                height: 1.35rem;
+                                            }
+
+                                            &.icon-bras {
+                                                top: -0.1rem;
+                                                height: 1.1rem;
+                                            }
+
+                                            &.icon-main {
+                                                top: -0.1rem;
+                                                height: 1.1rem;
+                                            }
+
+                                            &.icon-epaule {
+                                                top: -0.1rem;
+                                                height: 1.1rem;
+                                            }
+
+                                            &.icon-dos {
+                                                top: -0.1rem;
+                                                height: 1.1rem;
+                                            }
+
+                                            &.icon-cervicales {
+                                                top: -0.1rem;
+                                                height: 1.1rem;
+                                            }
+
+                                            &.icon-lombaires {
+                                                top: -0.1rem;
+                                                height: 1.2rem;
+                                            }
+
+                                            &.icon-thoracique {
+                                                top: -0.1rem;
+                                                height: 1.1rem;
+                                            }
+                                        }
                                     }
                                 }
                             }

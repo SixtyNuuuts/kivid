@@ -18,15 +18,17 @@
                 <div class="primary-actions">
                     <div class="search">
                         <vs-input
+                            v-model="search"
+                            @keyup="page = 1"
                             label-placeholder="Filtrer par nom de fiche et/ou patient"
                         />
                     </div>
-                    <div class="btn-primary-action">
+                    <!-- <div class="btn-primary-action">
                         <vs-button @click="true" class="w-100">
                             <i class="fas fa-folder-plus"></i> Créer un
                             traitement
                         </vs-button>
-                    </div>
+                    </div> -->
                 </div>
                 <div class="worksheet-list wl-doctor">
                     <div
@@ -184,7 +186,14 @@
                                             </vs-button>
                                         </div>
                                         <div class="created-at-date">
-                                            crée le 12/05/2021
+                                            <span
+                                                >créé le
+                                                {{
+                                                    formatDate(
+                                                        worksheet.createdAt
+                                                    )
+                                                }}
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
@@ -261,7 +270,15 @@
                     </div>
                 </div>
                 <div class="pagination">
-                    <vs-pagination v-model="page" :length="2" />
+                    <vs-pagination
+                        v-model="page"
+                        :length="
+                            getLength(
+                                getSearch(doctorPrescriptions, search),
+                                max
+                            )
+                        "
+                    />
                 </div>
             </div>
         </transition>
@@ -271,6 +288,7 @@
 <script>
 import f from "../../services/function";
 import TagPartOfBody from "../../components/TagPartOfBody.vue";
+import moment from "moment";
 
 export default {
     props: {
@@ -283,12 +301,18 @@ export default {
     },
     computed: {
         getDoctorPrescriptions() {
-            return this.doctorPrescriptions;
+            return this.getPage(
+                this.getSearch(this.doctorPrescriptions, this.search, "doctor"),
+                this.page,
+                this.max
+            );
         },
     },
     data() {
         return {
+            search: "",
             page: 1,
+            max: 4,
             redirectInProgress: null,
         };
     },
@@ -297,6 +321,18 @@ export default {
             this.redirectInProgress = worksheetId;
 
             document.location.href = `/doctor/${this.doctor.id}/fiche/${worksheetId}`;
+        },
+        formatDate(datetime) {
+            return moment(datetime).format("DD/MM/YYYY");
+        },
+        getPage(data, page, maxItems) {
+            return f.getPage(data, page, maxItems);
+        },
+        getLength(data, maxItems) {
+            return f.getLength(data, maxItems);
+        },
+        getSearch(data, filter) {
+            return f.getSearch(data, filter);
         },
     },
 };
@@ -314,6 +350,12 @@ export default {
 
         @media (min-width: 768px) {
             margin: 0;
+        }
+    }
+
+    .primary-actions {
+        .search {
+            margin-right: 0;
         }
     }
 
