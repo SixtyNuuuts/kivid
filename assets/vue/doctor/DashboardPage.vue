@@ -2,7 +2,7 @@
     <div class="container">
         <section id="dashboard" class="db-doctor">
             <h1>
-                Bienvenue sur votre dashabord !
+                Bienvenue sur votre dashboard !
                 <i>
                     <img
                         src="../../img/icons/colored/hand.svg"
@@ -141,14 +141,14 @@ export default {
 #dashboard.db-doctor {
     main {
         grid-template-areas:
+            "myprescriptions"
             "myworksheettemplates"
-            "aside"
-            "myprescriptions";
+            "aside";
 
         @media (min-width: 992px) {
             grid-template-areas:
-                "myworksheettemplates  myworksheettemplates  aside"
-                "myprescriptions       myprescriptions       aside";
+                "myprescriptions       myprescriptions       aside"
+                "myworksheettemplates  myworksheettemplates  aside";
         }
     }
 }

@@ -129,25 +129,24 @@
                         v-for="(worksheet, i) in getPatientWorksheets"
                         :key="i"
                         class="btn-toggle-worksheet-stats"
-                        @click="sensitivityToggleDisableWorksheet(worksheet.id)"
-                        :class="{
-                            disactive: sensitivityDisableWorksheets.includes(
+                        @click="
+                            toggleHiddenWorksheetLine(
+                                'sensitivity',
+                                i,
                                 worksheet.id
-                            ),
+                            )
+                        "
+                        :class="{
+                            disactive: disableWorksheets[
+                                'sensitivity'
+                            ].includes(worksheet.id),
                         }"
                     >
                         <div
                             class="line-color"
                             :style="{
-                                backgroundColor:
-                                    colors[
-                                        sensitivityColorsAssign[worksheet.id]
-                                    ],
-                                border: `5px solid ${
-                                    colors[
-                                        sensitivityColorsAssign[worksheet.id]
-                                    ]
-                                }`,
+                                backgroundColor: colors[i],
+                                border: `5px solid ${colors[i]}`,
                             }"
                         ></div>
                         <BtnChartWorksheetPartOfBody :worksheet="worksheet" />
@@ -242,9 +241,15 @@
                         v-for="(worksheet, i) in getPatientWorksheets"
                         :key="i"
                         class="btn-toggle-worksheet-stats"
-                        @click="technicalToggleDisableWorksheet(worksheet.id)"
+                        @click="
+                            toggleHiddenWorksheetLine(
+                                'technical',
+                                i,
+                                worksheet.id
+                            )
+                        "
                         :class="{
-                            disactive: technicalDisableWorksheets.includes(
+                            disactive: disableWorksheets['technical'].includes(
                                 worksheet.id
                             ),
                         }"
@@ -252,11 +257,8 @@
                         <div
                             class="line-color"
                             :style="{
-                                backgroundColor:
-                                    colors[technicalColorsAssign[worksheet.id]],
-                                border: `5px solid ${
-                                    colors[technicalColorsAssign[worksheet.id]]
-                                }`,
+                                backgroundColor: colors[i],
+                                border: `5px solid ${colors[i]}`,
                             }"
                         ></div>
                         <BtnChartWorksheetPartOfBody :worksheet="worksheet" />
@@ -354,9 +356,15 @@
                         v-for="(worksheet, i) in getPatientWorksheets"
                         :key="i"
                         class="btn-toggle-worksheet-stats"
-                        @click="difficultyToggleDisableWorksheet(worksheet.id)"
+                        @click="
+                            toggleHiddenWorksheetLine(
+                                'difficulty',
+                                i,
+                                worksheet.id
+                            )
+                        "
                         :class="{
-                            disactive: difficultyDisableWorksheets.includes(
+                            disactive: disableWorksheets['difficulty'].includes(
                                 worksheet.id
                             ),
                         }"
@@ -364,13 +372,8 @@
                         <div
                             class="line-color"
                             :style="{
-                                backgroundColor:
-                                    colors[
-                                        difficultyColorsAssign[worksheet.id]
-                                    ],
-                                border: `5px solid ${
-                                    colors[difficultyColorsAssign[worksheet.id]]
-                                }`,
+                                backgroundColor: colors[i],
+                                border: `5px solid ${colors[i]}`,
                             }"
                         ></div>
                         <BtnChartWorksheetPartOfBody :worksheet="worksheet" />
@@ -472,29 +475,53 @@ export default {
             colors: [
                 "#ff6838",
                 "#ffa126",
-                "#fb8b68",
-                "#ff564b",
-                "#ffcb46",
+                "#5c91e1",
+                "#8f67d1",
+                "#57cdbf",
+                "#f17cd7",
+                "#93d2a5",
+                "#b24788",
                 "#c1b79d",
+                "#ff564b",
+                "#fb8b68",
+                "#ffcb46",
+                "#3dc863",
                 "#ff6838",
                 "#ffa126",
-                "#fb8b68",
-                "#ff564b",
-                "#ffcb46",
+                "#5c91e1",
+                "#8f67d1",
+                "#57cdbf",
+                "#f17cd7",
+                "#93d2a5",
+                "#b24788",
                 "#c1b79d",
-                "#ff6838",
-                "#ffa126",
-                "#fb8b68",
                 "#ff564b",
+                "#fb8b68",
                 "#ffcb46",
-                "#c1b79d",
+                "#3dc863",
             ],
-            sensitivityColorsAssign: {},
-            technicalColorsAssign: {},
-            difficultyColorsAssign: {},
-            sensitivityDisableWorksheets: [],
-            technicalDisableWorksheets: [],
-            difficultyDisableWorksheets: [],
+            iCoresspLine: {
+                0: "a",
+                1: "b",
+                2: "c",
+                3: "d",
+                4: "e",
+                5: "f",
+                6: "g",
+                7: "h",
+                8: "i",
+                9: "j",
+                10: "k",
+                11: "l",
+                12: "m",
+                13: "n",
+                14: "o",
+            },
+            disableWorksheets: {
+                sensitivity: [],
+                technical: [],
+                difficulty: [],
+            },
         };
     },
     computed: {
@@ -504,8 +531,6 @@ export default {
             );
         },
         sensitivityExerciseStats() {
-            this.assignColorToWorksheet("sensitivity");
-
             return this.generateExerciseStatsByCriterion("sensitivity");
         },
         sensitivityChartOptions() {
@@ -518,8 +543,6 @@ export default {
             };
         },
         technicalExerciseStats() {
-            this.assignColorToWorksheet("technical");
-
             return this.generateExerciseStatsByCriterion("technical");
         },
         technicalChartOptions() {
@@ -529,8 +552,6 @@ export default {
             };
         },
         difficultyExerciseStats() {
-            this.assignColorToWorksheet("difficulty");
-
             return this.generateExerciseStatsByCriterion("difficulty");
         },
         difficultyChartOptions() {
@@ -547,28 +568,25 @@ export default {
             return array;
         },
         generateExerciseStatsByCriterion(criterion) {
-            let unitOfTime, disableWorksheets;
+            let unitOfTime;
 
             if ("difficulty" === criterion) {
                 unitOfTime = this.difficultyUnitOfTime;
-                disableWorksheets = this.difficultyDisableWorksheets;
             }
 
             if ("sensitivity" === criterion) {
                 unitOfTime = this.sensitivityUnitOfTime;
-                disableWorksheets = this.sensitivityDisableWorksheets;
             }
 
             if ("technical" === criterion) {
                 unitOfTime = this.technicalUnitOfTime;
-                disableWorksheets = this.technicalDisableWorksheets;
             }
 
             const exerciseStatsByUnitOfTime =
                 this.filterExerciseStatsByUnitOfTime(
                     this.getPatientWorksheets,
                     unitOfTime
-                ).filter((w) => !disableWorksheets.includes(w.id));
+                );
 
             const labels = this.generateLabels(exerciseStatsByUnitOfTime);
 
@@ -589,8 +607,7 @@ export default {
                             criterion,
                             w.exerciseStats,
                             labels,
-                            unitOfTime,
-                            "technical" === criterion ? false : true
+                            unitOfTime
                         );
 
                     const truncateTitle =
@@ -660,71 +677,20 @@ export default {
                 return new Date(a) - new Date(b);
             });
         },
-        assignColorToWorksheet(criterion) {
-            if ("difficulty" === criterion) {
-                this.difficultyColorsAssign = {};
+        toggleHiddenWorksheetLine(criterion, i, worksheetId) {
+            const line = document.querySelector(
+                `#${criterion} .ct-series-${this.iCoresspLine[i]}`
+            );
 
-                this.getPatientWorksheets
-                    .filter(
-                        (w) => !this.difficultyDisableWorksheets.includes(w.id)
-                    )
-                    .forEach((w, i) => {
-                        this.difficultyColorsAssign[w.id] = i;
-                    });
-            }
+            line.classList.toggle("hidden");
 
-            if ("sensitivity" === criterion) {
-                this.sensitivityColorsAssign = {};
-
-                this.getPatientWorksheets
-                    .filter(
-                        (w) => !this.sensitivityDisableWorksheets.includes(w.id)
-                    )
-                    .forEach((w, i) => {
-                        this.sensitivityColorsAssign[w.id] = i;
-                    });
-            }
-
-            if ("technical" === criterion) {
-                this.technicalColorsAssign = {};
-
-                this.getPatientWorksheets
-                    .filter(
-                        (w) => !this.technicalDisableWorksheets.includes(w.id)
-                    )
-                    .forEach((w, i) => {
-                        this.technicalColorsAssign[w.id] = i;
-                    });
-            }
-        },
-        sensitivityToggleDisableWorksheet(worksheetId) {
-            if (this.sensitivityDisableWorksheets.includes(worksheetId)) {
-                this.sensitivityDisableWorksheets.splice(
-                    this.sensitivityDisableWorksheets.indexOf(worksheetId),
+            if (this.disableWorksheets[criterion].includes(worksheetId)) {
+                this.disableWorksheets[criterion].splice(
+                    this.disableWorksheets[criterion].indexOf(worksheetId),
                     1
                 );
             } else {
-                this.sensitivityDisableWorksheets.push(worksheetId);
-            }
-        },
-        difficultyToggleDisableWorksheet(worksheetId) {
-            if (this.difficultyDisableWorksheets.includes(worksheetId)) {
-                this.difficultyDisableWorksheets.splice(
-                    this.difficultyDisableWorksheets.indexOf(worksheetId),
-                    1
-                );
-            } else {
-                this.difficultyDisableWorksheets.push(worksheetId);
-            }
-        },
-        technicalToggleDisableWorksheet(worksheetId) {
-            if (this.technicalDisableWorksheets.includes(worksheetId)) {
-                this.technicalDisableWorksheets.splice(
-                    this.technicalDisableWorksheets.indexOf(worksheetId),
-                    1
-                );
-            } else {
-                this.technicalDisableWorksheets.push(worksheetId);
+                this.disableWorksheets[criterion].push(worksheetId);
             }
         },
         changeSensitivityUnitOfTime(UnitOfTime) {
@@ -740,8 +706,7 @@ export default {
             criterion,
             stats,
             labels,
-            unitOfTime,
-            cloneEl
+            unitOfTime
         ) {
             let chartDataPoints = [];
 
@@ -790,11 +755,6 @@ export default {
                     y: statsAverage,
                     meta: textTooltip,
                 };
-
-                if (chartDataPoints.length === 1 && cloneEl) {
-                    const cloneAloneEl = { ...chartDataPoints[0] };
-                    chartDataPoints.push(cloneAloneEl);
-                }
             }
 
             return chartDataPoints;

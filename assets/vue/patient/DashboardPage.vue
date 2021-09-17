@@ -7,7 +7,7 @@
         />
         <section v-else id="dashboard" class="db-patient">
             <h1>
-                Bienvenue sur votre dashabord !
+                Bienvenue sur votre dashboard !
                 <i>
                     <img
                         src="../../img/icons/colored/hand.svg"
