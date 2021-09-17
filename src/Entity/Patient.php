@@ -56,6 +56,7 @@ class Patient extends User
 
     /**
      * @ORM\OneToMany(targetEntity=Worksheet::class, mappedBy="patient")
+     * @Groups({"patient_read"})
      */
     private $worksheets;
 

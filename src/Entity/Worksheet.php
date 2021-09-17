@@ -17,13 +17,13 @@ class Worksheet
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"worksheet_read", "dashboard_worksheet_read"})
+     * @Groups({"worksheet_read", "dashboard_worksheet_read", "patient_read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"worksheet_read", "dashboard_worksheet_read"})
+     * @Groups({"worksheet_read", "dashboard_worksheet_read", "patient_read"})
      */
     private $title;
 
@@ -41,7 +41,7 @@ class Worksheet
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"worksheet_read", "dashboard_worksheet_read"})
+     * @Groups({"worksheet_read", "dashboard_worksheet_read", "patient_read"})
      */
     private $partOfBody;
 
@@ -80,6 +80,7 @@ class Worksheet
 
     /**
      * @ORM\ManyToOne(targetEntity=Doctor::class, inversedBy="worksheets")
+     * @Groups({"dashboard_worksheet_read"})
      */
     private $doctor;
 

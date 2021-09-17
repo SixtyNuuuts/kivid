@@ -70,7 +70,7 @@ class UserService
         $email = (new TemplatedEmail())
             ->from(new Address('contact@kivid.fr', '"Kivid Contact"'))
             ->to($patient->getEmail())
-            ->subject("Vous avez été ajouté comme patient par {$doctor->getFirstname()} {$doctor->getLastname()}")
+            ->subject("Vous avez été ajouté comme patient par {$this->getUserName($doctor)}")
             ->htmlTemplate('patient/create_pass/email.html.twig')
             ->context([
                 'passToken' => $passToken,
@@ -82,7 +82,7 @@ class UserService
 
         $json = $this->serializer->serialize([
             "message" => "
-                <strong>{$patient->getFirstname()} {$patient->getLastname()}</strong> 
+                <strong>{$this->getUserName($patient)}</strong> 
                 a été créé et ajouté à vos patients, 
                 Nous lui avons envoyé un email pour qu'il valide son inscription.
             ",

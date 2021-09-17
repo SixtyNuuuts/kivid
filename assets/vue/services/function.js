@@ -194,7 +194,7 @@ export default {
     }
   },
 
-  getSearch(data, search) {
+  getSearch(data, search, exclude) {
     if (search === void 0) {
       search = '';
     }
@@ -206,7 +206,10 @@ export default {
     }
 
     function getValues(obj) {
-      const searchFields = ["firstname", "lastname", "email", "title", "name", "worksheet", "patient"]
+      let searchFields = ["firstname", "lastname", "email", "title", "name", "worksheet", "patient", "doctor"];
+      if ('doctor' === exclude) {
+        searchFields = ["firstname", "lastname", "email", "title", "name", "worksheet", "patient"];
+      }
 
       const objFilteredBySearchField = Object.keys(obj).reduce((r, key) => {
         if (searchFields.includes(key)) {

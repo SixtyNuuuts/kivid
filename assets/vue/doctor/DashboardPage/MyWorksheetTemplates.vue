@@ -19,6 +19,8 @@
                 <div class="primary-actions">
                     <div class="search">
                         <vs-input
+                            v-model="search"
+                            @keyup="page = 1"
                             label-placeholder="Filtrer par nom de fiche et/ou créateur du modèle"
                         />
                     </div>
@@ -31,12 +33,12 @@
                                 v-model="selectedTags"
                             >
                                 <vs-option
-                                    v-for="(tag, i) in getVideoTags"
+                                    v-for="(tag, i) in getTagsFromAll"
                                     :key="i"
-                                    :label="tag.name"
-                                    :value="tag.id"
+                                    :label="tag"
+                                    :value="tag"
                                 >
-                                    {{ tag.name }}
+                                    {{ tag }}
                                 </vs-option>
                                 <template slot="notData">
                                     Aucun mot-clé
@@ -104,9 +106,15 @@
                                         </vs-button>
                                     </div>
                                     <div class="tags">
-                                        <div class="tag-chip">test 1</div>
-                                        <div class="tag-chip">test 2</div>
-                                        <div class="tag-chip">test 3</div>
+                                        <div
+                                            class="tag-chip"
+                                            v-for="(
+                                                tag, i
+                                            ) in worksheet.exercisesTags"
+                                            :key="i"
+                                        >
+                                            {{ tag }}
+                                        </div>
                                     </div>
                                 </div>
                                 <div>
@@ -190,47 +198,51 @@
                                             </vs-button>
                                         </div>
                                         <div class="created-at-date">
-                                            crée le 12/05/2021 <br />par Damien
-                                            Dupuy
+                                            <span
+                                                >créé le
+                                                {{
+                                                    formatDate(
+                                                        worksheet.createdAt
+                                                    )
+                                                }}
+                                                <span
+                                                    v-if="
+                                                        worksheet.doctor &&
+                                                        (worksheet.doctor
+                                                            .firstname ||
+                                                            worksheet.doctor
+                                                                .lastname)
+                                                    "
+                                                >
+                                                    <br />par
+                                                    {{
+                                                        worksheet.doctor
+                                                            .firstname
+                                                    }}
+                                                    {{
+                                                        worksheet.doctor
+                                                            .lastname
+                                                    }}
+                                                </span></span
+                                            >
                                             <vs-avatar
                                                 size="25"
                                                 class="user-avatar"
                                                 circle
+                                                v-if="worksheet.doctor"
                                             >
                                                 <img
-                                                    :src="'/img/avatar-default.svg'"
-                                                    alt="Avatar de Damien Dupuy"
+                                                    :src="
+                                                        worksheet.doctor
+                                                            .avatarUrl
+                                                            ? worksheet.doctor
+                                                                  .avatarUrl
+                                                            : '/img/avatar-default.svg'
+                                                    "
+                                                    :alt="`Avatar de ${worksheet.doctor.firstname} ${worksheet.doctor.lastname}`"
                                                 />
                                             </vs-avatar>
                                         </div>
-                                        <!-- <vs-avatar
-                                            size="15"
-                                            class="user-avatar"
-                                            circle
-                                        >
-                                            <img
-                                                :src="
-                                                    worksheet.patient.avatarUrl
-                                                        ? worksheet.patient
-                                                              .avatarUrl
-                                                        : '/img/avatar-default.svg'
-                                                "
-                                                :alt="`Avatar de ${worksheet.patient.firstname} ${worksheet.patient.lastname}`"
-                                            />
-                                        </vs-avatar> -->
-                                        <!-- <div
-                                            class="user-name"
-                                            v-if="
-                                                worksheet.patient.firstname ||
-                                                worksheet.patient.lastname
-                                            "
-                                        >
-                                            {{ worksheet.patient.firstname }}
-                                            {{ worksheet.patient.lastname }}
-                                        </div>
-                                        <div v-else>
-                                            {{ worksheet.patient.email }}
-                                        </div> -->
                                     </div>
                                 </div>
                             </div>
@@ -306,7 +318,15 @@
                     </div>
                 </div>
                 <div class="pagination">
-                    <vs-pagination v-model="page" :length="2" />
+                    <vs-pagination
+                        v-model="page"
+                        :length="
+                            getLength(
+                                getSearch(doctorWorksheetTemplates, search),
+                                max
+                            )
+                        "
+                    />
                 </div>
             </div>
         </transition>
@@ -316,12 +336,14 @@
 <script>
 import f from "../../services/function";
 import TagPartOfBody from "../../components/TagPartOfBody.vue";
+import moment from "moment";
 
 export default {
     props: {
         doctor: Object,
         doctorWorksheetTemplates: Array,
         loadingDoctorWorksheets: Boolean,
+        tagsFromExercises: Array,
     },
     components: {
         TagPartOfBody,
@@ -329,22 +351,23 @@ export default {
     data() {
         return {
             selectedTags: [],
+            search: "",
             page: 1,
+            max: 4,
             viewAllTemplates: false,
             redirectInProgress: null,
         };
     },
     computed: {
-        getVideoTags() {
-            return [
-                { id: 1, name: "test1" },
-                { id: 2, name: "test2" },
-                { id: 3, name: "test3" },
-                { id: 4, name: "test4" },
-            ];
-        },
         getDoctorWorksheetTemplates() {
-            return this.doctorWorksheetTemplates;
+            return this.getPage(
+                this.getSearch(this.doctorWorksheetTemplates, this.search),
+                this.page,
+                this.max
+            );
+        },
+        getTagsFromAll() {
+            return f.getTagsFromAll(this.tagsFromExercises);
         },
     },
     methods: {
@@ -352,6 +375,44 @@ export default {
             this.redirectInProgress = worksheetId;
 
             document.location.href = `/doctor/${this.doctor.id}/fiche/${worksheetId}`;
+        },
+        formatDate(datetime) {
+            return moment(datetime).format("DD/MM/YYYY");
+        },
+        getPage(data, page, maxItems) {
+            return f.getPage(data, page, maxItems);
+        },
+        getLength(data, maxItems) {
+            return f.getLength(data, maxItems);
+        },
+        getSearch(data, filter) {
+            let worksheetTemplatesFiltered = f.getSearch(data, filter);
+
+            if (this.selectedTags.length) {
+                worksheetTemplatesFiltered = worksheetTemplatesFiltered.filter(
+                    (w) => {
+                        let result = false;
+
+                        if (w.exercisesTags) {
+                            w.exercisesTags.forEach((tag) => {
+                                if (this.selectedTags.includes(tag)) {
+                                    result = true;
+                                }
+                            });
+                        }
+
+                        return result;
+                    }
+                );
+            }
+
+            if (!this.viewAllTemplates) {
+                worksheetTemplatesFiltered = worksheetTemplatesFiltered.filter(
+                    (w) => w.doctor && w.doctor.id === this.doctor.id
+                );
+            }
+
+            return worksheetTemplatesFiltered;
         },
     },
 };

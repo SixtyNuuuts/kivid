@@ -14,6 +14,7 @@
                 <MyWorksheetTemplates
                     :doctor="doctor"
                     :doctorWorksheetTemplates="getDoctorWorksheetTemplates"
+                    :tagsFromExercises="tagsFromExercises"
                     :loadingDoctorWorksheets="loadingDoctorWorksheets"
                 />
                 <MyPrescriptions
@@ -25,8 +26,9 @@
                     <MyDashboardNotifications :doctor="doctor" />
                     <MyPatients
                         :doctor="doctor"
-                        :doctorPatients="doctorPatients"
-                        :loadingDoctorPatients="loadingDoctorPatients"
+                        :csrfTokenAddPatient="csrfTokenAddPatient"
+                        :csrfTokenRemovePatient="csrfTokenRemovePatient"
+                        :csrfTokenCreatePatient="csrfTokenCreatePatient"
                     />
                 </aside>
             </main>
@@ -57,21 +59,27 @@ export default {
             myWorksheetTemplatesContent: true,
             myPrescriptionsContent: true,
             myPatientsContent: true,
+            csrfTokenAddPatient: null,
+            csrfTokenRemovePatient: null,
+            csrfTokenCreatePatient: null,
             loadingDoctorWorksheets: false,
             loadingDoctorPatients: false,
-            doctorWorksheets: [],
+            allWorksheets: [],
             doctorPatients: [],
+            tagsFromExercises: [],
         };
     },
     computed: {
         getDoctorWorksheetTemplates() {
             return this.sortByCreatedAt(
-                this.doctorWorksheets.filter((w) => !w.patient)
+                this.allWorksheets.filter((w) => !w.patient)
             );
         },
         getDoctorPrescriptions() {
             return this.sortByCreatedAt(
-                this.doctorWorksheets.filter((w) => w.patient)
+                this.allWorksheets.filter(
+                    (w) => w.patient && w.doctor.id === this.doctor.id
+                )
             );
         },
     },
@@ -102,24 +110,25 @@ export default {
         const data = JSON.parse(document.getElementById("vueData").innerHTML);
 
         this.doctor = data.doctor;
-        // this.csrfTokenAcceptDoctor = data.csrfTokenAcceptDoctor;
+        this.csrfTokenAddPatient = data.csrfTokenAddPatient;
+        this.csrfTokenRemovePatient = data.csrfTokenRemovePatient;
+        this.csrfTokenCreatePatient = data.csrfTokenCreatePatient;
 
         this.loadingDoctorWorksheets = true;
 
         this.axios
-            .get(`/doctor/${this.doctor.id}/get/worksheets`)
+            .get(`/doctor/${this.doctor.id}/get/all/worksheets`)
             .then((response) => {
-                this.doctorWorksheets = response.data;
+                this.allWorksheets = response.data;
+
+                this.tagsFromExercises = f.generateTagsFromExercises(
+                    this.allWorksheets
+                );
 
                 this.loadingDoctorWorksheets = false;
             })
             .catch((error) => {
-                const errorMess =
-                    "object" === typeof error.response.data
-                        ? error.response.data.detail
-                        : error.response.data;
-
-                console.error(errorMess);
+                console.error(error);
             });
     },
     beforeDestroy() {

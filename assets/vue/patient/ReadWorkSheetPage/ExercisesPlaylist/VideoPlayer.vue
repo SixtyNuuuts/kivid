@@ -327,7 +327,7 @@ export default {
 
 .video-player {
     position: absolute;
-    z-index: 11;
+    z-index: 211;
     top: 0;
     left: 0;
     right: 0;

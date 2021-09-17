@@ -37,16 +37,16 @@ class PatientController extends AbstractController
         $this->em = $em;
     }
 
-    /**
-     * @Route("/{id}/patients", name="app_doctor_patients", methods={"GET"})
-     */
-    public function patientsList(Request $request, Doctor $doctor): Response
-    {
-        return $this->render('doctor/patients_list.html.twig', [
-            'doctor' => $doctor,
-            'triggerAddPatient' => $request->query->get('add_patient'),
-        ]);
-    }
+    // /**
+    //  * @Route("/{id}/patients", name="app_doctor_patients", methods={"GET"})
+    //  */
+    // public function patientsList(Request $request, Doctor $doctor): Response
+    // {
+    //     return $this->render('doctor/patients_list.html.twig', [
+    //         'doctor' => $doctor,
+    //         'triggerAddPatient' => $request->query->get('add_patient'),
+    //     ]);
+    // }
 
     /**
      * @Route("/{id}/get/patients", name="app_doctor_get_patients", methods={"GET"})
@@ -62,21 +62,34 @@ class PatientController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/show/patient/{patientId}", name="app_doctor_show_patient", methods={"GET"})
+     * @Route("/{id}/get/all/patients", name="app_doctor_get_all_patients", methods={"GET"})
      */
-    public function showPatient(
-        int $patientId = null
-    ): Response {
-        $patient =
-            $patientId ?
-                $this->patientRepository->findOneBy(['id' => $patientId])
-            : null;
-
-        return $this->render('patient/dashboard.html.twig', [
-            'patient' => $patient,
-            'doctorView' => true,
-        ]);
+    public function getAllPatients(Doctor $doctor): JsonResponse
+    {
+        return $this->json(
+            $this->patientRepository->findAll(),
+            200,
+            [],
+            ['groups' => 'patient_read']
+        );
     }
+
+    // /**
+    //  * @Route("/{id}/show/patient/{patientId}", name="app_doctor_show_patient", methods={"GET"})
+    //  */
+    // public function showPatient(
+    //     int $patientId = null
+    // ): Response {
+    //     $patient =
+    //         $patientId ?
+    //             $this->patientRepository->findOneBy(['id' => $patientId])
+    //         : null;
+
+    //     return $this->render('patient/dashboard.html.twig', [
+    //         'patient' => $patient,
+    //         'doctorView' => true,
+    //     ]);
+    // }
 
     /**
      * @Route("/{id}/create/patient", name="app_doctor_create_patient", methods={"POST"})
@@ -110,7 +123,7 @@ class PatientController extends AbstractController
             }
         }
         return $this->json(
-            'Nous n\'avons pas pu créer le patient, veuillez réessayer ultérieurement.',
+            "Une erreur s'est produite lors de la création du patient",
             500,
         );
     }
@@ -167,17 +180,15 @@ class PatientController extends AbstractController
             $data = json_decode($request->getContent());
 
             if ($this->isCsrfTokenValid('remove_patient' . $doctor->getId(), $data->_token)) {
-                $patient = $this->patientRepository->findOneBy(['id' => $data->patient_id]);
+                $patient = $this->patientRepository->findOneBy(['id' => $data->patientId]);
 
                 if ($doctor->getPatients()->contains($patient)) {
                     $doctor->removePatient($patient);
 
                     $this->em->flush();
 
-                    $gender = $patient->getGender() ? ("male" === $patient->getGender() ? 'M.' : 'Mme') : '';
-
                     return $this->json(
-                        "<strong>{$gender} {$patient->getFirstname()} {$patient->getLastname()}</strong> 
+                        "<strong>{$this->userService->getUserName($patient)}</strong> 
                         a bien été retiré de votre liste.",
                         200,
                     );
@@ -186,7 +197,7 @@ class PatientController extends AbstractController
         }
 
         return $this->json(
-            'Nous n\'avons pas pu retirer le patient de votre liste, veuillez réessayer ultérieurement.',
+            "Une erreur s'est produite lors de la suppression du patient de votre liste",
             500,
         );
     }
