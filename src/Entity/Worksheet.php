@@ -29,6 +29,7 @@ class Worksheet
 
     /**
      * @ORM\Column(type="datetime_immutable")
+     * @Groups({"dashboard_worksheet_read"})
      */
     private $createdAt;
 
@@ -84,6 +85,7 @@ class Worksheet
 
     /**
      * @ORM\ManyToOne(targetEntity=Patient::class, inversedBy="worksheets")
+     * @Groups({"dashboard_worksheet_read"})
      */
     private $patient;
 

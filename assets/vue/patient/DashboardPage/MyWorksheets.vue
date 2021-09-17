@@ -17,6 +17,7 @@
                     v-if="
                         !loadingPatientWorksheets && getPatientWorksheets.length
                     "
+                    class="wl-patient"
                 >
                     <div
                         v-for="(worksheet, i) in getPatientWorksheets"
@@ -240,7 +241,7 @@
 
 <script>
 import f from "../../services/function";
-import TagPartOfBody from "../Components/TagPartOfBody.vue";
+import TagPartOfBody from "../../components/TagPartOfBody.vue";
 
 export default {
     props: {
@@ -258,10 +259,16 @@ export default {
     },
     computed: {
         getPatientWorksheets() {
-            return this.patientWorksheets;
+            return this.sortByCreatedAt(this.patientWorksheets);
         },
     },
     methods: {
+        sortByCreatedAt(array) {
+            array.sort(function (a, b) {
+                return new Date(b.createdAt) - new Date(a.createdAt);
+            });
+            return array;
+        },
         redirectToWorksheetPage(worksheetId) {
             this.redirectInProgress = worksheetId;
 
@@ -270,326 +277,3 @@ export default {
     },
 };
 </script>
-
-<style lang="scss" scoped>
-@import "../../../scss/variables";
-
-#my-worksheets {
-    grid-area: myworksheets;
-
-    .worksheet-list {
-        > div:not(.not-found) {
-            display: grid;
-            grid-template-columns: 1fr;
-            grid-gap: 1.5rem;
-
-            @media (min-width: 768px) {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            @media (min-width: 992px) {
-                grid-template-columns: 1fr;
-            }
-
-            @media (min-width: 1200px) {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            > div {
-                background: #faf8f4;
-                border-radius: 0.5rem;
-                padding: 2rem;
-                overflow: hidden;
-                animation: 0.6s ease 0.5s forwards fadeEnter;
-                opacity: 0;
-                min-height: 19rem;
-
-                .worksheet-header {
-                    display: flex;
-                    justify-content: space-between;
-                    margin-bottom: 1.8rem;
-                    position: relative;
-
-                    .worksheet-title {
-                        max-width: 55%;
-                        overflow: hidden;
-                        white-space: nowrap;
-                        text-overflow: ellipsis;
-
-                        @media (min-width: 380px) {
-                            max-width: 63%;
-                        }
-
-                        @media (min-width: 480px) {
-                            max-width: 70%;
-                        }
-
-                        @media (min-width: 576px) {
-                            max-width: 77%;
-                        }
-
-                        @media (min-width: 768px) {
-                            max-width: 63%;
-                        }
-
-                        @media (min-width: 840px) {
-                            max-width: 70%;
-                        }
-
-                        @media (min-width: 992px) {
-                            max-width: 78%;
-                        }
-
-                        @media (min-width: 1200px) {
-                            max-width: 68%;
-                        }
-
-                        @media (min-width: 1450px) {
-                            max-width: 76%;
-                        }
-                    }
-
-                    > :last-child {
-                        position: absolute;
-                        top: 0;
-                        right: 0;
-                    }
-                }
-                .worksheet-progress-line {
-                    margin-bottom: 3rem;
-
-                    .progressbar-base {
-                        height: 0.8rem;
-                        border-radius: 1rem;
-                        background: $gray-middle;
-                        position: relative;
-
-                        .progressbar-thumb {
-                            background: linear-gradient(
-                                270deg,
-                                #fb8b68 9.29%,
-                                #ff6839 100%
-                            );
-                            border-radius: 1rem;
-                            width: 0%;
-                            min-width: 0.8rem;
-                            height: 100%;
-                            transition: width 1s ease;
-                            position: relative;
-                            z-index: 2;
-                            max-width: 100%;
-                        }
-
-                        .progressbar-steps {
-                            display: flex;
-                            justify-content: flex-end;
-                            position: relative;
-                            z-index: 3;
-                            top: -0.7rem;
-                            margin-right: 0.1rem;
-
-                            > div {
-                                display: flex;
-                                flex-direction: column;
-                                align-items: flex-end;
-
-                                .point {
-                                    width: 0.6rem;
-                                    height: 0.6rem;
-                                    min-width: 0.6rem;
-                                    max-height: 0.6rem;
-                                    border-radius: 50%;
-                                    background: $white;
-                                }
-
-                                span {
-                                    font-size: 1.3rem;
-                                    margin-top: 0.7rem;
-                                    white-space: nowrap;
-                                    overflow: hidden;
-                                    text-overflow: ellipsis;
-                                    color: #e1d8c6;
-                                    transition: all 2s;
-
-                                    &.completed {
-                                        color: $orange;
-                                        font-weight: 600;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                .worksheet-content {
-                    display: flex;
-                    flex-direction: row;
-                    justify-content: space-between;
-
-                    &.session-completed {
-                        flex-direction: column;
-                        align-items: flex-start;
-
-                        p {
-                            font-size: 1.4rem;
-                            margin: 0;
-                            margin-top: 1.2rem;
-                            margin-bottom: 2.2rem;
-                            line-height: 1.3;
-
-                            i.kiv-confettis {
-                                display: inline-block;
-                                width: 1.7rem;
-                                margin-right: 0.8rem;
-
-                                img {
-                                    width: 100%;
-                                }
-                            }
-                        }
-
-                        .btn-consult {
-                        }
-                    }
-
-                    .worksheet-details {
-                        font-size: 1.4rem;
-
-                        @media (max-width: 380px) {
-                            font-size: 1.2rem;
-                        }
-
-                        > div {
-                            display: flex;
-                            align-items: center;
-                            margin: 1rem 0;
-                            white-space: nowrap;
-                            overflow: hidden;
-                            text-overflow: ellipsis;
-
-                            &:first-child {
-                                margin-top: 0;
-                            }
-
-                            &:last-child {
-                                margin-bottom: 0;
-                            }
-
-                            i {
-                                color: $orange;
-                                font-size: 1.8rem;
-                                margin-right: 0.5rem;
-                            }
-
-                            span {
-                                font-weight: 700;
-                            }
-
-                            &.worksheet-exercises-count {
-                                span {
-                                    margin-right: 0.3rem;
-                                }
-                            }
-
-                            &.worksheet-timing {
-                                span {
-                                    margin-right: 0.3rem;
-
-                                    &:nth-child(3) {
-                                        margin-left: 0.3rem;
-                                    }
-                                }
-                            }
-                            &.worksheet-period {
-                                span {
-                                    margin-left: 0.3rem;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                .buttons {
-                    display: flex;
-                    align-items: flex-end;
-
-                    .btn-go {
-                    }
-
-                    .btn-consult {
-                    }
-                }
-            }
-
-            .loading-block {
-                border-radius: 0.5rem;
-                height: 19rem;
-                background: #fdfcfa;
-
-                .worksheet-header {
-                    .worksheet-title {
-                        border-radius: 0.5rem;
-                        height: 2.5rem;
-                    }
-                    .part-of-body {
-                        border-radius: 0.5rem;
-                        height: 2.7rem;
-                        width: 8.3rem;
-                    }
-                }
-                .worksheet-progress-line {
-                    border-radius: 1rem;
-                    height: 1rem;
-                    width: 100%;
-                }
-                .worksheet-content {
-                    display: flex;
-                    flex-direction: row;
-                    justify-content: space-between;
-
-                    .worksheet-details {
-                        width: 100%;
-                        > div {
-                            display: flex;
-                            align-items: center;
-                            margin: 1rem 0;
-
-                            &:first-child {
-                                margin-top: 0;
-                            }
-
-                            &:last-child {
-                                margin-bottom: 0;
-                            }
-
-                            &.worksheet-exercises-count {
-                                border-radius: 0.5rem;
-                                height: 1.7rem;
-                            }
-
-                            &.worksheet-timing {
-                                border-radius: 0.5rem;
-                                height: 1.7rem;
-                            }
-                            &.worksheet-period {
-                                border-radius: 0.5rem;
-                                height: 1.7rem;
-                            }
-                        }
-                    }
-                }
-
-                .buttons {
-                    display: flex;
-                    align-items: flex-end;
-
-                    .btn-go {
-                        border-radius: 50%;
-                        height: 5.5rem;
-                        width: 5.5rem;
-                    }
-                }
-            }
-        }
-    }
-}
-</style>

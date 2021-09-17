@@ -4,6 +4,7 @@ namespace App\DataFixtures;
 
 use Faker;
 use App\Entity\Tag;
+use App\Entity\Score;
 use App\Entity\Video;
 use App\Entity\Doctor;
 use App\Entity\Patient;
@@ -11,6 +12,7 @@ use App\Entity\Exercise;
 use App\Entity\Worksheet;
 use App\Entity\ExerciseStat;
 use App\Entity\WorksheetSession;
+use App\Service\NotificationService;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -18,17 +20,21 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 class AppFixtures extends Fixture
 {
     private $passwordHasher;
+    private $notificationService;
 
-    public function __construct(UserPasswordHasherInterface $passwordHasher)
-    {
+    public function __construct(
+        UserPasswordHasherInterface $passwordHasher,
+        NotificationService $notificationService
+    ) {
         $this->passwordHasher = $passwordHasher;
+        $this->notificationService = $notificationService;
     }
 
     public function load(ObjectManager $manager)
     {
         $faker = Faker\Factory::create('fr_FR');
 
-        $worksheetTemplateArray = [];
+        $worksheetArray = [];
 
         $tagArray = [];
 
@@ -52,11 +58,9 @@ class AppFixtures extends Fixture
         ];
 
         $videosId = [
-            '5ijJ0ofOrE4',
-            'UaU62T7v7Bk',
-            'vHUOZ5Ee_ak',
-            'dm_Ec0egqJY',
-            'FQ8ynzO8S7M',
+            'tQj9cNQ1mfU',
+            'iWtFLj6yV1I',
+            'NFf2ZD1X6lM',
         ];
 
         $gender = [
@@ -89,9 +93,9 @@ class AppFixtures extends Fixture
         $manager->persist($worksheetTempleateCreator);
 
         for ($wi = 0; $wi < rand(5, 15); $wi++) {
-            $worksheetTemplate = new Worksheet();
+            $worksheet = new Worksheet();
 
-            $worksheetTemplate
+            $worksheet
                 ->setTitle($tagNames[array_rand($tagNames)])
                 ->setCreatedAt(\DateTimeImmutable::createFromMutable($faker->dateTimeBetween()))
                 ->setPartOfBody($partOfBody[array_rand($partOfBody)])
@@ -118,7 +122,7 @@ class AppFixtures extends Fixture
                     ->setDescription($faker->text())
                     ->setUrl("https://www.youtube.com/watch?v={$videoId}")
                     ->setYoutubeId($videoId)
-                    ->setThumbnailUrl("https://img.youtube.com/vi/{$videoId}/mqdefault.jpg")
+                    ->setThumbnailUrl("https://img.youtube.com/vi/{$videoId}/maxresdefault.jpg")
                 ;
 
                 foreach ($randomTags as $randomTagId) {
@@ -130,12 +134,12 @@ class AppFixtures extends Fixture
                 $manager->persist($video);
                 $manager->persist($exercise);
 
-                $worksheetTemplate->addExercise($exercise);
+                $worksheet->addExercise($exercise);
             }
 
-            $worksheetTemplateArray[] = $worksheetTemplate;
+            $worksheetArray[] = $worksheet;
 
-            $manager->persist($worksheetTemplate);
+            $manager->persist($worksheet);
         }
 
         for ($ki = 0; $ki < 1; $ki++) {
@@ -149,11 +153,13 @@ class AppFixtures extends Fixture
                 ->setPassword($this->passwordHasher->hashPassword($kine, 'password'))
                 ->setFirstname($faker->firstName)
                 ->setLastname($faker->lastName)
-                ->setGender($gender[array_rand($gender)]);
+                ->setGender($gender[array_rand($gender)])
             ;
 
+            $kine->addWorksheet($worksheetArray[array_rand($worksheetArray)]);
+
             for ($wii = 0; $wii < rand(1, 2); $wii++) {
-                $kine->addWorksheet($worksheetTemplateArray[array_rand($worksheetTemplateArray)]);
+                $kine->addWorksheet($worksheetArray[array_rand($worksheetArray)]);
             }
 
             $manager->persist($kine);
@@ -178,19 +184,13 @@ class AppFixtures extends Fixture
                 ;
 
                 for ($wpi = 0; $wpi < 2; $wpi++) {
-                    $worksheetForPrescription = $worksheetTemplateArray[array_rand($worksheetTemplateArray)];
+                    $worksheetForPrescription = $worksheetArray[$wpi];
                     $worksheetForPrescription->setDuration(26)
                                              ->setPerDay(1)
                                              ->setPerWeek(7)
                                              ->setPatient($patient)
+                                             ->setDoctor($kine)
                     ;
-
-                    // $prescription = new Prescription();
-                    // $prescription->setPatient($patient)
-                    //     ->setDoctor($kine)
-                    //     ->setWorksheet($worksheetForPrescription)
-                    //     ->setCreatedAt(\DateTimeImmutable::createFromMutable($faker->dateTimeBetween()))
-                    // ;
 
                     $randomStartDate = $faker->dateTimeBetween('-6 months', '-6 months');
 
@@ -201,7 +201,6 @@ class AppFixtures extends Fixture
                     ) {
                         $worksheetSession = new WorksheetSession();
 
-                        // $worksheetSession->setPrescription($prescription)
                         $worksheetSession->setExecOrder($ws);
 
                         $worksheetSession->setIsCompleted(true)
@@ -236,6 +235,15 @@ class AppFixtures extends Fixture
 
                                 $manager->persist($exerciseStat);
                             }
+
+                            $score = new Score();
+
+                            $score->setPatient($patient)
+                                  ->setLabel('exercise_completed')
+                                  ->setPoints(30)
+                            ;
+
+                            $manager->persist($score);
                         }
 
                         $worksheetSessionEndDate = new \DateTime();
@@ -245,11 +253,60 @@ class AppFixtures extends Fixture
                         $randomStartDate = $worksheetSessionEndDate;
 
                         $manager->persist($worksheetSession);
+                        $manager->persist($worksheetForPrescription);
+                    }
+                }
+
+                for ($wpei = 1; $wpei < 3; $wpei++) {
+                    $prescription = new Worksheet();
+                    $prescription->setDuration(1)
+                                ->setPerDay(48 * $wpei)
+                                ->setPerWeek(7)
+                                ->setPatient($patient)
+                                ->setDoctor($kine)
+                                ->setTitle($tagNames[array_rand($tagNames)])
+                                ->setCreatedAt(new \DateTimeImmutable())
+                                ->setPartOfBody($partOfBody[array_rand($partOfBody)])
+                    ;
+
+                    $this->notificationService->createPrescriptionNotification($prescription, $patient);
+
+                    for ($ei = 0; $ei < rand(3, 5); $ei++) {
+                        $exercise = new Exercise();
+
+                        $exercise->setNumberOfRepetitions(rand(8, 15))
+                                 ->setNumberOfSeries(rand(3, 6))
+                                 ->setPosition($ei)
+                        ;
+
+                        $video = new Video();
+                        $videoId = $videosId[array_rand($videosId)];
+
+                        $video->setName($faker->sentence(3))
+                            ->setDescription($faker->text())
+                            ->setUrl("https://www.youtube.com/watch?v={$videoId}")
+                            ->setYoutubeId($videoId)
+                            ->setThumbnailUrl("https://img.youtube.com/vi/{$videoId}/maxresdefault.jpg")
+                        ;
+
+                        $exercise->setVideo($video);
+
+                        $manager->persist($video);
+                        $manager->persist($exercise);
+
+                        $prescription->addExercise($exercise);
                     }
 
-                    // $patient->addPrescription($prescription);
-                    // $manager->persist($prescription);
+                    $this->notificationService->createAcceptDoctorNotification($patient, $kine);
+                    $this->notificationService->createSelectDoctorNotification($patient, $kine);
+                    $this->notificationService->createDeclineDoctorNotification($patient, $kine);
+                    $this->notificationService->createScoreRankNotification('Super Patient', $patient);
+                    $this->notificationService->createTimingWorksheetNotification($patient);
+
+                    $manager->persist($prescription);
                 }
+
+                $this->notificationService->createAddPatientNotification($kine, $patient);
 
                 $manager->persist($patient);
             }

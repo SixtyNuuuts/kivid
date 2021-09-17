@@ -2,7 +2,7 @@
     <div id="my-exercise-stats">
         <section class="kiv-block" id="sensitivity">
             <h2><span>Sensibilité</span></h2>
-            <div v-if="getPatientWorksheets" class="content">
+            <div v-if="getPatientWorksheets.length" class="content">
                 <div class="buttons">
                     <vs-button-group>
                         <vs-button
@@ -35,7 +35,7 @@
                         </vs-button>
                     </vs-button-group>
                 </div>
-                <div class="select-chart">
+                <div class="kiv-select">
                     <vs-select
                         placeholder="Select"
                         v-model="sensitivityUnitOfTime"
@@ -154,11 +154,20 @@
                     </div>
                 </div>
             </div>
-            <div v-else class="loading"></div>
+            <div
+                class="not-found"
+                v-if="!loadingPatientWorksheets && !getPatientWorksheets.length"
+            >
+                <p>
+                    <i class="far fa-calendar-minus"></i>
+                    <span>Vous n'avez pas encore de statistiques</span>
+                </p>
+            </div>
+            <div v-if="loadingPatientWorksheets" class="loading"></div>
         </section>
         <section class="kiv-block" id="technical">
             <h2><span>Technique</span></h2>
-            <div v-if="getPatientWorksheets" class="content">
+            <div v-if="getPatientWorksheets.length" class="content">
                 <div class="buttons">
                     <vs-button-group>
                         <vs-button
@@ -191,7 +200,7 @@
                         </vs-button>
                     </vs-button-group>
                 </div>
-                <div class="select-chart">
+                <div class="kiv-select">
                     <vs-select
                         placeholder="Select"
                         v-model="technicalUnitOfTime"
@@ -254,11 +263,20 @@
                     </div>
                 </div>
             </div>
-            <div v-else class="loading"></div>
+            <div
+                class="not-found"
+                v-if="!loadingPatientWorksheets && !getPatientWorksheets.length"
+            >
+                <p>
+                    <i class="far fa-calendar-minus"></i>
+                    <span>Vous n'avez pas encore de statistiques</span>
+                </p>
+            </div>
+            <div v-if="loadingPatientWorksheets" class="loading"></div>
         </section>
         <section class="kiv-block" id="difficulty">
             <h2><span>Difficultées perçues</span></h2>
-            <div v-if="getPatientWorksheets" class="content">
+            <div v-if="getPatientWorksheets.length" class="content">
                 <div class="buttons">
                     <vs-button-group>
                         <vs-button
@@ -291,7 +309,7 @@
                         </vs-button>
                     </vs-button-group>
                 </div>
-                <div class="select-chart">
+                <div class="kiv-select">
                     <vs-select
                         placeholder="Select"
                         v-model="difficultyUnitOfTime"
@@ -359,13 +377,22 @@
                     </div>
                 </div>
             </div>
-            <div v-else class="loading"></div>
+            <div
+                class="not-found"
+                v-if="!loadingPatientWorksheets && !getPatientWorksheets.length"
+            >
+                <p>
+                    <i class="far fa-calendar-minus"></i>
+                    <span>Vous n'avez pas encore de statistiques</span>
+                </p>
+            </div>
+            <div v-if="loadingPatientWorksheets" class="loading"></div>
         </section>
     </div>
 </template>
 
 <script>
-import BtnChartWorksheetPartOfBody from "./MyExerciseStats/BtnChartWorksheetPartOfBody.vue";
+import BtnChartWorksheetPartOfBody from "../../components/BtnChartWorksheetPartOfBody.vue";
 import moment from "moment";
 
 export default {
@@ -472,7 +499,9 @@ export default {
     },
     computed: {
         getPatientWorksheets() {
-            return this.patientWorksheets;
+            return this.sortByCreatedAt(
+                this.patientWorksheets.filter((w) => w.exerciseStats.length)
+            );
         },
         sensitivityExerciseStats() {
             this.assignColorToWorksheet("sensitivity");
@@ -511,6 +540,12 @@ export default {
         },
     },
     methods: {
+        sortByCreatedAt(array) {
+            array.sort(function (a, b) {
+                return new Date(a.createdAt) - new Date(b.createdAt);
+            });
+            return array;
+        },
         generateExerciseStatsByCriterion(criterion) {
             let unitOfTime, disableWorksheets;
 
@@ -1029,12 +1064,12 @@ export default {
     }
 
     .loading {
-        height: 21rem;
+        min-height: 30rem;
         border-radius: 0.6rem;
     }
 
     .content {
-        animation: 0.5s ease 1.5s forwards fadeEnter;
+        animation: 0.5s ease 0s forwards fadeEnter;
         opacity: 0;
     }
 
@@ -1044,7 +1079,7 @@ export default {
     }
 
     .buttons,
-    .select-chart {
+    .kiv-select {
         position: absolute;
         top: 1.7rem;
         right: 2rem;
@@ -1057,7 +1092,7 @@ export default {
         }
     }
 
-    .select-chart {
+    .kiv-select {
         display: block;
         top: 1.1rem;
         right: 1.4rem;

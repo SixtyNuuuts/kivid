@@ -25,7 +25,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**
- * @Route("/praticien")
+ * @Route("/doctor")
  */
 class WorksheetController extends AbstractController
 {
@@ -62,6 +62,22 @@ class WorksheetController extends AbstractController
         $this->serializer = $serializerInterface;
         $this->notificationService = $notificationService;
         $this->em = $em;
+    }
+
+
+    /**
+     * @Route("/{id}/get/worksheets", name="app_doctor_get_worksheets", methods={"GET"})
+     */
+    public function getWorksheets(Doctor $doctor): JsonResponse
+    {
+        $worksheets = $this->worksheetRepository->findBy(['doctor' => $doctor]);
+
+        return $this->json(
+            $worksheets,
+            200,
+            [],
+            ['groups' => 'dashboard_worksheet_read']
+        );
     }
 
     /**

@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/praticien")
+ * @Route("/doctor")
  */
 class PatientController extends AbstractController
 {

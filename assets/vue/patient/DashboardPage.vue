@@ -5,7 +5,7 @@
             :patient="patient"
             :csrfTokenSelectDoctor="csrfTokenSelectDoctor"
         />
-        <section v-else id="dashboard">
+        <section v-else id="dashboard" class="db-patient">
             <h1>
                 Bienvenue sur votre dashabord !
                 <i>
@@ -161,7 +161,7 @@ export default {
             csrfTokenSelectDoctor: null,
             csrfTokenAcceptDoctor: null,
             csrfTokenDeclineDoctor: null,
-            notificationsContent: true,
+            myDBNotificationsContent: true,
             myScoresContent: true,
             myDoctorContent: true,
             myWorksheetsContent: true,
@@ -223,7 +223,7 @@ export default {
         onResize() {
             if (window.innerWidth > 576) {
                 this.myScoresContent = true;
-                this.notificationsContent = true;
+                this.myDBNotificationsContent = true;
                 this.myDoctorContent = true;
                 this.myWorksheetsContent = true;
             }
@@ -259,30 +259,35 @@ export default {
                     };
                 });
 
-                this.patientWorksheets.forEach((worksheet) => {
-                    this.axios
-                        .get(
-                            `/patient/${this.patient.id}/get/current-worksheet-session/${worksheet.id}`
-                        )
-                        .then((response) => {
-                            worksheet.currentWorksheetSession = response.data;
+                if (this.patientWorksheets.length) {
+                    this.patientWorksheets.forEach((worksheet) => {
+                        this.axios
+                            .get(
+                                `/patient/${this.patient.id}/get/current-worksheet-session/${worksheet.id}`
+                            )
+                            .then((response) => {
+                                worksheet.currentWorksheetSession =
+                                    response.data;
 
-                            worksheet.timeLeftBeforeNextSession =
-                                this.getTimeLeftBeforeNextSession(
-                                    response.data.endAt
-                                );
+                                worksheet.timeLeftBeforeNextSession =
+                                    this.getTimeLeftBeforeNextSession(
+                                        response.data.endAt
+                                    );
 
-                            this.loadingPatientWorksheets = false;
-                        })
-                        .catch((error) => {
-                            const errorMess =
-                                "object" === typeof error.response.data
-                                    ? error.response.data.detail
-                                    : error.response.data;
+                                this.loadingPatientWorksheets = false;
+                            })
+                            .catch((error) => {
+                                const errorMess =
+                                    "object" === typeof error.response.data
+                                        ? error.response.data.detail
+                                        : error.response.data;
 
-                            console.error(errorMess);
-                        });
-                });
+                                console.error(errorMess);
+                            });
+                    });
+                } else {
+                    this.loadingPatientWorksheets = false;
+                }
             })
             .catch((error) => {
                 const errorMess =
@@ -300,12 +305,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#dashboard {
+#dashboard.db-patient {
     main {
-        display: grid;
-        grid-gap: 2rem;
-
-        grid-template-columns: 1fr;
         grid-template-areas:
             "myscores"
             "aside"
@@ -313,94 +314,10 @@ export default {
             "myexercisestats";
 
         @media (min-width: 992px) {
-            grid-template-columns: repeat(3, 1fr);
             grid-template-areas:
                 "myscores      myscores      aside"
                 "myworksheets  myworksheets  aside"
                 "myexercisestats  myexercisestats  aside";
-        }
-
-        aside {
-            grid-area: aside;
-            display: flex;
-            flex-direction: column;
-
-            @media (min-width: 650px) {
-                flex-direction: row;
-            }
-
-            @media (min-width: 992px) {
-                margin-bottom: 2rem;
-                flex-direction: column;
-            }
-
-            #my-doctor {
-                display: flex;
-                flex-direction: column;
-                width: 100%;
-
-                @media (min-width: 650px) {
-                    width: 49%;
-                }
-
-                @media (min-width: 992px) {
-                    width: 100%;
-                }
-
-                .doctor-details {
-                    display: flex;
-                    align-items: center;
-                    flex-grow: 1;
-
-                    .doctor-avatar {
-                        .avatar {
-                            margin-right: 1.9rem;
-
-                            @media (min-width: 992px) {
-                                margin-right: 1.5vw;
-                            }
-
-                            &.waiting {
-                                img {
-                                    width: 35%;
-                                }
-                            }
-                        }
-
-                        .avatar.loading {
-                            width: 11.6rem;
-                            height: 11.6rem;
-                            min-width: 11.6rem;
-                            min-height: 11.6rem;
-                            max-height: 11.6rem;
-                            border-radius: 50%;
-                        }
-                    }
-
-                    .doctor-infos {
-                        font-size: 1.8rem;
-                        width: 100%;
-
-                        .name {
-                            margin: 0.5rem 0;
-
-                            &.loading {
-                                height: 2.3rem;
-                            }
-                        }
-
-                        .city {
-                            margin: 0.5rem 0;
-                            font-weight: 200;
-                            font-size: 1.5rem;
-
-                            &.loading {
-                                height: 1.8rem;
-                            }
-                        }
-                    }
-                }
-            }
         }
     }
 }
