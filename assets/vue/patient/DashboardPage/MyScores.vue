@@ -107,6 +107,7 @@
                         <h3 v-if="!loadingPatientWorksheets">
                             <span
                                 v-if="
+                                    getSensitivityVariation &&
                                     'up' === getSensitivityVariation.variation
                                 "
                             >
@@ -114,6 +115,7 @@
                             </span>
                             <span
                                 v-if="
+                                    getSensitivityVariation &&
                                     'down' === getSensitivityVariation.variation
                                 "
                             >
@@ -121,14 +123,19 @@
                             </span>
                             <span
                                 v-if="
+                                    getSensitivityVariation &&
                                     'equal' === getTechnicalVariation.variation
                                 "
                             >
                                 Stable
                             </span>
+                            <span v-if="!getSensitivityVariation">
+                                Bientôt !
+                            </span>
                         </h3>
                         <div
                             v-if="
+                                getSensitivityVariation &&
                                 !loadingPatientWorksheets &&
                                 'up' === getSensitivityVariation.variation
                             "
@@ -140,6 +147,7 @@
                         </div>
                         <div
                             v-if="
+                                getSensitivityVariation &&
                                 !loadingPatientWorksheets &&
                                 'down' === getSensitivityVariation.variation
                             "
@@ -163,12 +171,16 @@
                     <div class="stat-result">
                         <h3 v-if="!loadingPatientWorksheets">
                             <span
-                                v-if="'up' === getTechnicalVariation.variation"
+                                v-if="
+                                    getTechnicalVariation &&
+                                    'up' === getTechnicalVariation.variation
+                                "
                             >
                                 En amélioration
                             </span>
                             <span
                                 v-if="
+                                    getTechnicalVariation &&
                                     'down' === getTechnicalVariation.variation
                                 "
                             >
@@ -176,14 +188,19 @@
                             </span>
                             <span
                                 v-if="
+                                    getTechnicalVariation &&
                                     'equal' === getTechnicalVariation.variation
                                 "
                             >
                                 Stable
                             </span>
+                            <span v-if="!getTechnicalVariation">
+                                Bientôt !
+                            </span>
                         </h3>
                         <div
                             v-if="
+                                getTechnicalVariation &&
                                 !loadingPatientWorksheets &&
                                 'up' === getTechnicalVariation.variation
                             "
@@ -194,6 +211,7 @@
                         </div>
                         <div
                             v-if="
+                                getTechnicalVariation &&
                                 !loadingPatientWorksheets &&
                                 'down' === getTechnicalVariation.variation
                             "
@@ -216,7 +234,7 @@
 
 <script>
 import f from "../../services/function";
-import ScoreRankBlock from "../Components/ScoreRankBlock.vue";
+import ScoreRankBlock from "./MyScores/ScoreRankBlock.vue";
 
 export default {
     props: {
@@ -312,17 +330,28 @@ export default {
 
             const variationSlice = 1;
 
-            const lastStats = stats.filter(
-                (es, i) => i > stats.length - 1 - variationSlice
-            );
+            const lastStats = stats
+                .sort(function (a, b) {
+                    return new Date(a.doneAt) - new Date(b.doneAt);
+                })
+                .filter((es, i) => i > stats.length - 1 - variationSlice);
+
             const lastStatsAverage = this.statsAverage(lastStats);
 
-            const oldStats = stats.filter(
-                (es, i) => i <= stats.length - 1 - variationSlice
-            );
+            if (!lastStats.length) {
+                return null;
+            }
+
+            const oldStats = stats
+                .sort(function (a, b) {
+                    return new Date(a.doneAt) - new Date(b.doneAt);
+                })
+                .filter((es, i) => i <= stats.length - 1 - variationSlice);
+
             const oldStatsAverage = this.statsAverage(oldStats);
 
-            const result = Math.round(lastStatsAverage - oldStatsAverage) * 10;
+            const result =
+                Math.round(lastStatsAverage - oldStatsAverage * 10) / 10;
 
             return {
                 variation:

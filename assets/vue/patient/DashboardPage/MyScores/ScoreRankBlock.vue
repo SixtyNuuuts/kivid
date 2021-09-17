@@ -15,7 +15,7 @@
                 <h4>Votre niveau</h4>
                 <i class="rank-img">
                     <img
-                        src="../../../img/icons/colored/hand.svg"
+                        src="../../../../img/icons/colored/hand.svg"
                         alt="Icone du rang nouveau patient"
                     />
                 </i>
@@ -26,7 +26,7 @@
                 <h4>Votre niveau</h4>
                 <i class="rank-img">
                     <img
-                        src="../../../img/icons/colored/bras.svg"
+                        src="../../../../img/icons/colored/bras.svg"
                         alt="Icone du rang débutant"
                     />
                 </i>
@@ -37,7 +37,7 @@
                 <h4>Votre niveau</h4>
                 <i class="rank-img">
                     <img
-                        src="../../../img/icons/smiley/61.svg"
+                        src="../../../../img/icons/smiley/61.svg"
                         alt="Icone du rang amateur"
                     />
                 </i>
@@ -51,7 +51,7 @@
                 <h4>Votre niveau</h4>
                 <i class="rank-img">
                     <img
-                        src="../../../img/icons/colored/reward.svg"
+                        src="../../../../img/icons/colored/reward.svg"
                         alt="Icone du rang intermédiaire"
                     />
                 </i>
@@ -62,11 +62,11 @@
                 <h4>Votre niveau</h4>
                 <i class="rank-img">
                     <img
-                        src="../../../img/icons/colored/reward.svg"
+                        src="../../../../img/icons/colored/reward.svg"
                         alt="Icone 1 du rang confirmé"
                     />
                     <img
-                        src="../../../img/icons/colored/reward.svg"
+                        src="../../../../img/icons/colored/reward.svg"
                         alt="Icone 2 du rang confirmé"
                     />
                 </i>
@@ -77,15 +77,15 @@
                 <h4>Votre niveau</h4>
                 <i class="rank-img">
                     <img
-                        src="../../../img/icons/colored/reward.svg"
+                        src="../../../../img/icons/colored/reward.svg"
                         alt="Icone 1 du rang expert"
                     />
                     <img
-                        src="../../../img/icons/colored/reward.svg"
+                        src="../../../../img/icons/colored/reward.svg"
                         alt="Icone 2 du rang expert"
                     />
                     <img
-                        src="../../../img/icons/colored/reward.svg"
+                        src="../../../../img/icons/colored/reward.svg"
                         alt="Icone 3 du rang expert"
                     />
                 </i>
@@ -110,7 +110,7 @@ export default {
     },
 };
 </script><style lang="scss" scoped>
-@import "../../../scss/variables";
+@import "../../../../scss/variables";
 
 #my-scores .content .score-block.score-rank-block {
     grid-area: scorerangblock;
@@ -136,9 +136,10 @@ export default {
 
     &::before {
         content: "";
-        background: url(../../../img/ball-4.svg) top -8.1rem right -7.3rem
+        background: url(../../../../img/ball-4.svg) top -8.1rem right -7.3rem
                 no-repeat,
-            url(../../../img/ball-4.svg) bottom -15.4rem left -9.4rem no-repeat;
+            url(../../../../img/ball-4.svg) bottom -15.4rem left -9.4rem
+                no-repeat;
         background-size: 17.7rem, 26.7rem;
         display: block;
         position: absolute;
@@ -163,39 +164,39 @@ export default {
     }
 
     &.nouveau {
-        background-image: url(../../../img/icons/colored/hand.svg);
+        background-image: url(../../../../img/icons/colored/hand.svg);
         background-position: top 0rem left -4rem;
         background-repeat: no-repeat;
 
         i.rank-img {
             img {
-                width: 24%;
+                width: 27%;
                 margin: 0 0.5rem;
             }
         }
     }
 
     &.debutant {
-        background-image: url(../../../img/icons/colored/bras.svg);
+        background-image: url(../../../../img/icons/colored/bras.svg);
         background-position: top 0rem left -4rem;
         background-repeat: no-repeat;
 
         i.rank-img {
             img {
-                width: 23%;
+                width: 27%;
                 margin: 0 0.5rem;
             }
         }
     }
 
     &.amateur {
-        background-image: url(../../../img/icons/smiley/61.svg);
+        background-image: url(../../../../img/icons/smiley/61.svg);
         background-position: top 0rem left -4rem;
         background-repeat: no-repeat;
 
         i.rank-img {
             img {
-                width: 23%;
+                width: 27%;
                 margin: 0 0.5rem;
             }
         }
@@ -206,39 +207,39 @@ export default {
     }
 
     &.intermediaire {
-        background-image: url(../../../img/icons/colored/reward.svg);
+        background-image: url(../../../../img/icons/colored/reward.svg);
         background-position: top 0rem left -4rem;
         background-repeat: no-repeat;
 
         i.rank-img {
             img {
-                width: 23%;
+                width: 27%;
                 margin: 0 0.5rem;
             }
         }
     }
 
     &.confirme {
-        background-image: url(../../../img/icons/colored/reward.svg);
+        background-image: url(../../../../img/icons/colored/reward.svg);
         background-position: top 0rem left -4rem;
         background-repeat: no-repeat;
 
         i.rank-img {
             img {
-                width: 23%;
+                width: 27%;
                 margin: 0 0.5rem;
             }
         }
     }
 
     &.expert {
-        background-image: url(../../../img/icons/colored/reward.svg);
+        background-image: url(../../../../img/icons/colored/reward.svg);
         background-position: top 0rem left -4rem;
         background-repeat: no-repeat;
 
         i.rank-img {
             img {
-                width: 23%;
+                width: 27%;
                 margin: 0 0.5rem;
             }
         }
@@ -329,16 +330,24 @@ export default {
         background: $white;
         border-radius: 0.4rem;
         color: $black;
-        font-size: 1.4rem;
+        font-size: 1.1rem;
         font-weight: 700;
         margin: 0;
         margin-bottom: 2rem;
+
+        @media (min-width: 450px) {
+            font-size: 1.4rem;
+        }
     }
 
     .rank-result {
-        font-size: 1.3rem;
+        font-size: 1.1rem;
         font-weight: 700;
         margin: 0;
+
+        @media (min-width: 450px) {
+            font-size: 1.3rem;
+        }
     }
 }
 </style>

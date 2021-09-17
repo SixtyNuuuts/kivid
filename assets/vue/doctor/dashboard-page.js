@@ -9,10 +9,6 @@ Vue.use(VueAxios, axios)
 // Vuesax (UX lib)
 import Vuesax from 'vuesax'
 
-// Ellipse Progress Bar
-import VueEllipseProgress from 'vue-ellipse-progress';
-Vue.use(VueEllipseProgress);
-
 new Vue({
     render: h => h(DashboardPage)
 }).$mount('#vue')

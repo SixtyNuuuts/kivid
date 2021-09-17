@@ -2,7 +2,7 @@
     <section
         id="dashboard-notifications"
         class="kiv-block"
-        :class="{ reduced: !$parent.notificationsContent }"
+        :class="{ reduced: !$parent.myDBNotificationsContent }"
         v-if="
             getDashboardNotifications.length ||
             !patient.birthdate ||
@@ -15,14 +15,18 @@
         <div
             class="toggle-content"
             @click="
-                $parent.notificationsContent = !$parent.notificationsContent
+                $parent.myDBNotificationsContent =
+                    !$parent.myDBNotificationsContent
             "
         >
             <i class="kiv-chevron-down icon-3"></i>
         </div>
         <h2>Notifications</h2>
         <transition name="height">
-            <div v-if="$parent.notificationsContent" class="notifications-list">
+            <div
+                v-if="$parent.myDBNotificationsContent"
+                class="notifications-list"
+            >
                 <div v-for="(notif, i) in getDashboardNotifications" :key="i">
                     <div
                         v-if="
@@ -266,206 +270,3 @@ export default {
     },
 };
 </script>
-
-<style lang="scss" scoped>
-@import "../../../scss/variables";
-
-#dashboard-notifications {
-    font-size: 1.4rem;
-    margin-bottom: 2rem;
-    width: 100%;
-    margin-right: 0;
-    line-height: 1.3;
-
-    @media (min-width: 650px) {
-        margin-bottom: 0;
-        width: 49%;
-        margin-right: 2rem;
-    }
-
-    @media (min-width: 992px) {
-        margin-bottom: 2rem;
-        width: 100%;
-        margin-right: 0;
-    }
-
-    .notifications-list {
-        .notifications-item {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-            margin: 1.5rem 0;
-
-            &.loading-block {
-                > * {
-                    border-radius: 0.4rem;
-                    height: 1.5rem;
-                    margin: 0.2rem;
-                }
-                .notification-label {
-                    &.w-60 {
-                        width: 60%;
-                    }
-                    &.w-30 {
-                        width: 30%;
-                    }
-                }
-
-                .notification-actions {
-                    &.w-25 {
-                        width: 25%;
-                    }
-                    &.w-30 {
-                        width: 30%;
-                    }
-                }
-            }
-
-            @media (min-width: 650px) {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            @media (min-width: 768px) {
-                flex-direction: row;
-                align-items: center;
-            }
-
-            &:first-child {
-                margin-top: 0;
-            }
-
-            &:last-child {
-                margin-bottom: 0;
-            }
-
-            .notification-label {
-                margin: 0;
-            }
-
-            .notification-actions {
-                display: flex;
-                flex-direction: column;
-                align-items: flex-start;
-                margin-left: 2rem;
-
-                @media (min-width: 576px) {
-                    flex-direction: row;
-                    margin-left: 0;
-                }
-
-                @media (min-width: 768px) {
-                    flex-direction: column;
-                    margin-left: 2rem;
-                }
-
-                @media (min-width: 1200px) {
-                    flex-direction: row;
-                }
-
-                .action-link {
-                    display: inline-flex;
-                    align-items: center;
-                    padding: 0.5rem;
-                    color: $black;
-                    text-decoration: none;
-                    transition: all 0.1s;
-                    white-space: nowrap;
-                    padding-left: 0;
-                    cursor: pointer;
-
-                    &.verif-mail {
-                        // cursor: initial;
-
-                        // &:hover {
-                        //     color: $black;
-                        //     transform: none;
-                        // }
-
-                        i {
-                            font-size: 1.5rem;
-                            position: relative;
-                            top: 0.05rem;
-                            margin-right: 0.8rem;
-                        }
-
-                        // span {
-                        //     text-decoration: none;
-                        // }
-                    }
-
-                    @media (min-width: 768px) {
-                        padding-left: 0.5rem;
-                    }
-
-                    &:hover {
-                        color: darken($black, 5%);
-                        transform: translateY(-0.2rem);
-                    }
-
-                    &:nth-child(2) {
-                        margin-left: 0.8rem;
-                        margin-left: -0.1rem;
-
-                        @media (min-width: 576px) {
-                            flex-direction: row;
-                            margin-left: 0.8rem;
-                        }
-
-                        @media (min-width: 768px) {
-                            margin-left: -0.1rem;
-                        }
-
-                        @media (min-width: 1200px) {
-                            margin-left: 0.6rem;
-                        }
-                    }
-
-                    &.green {
-                        color: $green;
-
-                        &:hover {
-                            color: darken($green, 5%);
-                        }
-                    }
-
-                    &.red {
-                        color: $red;
-
-                        &:hover {
-                            color: darken($red, 5%);
-                        }
-                    }
-
-                    i {
-                        margin-right: 0.5rem;
-
-                        &.kiv-pen {
-                            font-size: 1.8rem;
-                            position: relative;
-                            top: -0.05rem;
-                        }
-
-                        &.kiv-accept {
-                            font-size: 1.7rem;
-                            position: relative;
-                            top: -0.05rem;
-                        }
-
-                        &.kiv-decline {
-                            font-size: 1.95rem;
-                            margin-right: 0.3rem;
-                        }
-                    }
-
-                    span {
-                        font-weight: 600;
-                        text-decoration: underline;
-                    }
-                }
-            }
-        }
-    }
-}
-</style>

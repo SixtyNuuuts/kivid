@@ -104,7 +104,7 @@
 import f from "../services/function";
 import TimingFrieze from "./ReadWorkSheetPage/TimingFrieze.vue";
 import ExercisesPlaylist from "./ReadWorkSheetPage/ExercisesPlaylist.vue";
-import TagPartOfBody from "./Components/TagPartOfBody.vue";
+import TagPartOfBody from "../components/TagPartOfBody.vue";
 
 export default {
     components: {

@@ -370,7 +370,7 @@ export default {
     font-weight: 600;
     position: sticky;
     top: 0;
-    z-index: 11;
+    z-index: 111;
 
     @media (min-width: 576px) {
         padding: 1.25rem 3rem;
