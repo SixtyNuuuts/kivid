@@ -5,7 +5,7 @@
         </div>
         <nav v-if="currentUser">
             <ul>
-                <li class="dashboard dashboard-icon">
+                <li class="dashboard dashboard-icon" @click="dashboard()">
                     <i class="kiv-dashboard icon-26"></i>
                 </li>
                 <li class="dashboard btn-navbar">
@@ -191,6 +191,9 @@
         </nav>
         <nav v-else>
             <ul>
+                <li class="login dashboard-icon" @click="login()">
+                    <i class="kiv-login icon-14"></i>
+                </li>
                 <li class="dashboard btn-navbar">
                     <vs-button @click="login()">
                         <i class="kiv-login icon-14"></i>
@@ -416,6 +419,10 @@ export default {
 
                         &:hover {
                             color: $orange;
+                        }
+
+                        &.kiv-login {
+                            font-size: 2.2rem;
                         }
                     }
 
@@ -659,9 +666,9 @@ export default {
                         }
 
                         &.active {
-                            .user-avatar {
-                                border: 0.3rem solid $orange;
-                            }
+                            // .user-avatar {
+                            //     border: 0.3rem solid $orange;
+                            // }
 
                             @media (min-width: 576px) {
                                 .user-avatar {
@@ -678,7 +685,7 @@ export default {
                     }
 
                     .user-menu {
-                        min-width: 15.5rem;
+                        min-width: 16.5rem;
                         padding: 1rem 2.1rem;
 
                         > ul {

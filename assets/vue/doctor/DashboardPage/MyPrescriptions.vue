@@ -23,12 +23,12 @@
                             label-placeholder="Filtrer par nom de fiche et/ou patient"
                         />
                     </div>
-                    <!-- <div class="btn-primary-action">
+                    <div class="btn-primary-action">
                         <vs-button @click="true" class="w-100">
                             <i class="fas fa-folder-plus"></i> Créer un
                             traitement
                         </vs-button>
-                    </div> -->
+                    </div>
                 </div>
                 <div class="worksheet-list wl-doctor">
                     <div

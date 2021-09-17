@@ -7,7 +7,17 @@
         >
             <i class="kiv-x icon-21"></i>
         </button>
-        <button v-else class="btn-close-player" @click="closeVideoPlayer">
+        <button
+            v-else
+            class="btn-close-player"
+            :class="{
+                hidden:
+                    technicalEvalFrame ||
+                    difficultyEvalFrame ||
+                    sensitivityEvalFrame,
+            }"
+            @click="closeVideoPlayer"
+        >
             <i class="kiv-x icon-21"></i>
         </button>
         <div class="content" v-if="!scoreFrame">
@@ -78,7 +88,7 @@
                 <div class="bottom-bar-content">
                     <div class="exercise-details">
                         <div class="exercise-count">
-                            Exercice {{ getExercise.position }}/{{
+                            Exercice {{ getExercise.position + 1 }}/{{
                                 getExercises ? getExercises.length : 0
                             }}
                         </div>
@@ -343,7 +353,7 @@ export default {
         bottom: 0;
         backdrop-filter: blur(0.5rem);
         background: rgba(34, 46, 84, 0.8);
-        height: 100%;
+        height: 100vh;
         width: 100%;
     }
 
@@ -355,17 +365,13 @@ export default {
         background: transparent;
         border: none;
         padding: 2rem;
-        display: none;
+        display: block;
         transition: all 0.25;
 
         &.dark {
             i {
                 color: $black;
             }
-        }
-
-        @media (min-width: 768px) {
-            display: block;
         }
 
         i {

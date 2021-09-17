@@ -297,16 +297,16 @@ class AppFixtures extends Fixture
                         $prescription->addExercise($exercise);
                     }
 
-                    $this->notificationService->createAcceptDoctorNotification($patient, $kine);
-                    $this->notificationService->createSelectDoctorNotification($patient, $kine);
-                    $this->notificationService->createDeclineDoctorNotification($patient, $kine);
-                    $this->notificationService->createScoreRankNotification('Super Patient', $patient);
-                    $this->notificationService->createTimingWorksheetNotification($patient);
+                    // $this->notificationService->createAcceptDoctorNotification($patient, $kine);
+                    // $this->notificationService->createSelectDoctorNotification($patient, $kine);
+                    // $this->notificationService->createDeclineDoctorNotification($patient, $kine);
+                    // $this->notificationService->createScoreRankNotification('Super Patient', $patient);
+                    // $this->notificationService->createTimingWorksheetNotification($patient);
 
                     $manager->persist($prescription);
                 }
 
-                $this->notificationService->createAddPatientNotification($kine, $patient);
+                // $this->notificationService->createAddPatientNotification($kine, $patient);
 
                 $manager->persist($patient);
             }

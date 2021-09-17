@@ -396,12 +396,9 @@ export default {
                     email: this.createPatientDetails.email,
                 })
                 .then((response) => {
-                    this.openNotification(
-                        `<strong>Création du patient</strong>`,
-                        `${response.data.message}`,
-                        "top-right",
-                        "success",
-                        "<i class='fe fe-check-circle'></i>"
+                    f.openSuccesNotification(
+                        "Création du patient",
+                        response.data
                     );
                     this.$parent.doctorPatientsListArray.push(
                         response.data.patient
@@ -409,35 +406,23 @@ export default {
                     this.$parent.allPatientsFilteredList.push(
                         response.data.patient
                     );
-                    if (
-                        this.createPatientWithPrescri &&
-                        response.data.patient
-                    ) {
-                        // setTimeout(() => {
-                        //     document.location.href = `/doctor/${this.doctor.id}/fiches/modeles/${response.data.patient.id}`;
-                        // }, 1000);
-                    }
-                    this.btnLoadingValidCreatePatient = false;
                     this.createPatientDetails = {
                         firstname: "",
                         lastname: "",
                         email: "",
                         gender: "",
                     };
-                    this.modalConfirmCreatePatient = false;
                     this.modalAddPatient = false;
                 })
                 .catch((error) => {
-                    this.openNotification(
-                        `<strong>Création du patient : Erreur</strong>`,
-                        `${error.response.data}`,
-                        "top-right",
-                        "danger",
-                        "<i class='fe fe-alert-circle'></i>"
-                    );
-                    this.btnLoadingValidCreatePatient = false;
-                    this.modalConfirmCreatePatient = false;
+                    const errorMess =
+                        "object" === typeof error.response.data
+                            ? error.response.data.detail
+                            : error.response.data;
+
                     this.modalAddPatient = false;
+
+                    f.openErrorNotification("Erreur", errorMess);
                 });
         },
         validationEmail() {
