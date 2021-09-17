@@ -664,7 +664,7 @@ export default {
             if ("difficulty" === criterion) {
                 this.difficultyColorsAssign = {};
 
-                this.patientWorksheets
+                this.getPatientWorksheets
                     .filter(
                         (w) => !this.difficultyDisableWorksheets.includes(w.id)
                     )
@@ -676,7 +676,7 @@ export default {
             if ("sensitivity" === criterion) {
                 this.sensitivityColorsAssign = {};
 
-                this.patientWorksheets
+                this.getPatientWorksheets
                     .filter(
                         (w) => !this.sensitivityDisableWorksheets.includes(w.id)
                     )
@@ -688,7 +688,7 @@ export default {
             if ("technical" === criterion) {
                 this.technicalColorsAssign = {};
 
-                this.patientWorksheets
+                this.getPatientWorksheets
                     .filter(
                         (w) => !this.technicalDisableWorksheets.includes(w.id)
                     )
