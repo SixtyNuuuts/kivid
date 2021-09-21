@@ -22,6 +22,26 @@ body {
         }
     }
 
+    .btn-prescription-action {
+        white-space: nowrap;
+        &.active {
+            .vs-button {
+                animation: mymove 2s infinite;
+            }
+        }
+        &.selected {
+            .vs-button {
+                background: $orange !important;
+                color: $white !important;
+            }
+        }
+    }
+    @keyframes mymove {
+        50% {
+            box-shadow: 0rem 0.4rem 2rem 0rem rgba(255, 107, 38, 0.9);
+        }
+    }
+
     .container {
         flex-grow: 1;
         display: flex;
@@ -108,10 +128,64 @@ body {
         border-radius: 1rem;
         box-shadow: 0px 1.5rem 3rem rgba(31, 6, 6, 0.096);
         padding: 2rem;
-        overflow: hidden;
         position: relative;
         width: 100%;
         min-width: 48%;
+
+        .prescri-process-dialog {
+            position: absolute;
+            top: -4.8rem;
+            left: 2rem;
+            background: $black;
+            box-shadow: 0rem 0.3rem 0.8rem rgba(255, 151, 119, 0.5);
+            border-radius: 0.5rem;
+            padding: 1.4rem;
+            z-index: 444;
+            width: 17rem;
+            color: $white;
+            text-align: center;
+            animation: bounce 0.8s ease infinite;
+            backface-visibility: hidden;
+            -webkit-font-smoothing: subpixel-antialiased;
+
+            .step-num {
+                font-weight: 700;
+                font-size: 1.2rem;
+                color: $orange;
+
+                i {
+                    font-size: 1.3rem;
+                    margin-right: 0.6rem;
+                }
+            }
+
+            p {
+                margin: 0;
+                font-size: 1.3rem;
+                line-height: 1.2;
+                margin-top: 0.7rem;
+            }
+
+            &::after {
+                content: "";
+                display: block;
+                width: 0;
+                height: 0;
+                border-left: 20px solid transparent;
+                border-right: 20px solid transparent;
+                border-top: 20px solid $black;
+                position: absolute;
+                bottom: -0.9rem;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+        }
+
+        &#my-patients {
+            .prescri-process-dialog {
+                top: -2.8rem;
+            }
+        }
 
         &.reduced {
             padding: 1.6rem 2rem;
@@ -265,6 +339,18 @@ body {
     }
     100% {
         background-position: 468px 0;
+    }
+}
+
+@keyframes bounce {
+    from {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-1rem);
+    }
+    to {
+        transform: translateY(0);
     }
 }
 

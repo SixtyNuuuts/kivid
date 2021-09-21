@@ -21,6 +21,16 @@
                 <h2><span>Mes fiches</span></h2>
             </div>
         </div>
+        <div v-if="prescriProcess" class="prescri-process-dialog">
+            <span class="step-num"
+                ><i class="fas fa-folder-plus"></i>Etape
+                {{ !$parent.prescriProcessPatientSelected ? 1 : 2 }}
+            </span>
+            <p>
+                Veuillez Sélectionner une fiche, vous pourrez la
+                personnaliser/modifier à l'étape suivante
+            </p>
+        </div>
         <transition name="height">
             <div v-if="$parent.myWorksheetTemplatesContent">
                 <div class="primary-actions">
@@ -333,10 +343,73 @@
                                             Copier
                                         </vs-button>
                                     </div>
-                                    <div class="btn-prescription-action">
-                                        <vs-button @click="true" class="w-100">
-                                            <i class="fas fa-folder-plus"></i>
-                                            Prescrire
+                                    <div
+                                        class="btn-prescription-action"
+                                        :class="{
+                                            active: prescriProcess,
+                                            selected:
+                                                $parent.prescriProcessWorksheetSelected &&
+                                                $parent
+                                                    .prescriProcessWorksheetSelected
+                                                    .id === worksheet.id,
+                                        }"
+                                    >
+                                        <vs-button
+                                            @click="
+                                                prescriProcessWorksheetChoice(
+                                                    worksheet
+                                                )
+                                            "
+                                            class="w-100"
+                                        >
+                                            <transition name="fade">
+                                                <span
+                                                    v-if="
+                                                        (!prescriProcess &&
+                                                            !$parent.prescriProcessWorksheetSelected) ||
+                                                        ($parent.prescriProcessWorksheetSelected &&
+                                                            $parent
+                                                                .prescriProcessWorksheetSelected
+                                                                .id !=
+                                                                worksheet.id)
+                                                    "
+                                                    ><i
+                                                        class="
+                                                            fas
+                                                            fa-folder-plus
+                                                        "
+                                                    ></i
+                                                    >Prescrire</span
+                                                >
+                                                <span
+                                                    v-if="
+                                                        prescriProcess &&
+                                                        !$parent.prescriProcessWorksheetSelected
+                                                    "
+                                                    ><i
+                                                        class="
+                                                            fas
+                                                            fa-folder-plus
+                                                        "
+                                                    ></i
+                                                    >Sélectionner</span
+                                                >
+                                                <span
+                                                    v-if="
+                                                        $parent.prescriProcessWorksheetSelected &&
+                                                        $parent
+                                                            .prescriProcessWorksheetSelected
+                                                            .id === worksheet.id
+                                                    "
+                                                    ><i
+                                                        class="
+                                                            fas
+                                                            fa-check-circle
+                                                        "
+                                                    ></i
+                                                    >Sélectionné</span
+                                                >
+                                            </transition>
                                         </vs-button>
                                     </div>
                                 </div>
@@ -678,6 +751,7 @@ export default {
         worksheetTemplates: Array,
         loadingAllWorksheets: Boolean,
         tagsFromExercises: Array,
+        prescriProcess: Boolean,
     },
     components: {
         TagPartOfBody,
@@ -706,6 +780,9 @@ export default {
         },
     },
     methods: {
+        prescriProcessWorksheetChoice(worksheet) {
+            this.$emit("prescriProcessWorksheetChoice", worksheet);
+        },
         redirectToWorksheetPage(worksheetId) {
             this.redirectInProgress = worksheetId;
 
@@ -908,7 +985,6 @@ export default {
         }
 
         .btn-prescription-action {
-            width: 11.9rem;
             position: relative;
             top: -0.1rem;
         }
@@ -922,11 +998,10 @@ export default {
             }
 
             .vs-button {
-                background: $orange;
+                background: $black;
                 color: $white;
                 letter-spacing: 0.005rem;
                 font-weight: 500;
-                box-shadow: 0rem 0.2rem 0.3rem 0rem rgba(255, 107, 38, 0.43);
                 font-size: 1.3rem;
 
                 i {
