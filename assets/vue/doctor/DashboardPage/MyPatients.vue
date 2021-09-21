@@ -11,6 +11,13 @@
             <i class="kiv-chevron-down icon-3"></i>
         </div>
         <h2>Mes Patients</h2>
+        <div v-if="prescriProcess" class="prescri-process-dialog">
+            <span class="step-num"
+                ><i class="fas fa-folder-plus"></i>Etape
+                {{ !$parent.prescriProcessWorksheetSelected ? 1 : 2 }}
+            </span>
+            <p>Veuillez Sélectionner un patient</p>
+        </div>
         <transition name="height">
             <div v-if="$parent.myPatientsContent">
                 <div class="primary-actions">
@@ -143,10 +150,61 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="btn-prescription-action">
-                                    <vs-button @click="true" class="w-100">
-                                        <i class="fas fa-folder-plus"></i>
-                                        Prescrire
+                                <div
+                                    class="btn-prescription-action"
+                                    :class="{
+                                        active: prescriProcess,
+                                        selected:
+                                            $parent.prescriProcessPatientSelected &&
+                                            $parent
+                                                .prescriProcessPatientSelected
+                                                .id === patient.id,
+                                    }"
+                                >
+                                    <vs-button
+                                        @click="
+                                            prescriProcessPatientChoice(patient)
+                                        "
+                                        class="w-100"
+                                    >
+                                        <transition name="fade">
+                                            <span
+                                                v-if="
+                                                    (!prescriProcess &&
+                                                        !$parent.prescriProcessPatientSelected) ||
+                                                    ($parent.prescriProcessPatientSelected &&
+                                                        $parent
+                                                            .prescriProcessPatientSelected
+                                                            .id != patient.id)
+                                                "
+                                                ><i
+                                                    class="fas fa-folder-plus"
+                                                ></i
+                                                >Prescrire</span
+                                            >
+                                            <span
+                                                v-if="
+                                                    prescriProcess &&
+                                                    !$parent.prescriProcessPatientSelected
+                                                "
+                                                ><i
+                                                    class="fas fa-folder-plus"
+                                                ></i
+                                                >Sélectionner</span
+                                            >
+                                            <span
+                                                v-if="
+                                                    $parent.prescriProcessPatientSelected &&
+                                                    $parent
+                                                        .prescriProcessPatientSelected
+                                                        .id === patient.id
+                                                "
+                                                ><i
+                                                    class="fas fa-check-circle"
+                                                ></i
+                                                >Sélectionné</span
+                                            >
+                                        </transition>
                                     </vs-button>
                                 </div>
                             </div>
@@ -427,6 +485,7 @@ export default {
         csrfTokenAddPatient: String,
         csrfTokenRemovePatient: String,
         csrfTokenCreatePatient: String,
+        prescriProcess: Boolean,
     },
     components: {
         BtnChartWorksheetPartOfBody,
@@ -451,7 +510,7 @@ export default {
     computed: {
         getDoctorPatients() {
             return this.getPage(
-                this.getSearch(this.doctorPatients, this.search),
+                f.getSearch(this.doctorPatients, this.search, "doctor"),
                 this.page,
                 this.max
             );
@@ -461,6 +520,9 @@ export default {
         },
     },
     methods: {
+        prescriProcessPatientChoice(patient) {
+            this.$emit("prescriProcessPatientChoice", patient);
+        },
         removePatient(patient) {
             this.removePatientDetails = patient;
 

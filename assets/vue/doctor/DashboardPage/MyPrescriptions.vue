@@ -31,7 +31,7 @@
                         />
                     </div>
                     <div class="btn-primary-action">
-                        <vs-button @click="true" class="w-100">
+                        <vs-button @click="prescriProcess" class="w-100">
                             <i class="fas fa-folder-plus"></i> Créer un
                             traitement
                         </vs-button>
@@ -534,7 +534,7 @@ export default {
     computed: {
         getDoctorPrescriptions() {
             return this.getPage(
-                this.getSearch(this.doctorPrescriptions, this.search, "doctor"),
+                f.getSearch(this.doctorPrescriptions, this.search, "doctor"),
                 this.page,
                 this.max
             );
@@ -549,6 +549,9 @@ export default {
         };
     },
     methods: {
+        prescriProcess() {
+            this.$emit("prescriProcess", true);
+        },
         redirectToWorksheetPage(worksheetId) {
             this.redirectInProgress = worksheetId;
 

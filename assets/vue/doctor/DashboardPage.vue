@@ -2,13 +2,25 @@
     <div class="container">
         <section id="dashboard" class="db-doctor">
             <h1>
-                Bienvenue sur votre dashboard !
-                <i>
-                    <img
-                        src="../../img/icons/colored/hand.svg"
-                        alt="Icone d'une main qui fait 'coucou'"
-                    />
-                </i>
+                <transition name="fade">
+                    <span v-if="!prescriProcess"
+                        >Bienvenue sur votre dashboard !
+                        <i>
+                            <img
+                                src="../../img/icons/colored/hand.svg"
+                                alt="Icone d'une main qui fait 'coucou'"
+                            /> </i
+                    ></span>
+                    <span class="prescri-process" v-if="prescriProcess">
+                        <span>Création d'une prescription</span>
+                        <vs-button
+                            class="secondary"
+                            @click="stopPrescriProcess"
+                        >
+                            Annuler
+                        </vs-button>
+                    </span>
+                </transition>
             </h1>
             <main>
                 <MyDashboardNotifications
@@ -21,6 +33,7 @@
                         :doctor="doctor"
                         :doctorPrescriptions="getDoctorPrescriptions"
                         :loadingDoctorWorksheets="loadingDoctorWorksheets"
+                        @prescriProcess="startPrescriProcess"
                     />
                     <MyWorksheetTemplates
                         v-if="activeOnglet === 2"
@@ -28,6 +41,10 @@
                         :worksheetTemplates="getWorksheetTemplates"
                         :tagsFromExercises="tagsFromExercises"
                         :loadingAllWorksheets="loadingAllWorksheets"
+                        :prescriProcess="prescriProcessWorksheet"
+                        @prescriProcessWorksheetChoice="
+                            setPrescriProcessWorksheetChoice
+                        "
                     />
                 </transition>
                 <aside>
@@ -40,6 +57,10 @@
                         :csrfTokenAddPatient="csrfTokenAddPatient"
                         :csrfTokenRemovePatient="csrfTokenRemovePatient"
                         :csrfTokenCreatePatient="csrfTokenCreatePatient"
+                        :prescriProcess="prescriProcessPatient"
+                        @prescriProcessPatientChoice="
+                            setPrescriProcessPatientChoice
+                        "
                     />
                 </aside>
             </main>
@@ -79,6 +100,11 @@ export default {
             doctorWorksheets: [],
             tagsFromExercises: [],
             activeOnglet: 1,
+            prescriProcess: false,
+            prescriProcessPatient: false,
+            prescriProcessPatientSelected: null,
+            prescriProcessWorksheet: false,
+            prescriProcessWorksheetSelected: null,
         };
     },
     computed: {
@@ -94,6 +120,64 @@ export default {
         },
     },
     methods: {
+        setPrescriProcessWorksheetChoice(worksheet) {
+            if (!this.prescriProcess) {
+                this.startPrescriProcess();
+            }
+
+            this.prescriProcessWorksheetSelected = worksheet;
+
+            this.prescriProcessWorksheet = false;
+            if (!this.prescriProcessPatientSelected) {
+                const id = "my-patients";
+                const yOffset = -100;
+                const element = document.getElementById(id);
+                const y =
+                    element.getBoundingClientRect().top +
+                    window.pageYOffset +
+                    yOffset;
+
+                window.scrollTo({ top: y, behavior: "smooth" });
+
+                this.prescriProcessPatient = true;
+            }
+        },
+        setPrescriProcessPatientChoice(patient) {
+            if (!this.prescriProcess) {
+                this.startPrescriProcess();
+            }
+
+            this.prescriProcessPatientSelected = patient;
+
+            this.prescriProcessPatient = false;
+            if (!this.prescriProcessWorksheetSelected) {
+                const id = "my-worksheets";
+                const yOffset = -100;
+                const element = document.getElementById(id);
+                const y =
+                    element.getBoundingClientRect().top +
+                    window.pageYOffset +
+                    yOffset;
+
+                window.scrollTo({ top: y, behavior: "smooth" });
+
+                this.activeOnglet = 2;
+                this.prescriProcessWorksheet = true;
+            }
+        },
+        startPrescriProcess() {
+            this.prescriProcess = true;
+            this.prescriProcessWorksheet = true;
+            this.activeOnglet = 2;
+        },
+        stopPrescriProcess() {
+            this.prescriProcess = false;
+            this.prescriProcessWorksheet = false;
+            this.prescriProcessPatient = false;
+            this.prescriProcessWorksheetSelected = null;
+            this.prescriProcessPatientSelected = null;
+            this.activeOnglet = 1;
+        },
         sortByCreatedAt(array) {
             array.sort(function (a, b) {
                 return new Date(b.createdAt) - new Date(a.createdAt);
@@ -317,6 +401,23 @@ export default {
 
 <style lang="scss">
 #dashboard.db-doctor {
+    h1 {
+        span.prescri-process {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+
+            @media (max-width: 576px) {
+                .vs-button .vs-button__content {
+                    padding: 1.3rem 3.8rem;
+                }
+            }
+
+            > :first-child {
+                margin-right: 2rem;
+            }
+        }
+    }
     main {
         grid-template-areas:
             "mydashboardnotif"
