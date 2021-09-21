@@ -54,11 +54,11 @@
             alt="Icone Thoracique"
             class="icon-thoracique"
         />
-        {{
+        <span class="text">{{
             "epaule" === partOfBody
                 ? "Épaule"
                 : partOfBody.charAt(0).toUpperCase() + partOfBody.slice(1)
-        }}
+        }}</span>
         <i class="kiv-completed icon-22"></i>
     </vs-button>
 </template>

@@ -8,7 +8,15 @@
                 <li class="dashboard dashboard-icon" @click="dashboard()">
                     <i class="kiv-dashboard icon-26"></i>
                 </li>
-                <li class="dashboard btn-navbar">
+                <li
+                    v-if="
+                        ('doctor' === currentUserType &&
+                            currentRoute != doctorDashboardRoute) ||
+                        ('patient' === currentUserType &&
+                            currentRoute != patientDashboardRoute)
+                    "
+                    class="dashboard btn-navbar"
+                >
                     <vs-button @click="dashboard()">
                         <i class="kiv-dashboard icon-26"></i>
                         Dashboard

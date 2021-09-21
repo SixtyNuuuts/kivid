@@ -127,23 +127,33 @@
                             <div class="worksheet-details">
                                 <div class="worksheet-exercises-count">
                                     <i class="kiv-exercise icon-7"></i>
-                                    <span>{{
+                                    <span class="b">{{
                                         worksheet.exercises.length
                                     }}</span>
-                                    exercices
+                                    exercice<span
+                                        v-if="worksheet.exercises.length > 1"
+                                        >s</span
+                                    >
                                 </div>
                                 <div class="worksheet-timing">
                                     <i class="kiv-calendar icon-10"></i>
-                                    <span>{{ worksheet.perDay }}x</span>
+                                    <span class="b"
+                                        >{{ worksheet.perDay }}x</span
+                                    >
                                     par jour -
-                                    <span>{{ worksheet.perWeek }}x</span>
+                                    <span class="b"
+                                        >{{ worksheet.perWeek }}x</span
+                                    >
                                     par semaine
                                 </div>
                                 <div class="worksheet-period">
                                     <i class="kiv-clock icon-11"></i>
                                     Période :
-                                    <span
-                                        >{{ worksheet.duration }} semaines</span
+                                    <span class="b"
+                                        >{{ worksheet.duration }} semaine<span
+                                            v-if="worksheet.duration > 1"
+                                            >s</span
+                                        ></span
                                     >
                                 </div>
                             </div>

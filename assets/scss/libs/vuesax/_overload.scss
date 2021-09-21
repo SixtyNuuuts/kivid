@@ -340,20 +340,21 @@
 
     .vs-input {
         width: 100%;
-        padding: 1.3rem 2rem;
+        padding: 1.6rem 1.7rem;
         background: $white;
         color: $black;
         border: 0.1rem solid $gray-middle;
         font-size: 1.4rem;
+        border-radius: 0.5rem;
 
         &:focus {
             background: $white;
-            border: 0.1rem solid $orange;
+            border: 0.1rem solid $gray-dark;
         }
 
         &:hover,
         &:focus:hover {
-            border: 0.1rem solid $orange;
+            border: 0.1rem solid $gray-dark;
             box-shadow: 0 0.5rem 2.5rem -0.4rem rgba(0, 0, 0, 0.05);
             // transform: translate(0, -0.4rem);
 
@@ -383,7 +384,7 @@
     }
 
     .vs-input__label {
-        top: 1.3rem;
+        top: 1.6rem;
         left: 1.6rem;
         font-size: 1.4rem;
         color: $gray-dark;
@@ -406,8 +407,8 @@
     .vs-input:focus ~ .vs-input__label--placeholder,
     .vs-input__label--hidden.vs-input__label--placeholder {
         font-size: 1.4rem;
-        top: -0.9rem;
-        left: 1.6rem;
+        top: -0.8rem;
+        left: 1.3rem;
         text-shadow: 0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white,
             0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white,
             0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white,
@@ -424,6 +425,10 @@
         box-shadow: none;
         background: transparent;
         color: $black;
+
+        i.error {
+            color: $red;
+        }
 
         i {
             font-size: 2rem;
@@ -451,9 +456,9 @@
     }
 
     & + .vs-input__message {
-        padding-top: 0.8rem;
+        padding-top: 0.7rem;
         font-size: 1.3rem;
-        margin-left: 1.4rem;
+        padding-left: 0;
     }
 }
 
@@ -467,7 +472,8 @@
                 border: 0.1rem solid $red;
 
                 & ~ .vs-input__icon {
-                    transform: translate(0, -0.4rem);
+                    // transform: translate(0, -0.4rem);
+                    transform: none;
                 }
             }
 
@@ -479,6 +485,10 @@
         .vs-input__icon {
             color: $red;
             font-size: 2rem;
+        }
+
+        .vs-input__label {
+            color: $red;
         }
     }
 }
@@ -499,37 +509,59 @@
     max-width: none;
 
     .vs-select__label {
-        font-size: 1.5rem;
-        color: $black;
-        opacity: 1;
-        top: 1.95rem;
-        left: 2rem;
+        // font-size: 1.5rem;
+        // color: $black;
+        // opacity: 1;
+        // top: 1.95rem;
+        // left: 2rem;
         max-width: 75%;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+
+        top: 1.6rem;
+        left: 1.6rem;
+        font-size: 1.4rem;
+        color: $gray-dark;
+        opacity: 1;
+        height: initial;
+        width: initial;
+        padding: 0.05rem 0.5rem;
+        border-radius: 0.4rem;
     }
 
-    .vs-select__input {
-        padding: 1.6rem 2rem;
+    .vs-select__input,
+    .vs-select.activeOptions .vs-select__input {
         padding-right: 3rem;
-        border-radius: 0.8rem;
         background: $white;
-        font-size: 1.5rem;
+        font-size: 1.4rem;
+        border: 0.1rem solid $gray-middle;
+        border-radius: 0.5rem;
+        padding: 1.6rem 1.7rem;
 
         &:focus {
+            border-radius: 0.5rem;
+            border: 0.1rem solid $gray-dark;
+
             ~ .vs-select__label {
-                margin-left: 0.3rem;
-                color: $gray-middle;
+                // margin-left: 0.3rem;
+                // color: $gray-middle;
             }
         }
 
         &:hover {
+            border: 0.1rem solid $gray-dark;
+
             ~ .vs-icon-arrow {
                 margin-top: -1.3rem;
             }
         }
     }
+
+    // .vs-select__input:hover {
+    //     box-shadow: none;
+    //     transform: none;
+    // }
 
     .vs-icon-arrow {
         width: 1rem;
@@ -538,6 +570,10 @@
         margin-top: -0.5rem;
         right: 1.6rem;
     }
+}
+
+.vs-select__options {
+    transform: translateY(1px);
 }
 
 .kiv-select {
@@ -599,7 +635,9 @@
         color: transparent;
     }
 
-    .vs-select:not(.activeOptions) .vs-select__chips:hover {
+    .vs-select:not(.activeOptions) .vs-select__chips:hover,
+    .vs-select__input:hover,
+    .vs-select__input:focus {
         transform: none;
     }
 
@@ -625,8 +663,8 @@
         }
 
         .vs-select__chips__chip {
-            background-color: #232f55;
-            color: white;
+            background-color: $orange;
+            color: $white;
             padding: 0.3rem 0.9rem;
             padding-right: 1.5rem;
             font-size: 1.24rem;
@@ -637,9 +675,9 @@
 .vs-select__options {
     border-radius: 0 0 0.3rem 0.3rem;
 }
-.vs-checkbox-mask:after {
-    background: $tournesol !important;
-}
+// .vs-checkbox-mask:after {
+//     background: $tournesol !important;
+// }
 
 .vs-select__options__content {
     color: $black;
@@ -713,12 +751,46 @@
 
 /// DIALOG / MODAL
 
+.vs-dialog__content.notFooter {
+    margin-bottom: 5px;
+}
+
 .vs-dialog-content {
     backdrop-filter: blur(0.5rem);
     background: rgba(34, 46, 84, 0.8);
 
+    .vs-dialog__content {
+        padding: 2rem 2rem;
+
+        h2 {
+            position: relative;
+            top: -0.4rem;
+            margin-bottom: 3rem;
+            margin-top: 1rem;
+            font-size: 2.3rem;
+
+            &::before {
+                content: "";
+                display: block;
+                width: 0.3rem;
+                height: 2.4rem;
+                background: $orange;
+                position: absolute;
+                left: -2rem;
+                top: 0;
+                border-radius: 0.2rem;
+            }
+
+            // @media (min-width: 768px) {
+            //     &::before {
+            //         top: 0.1rem;
+            //     }
+            // }
+        }
+    }
+
     .vs-dialog {
-        border-radius: 0.5rem;
+        border-radius: 1rem;
     }
 
     .vs-dialog__close {

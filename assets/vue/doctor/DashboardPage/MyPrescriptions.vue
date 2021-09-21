@@ -5,14 +5,21 @@
         :class="{ reduced: !$parent.myPrescriptionsContent }"
     >
         <div
-            class="toggle-content"
+            class="toggle-content onglet"
             @click="
                 $parent.myPrescriptionsContent = !$parent.myPrescriptionsContent
             "
         >
             <i class="kiv-chevron-down icon-3"></i>
         </div>
-        <h2>Mes prescriptions</h2>
+        <div class="onglets">
+            <div @click="activeOnglet(1)">
+                <h2><span>Mes prescriptions</span></h2>
+            </div>
+            <div class="inactive" @click="activeOnglet(2)">
+                <h2><span>Mes fiches</span></h2>
+            </div>
+        </div>
         <transition name="height">
             <div v-if="$parent.myPrescriptionsContent">
                 <div class="primary-actions">
@@ -42,34 +49,24 @@
                             :key="i"
                         >
                             <div class="worksheet-header">
-                                <h3 class="worksheet-title">
-                                    {{ worksheet.title }}
-                                </h3>
-                                <TagPartOfBody
-                                    :partOfBody="
-                                        worksheet.partOfBody.toLowerCase()
-                                    "
-                                />
-                            </div>
-                            <div class="worksheet-content">
-                                <div>
-                                    <div class="worksheet-patient">
-                                        <vs-avatar
-                                            size="55"
-                                            class="user-avatar"
-                                            circle
-                                        >
-                                            <img
-                                                :src="
-                                                    worksheet.patient.avatarUrl
-                                                        ? worksheet.patient
-                                                              .avatarUrl
-                                                        : '/img/avatar-default.svg'
-                                                "
-                                                :alt="`Avatar de ${worksheet.patient.firstname} ${worksheet.patient.lastname}`"
-                                            />
-                                        </vs-avatar>
-                                        <div
+                                <div class="user-title">
+                                    <vs-avatar
+                                        size="35"
+                                        class="user-avatar"
+                                        circle
+                                    >
+                                        <img
+                                            :src="
+                                                worksheet.patient.avatarUrl
+                                                    ? worksheet.patient
+                                                          .avatarUrl
+                                                    : '/img/avatar-default.svg'
+                                            "
+                                            :alt="`Avatar de ${worksheet.patient.firstname} ${worksheet.patient.lastname}`"
+                                        />
+                                    </vs-avatar>
+                                    <h3 class="worksheet-title">
+                                        <span
                                             class="user-name"
                                             v-if="
                                                 worksheet.patient.firstname ||
@@ -78,12 +75,14 @@
                                         >
                                             {{ worksheet.patient.firstname }}
                                             {{ worksheet.patient.lastname }}
-                                        </div>
-                                        <div v-else>
+                                        </span>
+                                        <span v-else>
                                             {{ worksheet.patient.email }}
-                                        </div>
-                                    </div>
-                                    <div class="btn-commentaries">
+                                        </span>
+                                        <span class="deux-points">:</span>
+                                        {{ worksheet.title }}
+                                    </h3>
+                                    <div>
                                         <vs-button
                                             :disabled="
                                                 redirectInProgress ===
@@ -105,20 +104,80 @@
                                         </vs-button>
                                     </div>
                                 </div>
+                                <TagPartOfBody
+                                    :partOfBody="
+                                        worksheet.partOfBody.toLowerCase()
+                                    "
+                                />
+                            </div>
+                            <div class="worksheet-progress-line">
+                                <div class="progressbar-base">
+                                    <div
+                                        class="progressbar-thumb"
+                                        :style="{
+                                            width: `${worksheet.worksheetTotalProgression}%`,
+                                        }"
+                                    ></div>
+                                    <!-- <div class="progressbar-steps">
+                                        <div>
+                                            <div class="point"></div>
+                                        </div>
+                                    </div> -->
+                                </div>
+                                <div class="count-sessions">
+                                    <!-- <i class="session-img">
+                                        <img
+                                            src="../../../img/icons/colored/basket.svg"
+                                            alt="Icone d'une basket"
+                                        />
+                                    </i> -->
+                                    <p
+                                        class="session-nb"
+                                        :class="{
+                                            completed:
+                                                100 <=
+                                                worksheet.worksheetTotalProgression,
+                                        }"
+                                    >
+                                        Session n°<span
+                                            v-if="
+                                                worksheet.currentWorksheetSession
+                                            "
+                                            >{{
+                                                worksheet
+                                                    .currentWorksheetSession
+                                                    .execOrder
+                                            }}</span
+                                        ><span v-else>{{
+                                            worksheet.totalWorksheetSessions
+                                        }}</span
+                                        >/{{ worksheet.totalWorksheetSessions }}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="worksheet-content">
                                 <div>
                                     <div class="worksheet-details">
                                         <div class="worksheet-exercises-count">
                                             <i class="kiv-exercise icon-7"></i>
-                                            <span>{{
+                                            <span class="b">{{
                                                 worksheet.exercises.length
                                             }}</span>
-                                            exercices
+                                            exercice<span
+                                                v-if="
+                                                    worksheet.exercises.length >
+                                                    1
+                                                "
+                                                >s</span
+                                            >
                                         </div>
                                         <div class="worksheet-timing">
                                             <i class="kiv-calendar icon-10"></i>
-                                            <span>{{ worksheet.perDay }}x</span>
+                                            <span class="b"
+                                                >{{ worksheet.perDay }}x</span
+                                            >
                                             par jour -
-                                            <span
+                                            <span class="b"
                                                 >{{ worksheet.perWeek }}x</span
                                             >
                                             par semaine
@@ -126,15 +185,60 @@
                                         <div class="worksheet-period">
                                             <i class="kiv-clock icon-11"></i>
                                             Période :
-                                            <span
+                                            <span class="b"
                                                 >{{
                                                     worksheet.duration
                                                 }}
-                                                semaines</span
+                                                semaine<span
+                                                    v-if="
+                                                        worksheet.duration > 1
+                                                    "
+                                                    >s</span
+                                                ></span
+                                            >
+                                        </div>
+                                    </div>
+                                    <div class="worksheet-details reduced">
+                                        <div class="worksheet-exercises-count">
+                                            <i class="kiv-exercise icon-7"></i>
+                                            <span class="b">{{
+                                                worksheet.exercises.length
+                                            }}</span>
+                                            ex.
+                                        </div>
+                                        <div class="worksheet-timing">
+                                            <i class="kiv-calendar icon-10"></i>
+                                            <span class="b"
+                                                >{{ worksheet.perDay }}x</span
+                                            >
+                                            / jour -
+                                            <span class="b"
+                                                >{{ worksheet.perWeek }}x</span
+                                            >
+                                            / sem.
+                                        </div>
+                                        <div class="worksheet-period">
+                                            <i class="kiv-clock icon-11"></i>
+                                            <span class="b"
+                                                >{{
+                                                    worksheet.duration
+                                                }}
+                                                sem.</span
                                             >
                                         </div>
                                     </div>
                                     <div class="btns-date">
+                                        <div class="created-at-date">
+                                            <span
+                                                >créé le
+                                                {{
+                                                    formatDate(
+                                                        worksheet.createdAt
+                                                    )
+                                                }}
+                                            </span>
+                                        </div>
+
                                         <div class="buttons">
                                             <vs-button
                                                 :disabled="
@@ -185,16 +289,6 @@
                                                 <i class="fas fa-trash"></i>
                                             </vs-button>
                                         </div>
-                                        <div class="created-at-date">
-                                            <span
-                                                >créé le
-                                                {{
-                                                    formatDate(
-                                                        worksheet.createdAt
-                                                    )
-                                                }}
-                                            </span>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -204,7 +298,8 @@
                         class="not-found"
                         v-if="
                             !loadingDoctorWorksheets &&
-                            !getDoctorPrescriptions.length
+                            !getDoctorPrescriptions.length &&
+                            !search
                         "
                     >
                         <p>
@@ -212,10 +307,29 @@
                             <span>Vous n'avez pas de prescription</span>
                         </p>
                     </div>
+                    <div
+                        class="not-found"
+                        v-if="
+                            !loadingDoctorWorksheets &&
+                            !getDoctorPrescriptions.length &&
+                            search
+                        "
+                    >
+                        <p>
+                            <i class="fas fa-folder-minus"></i>
+                            <span
+                                >Aucune prescription n'a été trouvée avec
+                                <span v-if="search"
+                                    >"<strong>{{ search }}</strong
+                                    >"</span
+                                ></span
+                            >
+                        </p>
+                    </div>
                     <div v-if="loadingDoctorWorksheets">
                         <div class="loading loading-block">
-                            <div class="worksheet-header">
-                                <div class="loading worksheet-title w-25"></div>
+                            <div class="worksheet-header w-85">
+                                <div class="loading worksheet-title w-65"></div>
                                 <div class="loading part-of-body"></div>
                             </div>
                             <div class="loading worksheet-progress-line"></div>
@@ -225,23 +339,20 @@
                                         class="
                                             loading
                                             worksheet-exercises-count
-                                            w-35
+                                            w-45
                                         "
                                     ></div>
                                     <div
                                         class="loading worksheet-timing w-25"
                                     ></div>
                                     <div
-                                        class="loading worksheet-period w-35"
+                                        class="loading worksheet-period w-15"
                                     ></div>
-                                </div>
-                                <div class="buttons">
-                                    <div class="loading btn-go"></div>
                                 </div>
                             </div>
                         </div>
                         <div class="loading loading-block">
-                            <div class="worksheet-header">
+                            <div class="worksheet-header w-85">
                                 <div class="loading worksheet-title w-45"></div>
                                 <div class="loading part-of-body"></div>
                             </div>
@@ -252,26 +363,144 @@
                                         class="
                                             loading
                                             worksheet-exercises-count
-                                            w-15
+                                            w-45
                                         "
                                     ></div>
                                     <div
-                                        class="loading worksheet-timing w-35"
+                                        class="loading worksheet-timing w-25"
                                     ></div>
                                     <div
-                                        class="loading worksheet-period w-25"
+                                        class="loading worksheet-period w-15"
                                     ></div>
                                 </div>
-                                <div class="buttons">
-                                    <div class="loading btn-go"></div>
+                            </div>
+                        </div>
+                        <div class="loading loading-block">
+                            <div class="worksheet-header w-85">
+                                <div class="loading worksheet-title w-55"></div>
+                                <div class="loading part-of-body"></div>
+                            </div>
+                            <div class="loading worksheet-progress-line"></div>
+                            <div class="worksheet-content">
+                                <div class="worksheet-details">
+                                    <div
+                                        class="
+                                            loading
+                                            worksheet-exercises-count
+                                            w-45
+                                        "
+                                    ></div>
+                                    <div
+                                        class="loading worksheet-timing w-25"
+                                    ></div>
+                                    <div
+                                        class="loading worksheet-period w-15"
+                                    ></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="loading loading-block">
+                            <div class="worksheet-header w-85">
+                                <div class="loading worksheet-title w-45"></div>
+                                <div class="loading part-of-body"></div>
+                            </div>
+                            <div class="loading worksheet-progress-line"></div>
+                            <div class="worksheet-content">
+                                <div class="worksheet-details">
+                                    <div
+                                        class="
+                                            loading
+                                            worksheet-exercises-count
+                                            w-45
+                                        "
+                                    ></div>
+                                    <div
+                                        class="loading worksheet-timing w-25"
+                                    ></div>
+                                    <div
+                                        class="loading worksheet-period w-15"
+                                    ></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="loading loading-block">
+                            <div class="worksheet-header w-85">
+                                <div class="loading worksheet-title w-45"></div>
+                                <div class="loading part-of-body"></div>
+                            </div>
+                            <div class="loading worksheet-progress-line"></div>
+                            <div class="worksheet-content">
+                                <div class="worksheet-details">
+                                    <div
+                                        class="
+                                            loading
+                                            worksheet-exercises-count
+                                            w-45
+                                        "
+                                    ></div>
+                                    <div
+                                        class="loading worksheet-timing w-25"
+                                    ></div>
+                                    <div
+                                        class="loading worksheet-period w-15"
+                                    ></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="loading loading-block">
+                            <div class="worksheet-header w-85">
+                                <div class="loading worksheet-title w-45"></div>
+                                <div class="loading part-of-body"></div>
+                            </div>
+                            <div class="loading worksheet-progress-line"></div>
+                            <div class="worksheet-content">
+                                <div class="worksheet-details">
+                                    <div
+                                        class="
+                                            loading
+                                            worksheet-exercises-count
+                                            w-45
+                                        "
+                                    ></div>
+                                    <div
+                                        class="loading worksheet-timing w-25"
+                                    ></div>
+                                    <div
+                                        class="loading worksheet-period w-15"
+                                    ></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="loading loading-block">
+                            <div class="worksheet-header w-85">
+                                <div class="loading worksheet-title w-45"></div>
+                                <div class="loading part-of-body"></div>
+                            </div>
+                            <div class="loading worksheet-progress-line"></div>
+                            <div class="worksheet-content">
+                                <div class="worksheet-details">
+                                    <div
+                                        class="
+                                            loading
+                                            worksheet-exercises-count
+                                            w-45
+                                        "
+                                    ></div>
+                                    <div
+                                        class="loading worksheet-timing w-25"
+                                    ></div>
+                                    <div
+                                        class="loading worksheet-period w-15"
+                                    ></div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="pagination">
+                <div class="pagination" v-if="doctorPrescriptions.length > max">
                     <vs-pagination
                         v-model="page"
+                        buttons-dotted
                         :length="
                             getLength(
                                 getSearch(doctorPrescriptions, search),
@@ -279,6 +508,9 @@
                             )
                         "
                     />
+                    <div class="count-page">
+                        Page: <b>{{ page }}</b>
+                    </div>
                 </div>
             </div>
         </transition>
@@ -312,7 +544,7 @@ export default {
         return {
             search: "",
             page: 1,
-            max: 4,
+            max: 6,
             redirectInProgress: null,
         };
     },
@@ -321,6 +553,19 @@ export default {
             this.redirectInProgress = worksheetId;
 
             document.location.href = `/doctor/${this.doctor.id}/fiche/${worksheetId}`;
+        },
+        activeOnglet(num) {
+            this.$parent.activeOnglet = num;
+
+            if (window.innerWidth < 576) {
+                if (1 === num) {
+                    this.$parent.myPrescriptionsContent =
+                        !this.$parent.myPrescriptionsContent;
+                }
+                if (2 === num) {
+                    this.$parent.myWorksheetTemplatesContent = true;
+                }
+            }
         },
         formatDate(datetime) {
             return moment(datetime).format("DD/MM/YYYY");
@@ -342,136 +587,291 @@ export default {
 @import "../../../scss/variables";
 
 #my-worksheets.s-prescriptions {
-    grid-area: myprescriptions;
+    padding-top: 6.7rem;
 
-    .primary-actions .btn-primary-action {
-        margin-top: 1.4rem;
-        margin-bottom: 0.6rem;
-
-        @media (min-width: 768px) {
-            margin: 0;
-        }
+    &.reduced {
+        padding-top: 4.4rem;
     }
 
-    .primary-actions {
-        .search {
-            margin-right: 0;
+    .onglets {
+        > div {
+            &.inactive {
+                box-shadow: inset 0.66rem -0.3rem 0.9rem rgba(148, 96, 77, 0.07);
+                border-radius: 0 0 0 0.8rem;
+            }
         }
     }
 
     .worksheet-list.wl-doctor > div:not(.not-found) {
-        @media (min-width: 810px) {
-            grid-template-columns: 1fr 1fr;
-        }
-
-        @media (min-width: 992px) {
-            grid-template-columns: 1fr;
-        }
-
-        @media (min-width: 1270px) {
-            grid-template-columns: 1fr 1fr;
-        }
-
         > div {
-            .worksheet-header {
-                margin-bottom: 0.8rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            @media (min-width: 500px) {
+                align-items: flex-start;
             }
 
-            .worksheet-content {
-                flex-direction: column;
+            .worksheet-header {
+                .user-avatar {
+                    margin-right: 1rem;
+                    min-width: 35px;
+                    max-height: 35px;
+                }
 
-                > div {
-                    display: flex;
-                    flex-direction: row;
-                    justify-content: space-between;
+                .user-title {
+                    max-width: 70vw;
 
-                    &:first-child {
-                        align-items: center;
+                    @media (min-width: 500px) {
+                        max-width: 62vw;
                     }
 
-                    &:last-child {
-                        align-items: flex-end;
-
-                        @media (max-width: 450px) {
-                            flex-direction: column !important;
-                            align-items: center !important;
-                        }
+                    @media (min-width: 576px) {
+                        max-width: 65vw;
                     }
 
-                    .worksheet-patient {
-                        margin-bottom: 0.9rem;
-                        position: relative;
-                        overflow: visible;
-                        flex-grow: 1;
-
-                        .user-avatar {
-                            border: 0.5rem solid $orange;
-                            box-shadow: 0rem 0.4rem 1.4rem 0rem
-                                rgba(251, 139, 104, 0.5);
-                        }
-
-                        .user-name {
-                            background-color: $orange;
-                            padding: 0.2rem 0.9rem;
-                            font-size: 1.3rem;
-                            font-weight: 700;
-                            color: $white;
-                            border-radius: 0 0.9rem 0.9rem 0;
-                            padding-left: 0.8rem;
-                            padding-top: 0.3rem;
-                            position: absolute;
-                            top: 50%;
-                            left: 5.1rem;
-                            transform: translateY(-50%);
-                            box-shadow: 0rem 0.4rem 1.4rem 0rem
-                                rgba(251, 139, 104, 0.5);
-                            max-width: 14rem;
-                            overflow: hidden;
-                            text-overflow: ellipsis;
-                            white-space: nowrap;
-
-                            @media (min-width: 450px) {
-                                max-width: 20rem;
-                            }
-
-                            @media (min-width: 500px) {
-                                max-width: 25rem;
-                            }
-                        }
+                    @media (min-width: 992px) {
+                        max-width: 36vw;
                     }
 
-                    .worksheet-details {
+                    @media (min-width: 1100px) {
+                        max-width: 45vw;
+                    }
+
+                    @media (min-width: 1370px) {
+                        max-width: 50vw;
+                    }
+
+                    .worksheet-title {
                         font-size: 1.3rem;
-                    }
 
-                    .btns-date {
-                        display: flex;
-                        flex-direction: column;
-                        justify-content: space-between;
-                        align-items: flex-end;
-
-                        @media (max-width: 450px) {
-                            flex-direction: row !important;
-                            width: 100%;
-                            margin-top: 1rem;
+                        @media (min-width: 500px) {
+                            font-size: 1.4rem;
                         }
 
-                        .buttons {
-                            display: flex;
-                        }
-
-                        .created-at-date {
-                            font-size: 1.1rem;
-                            background-color: #e7dfcd66;
-                            padding: 0.6rem 1.5rem;
-                            border-radius: 1.5rem;
-                            margin-top: 1.8rem;
-                            margin-left: 1rem;
+                        @media (min-width: 576px) {
+                            font-size: 1.6rem;
                         }
                     }
 
                     .btn-action {
-                        background: $orange;
+                        &.commentaries {
+                            background: $white !important;
+                            color: $gray-middle;
+                            position: relative;
+                            overflow: visible;
+                            width: 3rem;
+                            height: 3rem;
+                            min-width: 3rem;
+                            min-height: 3rem;
+                            max-height: 3rem;
+                            margin-left: 1rem;
+                            box-shadow: 0rem 0.2rem 0.9rem 0rem
+                                rgba(231, 223, 205, 0.6);
+
+                            i {
+                                font-size: 1.6rem;
+                                top: 0.18rem;
+                                left: 0.45rem;
+                            }
+
+                            .count-commentaries {
+                                position: absolute;
+                                top: -0.3rem;
+                                right: -0.5rem;
+                                width: 1.2rem;
+                                height: 1.2rem;
+                                min-width: 1.2rem;
+                                min-height: 1.2rem;
+                                max-height: 1.2rem;
+                                background-color: $orange;
+                                border-radius: 50%;
+                                font-size: 0.7rem;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                color: white;
+                                padding: 0.1rem 0.2rem;
+                                padding-top: 0.15rem;
+                            }
+                        }
+                    }
+                }
+
+                .vs-button--size-mini.tag.part-of-body {
+                    font-size: 0.9rem;
+                    top: 0;
+                    right: 50%;
+                    transform: translateX(50%);
+
+                    @media (min-width: 500px) {
+                        top: 1.6rem;
+                        right: 1.8rem;
+                        transform: none;
+                        font-size: 1.3rem;
+                    }
+                }
+            }
+
+            .worksheet-progress-line {
+                display: flex;
+                align-items: center;
+                margin-bottom: 1.4rem;
+                max-width: 70vw;
+                width: 100%;
+
+                @media (min-width: 500px) {
+                    max-width: 28rem;
+                }
+
+                @media (min-width: 700px) {
+                    max-width: 46rem;
+                }
+
+                @media (min-width: 992px) {
+                    max-width: 36vw;
+                }
+
+                @media (min-width: 1100px) {
+                    max-width: 46rem;
+                }
+
+                .progressbar-base {
+                    flex-grow: 1;
+                    height: 0.6rem;
+                }
+
+                .count-sessions {
+                    display: flex;
+                    align-items: center;
+                    margin-left: 0.8rem;
+
+                    // i {
+                    //     width: 1.9rem;
+                    // }
+                    .session-nb {
+                        font-weight: 700;
+                        color: #dfd9ca;
+                        margin: 0;
+                        font-size: 0.9rem;
+                        text-transform: uppercase;
+
+                        &.completed {
+                            color: $orange;
+                        }
+
+                        &:not(.completed):hover {
+                            color: $gray-dark;
+                        }
+                    }
+                }
+            }
+            .worksheet-content {
+                flex-direction: column;
+                margin-bottom: 2.1rem;
+                width: 100%;
+
+                @media (min-width: 500px) {
+                    margin-bottom: 0;
+                }
+
+                > div {
+                    .worksheet-details {
+                        position: relative;
+                        display: none;
+
+                        @media (min-width: 700px) {
+                            display: flex;
+                        }
+
+                        &.reduced {
+                            display: flex;
+                            width: 100%;
+                            align-items: center;
+                            justify-content: flex-start;
+                            margin-bottom: 0.2rem;
+                            overflow: hidden;
+                            max-width: 96%;
+
+                            @media (min-width: 410px) {
+                                justify-content: center;
+                            }
+
+                            @media (min-width: 500px) {
+                                justify-content: flex-start;
+                            }
+
+                            @media (min-width: 500px) {
+                                max-width: initial;
+                            }
+
+                            @media (min-width: 700px) {
+                                display: none;
+                            }
+                        }
+
+                        @media (min-width: 992px) {
+                            max-width: 36.5vw;
+                            overflow: hidden;
+                            font-size: 1.15rem !important;
+                        }
+
+                        @media (min-width: 1100px) {
+                            max-width: initial;
+                            font-size: 1.3rem !important;
+                        }
+
+                        &::after {
+                            content: "";
+                            display: block;
+                            height: 100%;
+                            width: 1.5rem;
+                            position: absolute;
+                            top: 0;
+                            right: 0;
+                            background: linear-gradient(
+                                90deg,
+                                rgba(250, 248, 244, 0) 0%,
+                                rgba(250, 248, 244, 1) 100%
+                            );
+                        }
+                    }
+
+                    .btns-date {
+                        display: flex;
+                        flex-direction: row;
+                        width: 99%;
+                        margin-top: 3rem;
+                        align-items: center;
+                        position: absolute;
+                        bottom: -0.7rem;
+                        right: 0;
+                        padding: 1.6rem;
+                        justify-content: space-between;
+
+                        @media (min-width: 500px) {
+                            flex-direction: column;
+                            width: initial;
+                            margin-top: 0rem;
+                            align-items: flex-end;
+                            padding: 0;
+                            bottom: 2rem;
+                            right: 2rem;
+                        }
+
+                        .created-at-date {
+                            margin-bottom: 0;
+                            margin-right: 0.7rem;
+
+                            @media (min-width: 500px) {
+                                margin-bottom: 0.9rem;
+                                margin-right: 0rem;
+                            }
+
+                            @media (min-width: 700px) {
+                                margin-bottom: 0.7rem;
+                            }
+                        }
                     }
                 }
             }

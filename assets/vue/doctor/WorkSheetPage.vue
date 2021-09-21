@@ -1,5 +1,7 @@
 <template>
-    <div class="container" id="worksheet">
+    <div class="container" id="read-worksheet">
+        <feather-icon type="activity"></feather-icon>
+
         <header>
             <div v-if="loading" class="loading-block">
                 <div class="title">
@@ -297,17 +299,147 @@ export default {
 @import "../../scss/variables";
 
 #worksheet {
-    .btn-timing-frieze-mobile {
-        width: 100%;
-        margin-bottom: 2.5rem;
-        display: block;
+    // header {
+    //     > div {
+    //         display: flex;
+    //         align-items: flex-start;
 
-        @media (min-width: 576px) {
-            display: none;
-        }
-    }
+    //         &.loading-block {
+    //             min-height: 6rem;
+
+    //             .title {
+    //                 i {
+    //                     color: $gray-middle !important;
+    //                 }
+
+    //                 .h1 {
+    //                     height: 3.5rem;
+    //                     width: 18rem;
+    //                     margin: 0;
+    //                     border-radius: 0.5rem;
+    //                 }
+    //             }
+
+    //             .part-of-body {
+    //                 height: 2.7rem;
+    //                 width: 9rem;
+    //                 margin-top: 0.5rem;
+    //                 margin-left: 2rem;
+    //                 border-radius: 0.4rem;
+    //             }
+    //         }
+
+    //         .title {
+    //             display: flex;
+    //             align-items: center;
+    //             margin-bottom: 2rem;
+    //             max-width: 60%;
+    //             position: relative;
+    //             top: 0.3rem;
+
+    //             @media (min-width: 768px) {
+    //                 top: 0;
+    //             }
+
+    //             @media (min-width: 330px) {
+    //                 max-width: 65%;
+    //             }
+
+    //             @media (min-width: 410px) {
+    //                 max-width: 70%;
+    //             }
+
+    //             @media (min-width: 500px) {
+    //                 max-width: 75%;
+    //             }
+
+    //             @media (min-width: 768px) {
+    //                 max-width: 85%;
+    //             }
+
+    //             i {
+    //                 font-size: 1.6rem;
+    //                 margin-right: 1.8rem;
+    //                 cursor: pointer;
+    //             }
+
+    //             h1 {
+    //                 margin: 0;
+    //                 white-space: nowrap;
+    //                 overflow: hidden;
+    //                 text-overflow: ellipsis;
+    //             }
+    //         }
+
+    //         .part-of-body {
+    //             margin-top: 0.5rem;
+    //             margin-left: 2rem;
+    //         }
+    //     }
+    // }
+
+    // .info {
+    //     border-radius: 0.5rem;
+    //     background: $white;
+    //     padding: 1.9rem 2.1rem;
+    //     margin-bottom: 2.5rem;
+
+    //     .loading-block {
+    //         i {
+    //             color: rgba($gray-middle, 0.9) !important;
+    //         }
+
+    //         .p {
+    //             height: 1.5rem;
+    //             margin: 0;
+    //             font-size: 1.4rem;
+    //             border-radius: 0.4rem;
+    //         }
+    //     }
+
+    //     @media (min-width: 992px) {
+    //         margin-bottom: 2.5rem;
+    //     }
+
+    //     > div {
+    //         display: flex;
+    //         align-items: center;
+
+    //         i.kiv-info {
+    //             color: $gray-dark;
+    //             font-size: 1.7rem;
+    //             margin-right: 1rem;
+    //         }
+
+    //         i.kiv-confettis {
+    //             width: 2.2rem;
+    //             margin-right: 0.8rem;
+
+    //             img {
+    //                 width: 100%;
+    //             }
+    //         }
+
+    //         p {
+    //             margin: 0;
+    //             font-size: 1.4rem;
+    //         }
+    //     }
+    // }
+
+    // .btn-timing-frieze-mobile {
+    //     width: 100%;
+    //     margin-bottom: 2.5rem;
+    //     display: block;
+
+    //     @media (min-width: 576px) {
+    //         display: none;
+    //     }
+    // }
 
     main {
+        // display: flex;
+
         #timing-frieze {
             width: 100%;
             background: white;
@@ -320,6 +452,18 @@ export default {
                 display: block;
                 width: 50%;
                 max-width: 31rem;
+            }
+        }
+
+        #exercises-playlist {
+            width: 100%;
+
+            @media (min-width: 576px) {
+                width: 70%;
+            }
+
+            @media (min-width: 992px) {
+                width: 80%;
             }
         }
     }

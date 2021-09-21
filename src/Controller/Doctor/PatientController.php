@@ -183,6 +183,8 @@ class PatientController extends AbstractController
                 $patient = $this->patientRepository->findOneBy(['id' => $data->patientId]);
 
                 if ($doctor->getPatients()->contains($patient)) {
+                    $patient->setAddRequestDoctor(null);
+
                     $doctor->removePatient($patient);
 
                     $this->em->flush();

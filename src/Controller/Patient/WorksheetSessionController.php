@@ -89,6 +89,24 @@ class WorksheetSessionController extends AbstractController
     }
 
     /**
+     * @Route("/{id}/get/total-completed-worksheet-sessions/{worksheetId}",
+     * name="app_patient_get_total_completed_worksheet_sessions", methods={"GET"})
+     */
+    public function getTotalCompletedWorksheetSessions(Patient $patient, int $worksheetId): JsonResponse
+    {
+        $worksheet = $this->worksheetRepository->findOneBy(['id' => $worksheetId]);
+
+        if (!$worksheet) {
+            return $this->json("Aucune fiche ne correspond à cet Id", 500);
+        }
+
+        return $this->json(
+            $this->worksheetSessionRepository->countCompletedWorksheetSessions($worksheet),
+            200
+        );
+    }
+
+    /**
      * @Route("/{id}/start/worksheet-session", name="app_patient_start_worksheet_session", methods={"POST"})
      */
     public function startWorksheetSession(Request $request, Patient $patient): JsonResponse
