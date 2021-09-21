@@ -350,7 +350,8 @@ export default {
 
             const oldStatsAverage = this.statsAverage(oldStats);
 
-            const result = (lastStatsAverage - oldStatsAverage) * 10;
+            const result =
+                Math.round((lastStatsAverage - oldStatsAverage) * 10 * 10) / 10;
 
             return {
                 variation:

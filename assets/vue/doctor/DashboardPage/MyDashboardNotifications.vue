@@ -123,3 +123,24 @@ export default {
     },
 };
 </script>
+
+<style lang="scss">
+@import "../../../scss/variables";
+
+#dashboard-notifications {
+    grid-area: mydashboardnotif;
+    margin-bottom: 0;
+    width: 100%;
+
+    @media (min-width: 992px) {
+        margin-bottom: 2rem;
+    }
+
+    @media (min-width: 650px) {
+        .notifications-list .notifications-item {
+            flex-direction: row;
+            align-items: center;
+        }
+    }
+}
+</style>

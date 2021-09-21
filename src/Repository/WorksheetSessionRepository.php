@@ -45,4 +45,16 @@ class WorksheetSessionRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
         ;
     }
+
+    public function countCompletedWorksheetSessions(Worksheet $worksheet): int
+    {
+        return $this->createQueryBuilder('ws')
+            ->select('count(ws.id)')
+            ->where('ws.worksheet = :worksheet')
+            ->andWhere('ws.isCompleted = true')
+            ->setParameter('worksheet', $worksheet)
+            ->getQuery()
+            ->getSingleScalarResult();
+        ;
+    }
 }
