@@ -125,7 +125,7 @@
                     </div>
                 </chartist>
                 <div class="btns-worksheets-stats sensitivity">
-                    <div
+                    <button
                         v-for="(worksheet, i) in getPatientWorksheets"
                         :key="i"
                         class="btn-toggle-worksheet-stats"
@@ -150,7 +150,7 @@
                             }"
                         ></div>
                         <BtnChartWorksheetPartOfBody :worksheet="worksheet" />
-                    </div>
+                    </button>
                 </div>
             </div>
             <div
@@ -237,7 +237,7 @@
                     </div>
                 </chartist>
                 <div class="btns-worksheets-stats">
-                    <div
+                    <button
                         v-for="(worksheet, i) in getPatientWorksheets"
                         :key="i"
                         class="btn-toggle-worksheet-stats"
@@ -262,7 +262,7 @@
                             }"
                         ></div>
                         <BtnChartWorksheetPartOfBody :worksheet="worksheet" />
-                    </div>
+                    </button>
                 </div>
             </div>
             <div
@@ -352,7 +352,7 @@
                     </div>
                 </chartist>
                 <div class="btns-worksheets-stats">
-                    <div
+                    <button
                         v-for="(worksheet, i) in getPatientWorksheets"
                         :key="i"
                         class="btn-toggle-worksheet-stats"
@@ -377,7 +377,7 @@
                             }"
                         ></div>
                         <BtnChartWorksheetPartOfBody :worksheet="worksheet" />
-                    </div>
+                    </button>
                 </div>
             </div>
             <div
@@ -1169,7 +1169,6 @@ export default {
 
     .btns-worksheets-stats {
         display: flex;
-        cursor: pointer;
         margin-top: 0.8rem;
         flex-wrap: wrap;
         margin-left: 8.5rem;
@@ -1183,6 +1182,9 @@ export default {
             align-items: center;
             margin-right: 1.5rem;
             min-height: 3.5rem;
+            cursor: pointer;
+            border: none;
+            background: transparent;
 
             .line-color {
                 width: 10px;

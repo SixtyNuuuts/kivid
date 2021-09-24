@@ -1,0 +1,30 @@
+{% extends 'layout/vue.html.twig' %}
+
+{% block title %}Fiche{% endblock %}
+
+{% block stylesheets %}
+	{{ parent() }}
+
+	{{ encore_entry_link_tags('doctor-worksheet-page') }}
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+
+	{{ encore_entry_script_tags('doctor-worksheet-page') }}
+{% endblock %}
+
+{% block body %}
+	<div id="vue"></div>
+{% endblock %}
+{% block vueData %}
+	{
+		"doctor": {{ doctor|serialize('json', {'groups': 'doctor_read'})|raw }},
+		"worksheetId": {{ worksheetId|serialize('json')|raw }},
+		"action": {{ action|serialize('json')|raw }},
+		"patient": {{ patient|serialize('json', {'groups': 'patient_read'})|raw }},
+		"csrfTokenCreateWorksheet": {{ csrf_token('create_worksheet' ~ doctor.id)|serialize('json')|raw }},
+		"csrfTokenEditWorksheet": {{ csrf_token('edit_worksheet' ~ doctor.id)|serialize('json')|raw }},
+		"csrfTokenRemoveExercise": {{ csrf_token('remove_exercise' ~ doctor.id)|serialize('json')|raw }}
+	}
+{% endblock %}

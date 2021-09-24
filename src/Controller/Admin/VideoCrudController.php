@@ -28,6 +28,7 @@ class VideoCrudController extends AbstractCrudController
                         ->setTemplatePath('admin/custom_field/image.html.twig')->onlyOnIndex(),
             TextEditorField::new('description'),
             AssociationField::new('tags', 'Tag(s)'),
+            AssociationField::new('options', 'Option(s)'),
         ];
     }
 }

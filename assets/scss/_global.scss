@@ -36,6 +36,34 @@ body {
             }
         }
     }
+
+    .btn-prescription-action,
+    .btn-create-action {
+        white-space: nowrap;
+
+        .vs-button {
+            background: $white;
+            font-size: 1.4rem;
+            color: $orange;
+            box-shadow: 0rem 0.4rem 1.4rem 0rem rgba(255, 107, 38, 0.43);
+            border-radius: 0.5rem;
+
+            i {
+                font-size: 1.5rem;
+            }
+
+            .vs-button__content {
+                padding: 0.7rem 1.5rem;
+                padding-top: 0.8rem;
+            }
+        }
+    }
+
+    .btn-prescription-action {
+        position: relative;
+        top: -0.1rem;
+    }
+
     @keyframes mymove {
         50% {
             box-shadow: 0rem 0.4rem 2rem 0rem rgba(255, 107, 38, 0.9);
@@ -144,9 +172,20 @@ body {
             width: 17rem;
             color: $white;
             text-align: center;
-            animation: bounce 0.8s ease infinite;
+            animation: kivRebound 0.5s ease;
             backface-visibility: hidden;
             -webkit-font-smoothing: subpixel-antialiased;
+
+            &.pp-create-worksheet {
+                top: 1.9rem;
+                left: auto;
+                right: 1rem;
+                width: 12rem;
+
+                @media (min-width: 576px) {
+                    top: -3.5rem;
+                }
+            }
 
             .step-num {
                 font-weight: 700;
@@ -216,6 +255,8 @@ body {
             height: 4.5rem;
             cursor: pointer;
             display: block;
+            border: none;
+            background: transparent;
 
             &.onglet {
                 left: auto;
@@ -346,7 +387,13 @@ body {
     from {
         transform: translateY(0);
     }
+    25% {
+        transform: translateY(-1rem);
+    }
     50% {
+        transform: translateY(0);
+    }
+    75% {
         transform: translateY(-1rem);
     }
     to {
@@ -556,7 +603,7 @@ body {
         width: 100%;
 
         @media (min-width: 576px) {
-            width: 27rem;
+            width: 19rem;
             white-space: nowrap;
         }
 
@@ -571,10 +618,10 @@ body {
         .vs-button {
             .vs-button__content {
                 padding: 1.3rem 2rem;
-                font-size: 1.4rem;
+                font-size: 1.5rem;
 
                 i {
-                    top: -0.1rem;
+                    top: -0.15rem;
                 }
             }
         }
@@ -618,8 +665,12 @@ body {
         .vs-input-content .vs-input {
             background: $white;
             border: 0.2rem solid #faf6ef;
-            padding: 1.1rem 2rem;
+            padding: 1.1rem 1.4rem;
             border-radius: 0.5rem;
+        }
+
+        .vs-input-content .vs-input__label {
+            left: 1.1rem;
         }
     }
 
@@ -719,7 +770,8 @@ body {
         margin: 0;
         display: flex;
         align-items: center;
-
+        width: 100%;
+        justify-content: center;
         span {
             position: relative;
             top: 0.1rem;
@@ -751,7 +803,7 @@ body {
 }
 
 .footer {
-    background: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.25);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -935,6 +987,11 @@ body {
             position: relative;
             top: -0.1rem;
             left: 0.1rem;
+
+            &.fa-trash {
+                top: 0;
+                left: 0;
+            }
         }
     }
 }

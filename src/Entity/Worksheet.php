@@ -65,13 +65,9 @@ class Worksheet
 
     /**
      * @ORM\OneToMany(targetEntity=Commentary::class, mappedBy="worksheet")
+     * @Groups({"dashboard_worksheet_read"})
      */
     private $commentaries;
-
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $isTemplate;
 
     /**
      * @ORM\OneToMany(targetEntity=WorksheetSession::class, mappedBy="worksheet", orphanRemoval=true)
@@ -100,7 +96,6 @@ class Worksheet
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->exercises = new ArrayCollection();
-        $this->isTemplate = false;
         $this->duration = 1;
         $this->perDay = 1;
         $this->perWeek = 1;
@@ -171,18 +166,6 @@ class Worksheet
     public function __toString()
     {
         return $this->getTitle();
-    }
-
-    public function getIsTemplate(): ?bool
-    {
-        return $this->isTemplate;
-    }
-
-    public function setIsTemplate(?bool $isTemplate): self
-    {
-        $this->isTemplate = $isTemplate;
-
-        return $this;
     }
 
     public function getPartOfBody(): ?string

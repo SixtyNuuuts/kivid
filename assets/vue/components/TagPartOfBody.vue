@@ -54,11 +54,7 @@
             alt="Icone Thoracique"
             class="icon-thoracique"
         />
-        <span class="text">{{
-            "epaule" === partOfBody
-                ? "Épaule"
-                : partOfBody.charAt(0).toUpperCase() + partOfBody.slice(1)
-        }}</span>
+        <span class="text">{{ formatPartOfBodyName(partOfBody) }}</span>
         <i class="kiv-completed icon-22"></i>
     </vs-button>
 </template>
@@ -102,6 +98,17 @@ export default {
                 ["thoracique", "abdominal"],
             ],
         };
+    },
+    methods: {
+        formatPartOfBodyName(partOfBody) {
+            if ("epaule" === partOfBody) {
+                return "Épaule";
+            }
+            if ("avantbras" === partOfBody) {
+                return "Avant-bras";
+            }
+            return partOfBody.charAt(0).toUpperCase() + partOfBody.slice(1);
+        },
     },
 };
 </script>

@@ -35,11 +35,14 @@ class WorksheetSessionController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/get/current-worksheet-session/{worksheetId}",
+     * @Route("/{id}/get/current-worksheet-session/{worksheetId}/{doctorView}",
      * name="app_patient_get_current_worksheet_session", methods={"GET"})
      */
-    public function getCurrentWorksheetSession(Patient $patient, int $worksheetId): JsonResponse
-    {
+    public function getCurrentWorksheetSession(
+        Patient $patient,
+        int $worksheetId,
+        string $doctorView = ''
+    ): JsonResponse {
         $worksheet = $this->worksheetRepository->findOneBy(['id' => $worksheetId]);
 
         if (!$worksheet) {
@@ -48,7 +51,7 @@ class WorksheetSessionController extends AbstractController
 
         $currentWorksheetSession = $this->worksheetSessionRepository->findCurrentWorksheetSession($worksheet);
 
-        if (!$currentWorksheetSession) {
+        if (!$currentWorksheetSession && $doctorView != 'doctorview') {
             $firstGenerateWorksheetSession =
                 $this->worksheetSessionService->generateWorksheetSessionsAndGetFirst($worksheet);
 

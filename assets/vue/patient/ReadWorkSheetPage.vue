@@ -83,6 +83,7 @@
                 <ExercisesPlaylist
                     :patient="patient"
                     :loading="loading"
+                    :doctorView="doctorView"
                     :worksheet="getWorksheet"
                     :currentWorksheetSession="getCurrentWorksheetSession"
                     :csrfTokenStartWorksheetSession="
@@ -119,7 +120,7 @@ export default {
             worksheet: {},
             currentWorksheetSession: {},
             totalWorksheetSessions: null,
-            // doctorView: null,
+            doctorView: null,
             csrfTokenStartWorksheetSession: null,
             csrfTokenCompleteWorksheetSession: null,
             csrfTokenCompleteExercise: null,
@@ -166,7 +167,11 @@ export default {
             return commentary;
         },
         rederictToDashboard() {
-            document.location.href = `/patient/${this.patient.id}/dashboard`;
+            if (this.doctorView && this.doctor) {
+                document.location.href = `/doctor/${this.doctor.id}/dashboard`;
+            } else {
+                document.location.href = `/patient/${this.patient.id}/dashboard`;
+            }
         },
     },
     created() {
@@ -174,7 +179,7 @@ export default {
 
         this.patient = data.patient;
         this.worksheetId = data.worksheetId;
-        // this.doctorView = data.doctorView;
+        this.doctorView = data.doctorView;
         this.csrfTokenStartWorksheetSession =
             data.csrfTokenStartWorksheetSession;
         this.csrfTokenCompleteWorksheetSession =

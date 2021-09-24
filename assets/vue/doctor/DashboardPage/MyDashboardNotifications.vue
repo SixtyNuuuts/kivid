@@ -11,7 +11,7 @@
             !doctor.isVerified
         "
     >
-        <div
+        <button
             class="toggle-content"
             @click="
                 $parent.myDBNotificationsContent =
@@ -19,7 +19,7 @@
             "
         >
             <i class="kiv-chevron-down icon-3"></i>
-        </div>
+        </button>
         <h2>Notifications</h2>
         <transition name="height">
             <div

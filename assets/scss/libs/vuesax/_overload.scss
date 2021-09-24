@@ -573,7 +573,7 @@
 }
 
 .vs-select__options {
-    transform: translateY(1px);
+    transform: translateY(3px);
 }
 
 .kiv-select {
@@ -592,7 +592,12 @@
             text-overflow: ellipsis;
         }
 
-        .vs-select__input {
+        .vs-select.activeOptions .vs-select__input {
+            transform: none;
+        }
+
+        .vs-select__input,
+        .vs-select.activeOptions .vs-select__input {
             padding: 0.6rem 1.3rem;
             padding-right: 3rem;
             border-radius: 0.3rem;
@@ -611,7 +616,7 @@
 
             &:hover {
                 ~ .vs-icon-arrow {
-                    margin-top: -1.3rem;
+                    margin-top: -0.5rem;
                 }
             }
         }
@@ -622,6 +627,10 @@
             color: $black;
             margin-top: -0.5rem;
             right: 1.6rem;
+        }
+
+        .vs-select.activeOptions .vs-icon-arrow {
+            margin-top: 0.4rem !important;
         }
     }
 
@@ -644,10 +653,15 @@
     .vs-select__chips input {
         font-size: 1.4rem;
         padding: 0.3rem 0.5rem;
+        padding-left: 0.7rem;
     }
 
     .vs-select.activeOptions .vs-select__input {
         min-height: 3.8rem;
+    }
+
+    .vs-select.activeOptions .vs-select__chips {
+        transform: none;
     }
 }
 
@@ -655,8 +669,8 @@
     min-width: 30%;
     .vs-select-content {
         .vs-select__input {
-            border-radius: 0.5rem;
-            min-height: 4.3rem;
+            border-radius: 0.5rem !important;
+            min-height: 4.3rem !important;
         }
         .vs-select__chips {
             align-items: center;

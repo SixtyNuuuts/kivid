@@ -37,17 +37,6 @@ class PatientController extends AbstractController
         $this->em = $em;
     }
 
-    // /**
-    //  * @Route("/{id}/patients", name="app_doctor_patients", methods={"GET"})
-    //  */
-    // public function patientsList(Request $request, Doctor $doctor): Response
-    // {
-    //     return $this->render('doctor/patients_list.html.twig', [
-    //         'doctor' => $doctor,
-    //         'triggerAddPatient' => $request->query->get('add_patient'),
-    //     ]);
-    // }
-
     /**
      * @Route("/{id}/get/patients", name="app_doctor_get_patients", methods={"GET"})
      */
@@ -74,22 +63,22 @@ class PatientController extends AbstractController
         );
     }
 
-    // /**
-    //  * @Route("/{id}/show/patient/{patientId}", name="app_doctor_show_patient", methods={"GET"})
-    //  */
-    // public function showPatient(
-    //     int $patientId = null
-    // ): Response {
-    //     $patient =
-    //         $patientId ?
-    //             $this->patientRepository->findOneBy(['id' => $patientId])
-    //         : null;
+    /**
+     * @Route("/{id}/show/patient/{patientId}", name="app_doctor_show_patient", methods={"GET"})
+     */
+    public function showPatient(
+        int $patientId = null
+    ): Response {
+        $patient =
+            $patientId ?
+                $this->patientRepository->findOneBy(['id' => $patientId])
+            : null;
 
-    //     return $this->render('patient/dashboard.html.twig', [
-    //         'patient' => $patient,
-    //         'doctorView' => true,
-    //     ]);
-    // }
+        return $this->render('patient/dashboard.html.twig', [
+            'patient' => $patient,
+            'doctorView' => true,
+        ]);
+    }
 
     /**
      * @Route("/{id}/create/patient", name="app_doctor_create_patient", methods={"POST"})

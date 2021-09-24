@@ -21,6 +21,8 @@
 	{
 		"patient": {{ patient|serialize('json', {'groups': 'patient_read'})|raw }},
 		"worksheetId": {{ worksheetId|serialize('json')|raw }},
+		"doctor": {{ doctor|serialize('json', {'groups': 'doctor_read'})|raw }},
+		"doctorView": {{ doctorView|serialize('json')|raw }},
 		"csrfTokenStartWorksheetSession": {{ csrf_token('start_worksheet_session' ~ patient.id)|serialize('json')|raw }},
 		"csrfTokenCompleteWorksheetSession": {{ csrf_token('complete_worksheet_session' ~ patient.id)|serialize('json')|raw }},
 		"csrfTokenCompleteExercise": {{ csrf_token('complete_exercise' ~ patient.id)|serialize('json')|raw }},

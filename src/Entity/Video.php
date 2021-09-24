@@ -50,6 +50,12 @@ class Video
     private $tags;
 
     /**
+     * @ORM\ManyToMany(targetEntity=Option::class, inversedBy="videos")
+     * @Groups({"video_read", "worksheet_read"})
+     */
+    private $options;
+
+    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"worksheet_read", "video_read"})
      */
@@ -70,6 +76,7 @@ class Video
         $this->createdAt = new \DateTimeImmutable();
         $this->tags = new ArrayCollection();
         $this->exercises = new ArrayCollection();
+        $this->options = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -145,6 +152,30 @@ class Video
     public function removeTag(Tag $tag): self
     {
         $this->tags->removeElement($tag);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Option[]
+     */
+    public function getOptions(): Collection
+    {
+        return $this->options;
+    }
+
+    public function addOption(Option $option): self
+    {
+        if (!$this->options->contains($option)) {
+            $this->options[] = $option;
+        }
+
+        return $this;
+    }
+
+    public function removeOption(Option $option): self
+    {
+        $this->options->removeElement($option);
 
         return $this;
     }

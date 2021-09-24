@@ -4,12 +4,12 @@
         class="kiv-block"
         :class="{ reduced: !$parent.myWorksheetsContent }"
     >
-        <div
+        <button
             class="toggle-content"
             @click="$parent.myWorksheetsContent = !$parent.myWorksheetsContent"
         >
             <i class="kiv-chevron-down icon-3"></i>
-        </div>
+        </button>
         <h2>Mes fiches</h2>
         <transition name="height">
             <div v-if="$parent.myWorksheetsContent" class="worksheet-list">
