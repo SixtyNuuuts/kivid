@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <DoctorChoice
-            v-if="!patient.doctor"
+            v-if="!patient.doctor && !doctorView"
             :patient="patient"
             :csrfTokenSelectDoctor="csrfTokenSelectDoctor"
         />
@@ -38,12 +38,12 @@
                         class="kiv-block"
                         :class="{ reduced: !myDoctorContent }"
                     >
-                        <div
+                        <button
                             class="toggle-content"
                             @click="myDoctorContent = !myDoctorContent"
                         >
                             <i class="kiv-chevron-down icon-3"></i>
-                        </div>
+                        </button>
                         <h2>Mon praticien</h2>
                         <transition name="height2">
                             <div v-if="myDoctorContent" class="doctor-details">

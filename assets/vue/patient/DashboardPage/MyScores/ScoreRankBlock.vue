@@ -31,7 +31,7 @@
                     />
                 </i>
                 <p class="rank-label">Patient Débutant</p>
-                <p class="rank-result">Vous êtes trop fort(e)&nbsp;!</p>
+                <p class="rank-result">Muscle ton jeu "Robert"&nbsp;!</p>
             </div>
             <div v-if="!loading && 'amateur' === rank" key="amateur">
                 <h4>Votre niveau</h4>
@@ -42,7 +42,7 @@
                     />
                 </i>
                 <p class="rank-label">Patient Amateur</p>
-                <p class="rank-result">Vous êtes trop fort(e)&nbsp;!</p>
+                <p class="rank-result">La tête dans le guidon&nbsp;!</p>
             </div>
             <div
                 v-if="!loading && 'intermediaire' === rank"
@@ -56,7 +56,7 @@
                     />
                 </i>
                 <p class="rank-label">Patient Intermédiaire</p>
-                <p class="rank-result">Vous êtes trop fort(e)&nbsp;!</p>
+                <p class="rank-result">Bien dans tes Baskets&nbsp;!</p>
             </div>
             <div v-if="!loading && 'confirme' === rank" key="confirme">
                 <h4>Votre niveau</h4>
@@ -71,7 +71,7 @@
                     />
                 </i>
                 <p class="rank-label">Patient Confirmé</p>
-                <p class="rank-result">Vous êtes trop fort(e)&nbsp;!</p>
+                <p class="rank-result">Pas le temps de niaiser&nbsp;!</p>
             </div>
             <div v-if="!loading && 'expert' === rank" key="expert">
                 <h4>Votre niveau</h4>
@@ -90,7 +90,7 @@
                     />
                 </i>
                 <p class="rank-label">Patient Expert</p>
-                <p class="rank-result">Vous êtes trop fort(e)&nbsp;!</p>
+                <p class="rank-result">Prêt pour le prochain Iron Man&nbsp;!</p>
             </div>
         </transition>
         <div v-if="loading" class="loading-block" key="loading">

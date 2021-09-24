@@ -26,7 +26,7 @@ Encore
 
     // Doctor
     .addEntry('doctor-dashboard-page', './assets/vue/doctor/dashboard-page.js')
-    // .addEntry('doctor-create-worksheet-page', './assets/vue/doctor/create-worksheet-page.js')
+    .addEntry('doctor-worksheet-page', './assets/vue/doctor/worksheet-page.js')
     // Patient
     .addEntry('patient-dashboard-page', './assets/vue/patient/dashboard-page.js')
     .addEntry('patient-read-worksheet-page', './assets/vue/patient/read-worksheet-page.js')

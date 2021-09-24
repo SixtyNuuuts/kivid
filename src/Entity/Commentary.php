@@ -15,7 +15,7 @@ class Commentary
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"worksheet_read"})
+     * @Groups({"worksheet_read", "dashboard_worksheet_read"})
      */
     private $id;
 

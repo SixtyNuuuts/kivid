@@ -81,7 +81,7 @@ class Exercise
     private $isCompleted;
 
     /**
-     * @ORM\OneToMany(targetEntity=ExerciseStat::class, mappedBy="exercise")
+     * @ORM\OneToMany(targetEntity=ExerciseStat::class, mappedBy="exercise", orphanRemoval=true)
      */
     private $exerciseStats;
 

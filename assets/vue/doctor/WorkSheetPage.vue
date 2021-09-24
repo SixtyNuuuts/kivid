@@ -1,7 +1,5 @@
 <template>
-    <div class="container" id="read-worksheet">
-        <feather-icon type="activity"></feather-icon>
-
+    <div class="container" id="worksheet">
         <header>
             <div v-if="loading" class="loading-block">
                 <div class="title">
@@ -16,254 +14,423 @@
                         class="kiv-arrow-left icon-31"
                         @click="rederictToDashboard()"
                     ></i>
-                    <h1>{{ getWorksheet.title }}</h1>
+                    <vs-input
+                        v-model="worksheet.title"
+                        label-placeholder="Titre de la fiche"
+                        type="text"
+                    >
+                    </vs-input>
                 </div>
-                <TagPartOfBody
-                    v-if="getWorksheet.partOfBody"
-                    :class="{ completed: allExercisesIsCompleted }"
-                    :partOfBody="getWorksheet.partOfBody.toLowerCase()"
-                />
+                <div v-if="patient" class="prescri-for-patient">
+                    <div class="label">prescription pour</div>
+                    <vs-avatar size="26" class="user-avatar" circle>
+                        <img
+                            :src="
+                                patient.avatarUrl
+                                    ? patient.avatarUrl
+                                    : '/img/avatar-default.svg'
+                            "
+                            :alt="`Avatar de ${patient.firstname} ${patient.lastname}`"
+                        />
+                    </vs-avatar>
+                    <div class="user-name">
+                        <div>
+                            <div v-if="patient.firstname || patient.lastname">
+                                {{ getCivility(patient.gender) }}
+                                {{ patient.firstname }}
+                                {{ patient.lastname }}
+                            </div>
+                            <div v-else>
+                                {{ patient.email }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="worksheet-params">
+                    <div
+                        class="worksheet-details"
+                        :class="{
+                            disabled:
+                                'edition' === action &&
+                                checkIfWorksheetSessionsExist,
+                        }"
+                    >
+                        <div
+                            v-if="
+                                'edition' === action &&
+                                checkIfWorksheetSessionsExist
+                            "
+                            class="avert-sessions-start"
+                        >
+                            <i class="kiv-info icon-17"></i>
+                            <p>
+                                Vous ne pouvez plus modifier la durée de la
+                                prescription car le patient a déjà démarré ses
+                                sessions.
+                            </p>
+                        </div>
+                        <div class="worksheet-period">
+                            <i class="kiv-clock icon-11"></i>
+                            <vs-input
+                                v-model="worksheet.duration"
+                                id="duration"
+                                label-placeholder="Durée en sem. (max: 52)"
+                                type="number"
+                                @keyup="
+                                    checkAndFormatDurationValue(
+                                        worksheet.duration,
+                                        $event
+                                    )
+                                "
+                                @blur="
+                                    checkIfDurationValueIsEmptyOrNull(
+                                        worksheet.duration,
+                                        $event
+                                    )
+                                "
+                                min="1"
+                                max="52"
+                            >
+                            </vs-input>
+                        </div>
+                        <div class="worksheet-timing-perday">
+                            <i class="kiv-calendar icon-10"></i>
+                            <vs-input
+                                v-model="worksheet.perDay"
+                                id="perDay"
+                                label-placeholder="X par jour (max: 3)"
+                                type="number"
+                                @keyup="
+                                    checkAndFormatDurationValue(
+                                        worksheet.perDay,
+                                        $event
+                                    )
+                                "
+                                @blur="
+                                    checkIfDurationValueIsEmptyOrNull(
+                                        worksheet.perDay,
+                                        $event
+                                    )
+                                "
+                                min="1"
+                                max="3"
+                            >
+                            </vs-input>
+                        </div>
+                        <div class="worksheet-timing-perweek">
+                            <i class="kiv-calendar icon-10"></i>
+                            <vs-input
+                                v-model="worksheet.perWeek"
+                                id="perWeek"
+                                label-placeholder="X par sem. (max: 7)"
+                                type="number"
+                                @keyup="
+                                    checkAndFormatDurationValue(
+                                        worksheet.perWeek,
+                                        $event
+                                    )
+                                "
+                                @blur="
+                                    checkIfDurationValueIsEmptyOrNull(
+                                        worksheet.perWeek,
+                                        $event
+                                    )
+                                "
+                                min="1"
+                                max="7"
+                            >
+                            </vs-input>
+                        </div>
+                    </div>
+                    <SelectPartOfBody
+                        :partOfBody="worksheet.partOfBody.toLowerCase()"
+                        @partOfBodySelected="setPartOfBody"
+                    />
+                </div>
             </div>
         </header>
-        <div class="info">
-            <transition name="fade">
-                <div v-if="!loading && allExercisesIsCompleted">
-                    <i class="kiv-confettis">
-                        <img
-                            src="../../img/icons/colored/confettis.svg"
-                            alt="Icone de confettis"
-                        />
-                    </i>
-                    <p>
-                        Félicitation, vous avez fait tous les exercices de la
-                        fiche.
-                        <span v-if="currentWorksheetSession"
-                            >Vous pouvez laisser un commentaire à votre
-                            praticien !</span
-                        >
-                    </p>
-                </div>
-                <div v-if="!loading && !allExercisesIsCompleted">
-                    <i class="kiv-info icon-17"></i>
-                    <p>
-                        À la fin de vos exercices, vous aurez la possiblité
-                        d’écrire un bref commentaire.
-                    </p>
-                </div>
-                <div v-if="loading" class="loading-block">
-                    <i class="kiv-info icon-17"></i>
-                    <div class="loading-gray w-55 p"></div>
-                </div>
-            </transition>
-        </div>
-        <div class="btn-timing-frieze-mobile">
-            <vs-button
-                class="secondary w-100"
-                @click="modalTimingFriezeMobile = !modalTimingFriezeMobile"
-            >
-                Frise chronologique
-            </vs-button>
-        </div>
         <main>
-            <vs-dialog class="modal-mobile" v-model="modalTimingFriezeMobile">
-                <TimingFrieze
-                    :loading="loading"
-                    :worksheet="getWorksheet"
-                    :currentWorksheetSession="getCurrentWorksheetSession"
-                    :totalWorksheetSessions="getTotalWorksheetSessions"
-                />
-            </vs-dialog>
-            <section id="timing-frieze">
-                <TimingFrieze
-                    :loading="loading"
-                    :worksheet="getWorksheet"
-                    :currentWorksheetSession="getCurrentWorksheetSession"
-                    :totalWorksheetSessions="getTotalWorksheetSessions"
-                />
-            </section>
             <section id="exercises-playlist">
                 <ExercisesPlaylist
-                    :patient="patient"
+                    :doctor="doctor"
                     :loading="loading"
+                    :action="action"
                     :worksheet="getWorksheet"
-                    :currentWorksheetSession="getCurrentWorksheetSession"
-                    :csrfTokenStartWorksheetSession="
-                        csrfTokenStartWorksheetSession
-                    "
-                    :csrfTokenCompleteWorksheetSession="
-                        csrfTokenCompleteWorksheetSession
-                    "
-                    :csrfTokenCompleteExercise="csrfTokenCompleteExercise"
-                    :csrfTokenCreateExerciseStat="csrfTokenCreateExerciseStat"
-                    :csrfTokenCreateCommentary="csrfTokenCreateCommentary"
+                    :csrfTokenRemoveExercise="csrfTokenRemoveExercise"
                 />
             </section>
         </main>
+        <div
+            class="btn-valid"
+            :class="{ disabled: btnLoadingValidEditWorksheet }"
+        >
+            <vs-button
+                v-if="'edition' === action"
+                @click="validEdit"
+                :loading="btnLoadingValidEditWorksheet"
+            >
+                <i class="fas fa-check-circle"></i>
+                Valider les modifications
+            </vs-button>
+            <vs-button
+                v-if="'creation' === action && !patient"
+                @click="validCreate"
+                :loading="btnLoadingValidEditWorksheet"
+            >
+                <i class="fas fa-check-circle"></i>
+                Créer la fiche
+            </vs-button>
+            <vs-button
+                v-if="'creation' === action && patient"
+                @click="validCreate"
+                :loading="btnLoadingValidEditWorksheet"
+            >
+                <i class="fas fa-check-circle"></i>
+                Créer la prescription
+            </vs-button>
+        </div>
     </div>
 </template>
 
 <script>
 import f from "../services/function";
-import TimingFrieze from "./ReadWorkSheetPage/TimingFrieze.vue";
-import ExercisesPlaylist from "./ReadWorkSheetPage/ExercisesPlaylist.vue";
-import TagPartOfBody from "../components/TagPartOfBody.vue";
+import ExercisesPlaylist from "./Worksheet/ExercisesPlaylist.vue";
+import SelectPartOfBody from "../components/SelectPartOfBody.vue";
 
 export default {
     components: {
         ExercisesPlaylist,
-        TimingFrieze,
-        TagPartOfBody,
+        SelectPartOfBody,
     },
     data() {
         return {
-            patient: null,
+            doctor: null,
+            action: null,
             worksheetId: null,
-            worksheet: {},
-            currentWorksheetSession: {},
-            totalWorksheetSessions: null,
-            // doctorView: null,
-            csrfTokenStartWorksheetSession: null,
-            csrfTokenCompleteWorksheetSession: null,
-            csrfTokenCompleteExercise: null,
-            csrfTokenCreateExerciseStat: null,
-            csrfTokenCreateCommentary: null,
-            modalTimingFriezeMobile: false,
+            worksheet: {
+                exercises: [],
+                partOfBody: "",
+                duration: 1,
+                perDay: 1,
+                perWeek: 1,
+                title: "",
+            },
+            patient: null,
+            csrfTokenCreateWorksheet: null,
+            csrfTokenEditWorksheet: null,
+            csrfTokenRemoveExercise: null,
             loading: false,
+            maxDuration: {
+                duration: 52,
+                perDay: 3,
+                perWeek: 7,
+            },
+            btnLoadingValidEditWorksheet: false,
+            btnLoadingValidCreateWorksheet: false,
+            checkIfWorksheetSessionsExist: null,
         };
     },
     computed: {
         getWorksheet() {
             return this.worksheet;
         },
-        getCurrentWorksheetSession() {
-            return this.currentWorksheetSession;
-        },
-        getTotalWorksheetSessions() {
-            return this.totalWorksheetSessions;
-        },
-        allExercisesIsCompleted() {
-            if (this.getWorksheet.exercises) {
-                return !this.getWorksheet.exercises.filter(
-                    (e) => !e.isCompleted
-                ).length;
-            }
-        },
     },
     methods: {
-        getCurrentCommentary(exerciseCommentaries) {
-            let commentary = {
-                content: "",
-                id: null,
-            };
-
-            const commentaryExist = exerciseCommentaries.find(
-                (c) =>
-                    c.worksheetSession.id === this.getCurrentWorksheetSession.id
-            );
-
-            if (commentaryExist) {
-                commentary = commentaryExist;
-            }
-
-            return commentary;
+        setPartOfBody(partOfBody) {
+            this.worksheet.partOfBody = partOfBody;
         },
         rederictToDashboard() {
-            document.location.href = `/patient/${this.patient.id}/dashboard`;
+            document.location.href = `/doctor/${this.doctor.id}/dashboard`;
+        },
+        checkAndFormatDurationValue(durationValue, event) {
+            const durationType = event.target.id;
+
+            if (!("Backspace" === event.code)) {
+                if ("vs-input--duration" === durationType) {
+                    if (durationValue < 1) {
+                        this.worksheet.duration = 1;
+                    }
+                    if (durationValue > this.maxDuration.duration) {
+                        this.worksheet.duration = this.maxDuration.duration;
+                    }
+                }
+
+                if ("vs-input--perDay" === durationType) {
+                    if (durationValue < 1) {
+                        this.worksheet.perDay = 1;
+                    }
+                    if (durationValue > this.maxDuration.perDay) {
+                        this.worksheet.perDay = this.maxDuration.perDay;
+                    }
+                }
+
+                if ("vs-input--perWeek" === durationType) {
+                    if (durationValue < 1) {
+                        this.worksheet.perWeek = 1;
+                    }
+                    if (durationValue > this.maxDuration.perWeek) {
+                        this.worksheet.perWeek = this.maxDuration.perWeek;
+                    }
+                }
+            }
+        },
+        checkIfDurationValueIsEmptyOrNull(durationValue, event) {
+            const durationType = event.target.id;
+
+            if ("vs-input--duration" === durationType) {
+                if ("" === durationValue || null === durationValue) {
+                    this.worksheet.duration = 1;
+                }
+            }
+
+            if ("vs-input--perDay" === durationType) {
+                if ("" === durationValue || null === durationValue) {
+                    this.worksheet.perDay = 1;
+                }
+            }
+
+            if ("vs-input--perWeek" === durationType) {
+                if ("" === durationValue || null === durationValue) {
+                    this.worksheet.perWeek = 1;
+                }
+            }
+        },
+        validEdit() {
+            this.btnLoadingValidEditWorksheet = true;
+
+            this.axios
+                .post(`/doctor/${this.doctor.id}/edit/worksheet`, {
+                    _token: this.csrfTokenEditWorksheet,
+                    worksheetId: this.worksheet.id,
+                    title: this.worksheet.title,
+                    partOfBody: this.worksheet.partOfBody,
+                    duration: this.worksheet.duration,
+                    perWeek: this.worksheet.perWeek,
+                    perDay: this.worksheet.perDay,
+                    exercises: this.worksheet.exercises,
+                })
+                .then((response) => {
+                    f.openSuccesNotification(
+                        "Edition de la fiche",
+                        response.data
+                    );
+                    this.btnLoadingValidEditWorksheet = false;
+
+                    setTimeout(() => {
+                        document.location.href = `/doctor/${this.doctor.id}/dashboard`;
+                    }, 2000);
+                })
+                .catch((error) => {
+                    const errorMess =
+                        "object" === typeof error.response.data
+                            ? error.response.data.detail
+                            : error.response.data;
+
+                    this.btnLoadingValidEditWorksheet = false;
+
+                    f.openErrorNotification("Erreur", errorMess);
+                });
+        },
+        validCreate() {
+            this.btnLoadingValidCreateWorksheet = true;
+            this.axios
+                .post(`/doctor/${this.doctor.id}/create/worksheet`, {
+                    _token: this.csrfTokenCreateWorksheet,
+                    worksheetId: this.worksheet.id,
+                    patientId: this.patient ? this.patient.id : null,
+                    title: this.worksheet.title,
+                    partOfBody: this.worksheet.partOfBody,
+                    duration: this.worksheet.duration,
+                    perWeek: this.worksheet.perWeek,
+                    perDay: this.worksheet.perDay,
+                    exercises: this.worksheet.exercises,
+                })
+                .then((response) => {
+                    if (this.patient) {
+                        f.openSuccesNotification(
+                            "Création de la prescription",
+                            `La fiche <strong> ${
+                                this.worksheet.title
+                            }</strong> a été prescrite à
+                                <strong>${this.getCivility(
+                                    this.patient.gender
+                                )} ${this.patient.firstname} ${
+                                this.patient.lastname
+                            }</strong>.`
+                        );
+                    } else {
+                        f.openSuccesNotification(
+                            "Création de la fiche",
+                            response.data
+                        );
+                    }
+                    this.btnLoadingValidCreateWorksheet = false;
+                    setTimeout(() => {
+                        document.location.href = `/doctor/${this.doctor.id}/dashboard`;
+                    }, 2000);
+                })
+                .catch((error) => {
+                    const errorMess =
+                        "object" === typeof error.response.data
+                            ? error.response.data.detail
+                            : error.response.data;
+                    this.btnLoadingValidCreateWorksheet = false;
+                    f.openErrorNotification("Erreur", errorMess);
+                });
+        },
+        getCivility(gender) {
+            return f.getCivility(gender);
         },
     },
     created() {
         const data = JSON.parse(document.getElementById("vueData").innerHTML);
 
-        this.patient = data.patient;
+        this.doctor = data.doctor;
         this.worksheetId = data.worksheetId;
-        // this.doctorView = data.doctorView;
-        this.csrfTokenStartWorksheetSession =
-            data.csrfTokenStartWorksheetSession;
-        this.csrfTokenCompleteWorksheetSession =
-            data.csrfTokenCompleteWorksheetSession;
-        this.csrfTokenCompleteExercise = data.csrfTokenCompleteExercise;
-        this.csrfTokenCreateExerciseStat = data.csrfTokenCreateExerciseStat;
-        this.csrfTokenCreateCommentary = data.csrfTokenCreateCommentary;
+        this.action = data.action;
+        this.patient = data.patient;
+        this.csrfTokenCreateWorksheet = data.csrfTokenCreateWorksheet;
+        this.csrfTokenEditWorksheet = data.csrfTokenEditWorksheet;
+        this.csrfTokenRemoveExercise = data.csrfTokenRemoveExercise;
 
         this.loading = true;
 
-        this.axios
-            .get(
-                `/patient/${this.patient.id}/get/worksheet/${this.worksheetId}`
-            )
-            .then((response) => {
-                this.worksheet = response.data;
+        if (this.worksheetId != 0) {
+            this.axios
+                .get(
+                    `/doctor/${this.doctor.id}/get/worksheet/${this.worksheetId}`
+                )
+                .then((response) => {
+                    this.worksheet = response.data;
 
-                this.axios
-                    .get(
-                        `/patient/${this.patient.id}/get/current-worksheet-session/${this.worksheetId}`
-                    )
-                    .then((response) => {
-                        this.currentWorksheetSession = response.data;
+                    if (this.action === "creation" && !this.patient) {
+                        this.worksheet.title = `Copie de ${this.worksheet.title}`;
+                    }
 
-                        this.worksheet.exercises = f.sortByPosition(
-                            this.worksheet.exercises.map((exercise) => {
-                                return {
-                                    ...exercise,
-                                    commentary: this.getCurrentCommentary(
-                                        exercise.commentaries
-                                    ),
-                                };
-                            })
-                        );
-
+                    this.worksheet.exercises = this.worksheet.exercises.map(
+                        (exercise) => {
+                            return {
+                                ...exercise,
+                                option: exercise.option ? exercise.option : "",
+                                tempo: exercise.tempo ? exercise.tempo : "",
+                                hold: exercise.hold ? exercise.hold : "",
+                                optionActive: exercise.option ? true : false,
+                                tempoActive: exercise.tempo ? true : false,
+                                holdActive: exercise.hold ? true : false,
+                            };
+                        }
+                    );
+                    if ("edition" === this.action) {
                         this.axios
                             .get(
-                                `/patient/${this.patient.id}/get/total-worksheet-sessions/${this.worksheetId}`
+                                `/doctor/${this.doctor.id}/check/worksheet-sessions-exist/${this.worksheetId}`
                             )
                             .then((response) => {
-                                this.totalWorksheetSessions = response.data;
+                                this.checkIfWorksheetSessionsExist =
+                                    response.data;
 
-                                if (
-                                    this.currentWorksheetSession &&
-                                    !this.currentWorksheetSession
-                                        .isInProgress &&
-                                    !this.currentWorksheetSession.isCompleted
-                                ) {
-                                    this.axios
-                                        .post(
-                                            `/patient/${this.patient.id}/start/worksheet-session`,
-                                            {
-                                                _token: this
-                                                    .csrfTokenStartWorksheetSession,
-                                                worksheetId:
-                                                    this.getWorksheet.id,
-                                                worksheetSessionId:
-                                                    this
-                                                        .getCurrentWorksheetSession
-                                                        .id,
-                                            }
-                                        )
-                                        .then((response) => {
-                                            // console.log(response.data);
-
-                                            this.getCurrentWorksheetSession.isInProgress = true;
-
-                                            this.getWorksheet.exercises.forEach(
-                                                (exercise) => {
-                                                    exercise.isCompleted = false;
-                                                }
-                                            );
-
-                                            this.loading = false;
-                                        })
-                                        .catch((error) => {
-                                            const errorMess =
-                                                "object" ===
-                                                typeof error.response.data
-                                                    ? error.response.data.detail
-                                                    : error.response.data;
-
-                                            console.error(errorMess);
-                                        });
-                                } else {
-                                    this.loading = false;
-                                }
+                                this.loading = false;
                             })
                             .catch((error) => {
                                 const errorMess =
@@ -273,197 +440,346 @@ export default {
 
                                 console.error(errorMess);
                             });
-                    })
-                    .catch((error) => {
-                        const errorMess =
-                            "object" === typeof error.response.data
-                                ? error.response.data.detail
-                                : error.response.data;
+                    } else {
+                        this.loading = false;
+                    }
+                })
+                .catch((error) => {
+                    const errorMess =
+                        "object" === typeof error.response.data
+                            ? error.response.data.detail
+                            : error.response.data;
 
-                        console.error(errorMess);
-                    });
-            })
-            .catch((error) => {
-                const errorMess =
-                    "object" === typeof error.response.data
-                        ? error.response.data.detail
-                        : error.response.data;
-
-                console.error(errorMess);
-            });
+                    console.error(errorMess);
+                });
+        } else {
+            this.loading = false;
+        }
     },
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 @import "../../scss/variables";
 
 #worksheet {
-    // header {
-    //     > div {
-    //         display: flex;
-    //         align-items: flex-start;
+    .prescri-for-patient {
+        background: #fff;
+        display: flex;
+        align-items: center;
+        padding: 0.55rem 0.9rem;
+        padding-top: 0.7rem;
+        box-shadow: 0px 0.4rem 0.7rem rgba(148, 96, 77, 0.04);
+        border-radius: 2.5rem;
+        font-weight: 600;
+        margin-bottom: 2.6rem;
+        margin-left: 3.4rem;
+        margin-top: -0.8rem;
+        position: relative;
 
-    //         &.loading-block {
-    //             min-height: 6rem;
+        .label {
+            position: absolute;
+            top: -0.7rem;
+            left: 4rem;
+            padding: 0.4rem 0.5rem;
+            padding-bottom: 0.1rem;
+            border-radius: 1.1rem;
+            background: #f5f5f5;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-    //             .title {
-    //                 i {
-    //                     color: $gray-middle !important;
-    //                 }
+        .user-avatar {
+            min-width: 26px;
+            max-height: 26px;
+        }
 
-    //                 .h1 {
-    //                     height: 3.5rem;
-    //                     width: 18rem;
-    //                     margin: 0;
-    //                     border-radius: 0.5rem;
-    //                 }
-    //             }
+        .user-name {
+            font-size: 1.4rem;
+            margin-left: 0.9rem;
+            margin-right: 0.5rem;
+            max-width: 63vw;
 
-    //             .part-of-body {
-    //                 height: 2.7rem;
-    //                 width: 9rem;
-    //                 margin-top: 0.5rem;
-    //                 margin-left: 2rem;
-    //                 border-radius: 0.4rem;
-    //             }
-    //         }
-
-    //         .title {
-    //             display: flex;
-    //             align-items: center;
-    //             margin-bottom: 2rem;
-    //             max-width: 60%;
-    //             position: relative;
-    //             top: 0.3rem;
-
-    //             @media (min-width: 768px) {
-    //                 top: 0;
-    //             }
-
-    //             @media (min-width: 330px) {
-    //                 max-width: 65%;
-    //             }
-
-    //             @media (min-width: 410px) {
-    //                 max-width: 70%;
-    //             }
-
-    //             @media (min-width: 500px) {
-    //                 max-width: 75%;
-    //             }
-
-    //             @media (min-width: 768px) {
-    //                 max-width: 85%;
-    //             }
-
-    //             i {
-    //                 font-size: 1.6rem;
-    //                 margin-right: 1.8rem;
-    //                 cursor: pointer;
-    //             }
-
-    //             h1 {
-    //                 margin: 0;
-    //                 white-space: nowrap;
-    //                 overflow: hidden;
-    //                 text-overflow: ellipsis;
-    //             }
-    //         }
-
-    //         .part-of-body {
-    //             margin-top: 0.5rem;
-    //             margin-left: 2rem;
-    //         }
-    //     }
-    // }
-
-    // .info {
-    //     border-radius: 0.5rem;
-    //     background: $white;
-    //     padding: 1.9rem 2.1rem;
-    //     margin-bottom: 2.5rem;
-
-    //     .loading-block {
-    //         i {
-    //             color: rgba($gray-middle, 0.9) !important;
-    //         }
-
-    //         .p {
-    //             height: 1.5rem;
-    //             margin: 0;
-    //             font-size: 1.4rem;
-    //             border-radius: 0.4rem;
-    //         }
-    //     }
-
-    //     @media (min-width: 992px) {
-    //         margin-bottom: 2.5rem;
-    //     }
-
-    //     > div {
-    //         display: flex;
-    //         align-items: center;
-
-    //         i.kiv-info {
-    //             color: $gray-dark;
-    //             font-size: 1.7rem;
-    //             margin-right: 1rem;
-    //         }
-
-    //         i.kiv-confettis {
-    //             width: 2.2rem;
-    //             margin-right: 0.8rem;
-
-    //             img {
-    //                 width: 100%;
-    //             }
-    //         }
-
-    //         p {
-    //             margin: 0;
-    //             font-size: 1.4rem;
-    //         }
-    //     }
-    // }
-
-    // .btn-timing-frieze-mobile {
-    //     width: 100%;
-    //     margin-bottom: 2.5rem;
-    //     display: block;
-
-    //     @media (min-width: 576px) {
-    //         display: none;
-    //     }
-    // }
-
-    main {
-        // display: flex;
-
-        #timing-frieze {
-            width: 100%;
-            background: white;
-            margin-right: 2.3rem;
-            border-radius: 0.8rem;
-            display: none;
-            max-width: initial;
-
-            @media (min-width: 576px) {
-                display: block;
-                width: 50%;
-                max-width: 31rem;
+            div {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
         }
+    }
+
+    header {
+        > div {
+            display: flex;
+            align-items: flex-start;
+            flex-direction: column;
+
+            &.loading-block {
+                min-height: 6rem;
+                flex-direction: row;
+                justify-content: flex-start;
+
+                .title {
+                    width: 13%;
+
+                    i {
+                        color: $gray-middle !important;
+                    }
+
+                    .h1 {
+                        height: 3.5rem;
+                        width: 18rem;
+                        margin: 0;
+                        border-radius: 0.5rem;
+                    }
+                }
+
+                .part-of-body {
+                    height: 2.7rem;
+                    width: 9rem;
+                    margin-top: 0.5rem;
+                    margin-left: 2rem;
+                    border-radius: 0.4rem;
+                }
+            }
+
+            .vs-input-parent {
+                width: 100%;
+
+                .vs-input-content {
+                    .vs-input {
+                        background: rgba(255, 255, 255, 0.25);
+                        padding-bottom: 1.5rem;
+
+                        &:focus,
+                        &:hover {
+                            background: $white;
+                        }
+                    }
+
+                    .vs-input__label {
+                        max-width: 89%;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        display: block;
+                    }
+
+                    .vs-input__label--hidden.vs-input__label--placeholder {
+                        font-size: 1.4rem;
+                        top: -0.85rem;
+                        left: 1.3rem;
+                    }
+                }
+            }
+
+            .title {
+                display: flex;
+                align-items: center;
+                margin-bottom: 3rem;
+                position: relative;
+                top: 0.3rem;
+                width: 100%;
+                max-width: initial;
+
+                @media (min-width: 768px) {
+                    margin-bottom: 3.7rem;
+                }
+
+                .vs-input-content {
+                    .vs-input {
+                        font-size: 2.9rem;
+                        font-weight: 700;
+
+                        @media (min-width: 768px) {
+                            font-size: 3.5rem;
+                        }
+                    }
+
+                    .vs-input__label {
+                        font-size: 2.4rem;
+                        top: 1.9rem;
+                        left: 1.6rem;
+
+                        @media (min-width: 768px) {
+                            font-size: 3rem;
+                        }
+                    }
+                }
+            }
+
+            .worksheet-params {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                justify-content: space-between;
+                width: 100%;
+                margin-bottom: 3.9rem;
+
+                @media (min-width: 768px) {
+                    flex-direction: row;
+                }
+
+                .worksheet-details {
+                    width: 100%;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: space-between;
+                    position: relative;
+
+                    &.disabled {
+                        opacity: 1 !important;
+
+                        .worksheet-period,
+                        .worksheet-timing-perday,
+                        .worksheet-timing-perweek {
+                            opacity: 0.2 !important;
+
+                            .vs-input {
+                                pointer-events: none;
+                            }
+                        }
+                    }
+
+                    .avert-sessions-start {
+                        position: absolute;
+                        z-index: 11;
+                        top: -0.9rem;
+                        left: -0.9rem;
+                        right: 0;
+                        bottom: 0;
+                        width: 100%;
+                        border-radius: 0.7rem;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: $black;
+                        font-size: 1.3rem;
+                        text-align: center;
+                        padding: 0 14%;
+                        line-height: 1.5;
+                        text-shadow: 0 0 0.3rem #fff, 0 0 0.3rem #fff,
+                            0 0 0.3rem #fff, 0 0 0.3rem #fff, 0 0 0.3rem #fff,
+                            0 0 0.3rem #fff, 0 0 0.3rem #fff, 0 0 0.3rem #fff,
+                            0 0 0.3rem #fff, 0 0 0.3rem #fff, 0 0 0.3rem #fff,
+                            0 0 0.3rem #fff, 0 0 0.3rem #fff, 0 0 0.3rem #fff,
+                            0 0 0.3rem #fff, 0 0 0.3rem #fff, 0 0 0.3rem #fff,
+                            0 0 0.3rem #fff, 0 0 0.3rem #fff, 0 0 0.3rem #fff;
+                        white-space: initial;
+                        margin-top: 0;
+                        pointer-events: none;
+                        display: flex;
+                        flex-direction: column;
+
+                        i {
+                            margin-right: 0rem;
+                            margin-bottom: 0.25rem;
+                            color: $black;
+                            font-size: 1.2rem;
+                            position: relative;
+                            top: 0.05rem;
+                        }
+
+                        p {
+                            margin: 0;
+                        }
+
+                        @media (min-width: 768px) {
+                            margin-top: 1rem;
+                        }
+
+                        @media (min-width: 1070px) {
+                            white-space: nowrap;
+                            flex-direction: row;
+                            i {
+                                margin-right: 0.6rem;
+                                margin-bottom: 0rem;
+                            }
+                        }
+                    }
+
+                    @media (min-width: 768px) {
+                        flex-direction: row;
+                        margin-left: 0.8rem;
+                    }
+
+                    > div {
+                        flex-grow: 1;
+                        display: flex;
+                        align-items: center;
+                        width: 100%;
+                        margin-right: 0;
+                        margin-bottom: 2.4rem;
+
+                        @media (min-width: 768px) {
+                            &:not(:last-child) {
+                                margin-right: 2rem;
+                            }
+                            margin-bottom: 0;
+                        }
+
+                        i {
+                            color: $orange;
+                            font-size: 2rem;
+                            margin-right: 1.3rem;
+
+                            @media (min-width: 768px) {
+                                margin-right: 0.7rem;
+                            }
+                        }
+                    }
+                }
+
+                .select-filter {
+                    max-width: initial;
+                    margin-left: 0;
+
+                    @media (min-width: 768px) {
+                        max-width: 23rem;
+                        margin-left: 2.5rem;
+                    }
+
+                    .part-of-body {
+                        margin-top: 0;
+                        margin-left: 0;
+                    }
+                }
+            }
+        }
+    }
+    main {
+        display: flex;
 
         #exercises-playlist {
             width: 100%;
+        }
+    }
+    .btn-valid {
+        position: fixed;
+        z-index: 1111;
+        bottom: 2rem;
+        right: 2rem;
 
-            @media (min-width: 576px) {
-                width: 70%;
+        .vs-button {
+            background: $black;
+            color: $white;
+            letter-spacing: 0.005rem;
+            font-weight: 700;
+            font-size: 1.4rem;
+            box-shadow: 0px 0.8rem 1.8rem rgba(75, 61, 56, 0.55);
+            border-radius: 0.5rem;
+
+            .vs-button__loading {
+                background: $black;
             }
 
-            @media (min-width: 992px) {
-                width: 80%;
+            i {
+                margin-right: 0.7rem;
+                font-size: 1.4rem;
             }
         }
     }

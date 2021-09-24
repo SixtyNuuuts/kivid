@@ -32,8 +32,7 @@
                     </div>
                     <div class="btn-primary-action">
                         <vs-button @click="prescriProcess" class="w-100">
-                            <i class="fas fa-folder-plus"></i> Créer un
-                            traitement
+                            <i class="fas fa-folder-plus"></i> Prescrire
                         </vs-button>
                     </div>
                 </div>
@@ -82,15 +81,12 @@
                                         <span class="deux-points">:</span>
                                         {{ worksheet.title }}
                                     </h3>
-                                    <div>
+                                    <div v-if="worksheet.commentaries.length">
                                         <vs-button
-                                            :disabled="
-                                                redirectInProgress ===
-                                                worksheet.id
-                                            "
                                             @click="
                                                 redirectToWorksheetPage(
-                                                    worksheet.id
+                                                    worksheet.id,
+                                                    worksheet.patient.id
                                                 )
                                             "
                                             class="btn-action commentaries"
@@ -99,7 +95,10 @@
                                         >
                                             <i class="far fa-comment-alt"></i>
                                             <div class="count-commentaries">
-                                                8
+                                                {{
+                                                    worksheet.commentaries
+                                                        .length
+                                                }}
                                             </div>
                                         </vs-button>
                                     </div>
@@ -241,13 +240,13 @@
 
                                         <div class="buttons">
                                             <vs-button
-                                                :disabled="
-                                                    redirectInProgress ===
-                                                    worksheet.id
+                                                v-if="
+                                                    worksheet.currentWorksheetSession
                                                 "
                                                 @click="
                                                     redirectToWorksheetPage(
-                                                        worksheet.id
+                                                        worksheet.id,
+                                                        worksheet.patient.id
                                                     )
                                                 "
                                                 class="btn-action"
@@ -257,12 +256,8 @@
                                                 <i class="fas fa-eye"></i>
                                             </vs-button>
                                             <vs-button
-                                                :disabled="
-                                                    redirectInProgress ===
-                                                    worksheet.id
-                                                "
                                                 @click="
-                                                    redirectToWorksheetPage(
+                                                    redirectToEditPage(
                                                         worksheet.id
                                                     )
                                                 "
@@ -273,14 +268,8 @@
                                                 <i class="fas fa-pen"></i>
                                             </vs-button>
                                             <vs-button
-                                                :disabled="
-                                                    redirectInProgress ===
-                                                    worksheet.id
-                                                "
                                                 @click="
-                                                    redirectToWorksheetPage(
-                                                        worksheet.id
-                                                    )
+                                                    removeWorksheet(worksheet)
                                                 "
                                                 class="btn-action"
                                                 circle
@@ -514,6 +503,38 @@
                 </div>
             </div>
         </transition>
+        <vs-dialog v-model="modalConfirmRemoveWorksheet">
+            <p class="modal-confirm-text">Confirmer la suppression de</p>
+
+            <div class="modal-confirm-detail remove-item">
+                <div class="modal-confirm-icon remove-item">
+                    <i class="fas fa-trash"></i>
+                </div>
+                <p>
+                    <span>
+                        {{ removeWorksheetDetails.title }}
+                    </span>
+                </p>
+            </div>
+
+            <div class="modal-confirm-buttons">
+                <vs-button
+                    class="secondary"
+                    @click="modalConfirmRemoveWorksheet = false"
+                >
+                    Annuler
+                </vs-button>
+                <vs-button
+                    @click="validRemoveWorksheet"
+                    :loading="btnLoadingValidRemoveWorksheet"
+                    :class="{
+                        disabled: btnLoadingValidRemoveWorksheet,
+                    }"
+                >
+                    Confirmer
+                </vs-button>
+            </div>
+        </vs-dialog>
     </section>
 </template>
 
@@ -527,6 +548,7 @@ export default {
         doctor: Object,
         doctorPrescriptions: Array,
         loadingDoctorWorksheets: Boolean,
+        csrfTokenRemoveWorksheet: String,
     },
     components: {
         TagPartOfBody,
@@ -545,17 +567,20 @@ export default {
             search: "",
             page: 1,
             max: 6,
-            redirectInProgress: null,
+            modalConfirmRemoveWorksheet: false,
+            removeWorksheetDetails: {},
+            btnLoadingValidRemoveWorksheet: false,
         };
     },
     methods: {
         prescriProcess() {
             this.$emit("prescriProcess", true);
         },
-        redirectToWorksheetPage(worksheetId) {
-            this.redirectInProgress = worksheetId;
-
-            document.location.href = `/doctor/${this.doctor.id}/fiche/${worksheetId}`;
+        redirectToEditPage(worksheetId) {
+            document.location.href = `/doctor/${this.doctor.id}/fiche/edition/${worksheetId}`;
+        },
+        redirectToWorksheetPage(worksheetId, patientId) {
+            document.location.href = `/doctor/${this.doctor.id}/commentaires/${worksheetId}/${patientId}`;
         },
         activeOnglet(num) {
             this.$parent.activeOnglet = num;
@@ -569,6 +594,45 @@ export default {
                     this.$parent.myWorksheetTemplatesContent = true;
                 }
             }
+        },
+        removeWorksheet(patient) {
+            this.removeWorksheetDetails = patient;
+
+            return (this.modalConfirmRemoveWorksheet =
+                !this.modalConfirmRemoveWorksheet);
+        },
+        validRemoveWorksheet() {
+            this.btnLoadingValidRemoveWorksheet = true;
+
+            this.axios
+                .post(`/doctor/${this.doctor.id}/remove/worksheet`, {
+                    _token: this.csrfTokenRemoveWorksheet,
+                    worksheetId: this.removeWorksheetDetails.id,
+                })
+                .then((response) => {
+                    f.openSuccesNotification(
+                        "Suppression de la prescription",
+                        response.data
+                    );
+                    this.$parent.doctorWorksheets.splice(
+                        this.$parent.doctorWorksheets.indexOf(
+                            this.removeWorksheetDetails
+                        ),
+                        1
+                    );
+                    this.btnLoadingValidRemoveWorksheet = false;
+                    this.modalConfirmRemoveWorksheet = false;
+                })
+                .catch((error) => {
+                    const errorMess =
+                        "object" === typeof error.response.data
+                            ? error.response.data.detail
+                            : error.response.data;
+
+                    f.openErrorNotification("Erreur", errorMess);
+                    this.btnLoadingValidRemoveWorksheet = false;
+                    this.modalConfirmRemoveWorksheet = false;
+                });
         },
         formatDate(datetime) {
             return moment(datetime).format("DD/MM/YYYY");

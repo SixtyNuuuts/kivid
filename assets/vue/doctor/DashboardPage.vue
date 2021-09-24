@@ -32,6 +32,7 @@
                         v-if="activeOnglet === 1"
                         :doctor="doctor"
                         :doctorPrescriptions="getDoctorPrescriptions"
+                        :csrfTokenRemoveWorksheet="csrfTokenRemoveWorksheet"
                         :loadingDoctorWorksheets="loadingDoctorWorksheets"
                         @prescriProcess="startPrescriProcess"
                     />
@@ -40,6 +41,7 @@
                         :doctor="doctor"
                         :worksheetTemplates="getWorksheetTemplates"
                         :tagsFromExercises="tagsFromExercises"
+                        :csrfTokenRemoveWorksheet="csrfTokenRemoveWorksheet"
                         :loadingAllWorksheets="loadingAllWorksheets"
                         :prescriProcess="prescriProcessWorksheet"
                         @prescriProcessWorksheetChoice="
@@ -94,6 +96,7 @@ export default {
             csrfTokenAddPatient: null,
             csrfTokenRemovePatient: null,
             csrfTokenCreatePatient: null,
+            csrfTokenRemoveWorksheet: null,
             loadingAllWorksheets: false,
             loadingDoctorWorksheets: false,
             allWorksheets: [],
@@ -140,6 +143,12 @@ export default {
                 window.scrollTo({ top: y, behavior: "smooth" });
 
                 this.prescriProcessPatient = true;
+            } else {
+                const prescriProcessWorksheetSelectedId = this
+                    .prescriProcessWorksheetSelected.id
+                    ? this.prescriProcessWorksheetSelected.id
+                    : 0;
+                document.location.href = `/doctor/${this.doctor.id}/fiche/creation/${prescriProcessWorksheetSelectedId}/${this.prescriProcessPatientSelected.id}`;
             }
         },
         setPrescriProcessPatientChoice(patient) {
@@ -163,6 +172,12 @@ export default {
 
                 this.activeOnglet = 2;
                 this.prescriProcessWorksheet = true;
+            } else {
+                const prescriProcessWorksheetSelectedId = this
+                    .prescriProcessWorksheetSelected.id
+                    ? this.prescriProcessWorksheetSelected.id
+                    : 0;
+                document.location.href = `/doctor/${this.doctor.id}/fiche/creation/${prescriProcessWorksheetSelectedId}/${this.prescriProcessPatientSelected.id}`;
             }
         },
         startPrescriProcess() {
@@ -264,6 +279,7 @@ export default {
         this.csrfTokenAddPatient = data.csrfTokenAddPatient;
         this.csrfTokenRemovePatient = data.csrfTokenRemovePatient;
         this.csrfTokenCreatePatient = data.csrfTokenCreatePatient;
+        this.csrfTokenRemoveWorksheet = data.csrfTokenRemoveWorksheet;
 
         this.loadingDoctorWorksheets = true;
 
@@ -280,84 +296,79 @@ export default {
                         totalCompletedWorksheetSessions: null,
                     };
                 });
+                if (this.getDoctorPrescriptions.length) {
+                    this.getDoctorPrescriptions.forEach((worksheet) => {
+                        this.axios
+                            .get(
+                                `/patient/${worksheet.patient.id}/get/current-worksheet-session/${worksheet.id}/doctorview`
+                            )
+                            .then((response) => {
+                                worksheet.currentWorksheetSession =
+                                    response.data;
 
-                if (this.doctorWorksheets.length) {
-                    this.doctorWorksheets
-                        .filter((w) => w.patient)
-                        .forEach((worksheet) => {
-                            this.axios
-                                .get(
-                                    `/patient/${worksheet.patient.id}/get/current-worksheet-session/${worksheet.id}`
-                                )
-                                .then((response) => {
-                                    worksheet.currentWorksheetSession =
-                                        response.data;
+                                this.loadingDoctorWorksheets = false;
 
-                                    this.loadingDoctorWorksheets = false;
+                                this.axios
+                                    .get(
+                                        `/patient/${worksheet.patient.id}/get/total-worksheet-sessions/${worksheet.id}`
+                                    )
+                                    .then((response) => {
+                                        worksheet.totalWorksheetSessions =
+                                            response.data;
 
-                                    this.axios
-                                        .get(
-                                            `/patient/${worksheet.patient.id}/get/total-worksheet-sessions/${worksheet.id}`
-                                        )
-                                        .then((response) => {
-                                            worksheet.totalWorksheetSessions =
-                                                response.data;
+                                        this.axios
+                                            .get(
+                                                `/patient/${worksheet.patient.id}/get/total-completed-worksheet-sessions/${worksheet.id}`
+                                            )
+                                            .then((response) => {
+                                                worksheet.totalCompletedWorksheetSessions =
+                                                    response.data;
 
-                                            this.axios
-                                                .get(
-                                                    `/patient/${worksheet.patient.id}/get/total-completed-worksheet-sessions/${worksheet.id}`
-                                                )
-                                                .then((response) => {
-                                                    worksheet.totalCompletedWorksheetSessions =
-                                                        response.data;
+                                                // worksheet.worksheetTimingProgression =
+                                                //     this.calculWorksheetTimingProgression(
+                                                //         worksheet
+                                                //             .currentWorksheetSession
+                                                //             .execOrder,
+                                                //         worksheet.totalWorksheetSessions
+                                                //     );
 
-                                                    // worksheet.worksheetTimingProgression =
-                                                    //     this.calculWorksheetTimingProgression(
-                                                    //         worksheet
-                                                    //             .currentWorksheetSession
-                                                    //             .execOrder,
-                                                    //         worksheet.totalWorksheetSessions
-                                                    //     );
+                                                worksheet.worksheetTotalProgression =
+                                                    this.calculWorksheetTotalProgression(
+                                                        worksheet,
+                                                        worksheet.totalCompletedWorksheetSessions,
+                                                        worksheet.totalWorksheetSessions
+                                                    );
+                                            })
+                                            .catch((error) => {
+                                                const errorMess =
+                                                    "object" ===
+                                                    typeof error.response.data
+                                                        ? error.response.data
+                                                              .detail
+                                                        : error.response.data;
 
-                                                    worksheet.worksheetTotalProgression =
-                                                        this.calculWorksheetTotalProgression(
-                                                            worksheet,
-                                                            worksheet.totalCompletedWorksheetSessions,
-                                                            worksheet.totalWorksheetSessions
-                                                        );
-                                                })
-                                                .catch((error) => {
-                                                    const errorMess =
-                                                        "object" ===
-                                                        typeof error.response
-                                                            .data
-                                                            ? error.response
-                                                                  .data.detail
-                                                            : error.response
-                                                                  .data;
+                                                console.error(errorMess);
+                                            });
+                                    })
+                                    .catch((error) => {
+                                        const errorMess =
+                                            "object" ===
+                                            typeof error.response.data
+                                                ? error.response.data.detail
+                                                : error.response.data;
 
-                                                    console.error(errorMess);
-                                                });
-                                        })
-                                        .catch((error) => {
-                                            const errorMess =
-                                                "object" ===
-                                                typeof error.response.data
-                                                    ? error.response.data.detail
-                                                    : error.response.data;
+                                        console.error(errorMess);
+                                    });
+                            })
+                            .catch((error) => {
+                                const errorMess =
+                                    "object" === typeof error.response.data
+                                        ? error.response.data.detail
+                                        : error.response.data;
 
-                                            console.error(errorMess);
-                                        });
-                                })
-                                .catch((error) => {
-                                    const errorMess =
-                                        "object" === typeof error.response.data
-                                            ? error.response.data.detail
-                                            : error.response.data;
-
-                                    console.error(errorMess);
-                                });
-                        });
+                                console.error(errorMess);
+                            });
+                    });
                 } else {
                     this.loadingDoctorWorksheets = false;
                 }

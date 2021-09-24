@@ -21,16 +21,30 @@
                 <h2><span>Mes fiches</span></h2>
             </div>
         </div>
-        <div v-if="prescriProcess" class="prescri-process-dialog">
-            <span class="step-num"
-                ><i class="fas fa-folder-plus"></i>Etape
-                {{ !$parent.prescriProcessPatientSelected ? 1 : 2 }}
-            </span>
-            <p>
-                Veuillez Sélectionner une fiche, vous pourrez la
-                personnaliser/modifier à l'étape suivante
-            </p>
-        </div>
+        <transition name="fade">
+            <div v-if="prescriProcess" class="prescri-process-dialog">
+                <span class="step-num"
+                    ><i class="fas fa-folder-plus"></i>Etape
+                    {{ !$parent.prescriProcessPatientSelected ? 1 : 2 }}
+                </span>
+                <p>
+                    Veuillez Sélectionner une fiche, vous pourrez la
+                    personnaliser/modifier à l'étape suivante
+                </p>
+            </div>
+        </transition>
+        <transition name="fade">
+            <div
+                v-if="prescriProcess"
+                class="prescri-process-dialog pp-create-worksheet"
+            >
+                <span class="step-num"
+                    ><i class="fas fa-folder-plus"></i>Etape
+                    {{ !$parent.prescriProcessPatientSelected ? 1 : 2 }}
+                </span>
+                <p>Ou créez une nouvelle fiche</p>
+            </div>
+        </transition>
         <transition name="height">
             <div v-if="$parent.myWorksheetTemplatesContent">
                 <div class="primary-actions">
@@ -59,6 +73,7 @@
                                 multiple
                                 placeholder="Mots-Clés"
                                 v-model="selectedTags"
+                                @change="page = 1"
                             >
                                 <vs-option
                                     v-for="(tag, i) in getTagsFromAll"
@@ -77,7 +92,8 @@
                         <div class="btn-primary-action add">
                             <vs-tooltip>
                                 <vs-button
-                                    @click="true"
+                                    v-if="!$parent.prescriProcess"
+                                    @click="redirectToCreatePage(0)"
                                     class="btn-action add"
                                     circle
                                     floating
@@ -90,6 +106,47 @@
                                 <template #tooltip> Créer une fiche </template>
                             </vs-tooltip>
                         </div>
+                        <transition name="fade">
+                            <div
+                                v-if="$parent.prescriProcess"
+                                class="btn-prescription-action"
+                                :class="{
+                                    active: prescriProcess,
+                                    selected:
+                                        $parent.prescriProcessWorksheetSelected &&
+                                        $parent.prescriProcessWorksheetSelected
+                                            .id === null,
+                                }"
+                            >
+                                <vs-button
+                                    @click="
+                                        prescriProcessWorksheetChoice({
+                                            id: null,
+                                        })
+                                    "
+                                    class="w-100"
+                                >
+                                    <span
+                                        v-if="
+                                            prescriProcess &&
+                                            !$parent.prescriProcessWorksheetSelected
+                                        "
+                                        ><i class="fas fa-folder-plus"></i>Créer
+                                        une fiche</span
+                                    >
+                                    <span
+                                        v-if="
+                                            $parent.prescriProcessWorksheetSelected &&
+                                            $parent
+                                                .prescriProcessWorksheetSelected
+                                                .id === null
+                                        "
+                                        ><i class="fas fa-check-circle"></i
+                                        >Sélectionné</span
+                                    >
+                                </vs-button>
+                            </div>
+                        </transition>
                     </div>
                 </div>
                 <div class="worksheet-list wl-doctor">
@@ -277,18 +334,8 @@
                                                     />
                                                 </vs-avatar>
                                             </div>
-                                            <div
-                                                v-if="
-                                                    worksheet.doctor.id ===
-                                                    doctor.id
-                                                "
-                                                class="buttons"
-                                            >
+                                            <div class="buttons">
                                                 <vs-button
-                                                    :disabled="
-                                                        redirectInProgress ===
-                                                        worksheet.id
-                                                    "
                                                     @click="
                                                         redirectToWorksheetPage(
                                                             worksheet.id
@@ -301,12 +348,12 @@
                                                     <i class="fas fa-eye"></i>
                                                 </vs-button>
                                                 <vs-button
-                                                    :disabled="
-                                                        redirectInProgress ===
-                                                        worksheet.id
+                                                    v-if="
+                                                        worksheet.doctor.id ===
+                                                        doctor.id
                                                     "
                                                     @click="
-                                                        redirectToWorksheetPage(
+                                                        redirectToEditPage(
                                                             worksheet.id
                                                         )
                                                     "
@@ -317,13 +364,13 @@
                                                     <i class="fas fa-pen"></i>
                                                 </vs-button>
                                                 <vs-button
-                                                    :disabled="
-                                                        redirectInProgress ===
-                                                        worksheet.id
+                                                    v-if="
+                                                        worksheet.doctor.id ===
+                                                        doctor.id
                                                     "
                                                     @click="
-                                                        redirectToWorksheetPage(
-                                                            worksheet.id
+                                                        removeWorksheet(
+                                                            worksheet
                                                         )
                                                     "
                                                     class="btn-action"
@@ -338,7 +385,14 @@
                                 </div>
                                 <div class="big-buttons">
                                     <div class="btn-create-action">
-                                        <vs-button @click="true" class="w-100">
+                                        <vs-button
+                                            @click="
+                                                redirectToCreatePage(
+                                                    worksheet.id
+                                                )
+                                            "
+                                            class="w-100"
+                                        >
                                             <i class="fas fa-plus-circle"></i>
                                             Copier
                                         </vs-button>
@@ -440,7 +494,7 @@
                             <p>
                                 <i class="fas fa-folder-minus"></i>
                                 <span
-                                    >Aucune fiches n'a été trouvée avec
+                                    >Aucune fiche n'a été trouvée avec
                                     <span v-if="search"
                                         >"<strong>{{ search }}</strong
                                         >"</span
@@ -736,6 +790,38 @@
                 </div>
             </div>
         </transition>
+        <vs-dialog v-model="modalConfirmRemoveWorksheet">
+            <p class="modal-confirm-text">Confirmer la suppression de</p>
+
+            <div class="modal-confirm-detail remove-item">
+                <div class="modal-confirm-icon remove-item">
+                    <i class="fas fa-trash"></i>
+                </div>
+                <p>
+                    <span>
+                        {{ removeWorksheetDetails.title }}
+                    </span>
+                </p>
+            </div>
+
+            <div class="modal-confirm-buttons">
+                <vs-button
+                    class="secondary"
+                    @click="modalConfirmRemoveWorksheet = false"
+                >
+                    Annuler
+                </vs-button>
+                <vs-button
+                    @click="validRemoveWorksheet"
+                    :loading="btnLoadingValidRemoveWorksheet"
+                    :class="{
+                        disabled: btnLoadingValidRemoveWorksheet,
+                    }"
+                >
+                    Confirmer
+                </vs-button>
+            </div>
+        </vs-dialog>
     </section>
 </template>
 
@@ -752,6 +838,7 @@ export default {
         loadingAllWorksheets: Boolean,
         tagsFromExercises: Array,
         prescriProcess: Boolean,
+        csrfTokenRemoveWorksheet: String,
     },
     components: {
         TagPartOfBody,
@@ -764,7 +851,9 @@ export default {
             page: 1,
             max: 6,
             viewAllTemplates: false,
-            redirectInProgress: null,
+            modalConfirmRemoveWorksheet: false,
+            removeWorksheetDetails: {},
+            btnLoadingValidRemoveWorksheet: false,
         };
     },
     computed: {
@@ -783,10 +872,14 @@ export default {
         prescriProcessWorksheetChoice(worksheet) {
             this.$emit("prescriProcessWorksheetChoice", worksheet);
         },
+        redirectToEditPage(worksheetId) {
+            document.location.href = `/doctor/${this.doctor.id}/fiche/edition/${worksheetId}`;
+        },
+        redirectToCreatePage(worksheetId) {
+            document.location.href = `/doctor/${this.doctor.id}/fiche/creation/${worksheetId}`;
+        },
         redirectToWorksheetPage(worksheetId) {
-            this.redirectInProgress = worksheetId;
-
-            document.location.href = `/doctor/${this.doctor.id}/fiche/${worksheetId}`;
+            document.location.href = `/doctor/${this.doctor.id}/fiche/edition/${worksheetId}`;
         },
         activeOnglet(num) {
             this.$parent.activeOnglet = num;
@@ -800,6 +893,45 @@ export default {
                         !this.$parent.myWorksheetTemplatesContent;
                 }
             }
+        },
+        removeWorksheet(patient) {
+            this.removeWorksheetDetails = patient;
+
+            return (this.modalConfirmRemoveWorksheet =
+                !this.modalConfirmRemoveWorksheet);
+        },
+        validRemoveWorksheet() {
+            this.btnLoadingValidRemoveWorksheet = true;
+
+            this.axios
+                .post(`/doctor/${this.doctor.id}/remove/worksheet`, {
+                    _token: this.csrfTokenRemoveWorksheet,
+                    worksheetId: this.removeWorksheetDetails.id,
+                })
+                .then((response) => {
+                    f.openSuccesNotification(
+                        "Suppression de la fiche",
+                        response.data
+                    );
+                    this.$parent.allWorksheets.splice(
+                        this.$parent.allWorksheets.indexOf(
+                            this.removeWorksheetDetails
+                        ),
+                        1
+                    );
+                    this.btnLoadingValidRemoveWorksheet = false;
+                    this.modalConfirmRemoveWorksheet = false;
+                })
+                .catch((error) => {
+                    const errorMess =
+                        "object" === typeof error.response.data
+                            ? error.response.data.detail
+                            : error.response.data;
+
+                    f.openErrorNotification("Erreur", errorMess);
+                    this.btnLoadingValidRemoveWorksheet = false;
+                    this.modalConfirmRemoveWorksheet = false;
+                });
         },
         formatDate(datetime) {
             return moment(datetime).format("DD/MM/YYYY");
@@ -864,19 +996,17 @@ export default {
     }
 
     .primary-actions {
-        margin-bottom: 0.2rem;
+        margin-bottom: 1.2rem;
 
-        @media (min-width: 768px) {
-            margin-bottom: 1.2rem;
+        .btn-prescription-action .vs-button .vs-button__content,
+        body .btn-create-action .vs-button .vs-button__content {
+            padding: 1.1rem 1.5rem;
+            padding-top: 1.2rem;
+            letter-spacing: 0.02rem;
         }
 
         .btn-primary-action {
-            margin-top: 1.4rem;
-            margin-bottom: 0.6rem;
-
-            @media (min-width: 768px) {
-                margin: 0;
-            }
+            margin: 0;
         }
 
         > :first-child {
@@ -893,10 +1023,12 @@ export default {
             align-items: center;
             width: 100%;
             margin-bottom: 0.3rem;
+            margin-top: 1rem;
 
             @media (min-width: 576px) {
                 margin-bottom: 0;
                 width: 50%;
+                margin-top: 0;
             }
         }
     }
@@ -910,6 +1042,7 @@ export default {
             border-radius: 0.5rem;
             width: 100%;
             height: 4.3rem;
+            background: #f9f9f9;
         }
     }
 

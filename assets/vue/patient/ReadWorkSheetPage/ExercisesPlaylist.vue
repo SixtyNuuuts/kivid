@@ -75,7 +75,8 @@
                         <div
                             v-if="
                                 exercise === getCurrentExercise &&
-                                !exercise.isCompleted
+                                !exercise.isCompleted &&
+                                !doctorView
                             "
                             class="btn-playlist"
                         >
@@ -149,13 +150,13 @@
                     </p>
                 </div>
                 <div class="btn-request-subscription">
-                    <vs-button> Je m’abonne </vs-button>
+                    <vs-button :disabled="doctorView"> Je m’abonne </vs-button>
                 </div>
             </div>
         </div>
         <transition name="fade">
             <VideoPlayer
-                v-if="videoPlayerToggle"
+                v-if="videoPlayerToggle && !doctorView"
                 :patient="patient"
                 :worksheet="getWorksheet"
                 :exercise="getCurrentExercise"
@@ -184,6 +185,7 @@ export default {
         patient: Object,
         loading: Boolean,
         worksheet: Object,
+        doctorView: Boolean,
         currentWorksheetSession: [Object, Boolean],
         csrfTokenStartWorksheetSession: String,
         csrfTokenCompleteWorksheetSession: String,
@@ -239,11 +241,9 @@ export default {
     methods: {
         openVideoPlayer() {
             this.videoPlayerToggle = true;
-            this.addMaxHeightToBody();
         },
         closeVideoPlayer() {
             this.videoPlayerToggle = false;
-            this.removeMaxHeightToBody();
         },
         setCommentary(exercise) {
             this.axios
@@ -273,15 +273,6 @@ export default {
             this.timeoutSetCommentary = setTimeout(() => {
                 this.setCommentary(exercise);
             }, 1500);
-        },
-        addMaxHeightToBody() {
-            window.scrollTo(0, 0);
-            document.body.classList.add("max-height-100vh");
-        },
-        removeMaxHeightToBody() {
-            setTimeout(() => {
-                document.body.classList.remove("max-height-100vh");
-            }, 200);
         },
     },
 };
@@ -362,6 +353,7 @@ export default {
             margin-bottom: 2rem;
             position: relative;
             overflow: hidden;
+            // min-width: 50%;
 
             @media (min-width: 992px) {
                 height: 31.6rem;

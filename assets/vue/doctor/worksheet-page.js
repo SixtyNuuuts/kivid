@@ -14,10 +14,6 @@ Vue.use(Vuesax)
 import VueYoutube from 'vue-youtube'
 Vue.use(VueYoutube)
 
-// Feather icons
-import VueFeatherIcon from 'vue-feather-icon'
-Vue.use(VueFeatherIcon)
-
 new Vue({
     render: h => h(WorkSheetPage)
 }).$mount('#vue')

@@ -4,20 +4,22 @@
         class="kiv-block"
         :class="{ reduced: !$parent.myPatientsContent }"
     >
-        <div
+        <button
             class="toggle-content"
             @click="$parent.myPatientsContent = !$parent.myPatientsContent"
         >
             <i class="kiv-chevron-down icon-3"></i>
-        </div>
+        </button>
         <h2>Mes Patients</h2>
-        <div v-if="prescriProcess" class="prescri-process-dialog">
-            <span class="step-num"
-                ><i class="fas fa-folder-plus"></i>Etape
-                {{ !$parent.prescriProcessWorksheetSelected ? 1 : 2 }}
-            </span>
-            <p>Veuillez Sélectionner un patient</p>
-        </div>
+        <transition name="fade">
+            <div v-if="prescriProcess" class="prescri-process-dialog">
+                <span class="step-num"
+                    ><i class="fas fa-folder-plus"></i>Etape
+                    {{ !$parent.prescriProcessWorksheetSelected ? 1 : 2 }}
+                </span>
+                <p>Veuillez Sélectionner un patient</p>
+            </div>
+        </transition>
         <transition name="height">
             <div v-if="$parent.myPatientsContent">
                 <div class="primary-actions">
@@ -71,12 +73,12 @@
                             :key="i"
                             class="patient-block"
                         >
-                            <div
+                            <button
                                 class="remove-user"
                                 @click="removePatient(patient)"
                             >
                                 <i class="fas fa-user-minus"></i>
-                            </div>
+                            </button>
                             <div class="patient-details">
                                 <div>
                                     <vs-avatar class="avatar" circle size="60">
@@ -718,6 +720,7 @@ export default {
                 color: $gray-middle;
                 cursor: pointer;
                 transition: all 0.2s;
+                background: transparent;
 
                 i {
                     font-size: 0.8rem;

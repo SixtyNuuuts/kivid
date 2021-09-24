@@ -336,8 +336,8 @@ export default {
 @import "../../../../scss/variables";
 
 .video-player {
-    position: absolute;
-    z-index: 211;
+    position: fixed;
+    z-index: 11111;
     top: 0;
     left: 0;
     right: 0;
@@ -366,7 +366,7 @@ export default {
         border: none;
         padding: 2rem;
         display: block;
-        transition: all 0.25;
+        transition: all 0.5s 2s;
 
         &.dark {
             i {

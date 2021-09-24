@@ -7,6 +7,7 @@ use App\Entity\Tag;
 use App\Entity\Score;
 use App\Entity\Video;
 use App\Entity\Doctor;
+use App\Entity\Option;
 use App\Entity\Patient;
 use App\Entity\Exercise;
 use App\Entity\Worksheet;
@@ -38,6 +39,8 @@ class AppFixtures extends Fixture
 
         $tagArray = [];
 
+        $optionArray = [];
+
         $tagNames = [
             'Mobilité',
             'Renforcement',
@@ -46,6 +49,13 @@ class AppFixtures extends Fixture
             'Récupération',
             'Rééducation',
             'Réhabilitation',
+        ];
+
+        $optionNames = [
+            'Elastique',
+            'NunChaku',
+            'Fouet',
+            'Corde à sauter',
         ];
 
         $partOfBody = [
@@ -81,6 +91,13 @@ class AppFixtures extends Fixture
             $tagArray[] = $tag;
         };
 
+        foreach ($optionNames as $optionName) {
+            $option = new Option();
+            $option->setName($optionName);
+            $manager->persist($option);
+            $optionArray[] = $option;
+        };
+
         $worksheetTempleateCreator = new Doctor();
 
         $worksheetTempleateCreator->setEmail("kine-creator@mail.com")
@@ -99,13 +116,14 @@ class AppFixtures extends Fixture
                 ->setTitle($tagNames[array_rand($tagNames)])
                 ->setCreatedAt(\DateTimeImmutable::createFromMutable($faker->dateTimeBetween()))
                 ->setPartOfBody($partOfBody[array_rand($partOfBody)])
-                ->setIsTemplate(true)
                 ->setDuration(1)
                 ->setPerDay(1)
                 ->setPerWeek(1)
             ;
 
             $randomTags = array_rand($tagArray, rand(2, 3));
+
+            $randomOptions = array_rand($optionArray, rand(2, 3));
 
             for ($ei = 0; $ei < rand(3, 5); $ei++) {
                 $exercise = new Exercise();
@@ -129,6 +147,10 @@ class AppFixtures extends Fixture
                     $video->addTag($tagArray[$randomTagId]);
                 };
 
+                foreach ($randomOptions as $randomOptionId) {
+                    $video->addOption($optionArray[$randomOptionId]);
+                };
+
                 $exercise->setVideo($video);
 
                 $manager->persist($video);
@@ -144,6 +166,10 @@ class AppFixtures extends Fixture
 
         for ($ki = 0; $ki < 1; $ki++) {
             $kine = new Doctor();
+
+            foreach ($worksheetArray as $worksheet) {
+                $worksheet->setDoctor($kine);
+            }
 
             $kine->setCity($faker->city)
                 ->setStreet($faker->streetName)

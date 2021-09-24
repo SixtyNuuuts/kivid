@@ -1,90 +1,21 @@
 <template>
     <div class="video-player">
-        <button
-            v-if="scoreFrame"
-            class="btn-close-player dark"
-            @click="closeVideoPlayerAndCompleteExercise"
-        >
+        <button class="btn-close-player" @click="closeVideoPlayer">
             <i class="kiv-x icon-21"></i>
         </button>
-        <button
-            v-else
-            class="btn-close-player"
-            :class="{
-                hidden:
-                    technicalEvalFrame ||
-                    difficultyEvalFrame ||
-                    sensitivityEvalFrame,
-            }"
-            @click="closeVideoPlayer"
-        >
-            <i class="kiv-x icon-21"></i>
-        </button>
-        <div class="content" v-if="!scoreFrame">
-            <transition-group name="slidevideoplayer" tag="div">
-                <div v-show="videoFrame" class="video-frame" key="video">
+        <div class="content">
+            <div>
+                <div class="video-frame" key="video">
                     <youtube
                         :player-vars="playerVars"
                         :video-id="getExercise.video.youtubeId"
-                        @ended="videoEnded"
                         ref="youtube"
                     ></youtube>
                 </div>
-                <EvalFrame
-                    v-show="technicalEvalFrame"
-                    @validTechnicalValue="validTechnicalValue"
-                    type="technical"
-                    key="technical"
-                    :loading="loadingBtnEvalNext"
-                />
-                <EvalFrame
-                    v-show="difficultyEvalFrame"
-                    @validDifficultyValue="validDifficultyValue"
-                    type="difficulty"
-                    key="difficulty"
-                    :loading="loadingBtnEvalNext"
-                />
-                <EvalFrame
-                    v-show="sensitivityEvalFrame"
-                    @validSensitivityValue="validSensitivityValue"
-                    type="sensitivity"
-                    key="sensitivity"
-                    :loading="loadingBtnEvalNext"
-                />
-            </transition-group>
+            </div>
         </div>
         <transition name="fade">
-            <div v-if="scoreFrame" class="score-frame">
-                <div class="score-top-elip">
-                    <img src="../../../../img/score-elip.svg" alt="ovale" />
-                </div>
-                <div class="score-stars-confettis">
-                    <img
-                        src="../../../../img/score-stars-confettis.svg"
-                        alt="Confettis"
-                    />
-                </div>
-                <div class="score-fanion">
-                    <img src="../../../../img/score-fanion.svg" alt="fanion" />
-                </div>
-                <div class="score-text">
-                    <div class="label">Félicitation !</div>
-                    <div v-if="exerciseScorePoints" class="score">
-                        {{ exerciseScorePoints }} points
-                    </div>
-                    <div class="btn-next">
-                        <vs-button @click="confirmScore">
-                            <span v-if="getExercise !== getTheLastExercise">
-                                Continuer
-                            </span>
-                            <span v-else>Terminer</span>
-                        </vs-button>
-                    </div>
-                </div>
-            </div>
-        </transition>
-        <transition name="fade">
-            <div v-if="videoFrame" class="bottom-bar">
+            <div class="bottom-bar">
                 <div class="bottom-bar-content">
                     <div class="exercise-details">
                         <div class="exercise-count">
@@ -125,11 +56,11 @@
                         </div>
                     </div>
                     <div class="btn-next">
-                        <vs-button
-                            :disabled="!btnValidVideoCompleted"
-                            @click="validVideoCompleted"
-                        >
-                            Suivant
+                        <vs-button @click="nextExercise">
+                            <span v-if="getExercise === getTheLastExercise"
+                                >Fermer</span
+                            >
+                            <span v-else>Suivant</span>
                         </vs-button>
                     </div>
                 </div>
@@ -139,22 +70,13 @@
 </template>
 
 <script>
-import EvalFrame from "./VideoPlayer/EvalFrame.vue";
-
 export default {
     props: {
-        patient: Object,
+        doctor: Object,
         exercise: Object,
         exercises: Array,
         worksheet: Object,
         lastExercise: Object,
-        currentWorksheetSession: [Object, Boolean],
-        csrfTokenCompleteWorksheetSession: String,
-        csrfTokenCompleteExercise: String,
-        csrfTokenCreateExerciseStat: String,
-    },
-    components: {
-        EvalFrame,
     },
     data() {
         return {
@@ -164,15 +86,6 @@ export default {
                 ecver: 2,
                 modestbranding: 1,
             },
-            videoFrame: true,
-            technicalEvalFrame: false,
-            difficultyEvalFrame: false,
-            sensitivityEvalFrame: false,
-            scoreFrame: false,
-            btnValidVideoCompleted: false,
-            ponderation: [],
-            loadingBtnEvalNext: false,
-            exerciseScorePoints: null,
         };
     },
     computed: {
@@ -188,145 +101,19 @@ export default {
         getTheLastExercise() {
             return this.lastExercise;
         },
-        getCurrentWorksheetSession() {
-            return this.currentWorksheetSession;
-        },
-        getPonderation() {
-            return (
-                this.ponderation.reduce((r, p) => r + p, 0) /
-                this.ponderation.length
-            );
-        },
     },
     methods: {
-        videoEnded() {
-            this.btnValidVideoCompleted = true;
-        },
-        validVideoCompleted() {
-            this.videoFrame = false;
-            this.btnValidVideoCompleted = false;
-            this.technicalEvalFrame = true;
-        },
-        validTechnicalValue(value) {
-            this.createExerciseStat("technical", value / 10);
-        },
-        validDifficultyValue(value) {
-            this.createExerciseStat("difficulty", value / 10);
-        },
-        validSensitivityValue(value) {
-            this.createExerciseStat("sensitivity", value / 10);
-        },
-        confirmScore() {
-            this.scoreFrame = false;
+        nextExercise() {
             if (this.getExercise === this.getTheLastExercise) {
                 this.closeVideoPlayer();
             } else {
-                this.videoFrame = true;
+                this.$parent.exerciseForPlaying = this.exercises.find(
+                    (e) => e.position === this.exercise.position + 1
+                );
             }
-            this.getExercise.isCompleted = true;
-        },
-        createExerciseStat(criterion, value) {
-            this.loadingBtnEvalNext = true;
-
-            this.axios
-                .post(
-                    `/patient/${this.patient.id}/create/exercise-stat/${criterion}`,
-                    {
-                        _token: this.csrfTokenCreateExerciseStat,
-                        exerciseId: this.getExercise.id,
-                        worksheetId: this.getWorksheet.id,
-                        worksheetSessionId: this.getCurrentWorksheetSession.id,
-                        exerciseStatValue: value,
-                    }
-                )
-                .then((response) => {
-                    console.log(response.data);
-
-                    this.ponderation.push(response.data.ponderation);
-
-                    if ("technical" === criterion) {
-                        this.technicalEvalFrame = false;
-                        this.difficultyEvalFrame = true;
-                    }
-
-                    if ("difficulty" === criterion) {
-                        this.difficultyEvalFrame = false;
-                        this.sensitivityEvalFrame = true;
-                    }
-
-                    if ("sensitivity" === criterion) {
-                        this.sensitivityEvalFrame = false;
-                        this.setExerciseCompleted(this.getExercise.id);
-                    }
-
-                    this.loadingBtnEvalNext = false;
-                })
-                .catch((error) => {
-                    const errorMess =
-                        "object" === typeof error.response.data
-                            ? error.response.data.detail
-                            : error.response.data;
-
-                    console.error(errorMess);
-                });
-        },
-        setExerciseCompleted(exerciseId) {
-            this.axios
-                .post(`/patient/${this.patient.id}/complete/exercise`, {
-                    _token: this.csrfTokenCompleteExercise,
-                    exerciseId: exerciseId,
-                    worksheetSessionId: this.getCurrentWorksheetSession.id,
-                    ponderationForScore: this.getPonderation,
-                })
-                .then((response) => {
-                    // console.log(response.data);
-
-                    this.exerciseScorePoints = response.data.score.points;
-
-                    this.scoreFrame = true;
-
-                    if (this.getExercise === this.getTheLastExercise) {
-                        this.axios
-                            .post(
-                                `/patient/${this.patient.id}/complete/worksheet-session`,
-                                {
-                                    _token: this
-                                        .csrfTokenCompleteWorksheetSession,
-                                    worksheetSessionId:
-                                        this.getCurrentWorksheetSession.id,
-                                }
-                            )
-                            .then((response) => {
-                                // console.log(response.data);
-
-                                this.getCurrentWorksheetSession.isInProgress = false;
-                                this.getCurrentWorksheetSession.isCompleted = true;
-                                this.getCurrentWorksheetSession.doneAt =
-                                    new Date();
-                            })
-                            .catch((error) => {
-                                const errorMess =
-                                    "object" === typeof error.response.data
-                                        ? error.response.data.detail
-                                        : error.response.data;
-                                console.error(errorMess);
-                            });
-                    }
-                })
-                .catch((error) => {
-                    const errorMess =
-                        "object" === typeof error.response.data
-                            ? error.response.data.detail
-                            : error.response.data;
-                    console.error(errorMess);
-                });
         },
         closeVideoPlayer() {
             this.$emit("closeVideoPlayer", true);
-        },
-        closeVideoPlayerAndCompleteExercise() {
-            this.$emit("closeVideoPlayer", true);
-            this.getExercise.isCompleted = true;
         },
     },
 };
@@ -336,8 +123,8 @@ export default {
 @import "../../../../scss/variables";
 
 .video-player {
-    position: absolute;
-    z-index: 211;
+    position: fixed;
+    z-index: 11111;
     top: 0;
     left: 0;
     right: 0;
@@ -430,197 +217,6 @@ export default {
                     height: 100%;
                     transform: translateY(-4.7rem);
                 }
-            }
-        }
-    }
-
-    .score-frame {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        width: 100%;
-        height: 100%;
-        color: $white;
-        overflow: hidden;
-
-        .score-top-elip {
-            width: 74rem;
-            position: absolute;
-            top: -12rem;
-            left: 50%;
-            transform: translate(-50%, 0);
-            animation: 0.5s ease 0s forwards elipDown;
-            opacity: 0;
-
-            @media (min-width: 576px) {
-                width: 100rem;
-                top: -19rem;
-            }
-
-            @media (min-width: 800px) {
-                width: 160rem;
-                top: -42rem;
-            }
-
-            @media (min-width: 900px) and (min-height: 1100px) and (max-height: 1500px) {
-                width: 213rem;
-                top: -53rem;
-            }
-
-            @media (min-width: 1100px) {
-                width: 187rem;
-                top: -53rem;
-            }
-
-            @media (min-width: 1400px) {
-                width: 204rem;
-                top: -62rem;
-            }
-
-            @media (min-width: 1600px) {
-                width: 245rem;
-                top: -80rem;
-            }
-
-            img {
-                width: 100%;
-            }
-        }
-
-        @keyframes elipDown {
-            0% {
-                transform: translate(-50%, -50%);
-                opacity: 1;
-            }
-            40% {
-                transform: translate(-50%, 2%);
-                opacity: 1;
-            }
-            80% {
-                transform: translate(-50%, -2%);
-                opacity: 1;
-            }
-            100% {
-                transform: translate(-50%, 0%);
-                opacity: 1;
-            }
-        }
-
-        .score-stars-confettis {
-            width: 62%;
-            max-width: 55rem;
-            min-width: 35rem;
-            position: absolute;
-            top: 20%;
-            left: 50%;
-            transform: translate(-48%, -50%) scale(0.3);
-            opacity: 0;
-            animation: 0.5s ease 0.3s forwards starsConfettis;
-
-            @media (min-width: 576px) {
-                top: 28%;
-            }
-
-            img {
-                width: 100%;
-            }
-        }
-
-        @keyframes starsConfettis {
-            0% {
-                transform: translate(-48%, -50%) scale(0.3);
-                opacity: 1;
-            }
-            100% {
-                transform: translate(-48%, -50%) scale(1);
-                opacity: 1;
-            }
-        }
-
-        .score-fanion {
-            width: 30%;
-            max-width: 27rem;
-            min-width: 16.9rem;
-            position: absolute;
-            top: 26.5%;
-            left: 50%;
-            transform: translate(-47.7%, -50%);
-            opacity: 0;
-            animation: 0.5s ease 0.3s forwards fanionBounce;
-
-            @media (min-width: 576px) {
-                top: 33.9%;
-            }
-
-            @media (min-width: 700px) {
-                top: 35.5%;
-            }
-
-            @media (min-width: 750px) {
-                top: 37%;
-            }
-
-            img {
-                width: 100%;
-            }
-        }
-
-        @keyframes fanionBounce {
-            0% {
-                transform: translate(-47.7%, -50%) scale(0.8);
-                opacity: 0;
-            }
-            40% {
-                transform: translate(-47.7%, -50%) scale(1.08);
-                opacity: 1;
-            }
-            80% {
-                transform: translate(-47.7%, -50%) scale(0.98);
-                opacity: 1;
-            }
-            100% {
-                transform: translate(-47.7%, -50%) scale(1);
-                opacity: 1;
-            }
-        }
-
-        .score-text {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translate(-50%, 0);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            max-width: 80%;
-            white-space: nowrap;
-            opacity: 0;
-            animation: 0.5s ease 0.7s forwards fadeEnter;
-
-            .label {
-                font-size: 2.5rem;
-                margin-bottom: 3.5rem;
-
-                @media (min-width: 576px) {
-                    font-size: 3rem;
-                }
-            }
-            .score {
-                font-size: 4rem;
-                font-weight: 700;
-                margin-bottom: 4rem;
-                line-height: 1.1;
-
-                @media (min-width: 576px) {
-                    font-size: 4.7rem;
-                }
-            }
-            .btn-next {
-                margin-bottom: 9rem;
             }
         }
     }

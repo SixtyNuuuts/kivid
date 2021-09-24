@@ -4,12 +4,12 @@
         class="kiv-block"
         :class="{ reduced: !$parent.myScoresContent }"
     >
-        <div
+        <button
             class="toggle-content"
             @click="$parent.myScoresContent = !$parent.myScoresContent"
         >
             <i class="kiv-chevron-down icon-3"></i>
-        </div>
+        </button>
         <h2>Mes indices</h2>
         <transition name="height">
             <div v-if="$parent.myScoresContent" class="content">
