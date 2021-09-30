@@ -16,7 +16,7 @@ class Patient extends User
 {
     /**
      * @ORM\Column(type="datetime_immutable", nullable=true)
-     * @Groups({"patient_read"})
+     * @Groups({"patient_read", "user_read"})
      */
     private $birthdate;
 

@@ -149,7 +149,7 @@ export default {
                     doctorId: this.doctorSelected.id,
                 })
                 .then((response) => {
-                    f.openSuccesNotification(
+                    f.openSuccessNotification(
                         "Choix du praticien enregistré",
                         response.data
                     );

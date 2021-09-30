@@ -14,19 +14,18 @@ class SecurityController extends AbstractController
     use RedirectFromIsGrantedTrait;
 
     /**
-     * @Route("/login", name="app_login")
+     * @Route("/login/{userType}", name="app_login")
      */
-    public function login(AuthenticationUtils $authenticationUtils): Response
+    public function login(AuthenticationUtils $authenticationUtils, string $userType = 'patient'): Response
     {
         if ($this->getUser()) {
             return $this->redirectFromIsGranted();
         }
 
-        $form = $this->createForm(LoginFormType::class, ['email' => $authenticationUtils->getLastUsername()]);
-
         return $this->render('security/login.html.twig', [
-            'loginForm' => $form->createView(),
             'error' => $authenticationUtils->getLastAuthenticationError(),
+            'getLastUsername' => $authenticationUtils->getLastUsername(),
+            'userType' => $userType === "praticien" ? "doctor" : "patient",
         ]);
     }
 

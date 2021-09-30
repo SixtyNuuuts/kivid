@@ -102,6 +102,7 @@
 </template>
 
 <script>
+import Vue from "vue";
 import f from "../services/function";
 import TimingFrieze from "./ReadWorkSheetPage/TimingFrieze.vue";
 import ExercisesPlaylist from "./ReadWorkSheetPage/ExercisesPlaylist.vue";
@@ -116,6 +117,7 @@ export default {
     data() {
         return {
             patient: null,
+            doctor: null,
             worksheetId: null,
             worksheet: {},
             currentWorksheetSession: {},
@@ -175,9 +177,12 @@ export default {
         },
     },
     created() {
+        Vue.prototype.$vs = this.$vs;
+
         const data = JSON.parse(document.getElementById("vueData").innerHTML);
 
         this.patient = data.patient;
+        this.doctor = data.doctor;
         this.worksheetId = data.worksheetId;
         this.doctorView = data.doctorView;
         this.csrfTokenStartWorksheetSession =

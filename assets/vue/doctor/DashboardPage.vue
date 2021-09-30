@@ -29,7 +29,7 @@
                 />
                 <transition name="fade">
                     <MyPrescriptions
-                        v-if="activeOnglet === 1"
+                        v-if="activeTab === 1"
                         :doctor="doctor"
                         :doctorPrescriptions="getDoctorPrescriptions"
                         :csrfTokenRemoveWorksheet="csrfTokenRemoveWorksheet"
@@ -37,7 +37,7 @@
                         @prescriProcess="startPrescriProcess"
                     />
                     <MyWorksheetTemplates
-                        v-if="activeOnglet === 2"
+                        v-if="activeTab === 2"
                         :doctor="doctor"
                         :worksheetTemplates="getWorksheetTemplates"
                         :tagsFromExercises="tagsFromExercises"
@@ -102,7 +102,7 @@ export default {
             allWorksheets: [],
             doctorWorksheets: [],
             tagsFromExercises: [],
-            activeOnglet: 1,
+            activeTab: 1,
             prescriProcess: false,
             prescriProcessPatient: false,
             prescriProcessPatientSelected: null,
@@ -170,7 +170,7 @@ export default {
 
                 window.scrollTo({ top: y, behavior: "smooth" });
 
-                this.activeOnglet = 2;
+                this.activeTab = 2;
                 this.prescriProcessWorksheet = true;
             } else {
                 const prescriProcessWorksheetSelectedId = this
@@ -183,7 +183,8 @@ export default {
         startPrescriProcess() {
             this.prescriProcess = true;
             this.prescriProcessWorksheet = true;
-            this.activeOnglet = 2;
+            this.myWorksheetTemplatesContent = true;
+            this.activeTab = 2;
         },
         stopPrescriProcess() {
             this.prescriProcess = false;
@@ -191,7 +192,7 @@ export default {
             this.prescriProcessPatient = false;
             this.prescriProcessWorksheetSelected = null;
             this.prescriProcessPatientSelected = null;
-            this.activeOnglet = 1;
+            this.activeTab = 1;
         },
         sortByCreatedAt(array) {
             array.sort(function (a, b) {
@@ -306,8 +307,6 @@ export default {
                                 worksheet.currentWorksheetSession =
                                     response.data;
 
-                                this.loadingDoctorWorksheets = false;
-
                                 this.axios
                                     .get(
                                         `/patient/${worksheet.patient.id}/get/total-worksheet-sessions/${worksheet.id}`
@@ -315,6 +314,8 @@ export default {
                                     .then((response) => {
                                         worksheet.totalWorksheetSessions =
                                             response.data;
+
+                                        this.loadingDoctorWorksheets = false;
 
                                         this.axios
                                             .get(

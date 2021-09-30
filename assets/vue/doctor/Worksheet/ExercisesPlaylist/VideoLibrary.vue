@@ -96,17 +96,12 @@
                                 </vs-button>
                                 <vs-button
                                     circle
-                                    animation-type="rotate"
                                     size="small"
                                     @click="removeVideo(video)"
                                     class="btn-remove-vid"
                                     v-else
                                 >
                                     <check-icon size="2x"></check-icon>
-
-                                    <template #animate>
-                                        <x-icon size="1.3x"></x-icon>
-                                    </template>
                                 </vs-button>
                             </div>
                         </div>

@@ -67,7 +67,7 @@ export default {
     );
   },
 
-  openSuccesNotification(titleText, messageText) {
+  openSuccessNotification(titleText, messageText) {
     Vue.prototype.$vs.notification({
       progress: "auto",
       icon: "<i class='far fa-check-circle text-success'></i>",
@@ -78,9 +78,44 @@ export default {
     });
   },
 
+  openPrimaryNotification(titleText, messageText) {
+    Vue.prototype.$vs.notification({
+      progress: "auto",
+      icon: "<i class='far fa-check-circle text-primary'></i>",
+      color: null,
+      position: "top-right",
+      title: `<strong class='text-success'>${titleText}</strong>`,
+      text: `${messageText}`,
+    });
+  },
+
   openErrorNotification(titleText, messageText) {
     Vue.prototype.$vs.notification({
       progress: "auto",
+      icon: "<i class='far fa-times-circle text-danger'></i>",
+      color: null,
+      position: "top-right",
+      title: `<strong class='text-danger'>${titleText}</strong>`,
+      text: `${messageText}`,
+    });
+  },
+
+  openSuccessNotificationStay(titleText, messageText) {
+    Vue.prototype.$vs.notification({
+      duration: 'none',
+      classNotification: 'fullpage',
+      icon: "<i class='far fa-check-circle text-success'></i>",
+      color: null,
+      position: "top-right",
+      title: `<strong class='text-success'>${titleText}</strong>`,
+      text: `${messageText}`,
+    });
+  },
+
+  openErrorNotificationStay(titleText, messageText) {
+    Vue.prototype.$vs.notification({
+      duration: 'none',
+      classNotification: 'fullpage',
       icon: "<i class='far fa-times-circle text-danger'></i>",
       color: null,
       position: "top-right",

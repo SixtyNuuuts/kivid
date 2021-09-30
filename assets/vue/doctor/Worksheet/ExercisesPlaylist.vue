@@ -67,7 +67,7 @@
                     class="exercise"
                 >
                     <div class="thumbnail-wrapper">
-                        <div class="btns-arrow">
+                        <div v-if="'voir' !== action" class="btns-arrow">
                             <vs-button
                                 v-if="exercise.position != 0"
                                 circle
@@ -111,13 +111,14 @@
                                 <span>{{ exercise.video.name }}</span>
                             </h2>
                             <button
+                                v-if="'voir' !== action"
                                 class="remove-exercise"
                                 @click="removeExercise(exercise)"
                             >
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
-                        <div class="details">
+                        <div v-if="'voir' !== action" class="details">
                             <div class="series-reps">
                                 <div class="series">
                                     <i class="kiv-series icon-18"></i>
@@ -139,7 +140,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="options">
+                        <div v-if="'voir' !== action" class="options">
                             <div
                                 class="option"
                                 :class="{ active: exercise.optionActive }"
@@ -226,11 +227,39 @@
                                 </vs-input>
                             </div>
                         </div>
+                        <div v-if="'voir' === action" class="details">
+                            <div class="series-reps">
+                                <div class="series">
+                                    <i class="kiv-series icon-18"></i
+                                    ><span>{{ exercise.numberOfSeries }}</span>
+                                    séries
+                                </div>
+                                <div
+                                    v-if="exercise.numberOfRepetitions"
+                                    class="reps"
+                                >
+                                    <i class="kiv-reps icon-19"></i
+                                    ><span>{{
+                                        exercise.numberOfRepetitions
+                                    }}</span>
+                                    répétitions
+                                </div>
+                            </div>
+                            <div v-if="exercise.option" class="option">
+                                Options : <span>{{ exercise.option }}</span>
+                            </div>
+                            <div v-if="exercise.tempo" class="tempo">
+                                Tempo : <span>{{ exercise.tempo }}</span>
+                            </div>
+                            <div v-if="exercise.hold" class="hold">
+                                Tenir : <span>{{ exercise.hold }}s</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="request-subscription">
-                <div class="btn-request-subscription">
+            <div class="add-videos" v-if="'voir' !== action">
+                <div class="btn-add-videos">
                     <vs-button @click="openVideoLibrary()">
                         <i class="fab fa-youtube"></i> Ajouter des vidéos
                     </vs-button>
@@ -436,7 +465,7 @@ export default {
                             (e, i) => (e.position = i)
                         );
 
-                        f.openSuccesNotification(
+                        f.openSuccessNotification(
                             "Suppression de l'exercice",
                             response.data
                         );
@@ -931,7 +960,7 @@ export default {
         }
     }
 
-    .request-subscription {
+    .add-videos {
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -941,7 +970,7 @@ export default {
         padding: 4.3rem;
         margin-top: 3rem;
 
-        .icon-request-subscription {
+        .icon-add-videos {
             width: 5rem;
             height: 5rem;
             min-width: 5rem;
@@ -962,7 +991,7 @@ export default {
                 font-size: 2.4rem;
             }
         }
-        .text-request-subscription {
+        .text-add-videos {
             p {
                 margin-top: 4rem;
                 margin-bottom: 4.5rem;
@@ -973,7 +1002,7 @@ export default {
             }
         }
 
-        .btn-request-subscription {
+        .btn-add-videos {
         }
     }
 }

@@ -37,7 +37,7 @@ class SubscriptionController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/subscription/{status}", name="app_subscription", methods={"GET"})
+     * @Route("/{id}/subscription/{status}", name="app_settings_subscription", methods={"GET"})
      */
     public function subscription(
         Patient $patient,
@@ -77,11 +77,10 @@ class SubscriptionController extends AbstractController
             }
         }
 
-        return $this->render('patient/subscription.html.twig', [
+        return $this->render('settings/subscription.html.twig', [
             'patient' => $patient,
             'stripeSubPlans' => $subscriptionService->getPlans(),
             'status' => $status,
-            'stripeCheckoutSession' => $stripeCheckoutSession ?? null,
             'stripeSubscription' => $stripeSubscription ?? null,
         ]);
     }

@@ -22,19 +22,19 @@ class Doctor extends User
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"doctor_read", "patient_read"})
+     * @Groups({"doctor_read", "patient_read", "user_read"})
      */
     private $city;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"doctor_read"})
+     * @Groups({"doctor_read", "user_read"})
      */
     private $street;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"doctor_read"})
+     * @Groups({"doctor_read", "user_read"})
      */
     private $entityName;
 

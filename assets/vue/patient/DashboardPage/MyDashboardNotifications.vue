@@ -97,10 +97,7 @@
                 >
                     <p class="notification-label">Compléter votre profil</p>
                     <div class="notification-actions">
-                        <a
-                            class="action-link"
-                            :href="`/patient/${this.patient.id}/edit`"
-                        >
+                        <a class="action-link" :href="`/settings/user/edit`">
                             <i class="kiv-pen icon-4"></i>
                             <span>Compléter</span>
                         </a>
@@ -174,7 +171,7 @@ export default {
                     doctorId: this.patient.doctor.id,
                 })
                 .then((response) => {
-                    f.openSuccesNotification(
+                    f.openSuccessNotification(
                         "Demande d'ajout acceptée",
                         response.data
                     );
@@ -213,7 +210,7 @@ export default {
                     doctorId: this.patient.doctor.id,
                 })
                 .then((response) => {
-                    f.openSuccesNotification(
+                    f.openSuccessNotification(
                         "Demande d'ajout refusée",
                         response.data
                     );
@@ -246,7 +243,7 @@ export default {
             this.axios
                 .get(`/patient/${this.patient.id}/resend/verify-email`)
                 .then((response) => {
-                    f.openSuccesNotification(
+                    f.openSuccessNotification(
                         "E-mail de vérification envoyé",
                         response.data
                     );

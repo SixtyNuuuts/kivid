@@ -5,7 +5,7 @@
         :class="{ reduced: !$parent.myWorksheetTemplatesContent }"
     >
         <div
-            class="toggle-content onglet"
+            class="toggle-content tab"
             @click="
                 $parent.myWorksheetTemplatesContent =
                     !$parent.myWorksheetTemplatesContent
@@ -13,11 +13,11 @@
         >
             <i class="kiv-chevron-down icon-3"></i>
         </div>
-        <div class="onglets">
-            <div class="inactive" @click="activeOnglet(1)">
+        <div class="tabs">
+            <div class="inactive" @click="activeTab(1)">
                 <h2><span>Mes prescriptions</span></h2>
             </div>
-            <div @click="activeOnglet(2)">
+            <div @click="activeTab(2)">
                 <h2><span>Mes fiches</span></h2>
             </div>
         </div>
@@ -128,8 +128,12 @@
                                 >
                                     <span
                                         v-if="
-                                            prescriProcess &&
-                                            !$parent.prescriProcessWorksheetSelected
+                                            ($parent.prescriProcess &&
+                                                !$parent.prescriProcessWorksheetSelected) ||
+                                            ($parent.prescriProcessWorksheetSelected &&
+                                                $parent
+                                                    .prescriProcessWorksheetSelected
+                                                    .id !== null)
                                         "
                                         ><i class="fas fa-folder-plus"></i>Créer
                                         une fiche</span
@@ -879,10 +883,10 @@ export default {
             document.location.href = `/doctor/${this.doctor.id}/fiche/creation/${worksheetId}`;
         },
         redirectToWorksheetPage(worksheetId) {
-            document.location.href = `/doctor/${this.doctor.id}/fiche/edition/${worksheetId}`;
+            document.location.href = `/doctor/${this.doctor.id}/fiche/voir/${worksheetId}`;
         },
-        activeOnglet(num) {
-            this.$parent.activeOnglet = num;
+        activeTab(num) {
+            this.$parent.activeTab = num;
 
             if (window.innerWidth < 576) {
                 if (1 === num) {
@@ -909,7 +913,7 @@ export default {
                     worksheetId: this.removeWorksheetDetails.id,
                 })
                 .then((response) => {
-                    f.openSuccesNotification(
+                    f.openSuccessNotification(
                         "Suppression de la fiche",
                         response.data
                     );
@@ -985,7 +989,7 @@ export default {
         padding-top: 4.4rem;
     }
 
-    .onglets {
+    .tabs {
         > div {
             &.inactive {
                 box-shadow: inset -0.74rem -0.3rem 0.9rem
