@@ -135,6 +135,7 @@
                             circle
                         >
                             <img
+                                id="u-avatar"
                                 :src="
                                     currentUser.avatarUrl
                                         ? currentUser.avatarUrl
@@ -149,6 +150,7 @@
                             </div>
                             <div v-else>
                                 <div
+                                    id="u-name"
                                     v-if="
                                         currentUser.firstname ||
                                         currentUser.lastname
@@ -170,13 +172,16 @@
                             v-if="currentUserMenu"
                         >
                             <ul>
-                                <li @click="profil()">
+                                <li class="md" @click="myProfil()">
                                     <i class="kiv-profil icon-12"></i>
-                                    Profil
+                                    Mon Profil
                                 </li>
-                                <li @click="settings()">
-                                    <i class="kiv-settings icon-16"></i>
-                                    Paramètres
+                                <li
+                                    v-if="'patient' === currentUserType"
+                                    class="md"
+                                    @click="mySubscription()"
+                                >
+                                    <i class="fas fa-medal"></i> Mon Abonnement
                                 </li>
                                 <li class="sm" @click="lexique()">
                                     <i class="kiv-lexique icon-1"></i>
@@ -185,6 +190,10 @@
                                 <li @click="help()">
                                     <i class="kiv-help icon-15"></i>
                                     Aide
+                                </li>
+                                <li @click="myProfil()">
+                                    <i class="kiv-settings icon-16"></i>
+                                    Paramètres
                                 </li>
                                 <hr />
                                 <li @click="logout()">
@@ -226,16 +235,15 @@ export default {
             currentUserMenu: false,
             showNotifications: false,
             currentUserNotifications: [],
+            settingsUserEditPath: null,
             homePath: null,
             loginPath: null,
             logoutPath: null,
             adminDashboardPath: null,
             patientDashboardRoute: null,
             patientDashboardPath: null,
-            patientEditPath: null,
             doctorDashboardPath: null,
             doctorDashboardRoute: null,
-            doctorEditPath: null,
             csrfTokenReadNotification: null,
             loadingNotif: false,
             loadingUser: false,
@@ -316,14 +324,11 @@ export default {
                 document.location.href = this.doctorDashboardPath;
             }
         },
-        settings() {
-            if ("patient" === this.currentUserType) {
-                document.location.href = this.patientEditPath;
-            }
-
-            if ("doctor" === this.currentUserType) {
-                document.location.href = this.doctorEditPath;
-            }
+        myProfil() {
+            document.location.href = this.settingsUserEditPath;
+        },
+        mySubscription() {
+            document.location.href = this.settingsSubscriptionPath;
         },
         homepage() {
             document.location.href = this.homePath;
@@ -355,10 +360,10 @@ export default {
             this.logoutPath = data.logoutPath;
             this.patientDashboardPath = data.patientDashboardPath;
             this.patientDashboardRoute = data.patientDashboardRoute;
-            this.patientEditPath = data.patientEditPath;
             this.doctorDashboardPath = data.doctorDashboardPath;
             this.doctorDashboardRoute = data.doctorDashboardRoute;
-            this.doctorEditPath = data.doctorEditPath;
+            this.settingsUserEditPath = data.settingsUserEditPath;
+            this.settingsSubscriptionPath = data.settingsSubscriptionPath;
             this.csrfTokenReadNotification = data.csrfTokenReadNotification;
 
             this.getNotifications();
@@ -704,6 +709,7 @@ export default {
                                 padding: 0.8rem 0;
                                 cursor: pointer;
                                 transition: all 0.3s;
+                                white-space: nowrap;
 
                                 @media (min-width: 576px) {
                                     padding: 0.6rem 0;
@@ -711,6 +717,12 @@ export default {
 
                                 &.sm {
                                     @media (min-width: 768px) {
+                                        display: none;
+                                    }
+                                }
+
+                                &.md {
+                                    @media (min-width: 850px) {
                                         display: none;
                                     }
                                 }
@@ -727,6 +739,14 @@ export default {
 
                                     &.kiv-help {
                                         font-size: 1.8rem;
+                                    }
+
+                                    &.fa-medal {
+                                        font-size: 1.9rem;
+                                    }
+
+                                    &.kiv-profil {
+                                        font-size: 1.7rem;
                                     }
 
                                     &.kiv-logout {

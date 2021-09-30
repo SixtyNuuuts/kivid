@@ -5,18 +5,18 @@
         :class="{ reduced: !$parent.myPrescriptionsContent }"
     >
         <div
-            class="toggle-content onglet"
+            class="toggle-content tab"
             @click="
                 $parent.myPrescriptionsContent = !$parent.myPrescriptionsContent
             "
         >
             <i class="kiv-chevron-down icon-3"></i>
         </div>
-        <div class="onglets">
-            <div @click="activeOnglet(1)">
+        <div class="tabs">
+            <div @click="activeTab(1)">
                 <h2><span>Mes prescriptions</span></h2>
             </div>
-            <div class="inactive" @click="activeOnglet(2)">
+            <div class="inactive" @click="activeTab(2)">
                 <h2><span>Mes fiches</span></h2>
             </div>
         </div>
@@ -86,7 +86,8 @@
                                             @click="
                                                 redirectToWorksheetPage(
                                                     worksheet.id,
-                                                    worksheet.patient.id
+                                                    worksheet.patient.id,
+                                                    true
                                                 )
                                             "
                                             class="btn-action commentaries"
@@ -138,19 +139,29 @@
                                                 worksheet.worksheetTotalProgression,
                                         }"
                                     >
-                                        Session n°<span
+                                        <span
                                             v-if="
-                                                worksheet.currentWorksheetSession
+                                                worksheet.totalWorksheetSessions >
+                                                0
                                             "
-                                            >{{
-                                                worksheet
-                                                    .currentWorksheetSession
-                                                    .execOrder
+                                        >
+                                            Session n°<span
+                                                v-if="
+                                                    worksheet.currentWorksheetSession
+                                                "
+                                                >{{
+                                                    worksheet
+                                                        .currentWorksheetSession
+                                                        .execOrder
+                                                }}</span
+                                            ><span v-else>{{
+                                                worksheet.totalWorksheetSessions
                                             }}</span
-                                        ><span v-else>{{
-                                            worksheet.totalWorksheetSessions
-                                        }}</span
-                                        >/{{ worksheet.totalWorksheetSessions }}
+                                            >/{{
+                                                worksheet.totalWorksheetSessions
+                                            }}
+                                        </span>
+                                        <span v-else> Non démarrée </span>
                                     </p>
                                 </div>
                             </div>
@@ -241,12 +252,32 @@
                                         <div class="buttons">
                                             <vs-button
                                                 v-if="
-                                                    worksheet.currentWorksheetSession
+                                                    worksheet.totalWorksheetSessions >
+                                                    0
                                                 "
                                                 @click="
                                                     redirectToWorksheetPage(
                                                         worksheet.id,
-                                                        worksheet.patient.id
+                                                        worksheet.patient.id,
+                                                        true
+                                                    )
+                                                "
+                                                class="btn-action"
+                                                circle
+                                                floating
+                                            >
+                                                <i class="fas fa-eye"></i>
+                                            </vs-button>
+                                            <vs-button
+                                                v-if="
+                                                    worksheet.totalWorksheetSessions ===
+                                                    0
+                                                "
+                                                @click="
+                                                    redirectToWorksheetPage(
+                                                        worksheet.id,
+                                                        worksheet.patient.id,
+                                                        false
                                                     )
                                                 "
                                                 class="btn-action"
@@ -579,11 +610,15 @@ export default {
         redirectToEditPage(worksheetId) {
             document.location.href = `/doctor/${this.doctor.id}/fiche/edition/${worksheetId}`;
         },
-        redirectToWorksheetPage(worksheetId, patientId) {
-            document.location.href = `/doctor/${this.doctor.id}/commentaires/${worksheetId}/${patientId}`;
+        redirectToWorksheetPage(worksheetId, patientId, hasSessions) {
+            if (hasSessions) {
+                document.location.href = `/doctor/${this.doctor.id}/voir/${worksheetId}/${patientId}`;
+            } else {
+                document.location.href = `/doctor/${this.doctor.id}/fiche/voir/${worksheetId}`;
+            }
         },
-        activeOnglet(num) {
-            this.$parent.activeOnglet = num;
+        activeTab(num) {
+            this.$parent.activeTab = num;
 
             if (window.innerWidth < 576) {
                 if (1 === num) {
@@ -610,7 +645,7 @@ export default {
                     worksheetId: this.removeWorksheetDetails.id,
                 })
                 .then((response) => {
-                    f.openSuccesNotification(
+                    f.openSuccessNotification(
                         "Suppression de la prescription",
                         response.data
                     );
@@ -660,7 +695,7 @@ export default {
         padding-top: 4.4rem;
     }
 
-    .onglets {
+    .tabs {
         > div {
             &.inactive {
                 box-shadow: inset 0.66rem -0.3rem 0.9rem rgba(148, 96, 77, 0.07);

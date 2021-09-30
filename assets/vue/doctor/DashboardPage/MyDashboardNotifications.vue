@@ -58,10 +58,7 @@
                 >
                     <p class="notification-label">Compléter votre profil</p>
                     <div class="notification-actions">
-                        <a
-                            class="action-link"
-                            :href="`/doctor/${this.doctor.id}/edit`"
-                        >
+                        <a class="action-link" :href="`/settings/user/edit`">
                             <i class="kiv-pen icon-4"></i>
                             <span>Compléter</span>
                         </a>
@@ -102,7 +99,7 @@ export default {
             this.axios
                 .get(`/doctor/${this.doctor.id}/resend/verify-email`)
                 .then((response) => {
-                    f.openSuccesNotification(
+                    f.openSuccessNotification(
                         "E-mail de vérification envoyé",
                         response.data
                     );

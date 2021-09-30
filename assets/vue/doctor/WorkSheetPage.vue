@@ -9,7 +9,19 @@
                 <div class="loading-gray part-of-body"></div>
             </div>
             <div v-else>
-                <div class="title">
+                <div v-if="'voir' === action" class="title-view">
+                    <div class="title">
+                        <i
+                            class="kiv-arrow-left icon-31"
+                            @click="rederictToDashboard()"
+                        ></i>
+                        <h1>{{ getWorksheet.title }}</h1>
+                    </div>
+                    <TagPartOfBody
+                        :partOfBody="getWorksheet.partOfBody.toLowerCase()"
+                    />
+                </div>
+                <div v-else class="title">
                     <i
                         class="kiv-arrow-left icon-31"
                         @click="rederictToDashboard()"
@@ -47,7 +59,7 @@
                     </div>
                 </div>
 
-                <div class="worksheet-params">
+                <div v-if="'voir' !== action" class="worksheet-params">
                     <div
                         class="worksheet-details"
                         :class="{
@@ -194,14 +206,17 @@
 </template>
 
 <script>
+import Vue from "vue";
 import f from "../services/function";
 import ExercisesPlaylist from "./Worksheet/ExercisesPlaylist.vue";
+import TagPartOfBody from "../components/TagPartOfBody.vue";
 import SelectPartOfBody from "../components/SelectPartOfBody.vue";
 
 export default {
     components: {
         ExercisesPlaylist,
         SelectPartOfBody,
+        TagPartOfBody,
     },
     data() {
         return {
@@ -311,7 +326,7 @@ export default {
                     exercises: this.worksheet.exercises,
                 })
                 .then((response) => {
-                    f.openSuccesNotification(
+                    f.openSuccessNotification(
                         "Edition de la fiche",
                         response.data
                     );
@@ -348,7 +363,7 @@ export default {
                 })
                 .then((response) => {
                     if (this.patient) {
-                        f.openSuccesNotification(
+                        f.openSuccessNotification(
                             "Création de la prescription",
                             `La fiche <strong> ${
                                 this.worksheet.title
@@ -360,7 +375,7 @@ export default {
                             }</strong>.`
                         );
                     } else {
-                        f.openSuccesNotification(
+                        f.openSuccessNotification(
                             "Création de la fiche",
                             response.data
                         );
@@ -384,6 +399,8 @@ export default {
         },
     },
     created() {
+        Vue.prototype.$vs = this.$vs;
+
         const data = JSON.parse(document.getElementById("vueData").innerHTML);
 
         this.doctor = data.doctor;
@@ -572,6 +589,25 @@ export default {
                         font-size: 1.4rem;
                         top: -0.85rem;
                         left: 1.3rem;
+                    }
+                }
+            }
+
+            .title-view {
+                display: flex;
+                align-items: center;
+                margin-bottom: 3.7rem;
+
+                h1,
+                .title {
+                    margin-bottom: 0;
+                }
+
+                .title {
+                    max-width: 60vw;
+
+                    @media (min-width: 768px) {
+                        max-width: 81vw;
                     }
                 }
             }

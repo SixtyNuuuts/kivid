@@ -96,7 +96,7 @@ class WorksheetController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/commentaires/{worksheetId}/{patientId}",
+     * @Route("/{id}/voir/{worksheetId}/{patientId}",
      * name="app_doctor_show_commentaries", methods={"GET"})
      */
     public function showCommentaries(

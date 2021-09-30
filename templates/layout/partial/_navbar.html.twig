@@ -11,9 +11,9 @@
 			"currentUser": {{ app.user|serialize('json', {'groups': 'user_read'})|raw }},
 			"currentRoute": {{ app.request.get('_route')|serialize('json')|raw }},
 			"patientDashboardPath": {{ path('app_patient_dashboard', {'id':app.user.id})|serialize('json')|raw }},
-			"patientEditPath": {{ path('app_user_edit', {'id': app.user.id, 'userType': 'patient'})|serialize('json')|raw }},
+			"settingsUserEditPath": {{ path('app_settings_user_edit')|serialize('json')|raw }},
+			"settingsSubscriptionPath": {{ path('app_settings_subscription', {'id':app.user.id})|serialize('json')|raw }},
 			"doctorDashboardPath": {{ path('app_doctor_dashboard', {'id':app.user.id})|serialize('json')|raw }},
-			"doctorEditPath": {{ path('app_user_edit', {'id': app.user.id, 'userType': 'doctor'})|serialize('json')|raw }},
 			"patientDashboardRoute": "app_patient_dashboard",
 			"doctorDashboardRoute": "app_doctor_dashboard"
 		}

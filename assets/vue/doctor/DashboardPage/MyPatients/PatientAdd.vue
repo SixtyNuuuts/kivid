@@ -288,7 +288,10 @@ export default {
                     patientId: this.userSelected.id,
                 })
                 .then((response) => {
-                    f.openSuccesNotification("Ajout du patient", response.data);
+                    f.openSuccessNotification(
+                        "Ajout du patient",
+                        response.data
+                    );
 
                     this.userSelected.addRequestDoctor = false;
                     this.userSelected.doctor = this.doctor;
@@ -325,7 +328,7 @@ export default {
                     email: this.createPatientDetails.email,
                 })
                 .then((response) => {
-                    f.openSuccesNotification(
+                    f.openSuccessNotification(
                         "Création du patient",
                         response.data.message
                     );

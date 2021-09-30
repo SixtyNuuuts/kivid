@@ -540,7 +540,7 @@ export default {
                     patientId: this.removePatientDetails.id,
                 })
                 .then((response) => {
-                    f.openSuccesNotification(
+                    f.openSuccessNotification(
                         "Suppression du patient",
                         response.data
                     );

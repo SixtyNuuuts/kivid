@@ -442,7 +442,7 @@
     }
 
     .vs-input--has-icon--after {
-        padding-right: 4.5rem;
+        padding-right: 4.2rem;
     }
 
     .vs-input:focus ~ .vs-input__icon--after {
@@ -459,6 +459,16 @@
         padding-top: 0.7rem;
         font-size: 1.3rem;
         padding-left: 0;
+    }
+}
+
+.vs-input-parent[type="date"] {
+    .vs-input-content .vs-input__label {
+        top: 0.4rem;
+        text-shadow: 0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white,
+            0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white,
+            0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white,
+            0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white;
     }
 }
 
@@ -872,6 +882,10 @@
     top: 5.8rem;
     right: 1.9rem;
 
+    &.fullpage {
+        top: 1.8rem;
+    }
+
     @media (max-width: 600px) {
         right: 0;
     }
@@ -893,6 +907,10 @@
     padding-top: 0.85rem;
     border-radius: 0.5rem;
     font-size: 1.3rem;
+}
+
+.vs-avatar img {
+    border-radius: initial;
 }
 
 /* VueSax Overload */
