@@ -49,12 +49,6 @@ class Subscription
      */
     private $patient;
 
-    /**
-     * @ORM\Column(type="boolean")
-     * @Groups({"patient_read"})
-     */
-    private $isActive;
-
     public function getId(): ?int
     {
         return $this->id;
@@ -116,18 +110,6 @@ class Subscription
     public function setPatient(?Patient $patient): self
     {
         $this->patient = $patient;
-
-        return $this;
-    }
-
-    public function getIsActive(): ?bool
-    {
-        return $this->isActive;
-    }
-
-    public function setIsActive(bool $isActive): self
-    {
-        $this->isActive = $isActive;
 
         return $this;
     }

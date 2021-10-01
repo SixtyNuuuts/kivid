@@ -2,33 +2,37 @@
 
 namespace App\Service;
 
-use App\Entity\Subscription;
-use App\Repository\SubscriptionRepository;
 use Stripe\StripeClient;
+use App\Entity\Subscription;
+use App\Service\SubscriptionService;
 use Stripe\Webhook as StripeWebhook;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\SubscriptionRepository;
+use Symfony\Component\HttpFoundation\Request;
 use Stripe\Subscription as StripeSubscription;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Stripe\Checkout\Session as StripeCheckoutSession;
 use Stripe\BillingPortal\Session as StripeBillingPortalSession;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\JsonResponse;
 
 class StripeService
 {
     private $stripe;
     private $stripeWebhookSecretKey;
     private $subscriptionRepository;
+    private $subscriptionService;
     private $em;
 
     public function __construct(
         string $stripeSecretKey,
         string $stripeWebhookSecretKey,
         SubscriptionRepository $subscriptionRepository,
+        SubscriptionService $subscriptionService,
         EntityManagerInterface $entityManager
     ) {
         $this->stripe = new StripeClient($stripeSecretKey);
         $this->stripeWebhookSecretKey = $stripeWebhookSecretKey;
         $this->subscriptionRepository = $subscriptionRepository;
+        $this->subscriptionService = $subscriptionService;
         $this->em = $entityManager;
     }
 
@@ -110,6 +114,11 @@ class StripeService
                 // Continue to provision the subscription as payments continue to be made.
                 // Store the status in your database and check when a user accesses your service.
                 // This approach helps you avoid hitting rate limits.
+
+                // $this->subscriptionService->createSubscription(
+                //     $user,
+                //     $stripeSubscription
+                // );
                 break;
             case 'invoice.payment_failed':
                 // The payment failed or the customer does not have a valid payment method.

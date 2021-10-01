@@ -139,7 +139,10 @@
                     </div>
                 </div>
             </div>
-            <div class="request-subscription">
+            <div
+                v-if="!$parent.stripeSubscription"
+                class="request-subscription"
+            >
                 <div class="icon-request-subscription">
                     <i class="kiv-subscription icon-20"></i>
                 </div>
@@ -150,7 +153,9 @@
                     </p>
                 </div>
                 <div class="btn-request-subscription">
-                    <vs-button :disabled="doctorView"> Je m’abonne </vs-button>
+                    <vs-button :disabled="doctorView" @click="stripeCheckout()">
+                        Je m’abonne
+                    </vs-button>
                 </div>
             </div>
         </div>
@@ -169,6 +174,7 @@
                 :csrfTokenCompleteExercise="csrfTokenCompleteExercise"
                 :csrfTokenCreateExerciseStat="csrfTokenCreateExerciseStat"
                 @closeVideoPlayer="closeVideoPlayer"
+                @stripeCheckout="stripeCheckout()"
             />
         </transition>
     </div>
@@ -185,6 +191,7 @@ export default {
         patient: Object,
         loading: Boolean,
         worksheet: Object,
+        exercises: Array,
         doctorView: Boolean,
         currentWorksheetSession: [Object, Boolean],
         csrfTokenStartWorksheetSession: String,
@@ -214,16 +221,16 @@ export default {
             return this.worksheet;
         },
         getExercises() {
-            return this.getWorksheet.exercises;
+            return this.exercises;
         },
         getCurrentExercise() {
             let currentExercise = this.emptyExercise;
 
             if (
-                this.getWorksheet.exercises &&
-                this.getWorksheet.exercises.find((e) => e.isCompleted === false)
+                this.getExercises &&
+                this.getExercises.find((e) => e.isCompleted === false)
             ) {
-                currentExercise = this.getWorksheet.exercises.find(
+                currentExercise = this.getExercises.find(
                     (e) => e.isCompleted === false
                 );
             }
@@ -233,9 +240,7 @@ export default {
             return this.currentWorksheetSession;
         },
         getTheLastExercise() {
-            return this.getWorksheet.exercises[
-                this.getWorksheet.exercises.length - 1
-            ];
+            return this.getExercises[this.getExercises.length - 1];
         },
     },
     methods: {
@@ -273,6 +278,9 @@ export default {
             this.timeoutSetCommentary = setTimeout(() => {
                 this.setCommentary(exercise);
             }, 1500);
+        },
+        stripeCheckout() {
+            this.$emit("stripeCheckout", 0);
         },
     },
 };
@@ -411,10 +419,15 @@ export default {
             flex-direction: column;
             justify-content: space-between;
 
+            @media (min-width: 992px) {
+                width: 50%;
+            }
+
             h2 {
                 position: relative;
                 margin-bottom: 2.5rem;
                 margin-left: 2rem;
+                max-width: 80%;
 
                 &::before {
                     content: "";
@@ -491,51 +504,6 @@ export default {
                     margin-bottom: 1rem;
                 }
             }
-        }
-    }
-
-    .request-subscription {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        align-items: center;
-        background: $white;
-        border-radius: 1rem;
-        padding: 4.3rem;
-        margin-top: 3rem;
-
-        .icon-request-subscription {
-            width: 5rem;
-            height: 5rem;
-            min-width: 5rem;
-            min-height: 5rem;
-            max-height: 5rem;
-            background: rgba($tournesol, 0.25);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            i {
-                color: $sanguine;
-                position: relative;
-                top: 0.1rem;
-                left: 0.05rem;
-                font-size: 2.4rem;
-            }
-        }
-        .text-request-subscription {
-            p {
-                margin-top: 4rem;
-                margin-bottom: 4.5rem;
-                font-size: 2.3rem;
-                font-weight: 700;
-                max-width: 44rem;
-                text-align: center;
-            }
-        }
-
-        .btn-request-subscription {
         }
     }
 }

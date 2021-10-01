@@ -24,11 +24,41 @@
             <transition-group name="slidevideoplayer" tag="div">
                 <div v-show="videoFrame" class="video-frame" key="video">
                     <youtube
+                        v-if="getExercise.video.youtubeId"
                         :player-vars="playerVars"
                         :video-id="getExercise.video.youtubeId"
                         @ended="videoEnded"
                         ref="youtube"
                     ></youtube>
+                    <div
+                        class="video-frame not-sub-frame"
+                        v-else
+                        :style="{
+                            backgroundImage: `url('${getExercise.video.thumbnailUrl}')`,
+                        }"
+                    ></div>
+                </div>
+                <div
+                    v-if="!getExercise.video.youtubeId"
+                    class="not-sub-message"
+                    key="not-sub-message"
+                >
+                    <div class="request-subscription dark">
+                        <div class="icon-request-subscription">
+                            <i class="kiv-subscription icon-20"></i>
+                        </div>
+                        <div class="text-request-subscription">
+                            <p>
+                                Pour accéder complètement à votre prescription,
+                                veuillez vous abonner.
+                            </p>
+                        </div>
+                        <div class="btn-request-subscription">
+                            <vs-button @click="stripeCheckout()">
+                                Je m’abonne
+                            </vs-button>
+                        </div>
+                    </div>
                 </div>
                 <EvalFrame
                     v-show="technicalEvalFrame"
@@ -328,6 +358,9 @@ export default {
             this.$emit("closeVideoPlayer", true);
             this.getExercise.isCompleted = true;
         },
+        stripeCheckout() {
+            this.$emit("stripeCheckout", 0);
+        },
     },
 };
 </script>
@@ -430,6 +463,31 @@ export default {
                     height: 100%;
                     transform: translateY(-4.7rem);
                 }
+
+                &.not-sub-frame {
+                    background-size: cover;
+                    height: 100%;
+                    transform: translateY(-3rem);
+
+                    @media (min-width: 768px) {
+                        height: 100%;
+                        transform: translateY(-4.7rem);
+                    }
+                }
+            }
+
+            .not-sub-message {
+                position: absolute;
+                // z-index: -1;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                -webkit-backdrop-filter: blur(0.5rem);
+                backdrop-filter: blur(0.5rem);
+                background: rgba(34, 46, 84, 0.8);
+                height: 100vh;
+                width: 100%;
             }
         }
     }

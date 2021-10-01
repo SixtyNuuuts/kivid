@@ -35,7 +35,7 @@ class Worksheet
 
     /**
      * @ORM\OneToMany(targetEntity=Exercise::class, mappedBy="worksheet", orphanRemoval=true)
-     * @Groups({"worksheet_read", "dashboard_worksheet_read"})
+     * @Groups({"dashboard_worksheet_read"})
      */
     private $exercises;
 

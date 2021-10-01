@@ -12,7 +12,7 @@
 			"currentRoute": {{ app.request.get('_route')|serialize('json')|raw }},
 			"patientDashboardPath": {{ path('app_patient_dashboard', {'id':app.user.id})|serialize('json')|raw }},
 			"settingsUserEditPath": {{ path('app_settings_user_edit')|serialize('json')|raw }},
-			"settingsSubscriptionPath": {{ path('app_settings_subscription', {'id':app.user.id})|serialize('json')|raw }},
+			"settingsSubscriptionPath": {{ path('app_subscription')|serialize('json')|raw }},
 			"doctorDashboardPath": {{ path('app_doctor_dashboard', {'id':app.user.id})|serialize('json')|raw }},
 			"patientDashboardRoute": "app_patient_dashboard",
 			"doctorDashboardRoute": "app_doctor_dashboard"

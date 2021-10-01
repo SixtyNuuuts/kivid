@@ -1,63 +1,44 @@
 <?php
 
-namespace App\Controller\Patient;
+namespace App\Controller;
 
-use App\Entity\Patient;
-use App\Entity\Subscription;
-use App\Repository\SubscriptionRepository;
 use App\Service\StripeService;
 use App\Service\SubscriptionService;
-use Stripe\Checkout\Session as StripeCheckoutSession;
-use Stripe\Subscription as StripeSubscription;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Repository\SubscriptionRepository;
 use Symfony\Component\HttpFoundation\Request;
+use Stripe\Subscription as StripeSubscription;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Stripe\Checkout\Session as StripeCheckoutSession;
 use Symfony\Component\Routing\Generator\UrlGenerator;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-/**
- * @Route("/patient")
- */
 class SubscriptionController extends AbstractController
 {
     private $stripeService;
     private $subscriptionRepository;
-    private $em;
 
     public function __construct(
         StripeService $stripeService,
-        SubscriptionRepository $subscriptionRepository,
-        EntityManagerInterface $entityManagerInterface
+        SubscriptionRepository $subscriptionRepository
     ) {
         $this->stripeService = $stripeService;
         $this->subscriptionRepository = $subscriptionRepository;
-        $this->em = $entityManagerInterface;
     }
 
     /**
-     * @Route("/{id}/subscription/{status}", name="app_settings_subscription", methods={"GET"})
+     * @Route("/subscription/{status}", name="app_subscription", methods={"GET"})
      */
     public function subscription(
-        Patient $patient,
         Request $request,
         string $status = null,
         SubscriptionService $subscriptionService
     ): Response {
-        $subscription = 'success' === $status
-                      ? new Subscription()
-                      : $this->subscriptionRepository->findOneBy(
-                          ['patient' => $patient],
-                          ['currentPeriodStart' => 'ASC']
-                      )
-        ;
+        $user = $this->getUser();
 
-        if ($subscription) {
-            $stripeCheckoutSessionId = 'success' === $status
-                ? $request->query->get('session_id')
-                : $subscription->getStripeCustomerId()
-            ;
+        if ('success' === $status) {
+            $stripeCheckoutSessionId = $request->query->get('session_id');
 
             $stripeCheckoutSession = $this->stripeService->retrieveCheckoutSession(
                 $stripeCheckoutSessionId
@@ -67,30 +48,41 @@ class SubscriptionController extends AbstractController
                 $stripeCheckoutSession->subscription
             );
 
-            if ('success' === $status) {
-                $this->createSubscription(
-                    $patient,
-                    $subscription,
-                    $stripeCheckoutSession,
+            $subscriptionExist = $this->subscriptionRepository->findOneBy([
+                'stripeSubscriptionId' => $stripeSubscription->id
+            ]);
+
+            if (!$subscriptionExist) {
+                $subscriptionService->createSubscription(
+                    $user,
                     $stripeSubscription
                 );
             }
         }
 
+        if ('success' !== $status) {
+            $subscription = $this->subscriptionRepository->findCurrentSubscription($user);
+
+            if ($subscription) {
+                $stripeSubscription = $this->stripeService->retrieveSubscription(
+                    $subscription->getStripeSubscriptionId()
+                );
+            }
+        }
+
         return $this->render('settings/subscription.html.twig', [
-            'patient' => $patient,
-            'stripeSubPlans' => $subscriptionService->getPlans(),
+            'currentUser' => $user,
             'status' => $status,
+            'stripeSubPlans' => $subscriptionService->getPlans(),
             'stripeSubscription' => $stripeSubscription ?? null,
         ]);
     }
 
     /**
-     * @Route("/{id}/subscription/checkout",
+     * @Route("/subscription/checkout",
      * name="app_subscription_checkout", priority=1, methods={"POST"})
      */
     public function subscriptionCheckout(
-        Patient $patient,
         Request $request
     ): JsonResponse {
         $data = json_decode($request->getContent());
@@ -98,15 +90,15 @@ class SubscriptionController extends AbstractController
         $stripeCheckoutSession = $this->stripeService->createCheckoutSession(
             $data->stripeCustomerId,
             $this->generateUrl(
-                'app_subscription',
-                ['id' => $patient->getId(), 'status' => 'success'],
+                'app_home',
+                [],
                 UrlGenerator::ABSOLUTE_URL
-            ),
+            ) . $data->successUrl,
             $this->generateUrl(
-                'app_subscription',
-                ['id' => $patient->getId(), 'status' => 'cancel'],
+                'app_home',
+                [],
                 UrlGenerator::ABSOLUTE_URL
-            ),
+            ) . $data->cancelUrl,
             $data->stripeSubPlanId
         );
 
@@ -117,11 +109,10 @@ class SubscriptionController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/subscription/customer-portal-session",
+     * @Route("/subscription/customer-portal-session",
      * name="app_subscription_customer_portal_session", priority=1, methods={"POST"})
      */
     public function subscriptionCustomerPortalSession(
-        Patient $patient,
         Request $request
     ): JsonResponse {
         $data = json_decode($request->getContent());
@@ -130,7 +121,7 @@ class SubscriptionController extends AbstractController
             $data->stripeCustomerId,
             $this->generateUrl(
                 'app_subscription',
-                ['id' => $patient->getId()],
+                [],
                 UrlGenerator::ABSOLUTE_URL
             ),
         );
@@ -147,30 +138,5 @@ class SubscriptionController extends AbstractController
     public function subscriptionWebhook(Request $request): JsonResponse
     {
         return $this->stripeService->handleSubscriptionWebhook($request);
-    }
-
-    private function createSubscription(
-        Patient $patient,
-        Subscription $subscription,
-        StripeCheckoutSession $stripeCheckoutSession,
-        StripeSubscription $stripeSubscription
-    ): void {
-        $subscription->setPatient($patient);
-
-        $subscription->setStripeCustomerId($stripeCheckoutSession->id);
-        $subscription->setStripeSubscriptionId($stripeSubscription->id);
-
-        $currentPeriodStart = new \DateTime();
-        $currentPeriodStart->setTimestamp($stripeSubscription->current_period_start);
-        $subscription->setCurrentPeriodStart($currentPeriodStart);
-
-        $currentPeriodEnd = new \DateTime();
-        $currentPeriodEnd->setTimestamp($stripeSubscription->current_period_end);
-        $subscription->setCurrentPeriodEnd($currentPeriodEnd);
-
-        $subscription->setIsActive(true);
-
-        $this->em->persist($subscription);
-        $this->em->flush();
     }
 }

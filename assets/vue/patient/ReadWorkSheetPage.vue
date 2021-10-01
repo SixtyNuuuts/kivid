@@ -85,6 +85,7 @@
                     :loading="loading"
                     :doctorView="doctorView"
                     :worksheet="getWorksheet"
+                    :exercises="getExercises"
                     :currentWorksheetSession="getCurrentWorksheetSession"
                     :csrfTokenStartWorksheetSession="
                         csrfTokenStartWorksheetSession
@@ -95,6 +96,7 @@
                     :csrfTokenCompleteExercise="csrfTokenCompleteExercise"
                     :csrfTokenCreateExerciseStat="csrfTokenCreateExerciseStat"
                     :csrfTokenCreateCommentary="csrfTokenCreateCommentary"
+                    @stripeCheckout="stripeCheckout"
                 />
             </section>
         </main>
@@ -120,6 +122,7 @@ export default {
             doctor: null,
             worksheetId: null,
             worksheet: {},
+            exercises: [],
             currentWorksheetSession: {},
             totalWorksheetSessions: null,
             doctorView: null,
@@ -130,11 +133,17 @@ export default {
             csrfTokenCreateCommentary: null,
             modalTimingFriezeMobile: false,
             loading: false,
+            stripeSubPlans: null,
+            status: null,
+            stripeSubscription: null,
         };
     },
     computed: {
         getWorksheet() {
             return this.worksheet;
+        },
+        getExercises() {
+            return this.exercises;
         },
         getCurrentWorksheetSession() {
             return this.currentWorksheetSession;
@@ -143,10 +152,8 @@ export default {
             return this.totalWorksheetSessions;
         },
         allExercisesIsCompleted() {
-            if (this.getWorksheet.exercises) {
-                return !this.getWorksheet.exercises.filter(
-                    (e) => !e.isCompleted
-                ).length;
+            if (this.getExercises) {
+                return !this.getExercises.filter((e) => !e.isCompleted).length;
             }
         },
     },
@@ -175,6 +182,28 @@ export default {
                 document.location.href = `/patient/${this.patient.id}/dashboard`;
             }
         },
+        stripeCheckout(indice) {
+            this.axios
+                .post(`/subscription/checkout`, {
+                    stripeSubPlanId: this.stripeSubPlans[indice].planId,
+                    stripeCustomerId: this.stripeSubscription
+                        ? this.stripeSubscription.customer
+                        : null,
+                    successUrl: `patient/${this.patient.id}/fiche/${this.getWorksheet.id}/success`,
+                    cancelUrl: `patient/${this.patient.id}/fiche/${this.getWorksheet.id}/cancel`,
+                })
+                .then((response) => {
+                    window.location.href = response.data;
+                })
+                .catch((error) => {
+                    console.log(error);
+
+                    f.openErrorNotification(
+                        "Erreur",
+                        "Erreur lors du processus d'abonnement"
+                    );
+                });
+        },
     },
     created() {
         Vue.prototype.$vs = this.$vs;
@@ -193,6 +222,24 @@ export default {
         this.csrfTokenCreateExerciseStat = data.csrfTokenCreateExerciseStat;
         this.csrfTokenCreateCommentary = data.csrfTokenCreateCommentary;
 
+        this.stripeSubPlans = data.stripeSubPlans;
+        this.stripeSubscription = data.stripeSubscription;
+        this.status = data.status;
+
+        if ("cancel" === this.status) {
+            f.openPrimaryNotification(
+                "Paiement annulé",
+                "Le paiement a été annulé"
+            );
+        }
+
+        if ("success" === this.status) {
+            f.openSuccessNotification(
+                "Paiement accepté",
+                "Vous pouvez profiter de votre abonnement"
+            );
+        }
+
         this.loading = true;
 
         this.axios
@@ -209,69 +256,93 @@ export default {
                     .then((response) => {
                         this.currentWorksheetSession = response.data;
 
-                        this.worksheet.exercises = f.sortByPosition(
-                            this.worksheet.exercises.map((exercise) => {
-                                return {
-                                    ...exercise,
-                                    commentary: this.getCurrentCommentary(
-                                        exercise.commentaries
-                                    ),
-                                };
-                            })
-                        );
-
                         this.axios
                             .get(
-                                `/patient/${this.patient.id}/get/total-worksheet-sessions/${this.worksheetId}`
+                                `/patient/${this.patient.id}/get/exercises/${this.worksheetId}`
                             )
                             .then((response) => {
-                                this.totalWorksheetSessions = response.data;
+                                this.exercises = response.data;
 
-                                if (
-                                    this.currentWorksheetSession &&
-                                    !this.currentWorksheetSession
-                                        .isInProgress &&
-                                    !this.currentWorksheetSession.isCompleted
-                                ) {
-                                    this.axios
-                                        .post(
-                                            `/patient/${this.patient.id}/start/worksheet-session`,
-                                            {
-                                                _token: this
-                                                    .csrfTokenStartWorksheetSession,
-                                                worksheetId:
-                                                    this.getWorksheet.id,
-                                                worksheetSessionId:
-                                                    this
-                                                        .getCurrentWorksheetSession
-                                                        .id,
-                                            }
-                                        )
-                                        .then((response) => {
-                                            // console.log(response.data);
+                                this.exercises = f.sortByPosition(
+                                    this.exercises.map((exercise) => {
+                                        return {
+                                            ...exercise,
+                                            commentary:
+                                                this.getCurrentCommentary(
+                                                    exercise.commentaries
+                                                ),
+                                        };
+                                    })
+                                );
 
-                                            this.getCurrentWorksheetSession.isInProgress = true;
+                                this.axios
+                                    .get(
+                                        `/patient/${this.patient.id}/get/total-worksheet-sessions/${this.worksheetId}`
+                                    )
+                                    .then((response) => {
+                                        this.totalWorksheetSessions =
+                                            response.data;
 
-                                            this.getWorksheet.exercises.forEach(
-                                                (exercise) => {
-                                                    exercise.isCompleted = false;
-                                                }
-                                            );
+                                        if (
+                                            this.currentWorksheetSession &&
+                                            !this.currentWorksheetSession
+                                                .isInProgress &&
+                                            !this.currentWorksheetSession
+                                                .isCompleted
+                                        ) {
+                                            this.axios
+                                                .post(
+                                                    `/patient/${this.patient.id}/start/worksheet-session`,
+                                                    {
+                                                        _token: this
+                                                            .csrfTokenStartWorksheetSession,
+                                                        worksheetId:
+                                                            this.getWorksheet
+                                                                .id,
+                                                        worksheetSessionId:
+                                                            this
+                                                                .getCurrentWorksheetSession
+                                                                .id,
+                                                    }
+                                                )
+                                                .then((response) => {
+                                                    // console.log(response.data);
 
+                                                    this.getCurrentWorksheetSession.isInProgress = true;
+
+                                                    this.exercises.forEach(
+                                                        (exercise) => {
+                                                            exercise.isCompleted = false;
+                                                        }
+                                                    );
+
+                                                    this.loading = false;
+                                                })
+                                                .catch((error) => {
+                                                    const errorMess =
+                                                        "object" ===
+                                                        typeof error.response
+                                                            .data
+                                                            ? error.response
+                                                                  .data.detail
+                                                            : error.response
+                                                                  .data;
+
+                                                    console.error(errorMess);
+                                                });
+                                        } else {
                                             this.loading = false;
-                                        })
-                                        .catch((error) => {
-                                            const errorMess =
-                                                "object" ===
-                                                typeof error.response.data
-                                                    ? error.response.data.detail
-                                                    : error.response.data;
+                                        }
+                                    })
+                                    .catch((error) => {
+                                        const errorMess =
+                                            "object" ===
+                                            typeof error.response.data
+                                                ? error.response.data.detail
+                                                : error.response.data;
 
-                                            console.error(errorMess);
-                                        });
-                                } else {
-                                    this.loading = false;
-                                }
+                                        console.error(errorMess);
+                                    });
                             })
                             .catch((error) => {
                                 const errorMess =

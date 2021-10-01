@@ -260,8 +260,9 @@ export default {
         },
         checkAndFormatDurationValue(durationValue, event) {
             const durationType = event.target.id;
+            const key = event.keyCode || event.charCode;
 
-            if (!("Backspace" === event.code)) {
+            if (!("Backspace" === event.code) || !(key == 8)) {
                 if ("vs-input--duration" === durationType) {
                     if (durationValue < 1) {
                         this.worksheet.duration = 1;

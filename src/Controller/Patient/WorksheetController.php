@@ -5,11 +5,14 @@ namespace App\Controller\Patient;
 use App\Entity\Score;
 use App\Entity\Patient;
 use App\Entity\Commentary;
+use App\Service\StripeService;
+use App\Repository\ScoreRepository;
+use App\Service\SubscriptionService;
 use App\Repository\ExerciseRepository;
 use App\Repository\WorksheetRepository;
 use App\Repository\CommentaryRepository;
-use App\Repository\ScoreRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\SubscriptionRepository;
 use Symfony\Component\HttpFoundation\Request;
 use App\Repository\WorksheetSessionRepository;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,6 +29,7 @@ class WorksheetController extends AbstractController
     private $commentaryRepository;
     private $worksheetRepository;
     private $worksheetSessionRepository;
+    private $subscriptionRepository;
     private $scoreRepository;
     private $em;
 
@@ -34,6 +38,7 @@ class WorksheetController extends AbstractController
         CommentaryRepository $commentaryRepository,
         WorksheetRepository $worksheetRepository,
         WorksheetSessionRepository $worksheetSessionRepository,
+        SubscriptionRepository $subscriptionRepository,
         ScoreRepository $scoreRepository,
         EntityManagerInterface $em
     ) {
@@ -41,18 +46,61 @@ class WorksheetController extends AbstractController
         $this->commentaryRepository = $commentaryRepository;
         $this->worksheetRepository = $worksheetRepository;
         $this->worksheetSessionRepository = $worksheetSessionRepository;
+        $this->subscriptionRepository = $subscriptionRepository;
         $this->scoreRepository = $scoreRepository;
         $this->em = $em;
     }
 
     /**
-     * @Route("/{id}/fiche/{worksheetId}", name="app_patient_worksheet_read", methods={"GET"})
+     * @Route("/{id}/fiche/{worksheetId}/{status}", name="app_patient_worksheet_read", methods={"GET"})
      */
-    public function worksheetRead(Patient $patient, int $worksheetId = null): Response
-    {
+    public function worksheetRead(
+        Request $request,
+        Patient $patient,
+        int $worksheetId = null,
+        string $status = null,
+        SubscriptionService $subscriptionService,
+        StripeService $stripeService
+    ): Response {
+        if ('success' === $status) {
+            $stripeCheckoutSessionId = $request->query->get('session_id');
+
+            $stripeCheckoutSession = $stripeService->retrieveCheckoutSession(
+                $stripeCheckoutSessionId
+            );
+
+            $stripeSubscription = $stripeService->retrieveSubscription(
+                $stripeCheckoutSession->subscription
+            );
+
+            $subscriptionExist = $this->subscriptionRepository->findOneBy([
+                'stripeSubscriptionId' => $stripeSubscription->id
+            ]);
+
+            if (!$subscriptionExist) {
+                $subscriptionService->createSubscription(
+                    $patient,
+                    $stripeSubscription
+                );
+            }
+        }
+
+        if ('success' !== $status) {
+            $subscription = $this->subscriptionRepository->findCurrentSubscription($patient);
+
+            if ($subscription) {
+                $stripeSubscription = $stripeService->retrieveSubscription(
+                    $subscription->getStripeSubscriptionId()
+                );
+            }
+        }
+
         return $this->render('patient/read_worksheet.html.twig', [
             'patient' => $patient,
             'worksheetId' => $worksheetId,
+            'status' => $status,
+            'stripeSubPlans' => $subscriptionService->getPlans(),
+            'stripeSubscription' => $stripeSubscription ?? null,
             'doctorView' => false,
             'doctor' => null,
         ]);
@@ -85,6 +133,34 @@ class WorksheetController extends AbstractController
             200,
             [],
             ['groups' => 'dashboard_worksheet_read']
+        );
+    }
+
+    /**
+     * @Route("/{id}/get/exercises/{worksheetId}", name="app_patient_get_exercises", methods={"GET"})
+     */
+    public function getExercises(Patient $patient, int $worksheetId): JsonResponse
+    {
+        $exercises = $this->exerciseRepository->findBy(
+            ['worksheet' => $worksheetId],
+            ['position' => 'ASC']
+        );
+
+        $patientHasCurrentSubscription = $this->subscriptionRepository->findCurrentSubscription($patient);
+
+        if (!$patientHasCurrentSubscription) {
+            foreach ($exercises as $key => $exercise) {
+                if ($key > 1) {
+                    $exercise->getVideo()->setYoutubeId(null)->setUrl('');
+                }
+            }
+        }
+
+        return $this->json(
+            $exercises,
+            200,
+            [],
+            ['groups' => 'worksheet_read']
         );
     }
 
