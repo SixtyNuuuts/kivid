@@ -10,7 +10,10 @@
         >
             <i class="kiv-chevron-down icon-3"></i>
         </button>
-        <h2>Mes fiches</h2>
+        <h2>
+            <span v-if="!doctorView">Mes</span
+            ><span v-if="doctorView">Ses</span> fiches
+        </h2>
         <transition name="height">
             <div v-if="$parent.myWorksheetsContent" class="worksheet-list">
                 <div
@@ -34,7 +37,8 @@
                                         (worksheet.currentWorksheetSession &&
                                             worksheet.currentWorksheetSession
                                                 .isCompleted) ||
-                                        !worksheet.currentWorksheetSession,
+                                        (!worksheet.currentWorksheetSession &&
+                                            worksheet.exerciseStats.length > 0),
                                 }"
                             />
                         </div>
@@ -65,10 +69,13 @@
                         <div
                             class="worksheet-progress-line"
                             v-if="
-                                worksheet.currentWorksheetSession &&
-                                !worksheet.currentWorksheetSession
-                                    .isCompleted &&
-                                !worksheet.currentWorksheetSession.isInProgress
+                                (worksheet.currentWorksheetSession &&
+                                    !worksheet.currentWorksheetSession
+                                        .isCompleted &&
+                                    !worksheet.currentWorksheetSession
+                                        .isInProgress) ||
+                                (!worksheet.currentWorksheetSession &&
+                                    worksheet.exerciseStats.length === 0)
                             "
                         >
                             <div class="progressbar-base">
@@ -91,7 +98,8 @@
                                 (worksheet.currentWorksheetSession &&
                                     worksheet.currentWorksheetSession
                                         .isCompleted) ||
-                                !worksheet.currentWorksheetSession
+                                (!worksheet.currentWorksheetSession &&
+                                    worksheet.exerciseStats.length > 0)
                             "
                             class="worksheet-content session-completed"
                         >
@@ -112,7 +120,12 @@
                                     </span>
                                 </transition>
                             </p>
-                            <p v-if="!worksheet.currentWorksheetSession">
+                            <p
+                                v-if="
+                                    !worksheet.currentWorksheetSession &&
+                                    worksheet.exerciseStats.length > 0
+                                "
+                            >
                                 Traitement terminé<br />
                             </p>
                             <vs-button
@@ -160,7 +173,8 @@
                             <div class="buttons">
                                 <vs-button
                                     :disabled="
-                                        redirectInProgress === worksheet.id
+                                        redirectInProgress === worksheet.id ||
+                                        doctorView
                                     "
                                     @click="
                                         redirectToWorksheetPage(worksheet.id)
@@ -258,6 +272,7 @@ export default {
         patient: Object,
         patientWorksheets: Array,
         loadingPatientWorksheets: Boolean,
+        doctorView: Boolean,
     },
     components: {
         TagPartOfBody,

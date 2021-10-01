@@ -777,7 +777,7 @@
                         </div>
                     </transition>
                 </div>
-                <div class="pagination" v-if="worksheetTemplates.length > max">
+                <div class="pagination" v-if="countWorksheetTemplates > max">
                     <vs-pagination
                         v-model="page"
                         buttons-dotted
@@ -867,6 +867,9 @@ export default {
                 this.page,
                 this.max
             );
+        },
+        countWorksheetTemplates() {
+            return this.getSearch(this.worksheetTemplates, this.search).length;
         },
         getTagsFromAll() {
             return f.getTagsFromAll(this.tagsFromExercises);

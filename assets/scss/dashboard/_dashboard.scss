@@ -92,4 +92,49 @@
             }
         }
     }
+
+    #patient {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+
+        @media (min-width: 650px) {
+            width: 49%;
+        }
+
+        @media (min-width: 992px) {
+            width: 100%;
+        }
+
+        .patient-details {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+
+            .patient-avatar {
+                .avatar {
+                    margin-right: 1.9rem;
+
+                    @media (min-width: 992px) {
+                        margin-right: 1.5vw;
+                    }
+                }
+            }
+
+            .patient-infos {
+                font-size: 1.8rem;
+                width: 100%;
+
+                .name {
+                    margin: 0.5rem 0;
+                }
+
+                .birthdate {
+                    margin: 0.5rem 0;
+                    font-weight: 200;
+                    font-size: 1.5rem;
+                }
+            }
+        }
+    }
 }

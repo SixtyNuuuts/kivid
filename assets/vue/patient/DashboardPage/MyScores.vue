@@ -10,7 +10,10 @@
         >
             <i class="kiv-chevron-down icon-3"></i>
         </button>
-        <h2>Mes indices</h2>
+        <h2>
+            <span v-if="!doctorView">Mes</span
+            ><span v-if="doctorView">Ses</span> indices
+        </h2>
         <transition name="height">
             <div v-if="$parent.myScoresContent" class="content">
                 <div class="score-circle">
@@ -241,6 +244,7 @@ export default {
         patient: Object,
         patientWorksheets: Array,
         loadingPatientWorksheets: Boolean,
+        doctorView: Boolean,
     },
     components: {
         ScoreRankBlock,

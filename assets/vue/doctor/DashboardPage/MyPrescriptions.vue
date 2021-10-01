@@ -53,6 +53,11 @@
                                         size="35"
                                         class="user-avatar"
                                         circle
+                                        @click="
+                                            redirectToPatientDashboard(
+                                                worksheet.patient.id
+                                            )
+                                        "
                                     >
                                         <img
                                             :src="
@@ -64,7 +69,14 @@
                                             :alt="`Avatar de ${worksheet.patient.firstname} ${worksheet.patient.lastname}`"
                                         />
                                     </vs-avatar>
-                                    <h3 class="worksheet-title">
+                                    <h3
+                                        class="worksheet-title"
+                                        @click="
+                                            redirectToPatientDashboard(
+                                                worksheet.patient.id
+                                            )
+                                        "
+                                    >
                                         <span
                                             class="user-name"
                                             v-if="
@@ -617,6 +629,9 @@ export default {
                 document.location.href = `/doctor/${this.doctor.id}/fiche/voir/${worksheetId}`;
             }
         },
+        redirectToPatientDashboard(patientId) {
+            document.location.href = `/doctor/${this.doctor.id}/voir/patient/${patientId}`;
+        },
         activeTab(num) {
             this.$parent.activeTab = num;
 
@@ -719,6 +734,7 @@ export default {
                     margin-right: 1rem;
                     min-width: 35px;
                     max-height: 35px;
+                    cursor: pointer;
                 }
 
                 .user-title {
@@ -746,6 +762,7 @@ export default {
 
                     .worksheet-title {
                         font-size: 1.3rem;
+                        cursor: pointer;
 
                         @media (min-width: 500px) {
                             font-size: 1.4rem;

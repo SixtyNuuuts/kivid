@@ -126,7 +126,15 @@
                                         v-model="exercise.numberOfSeries"
                                         label-placeholder="Nb de séries"
                                         type="number"
-                                        @keyup="checkAndFormatValue($event)"
+                                        @keyup="
+                                            checkAndFormatValue(
+                                                exercise,
+                                                $event
+                                            )
+                                        "
+                                        @blur="
+                                            checkIfValueIsEmptyOrNull(exercise)
+                                        "
                                         min="1"
                                     >
                                     </vs-input>
@@ -137,7 +145,15 @@
                                         v-model="exercise.numberOfRepetitions"
                                         label-placeholder="Nb de répétitions"
                                         type="number"
-                                        @keyup="checkAndFormatValue($event)"
+                                        @keyup="
+                                            checkAndFormatValue(
+                                                exercise,
+                                                $event
+                                            )
+                                        "
+                                        @blur="
+                                            checkIfValueIsEmptyOrNull(exercise)
+                                        "
                                         min="1"
                                     >
                                     </vs-input>
@@ -338,6 +354,7 @@ export default {
         doctor: Object,
         loading: Boolean,
         worksheet: Object,
+        exercises: Array,
         action: String,
         csrfTokenRemoveExercise: String,
     },
@@ -361,12 +378,10 @@ export default {
             return this.worksheet;
         },
         getExercises() {
-            return f.sortByPosition(this.getWorksheet.exercises);
+            return f.sortByPosition(this.exercises);
         },
         getTheLastExercise() {
-            return this.getWorksheet.exercises[
-                this.getWorksheet.exercises.length - 1
-            ];
+            return this.getExercises[this.getExercises.length - 1];
         },
     },
     methods: {
@@ -376,7 +391,7 @@ export default {
             }
         },
         addVideosSelection(videos) {
-            const is = this.worksheet.exercises.length;
+            const is = this.getExercises.length;
             videos.forEach((v, i) => {
                 const exercise = {
                     id: null,
@@ -392,13 +407,34 @@ export default {
                     video: v,
                 };
 
-                this.worksheet.exercises.push(exercise);
+                this.exercises.push(exercise);
             });
         },
-        checkAndFormatValue(event) {
+        checkAndFormatValue(exercise, event) {
             const key = event.keyCode || event.charCode;
-            if (key == 48 || key == 96) {
-                event.preventDefault();
+
+            if (!("Backspace" === event.code) || !(key == 8)) {
+                if (exercise.numberOfSeries < 1) {
+                    exercise.numberOfSeries = 1;
+                }
+
+                if (exercise.numberOfRepetitions < 1) {
+                    exercise.numberOfRepetitions = 1;
+                }
+            }
+        },
+        checkIfValueIsEmptyOrNull(exercise) {
+            if (
+                "" === exercise.numberOfSeries ||
+                null === exercise.numberOfSeries
+            ) {
+                exercise.numberOfSeries = 1;
+            }
+            if (
+                "" === exercise.numberOfRepetitions ||
+                null === exercise.numberOfRepetitions
+            ) {
+                exercise.numberOfRepetitions = 1;
             }
         },
         upPosition(exercise) {
@@ -441,14 +477,12 @@ export default {
             this.btnLoadingValidRemoveExercise = true;
 
             if (!this.removeExerciseDetails.id || "creation" === this.action) {
-                this.worksheet.exercises.splice(
-                    this.worksheet.exercises.indexOf(
-                        this.removeExerciseDetails
-                    ),
+                this.exercises.splice(
+                    this.exercises.indexOf(this.removeExerciseDetails),
                     1
                 );
 
-                f.sortByPosition(this.worksheet.exercises).map(
+                f.sortByPosition(this.exercises).map(
                     (e, i) => (e.position = i)
                 );
 
@@ -464,14 +498,12 @@ export default {
                     .then((response) => {
                         console.log(response.data);
 
-                        this.worksheet.exercises.splice(
-                            this.worksheet.exercises.indexOf(
-                                this.removeExerciseDetails
-                            ),
+                        this.exercises.splice(
+                            this.exercises.indexOf(this.removeExerciseDetails),
                             1
                         );
 
-                        f.sortByPosition(this.worksheet.exercises).map(
+                        f.sortByPosition(this.exercises).map(
                             (e, i) => (e.position = i)
                         );
 

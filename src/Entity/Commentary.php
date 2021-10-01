@@ -21,6 +21,7 @@ class Commentary
 
     /**
      * @ORM\Column(type="datetime_immutable")
+     * @Groups({"worksheet_read"})
      */
     private $createdAt;
 

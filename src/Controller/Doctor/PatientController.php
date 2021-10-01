@@ -64,7 +64,7 @@ class PatientController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/show/patient/{patientId}", name="app_doctor_show_patient", methods={"GET"})
+     * @Route("/{id}/voir/patient/{patientId}", name="app_doctor_show_patient", methods={"GET"})
      */
     public function showPatient(
         int $patientId = null

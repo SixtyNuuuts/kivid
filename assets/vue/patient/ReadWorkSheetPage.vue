@@ -242,134 +242,146 @@ export default {
 
         this.loading = true;
 
-        this.axios
-            .get(
-                `/patient/${this.patient.id}/get/worksheet/${this.worksheetId}`
-            )
-            .then((response) => {
-                this.worksheet = response.data;
+        if (!this.doctorView) {
+            this.axios
+                .get(
+                    `/patient/${this.patient.id}/get/worksheet/${this.worksheetId}`
+                )
+                .then((response) => {
+                    this.worksheet = response.data;
 
-                this.axios
-                    .get(
-                        `/patient/${this.patient.id}/get/current-worksheet-session/${this.worksheetId}`
-                    )
-                    .then((response) => {
-                        this.currentWorksheetSession = response.data;
+                    this.axios
+                        .get(
+                            `/patient/${this.patient.id}/get/current-worksheet-session/${this.worksheetId}`
+                        )
+                        .then((response) => {
+                            this.currentWorksheetSession = response.data;
 
-                        this.axios
-                            .get(
-                                `/patient/${this.patient.id}/get/exercises/${this.worksheetId}`
-                            )
-                            .then((response) => {
-                                this.exercises = response.data;
+                            this.axios
+                                .get(
+                                    `/patient/${this.patient.id}/get/exercises/${this.worksheetId}`
+                                )
+                                .then((response) => {
+                                    this.exercises = response.data;
 
-                                this.exercises = f.sortByPosition(
-                                    this.exercises.map((exercise) => {
-                                        return {
-                                            ...exercise,
-                                            commentary:
-                                                this.getCurrentCommentary(
-                                                    exercise.commentaries
-                                                ),
-                                        };
-                                    })
-                                );
+                                    this.exercises = f.sortByPosition(
+                                        this.exercises.map((exercise) => {
+                                            return {
+                                                ...exercise,
+                                                commentaries:
+                                                    f.sortByCreatedAtDesc(
+                                                        exercise.commentaries
+                                                    ),
+                                                commentary:
+                                                    this.getCurrentCommentary(
+                                                        exercise.commentaries
+                                                    ),
+                                            };
+                                        })
+                                    );
 
-                                this.axios
-                                    .get(
-                                        `/patient/${this.patient.id}/get/total-worksheet-sessions/${this.worksheetId}`
-                                    )
-                                    .then((response) => {
-                                        this.totalWorksheetSessions =
-                                            response.data;
+                                    this.axios
+                                        .get(
+                                            `/patient/${this.patient.id}/get/total-worksheet-sessions/${this.worksheetId}`
+                                        )
+                                        .then((response) => {
+                                            this.totalWorksheetSessions =
+                                                response.data;
 
-                                        if (
-                                            this.currentWorksheetSession &&
-                                            !this.currentWorksheetSession
-                                                .isInProgress &&
-                                            !this.currentWorksheetSession
-                                                .isCompleted
-                                        ) {
-                                            this.axios
-                                                .post(
-                                                    `/patient/${this.patient.id}/start/worksheet-session`,
-                                                    {
-                                                        _token: this
-                                                            .csrfTokenStartWorksheetSession,
-                                                        worksheetId:
-                                                            this.getWorksheet
-                                                                .id,
-                                                        worksheetSessionId:
-                                                            this
-                                                                .getCurrentWorksheetSession
-                                                                .id,
-                                                    }
-                                                )
-                                                .then((response) => {
-                                                    // console.log(response.data);
-
-                                                    this.getCurrentWorksheetSession.isInProgress = true;
-
-                                                    this.exercises.forEach(
-                                                        (exercise) => {
-                                                            exercise.isCompleted = false;
+                                            if (
+                                                this.currentWorksheetSession &&
+                                                !this.currentWorksheetSession
+                                                    .isInProgress &&
+                                                !this.currentWorksheetSession
+                                                    .isCompleted
+                                            ) {
+                                                this.axios
+                                                    .post(
+                                                        `/patient/${this.patient.id}/start/worksheet-session`,
+                                                        {
+                                                            _token: this
+                                                                .csrfTokenStartWorksheetSession,
+                                                            worksheetId:
+                                                                this
+                                                                    .getWorksheet
+                                                                    .id,
+                                                            worksheetSessionId:
+                                                                this
+                                                                    .getCurrentWorksheetSession
+                                                                    .id,
                                                         }
-                                                    );
+                                                    )
+                                                    .then((response) => {
+                                                        // console.log(response.data);
 
-                                                    this.loading = false;
-                                                })
-                                                .catch((error) => {
-                                                    const errorMess =
-                                                        "object" ===
-                                                        typeof error.response
-                                                            .data
-                                                            ? error.response
-                                                                  .data.detail
-                                                            : error.response
-                                                                  .data;
+                                                        this.getCurrentWorksheetSession.isInProgress = true;
 
-                                                    console.error(errorMess);
-                                                });
-                                        } else {
-                                            this.loading = false;
-                                        }
-                                    })
-                                    .catch((error) => {
-                                        const errorMess =
-                                            "object" ===
-                                            typeof error.response.data
-                                                ? error.response.data.detail
-                                                : error.response.data;
+                                                        this.exercises.forEach(
+                                                            (exercise) => {
+                                                                exercise.isCompleted = false;
+                                                            }
+                                                        );
 
-                                        console.error(errorMess);
-                                    });
-                            })
-                            .catch((error) => {
-                                const errorMess =
-                                    "object" === typeof error.response.data
-                                        ? error.response.data.detail
-                                        : error.response.data;
+                                                        this.loading = false;
+                                                    })
+                                                    .catch((error) => {
+                                                        const errorMess =
+                                                            "object" ===
+                                                            typeof error
+                                                                .response.data
+                                                                ? error.response
+                                                                      .data
+                                                                      .detail
+                                                                : error.response
+                                                                      .data;
 
-                                console.error(errorMess);
-                            });
-                    })
-                    .catch((error) => {
-                        const errorMess =
-                            "object" === typeof error.response.data
-                                ? error.response.data.detail
-                                : error.response.data;
+                                                        console.error(
+                                                            errorMess
+                                                        );
+                                                    });
+                                            } else {
+                                                this.loading = false;
+                                            }
+                                        })
+                                        .catch((error) => {
+                                            const errorMess =
+                                                "object" ===
+                                                typeof error.response.data
+                                                    ? error.response.data.detail
+                                                    : error.response.data;
 
-                        console.error(errorMess);
-                    });
-            })
-            .catch((error) => {
-                const errorMess =
-                    "object" === typeof error.response.data
-                        ? error.response.data.detail
-                        : error.response.data;
+                                            console.error(errorMess);
+                                        });
+                                })
+                                .catch((error) => {
+                                    const errorMess =
+                                        "object" === typeof error.response.data
+                                            ? error.response.data.detail
+                                            : error.response.data;
 
-                console.error(errorMess);
-            });
+                                    console.error(errorMess);
+                                });
+                        })
+                        .catch((error) => {
+                            const errorMess =
+                                "object" === typeof error.response.data
+                                    ? error.response.data.detail
+                                    : error.response.data;
+
+                            console.error(errorMess);
+                        });
+                })
+                .catch((error) => {
+                    const errorMess =
+                        "object" === typeof error.response.data
+                            ? error.response.data.detail
+                            : error.response.data;
+
+                    console.error(errorMess);
+                });
+        } else {
+            this.loading = false;
+        }
     },
 };
 </script>
