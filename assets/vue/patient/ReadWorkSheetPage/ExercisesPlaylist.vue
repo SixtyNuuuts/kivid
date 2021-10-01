@@ -123,9 +123,11 @@
                             </div>
                         </div>
                         <div class="commentary">
-                            <p>Commentaire</p>
+                            <p v-if="exercise.commentary && !doctorView">
+                                Commentaire
+                            </p>
                             <vs-input
-                                v-if="exercise.commentary"
+                                v-if="exercise.commentary && !doctorView"
                                 placeholder="Tapez votre commentaire"
                                 :disabled="
                                     !exercise.isCompleted ||
@@ -135,12 +137,42 @@
                                 @keyup="setCommentaryWithDebounce(exercise)"
                                 @blur="setCommentary(exercise)"
                             />
+                            <p
+                                v-if="
+                                    exercise.commentaries.length > 0 &&
+                                    doctorView
+                                "
+                            >
+                                Commentaire<span
+                                    v-if="exercise.commentaries.length > 1"
+                                    >s</span
+                                >
+                            </p>
+                            <div v-if="exercise.commentaries && doctorView">
+                                <div
+                                    v-for="(
+                                        commentary, i
+                                    ) in exercise.commentaries"
+                                    :key="i"
+                                    class="commentary-doc-read"
+                                >
+                                    <h5>
+                                        {{ formatDate(commentary.createdAt) }} |
+                                        Session
+                                        {{
+                                            commentary.worksheetSession
+                                                .execOrder
+                                        }}
+                                    </h5>
+                                    <p>{{ commentary.content }}</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
             <div
-                v-if="!$parent.stripeSubscription"
+                v-if="!$parent.stripeSubscription && !doctorView"
                 class="request-subscription"
             >
                 <div class="icon-request-subscription">
@@ -153,7 +185,7 @@
                     </p>
                 </div>
                 <div class="btn-request-subscription">
-                    <vs-button :disabled="doctorView" @click="stripeCheckout()">
+                    <vs-button @click="stripeCheckout()">
                         Je m’abonne
                     </vs-button>
                 </div>
@@ -182,6 +214,7 @@
 
 <script>
 import VideoPlayer from "./ExercisesPlaylist/VideoPlayer.vue";
+import moment from "moment";
 
 export default {
     components: {
@@ -281,6 +314,9 @@ export default {
         },
         stripeCheckout() {
             this.$emit("stripeCheckout", 0);
+        },
+        formatDate(datetime) {
+            return moment(datetime).format("DD/MM/YYYY");
         },
     },
 };
@@ -502,6 +538,27 @@ export default {
                 p {
                     margin-top: 2.5rem;
                     margin-bottom: 1rem;
+                }
+
+                .commentary-doc-read {
+                    background: $white;
+                    padding: 1.2rem;
+                    border-radius: 0.8rem;
+
+                    &:not(:last-child) {
+                        margin-bottom: 1.2rem;
+                    }
+
+                    h5 {
+                        color: $gray-dark;
+                        margin: 0;
+                        font-size: 1rem;
+                    }
+
+                    p {
+                        margin: 0;
+                        margin-top: 0.5rem;
+                    }
                 }
             }
         }

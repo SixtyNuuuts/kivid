@@ -145,6 +145,13 @@ export default {
     return array
   },
 
+  sortByCreatedAtDesc(array) {
+    array.sort(function (a, b) {
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    });
+    return array;
+  },
+
   hexToRgbA(hex, alpha) {
     let c;
     if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {

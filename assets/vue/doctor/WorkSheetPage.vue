@@ -30,7 +30,11 @@
                         v-model="worksheet.title"
                         label-placeholder="Titre de la fiche"
                         type="text"
+                        @keyup="titleIsEmptyMessage = null"
                     >
+                        <template v-if="titleIsEmptyMessage" #message-danger>
+                            {{ titleIsEmptyMessage }}
+                        </template>
                     </vs-input>
                 </div>
                 <div v-if="patient" class="prescri-for-patient">
@@ -169,6 +173,7 @@
                     :loading="loading"
                     :action="action"
                     :worksheet="getWorksheet"
+                    :exercises="getExercises"
                     :csrfTokenRemoveExercise="csrfTokenRemoveExercise"
                 />
             </section>
@@ -224,13 +229,13 @@ export default {
             action: null,
             worksheetId: null,
             worksheet: {
-                exercises: [],
                 partOfBody: "",
                 duration: 1,
                 perDay: 1,
                 perWeek: 1,
                 title: "",
             },
+            exercises: [],
             patient: null,
             csrfTokenCreateWorksheet: null,
             csrfTokenEditWorksheet: null,
@@ -244,11 +249,15 @@ export default {
             btnLoadingValidEditWorksheet: false,
             btnLoadingValidCreateWorksheet: false,
             checkIfWorksheetSessionsExist: null,
+            titleIsEmptyMessage: null,
         };
     },
     computed: {
         getWorksheet() {
             return this.worksheet;
+        },
+        getExercises() {
+            return this.exercises;
         },
     },
     methods: {
@@ -312,88 +321,106 @@ export default {
                 }
             }
         },
+        checkIfTitleIsEmpty() {
+            if (this.worksheet.title === "" || this.worksheet.title === null) {
+                this.titleIsEmptyMessage =
+                    "Vous devez entrer un titre pour la fiche.";
+                return false;
+            }
+
+            return true;
+        },
         validEdit() {
             this.btnLoadingValidEditWorksheet = true;
 
-            this.axios
-                .post(`/doctor/${this.doctor.id}/edit/worksheet`, {
-                    _token: this.csrfTokenEditWorksheet,
-                    worksheetId: this.worksheet.id,
-                    title: this.worksheet.title,
-                    partOfBody: this.worksheet.partOfBody,
-                    duration: this.worksheet.duration,
-                    perWeek: this.worksheet.perWeek,
-                    perDay: this.worksheet.perDay,
-                    exercises: this.worksheet.exercises,
-                })
-                .then((response) => {
-                    f.openSuccessNotification(
-                        "Edition de la fiche",
-                        response.data
-                    );
-                    this.btnLoadingValidEditWorksheet = false;
+            const titleIsNotEmpty = this.checkIfTitleIsEmpty();
 
-                    setTimeout(() => {
-                        document.location.href = `/doctor/${this.doctor.id}/dashboard`;
-                    }, 2000);
-                })
-                .catch((error) => {
-                    const errorMess =
-                        "object" === typeof error.response.data
-                            ? error.response.data.detail
-                            : error.response.data;
+            if (titleIsNotEmpty) {
+                this.axios
+                    .post(`/doctor/${this.doctor.id}/edit/worksheet`, {
+                        _token: this.csrfTokenEditWorksheet,
+                        worksheetId: this.worksheet.id,
+                        title: this.worksheet.title,
+                        partOfBody: this.worksheet.partOfBody,
+                        duration: this.worksheet.duration,
+                        perWeek: this.worksheet.perWeek,
+                        perDay: this.worksheet.perDay,
+                        exercises: this.exercises,
+                    })
+                    .then((response) => {
+                        f.openSuccessNotification(
+                            "Edition de la fiche",
+                            response.data
+                        );
+                        this.btnLoadingValidEditWorksheet = false;
 
-                    this.btnLoadingValidEditWorksheet = false;
+                        setTimeout(() => {
+                            document.location.href = `/doctor/${this.doctor.id}/dashboard`;
+                        }, 2000);
+                    })
+                    .catch((error) => {
+                        const errorMess =
+                            "object" === typeof error.response.data
+                                ? error.response.data.detail
+                                : error.response.data;
 
-                    f.openErrorNotification("Erreur", errorMess);
-                });
+                        this.btnLoadingValidEditWorksheet = false;
+
+                        f.openErrorNotification("Erreur", errorMess);
+                    });
+            }
         },
         validCreate() {
             this.btnLoadingValidCreateWorksheet = true;
-            this.axios
-                .post(`/doctor/${this.doctor.id}/create/worksheet`, {
-                    _token: this.csrfTokenCreateWorksheet,
-                    worksheetId: this.worksheet.id,
-                    patientId: this.patient ? this.patient.id : null,
-                    title: this.worksheet.title,
-                    partOfBody: this.worksheet.partOfBody,
-                    duration: this.worksheet.duration,
-                    perWeek: this.worksheet.perWeek,
-                    perDay: this.worksheet.perDay,
-                    exercises: this.worksheet.exercises,
-                })
-                .then((response) => {
-                    if (this.patient) {
-                        f.openSuccessNotification(
-                            "Création de la prescription",
-                            `La fiche <strong> ${
-                                this.worksheet.title
-                            }</strong> a été prescrite à
+
+            const titleIsNotEmpty = this.checkIfTitleIsEmpty();
+
+            if (titleIsNotEmpty) {
+                this.axios
+                    .post(`/doctor/${this.doctor.id}/create/worksheet`, {
+                        _token: this.csrfTokenCreateWorksheet,
+                        worksheetId: this.worksheet.id,
+                        patientId: this.patient ? this.patient.id : null,
+                        title: this.worksheet.title,
+                        partOfBody: this.worksheet.partOfBody,
+                        duration: this.worksheet.duration,
+                        perWeek: this.worksheet.perWeek,
+                        perDay: this.worksheet.perDay,
+                        exercises: this.exercises,
+                    })
+                    .then((response) => {
+                        if (this.patient) {
+                            f.openSuccessNotification(
+                                "Création de la prescription",
+                                `La fiche <strong> ${
+                                    this.worksheet.title
+                                }</strong> a été prescrite à
                                 <strong>${this.getCivility(
                                     this.patient.gender
                                 )} ${this.patient.firstname} ${
-                                this.patient.lastname
-                            }</strong>.`
-                        );
-                    } else {
-                        f.openSuccessNotification(
-                            "Création de la fiche",
-                            response.data
-                        );
-                    }
-                    this.btnLoadingValidCreateWorksheet = false;
-                    setTimeout(() => {
-                        document.location.href = `/doctor/${this.doctor.id}/dashboard`;
-                    }, 2000);
-                })
-                .catch((error) => {
-                    const errorMess =
-                        "object" === typeof error.response.data
-                            ? error.response.data.detail
-                            : error.response.data;
-                    this.btnLoadingValidCreateWorksheet = false;
-                    f.openErrorNotification("Erreur", errorMess);
-                });
+                                    this.patient.lastname
+                                }</strong>.`
+                            );
+                        } else {
+                            f.openSuccessNotification(
+                                "Création de la fiche",
+                                response.data
+                            );
+                        }
+                        this.btnLoadingValidCreateWorksheet = false;
+                        setTimeout(() => {
+                            document.location.href = `/doctor/${this.doctor.id}/dashboard`;
+                        }, 2000);
+                    })
+                    .catch((error) => {
+                        const errorMess =
+                            "object" === typeof error.response.data
+                                ? error.response.data.detail
+                                : error.response.data;
+                        this.btnLoadingValidCreateWorksheet = false;
+                        f.openErrorNotification("Erreur", errorMess);
+                    });
+            }
         },
         getCivility(gender) {
             return f.getCivility(gender);
@@ -426,41 +453,60 @@ export default {
                         this.worksheet.title = `Copie de ${this.worksheet.title}`;
                     }
 
-                    this.worksheet.exercises = this.worksheet.exercises.map(
-                        (exercise) => {
-                            return {
-                                ...exercise,
-                                option: exercise.option ? exercise.option : "",
-                                tempo: exercise.tempo ? exercise.tempo : "",
-                                hold: exercise.hold ? exercise.hold : "",
-                                optionActive: exercise.option ? true : false,
-                                tempoActive: exercise.tempo ? true : false,
-                                holdActive: exercise.hold ? true : false,
-                            };
-                        }
-                    );
-                    if ("edition" === this.action) {
-                        this.axios
-                            .get(
-                                `/doctor/${this.doctor.id}/check/worksheet-sessions-exist/${this.worksheetId}`
-                            )
-                            .then((response) => {
-                                this.checkIfWorksheetSessionsExist =
-                                    response.data;
+                    this.axios
+                        .get(
+                            `/doctor/${this.doctor.id}/get/exercises/${this.worksheetId}`
+                        )
+                        .then((response) => {
+                            this.exercises = response.data;
 
-                                this.loading = false;
-                            })
-                            .catch((error) => {
-                                const errorMess =
-                                    "object" === typeof error.response.data
-                                        ? error.response.data.detail
-                                        : error.response.data;
-
-                                console.error(errorMess);
+                            this.exercises = this.exercises.map((exercise) => {
+                                return {
+                                    ...exercise,
+                                    option: exercise.option
+                                        ? exercise.option
+                                        : "",
+                                    tempo: exercise.tempo ? exercise.tempo : "",
+                                    hold: exercise.hold ? exercise.hold : "",
+                                    optionActive: exercise.option
+                                        ? true
+                                        : false,
+                                    tempoActive: exercise.tempo ? true : false,
+                                    holdActive: exercise.hold ? true : false,
+                                };
                             });
-                    } else {
-                        this.loading = false;
-                    }
+                            if ("edition" === this.action) {
+                                this.axios
+                                    .get(
+                                        `/doctor/${this.doctor.id}/check/worksheet-sessions-exist/${this.worksheetId}`
+                                    )
+                                    .then((response) => {
+                                        this.checkIfWorksheetSessionsExist =
+                                            response.data;
+
+                                        this.loading = false;
+                                    })
+                                    .catch((error) => {
+                                        const errorMess =
+                                            "object" ===
+                                            typeof error.response.data
+                                                ? error.response.data.detail
+                                                : error.response.data;
+
+                                        console.error(errorMess);
+                                    });
+                            } else {
+                                this.loading = false;
+                            }
+                        })
+                        .catch((error) => {
+                            const errorMess =
+                                "object" === typeof error.response.data
+                                    ? error.response.data.detail
+                                    : error.response.data;
+
+                            console.error(errorMess);
+                        });
                 })
                 .catch((error) => {
                     const errorMess =

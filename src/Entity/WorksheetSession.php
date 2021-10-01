@@ -53,7 +53,7 @@ class WorksheetSession
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"session_read"})
+     * @Groups({"session_read", "worksheet_read"})
      */
     private $execOrder;
 

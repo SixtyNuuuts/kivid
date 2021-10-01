@@ -81,7 +81,16 @@
                             </button>
                             <div class="patient-details">
                                 <div>
-                                    <vs-avatar class="avatar" circle size="60">
+                                    <vs-avatar
+                                        @click="
+                                            redirectToPatientDashboard(
+                                                patient.id
+                                            )
+                                        "
+                                        class="avatar"
+                                        circle
+                                        size="60"
+                                    >
                                         <img
                                             :src="
                                                 patient.avatarUrl
@@ -100,6 +109,11 @@
                                     </vs-avatar>
                                     <div class="user-name">
                                         <div
+                                            @click="
+                                                redirectToPatientDashboard(
+                                                    patient.id
+                                                )
+                                            "
                                             class="name"
                                             v-if="
                                                 patient.firstname ||
@@ -109,7 +123,14 @@
                                             {{ patient.firstname }}
                                             {{ patient.lastname }}
                                         </div>
-                                        <div class="mail">
+                                        <div
+                                            class="mail"
+                                            @click="
+                                                redirectToPatientDashboard(
+                                                    patient.id
+                                                )
+                                            "
+                                        >
                                             {{ patient.email }}
                                         </div>
                                         <div
@@ -587,6 +608,9 @@ export default {
         getSearch(data, filter) {
             return f.getSearch(data, filter);
         },
+        redirectToPatientDashboard(patientId) {
+            document.location.href = `/doctor/${this.doctor.id}/voir/patient/${patientId}`;
+        },
     },
     created() {
         this.loadingDoctorPatients = true;
@@ -756,6 +780,7 @@ export default {
                             margin-right: 1.5rem;
                             min-width: 60px;
                             position: relative;
+                            cursor: pointer;
 
                             .age {
                                 position: absolute;
@@ -814,6 +839,7 @@ export default {
                                 overflow: hidden;
                                 text-overflow: ellipsis;
                                 white-space: nowrap;
+                                cursor: pointer;
                             }
                             .mail {
                                 margin-top: 0.3rem;
@@ -821,6 +847,7 @@ export default {
                                 overflow: hidden;
                                 text-overflow: ellipsis;
                                 white-space: nowrap;
+                                cursor: pointer;
                             }
 
                             .prescriptions {

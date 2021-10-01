@@ -81,6 +81,24 @@ class WorksheetController extends AbstractController
     }
 
     /**
+     * @Route("/{id}/get/exercises/{worksheetId}", name="app_doctor_get_exercises", methods={"GET"})
+     */
+    public function getExercises(Doctor $doctor, int $worksheetId): JsonResponse
+    {
+        $exercises = $this->exerciseRepository->findBy(
+            ['worksheet' => $worksheetId],
+            ['position' => 'ASC']
+        );
+
+        return $this->json(
+            $exercises,
+            200,
+            [],
+            ['groups' => 'worksheet_read']
+        );
+    }
+
+    /**
      * @Route("/{id}/get/all/worksheets", name="app_doctor_get_all_worksheets", methods={"GET"})
      */
     public function getAllWorksheets(Doctor $doctor): JsonResponse
@@ -113,6 +131,9 @@ class WorksheetController extends AbstractController
             'doctor' => $doctor,
             'patient' => $patient,
             'worksheetId' => $worksheetId,
+            'status' => null,
+            'stripeSubPlans' => null,
+            'stripeSubscription' => null,
             'doctorView' => true,
         ]);
     }
