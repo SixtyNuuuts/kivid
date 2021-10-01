@@ -126,6 +126,8 @@
                                         v-model="exercise.numberOfSeries"
                                         label-placeholder="Nb de séries"
                                         type="number"
+                                        @keyup="checkAndFormatValue($event)"
+                                        min="1"
                                     >
                                     </vs-input>
                                 </div>
@@ -135,6 +137,8 @@
                                         v-model="exercise.numberOfRepetitions"
                                         label-placeholder="Nb de répétitions"
                                         type="number"
+                                        @keyup="checkAndFormatValue($event)"
+                                        min="1"
                                     >
                                     </vs-input>
                                 </div>
@@ -377,8 +381,8 @@ export default {
                 const exercise = {
                     id: null,
                     position: is + i,
-                    numberOfRepetitions: 0,
-                    numberOfSeries: 0,
+                    numberOfRepetitions: 1,
+                    numberOfSeries: 1,
                     option: "",
                     tempo: "",
                     hold: "",
@@ -390,6 +394,12 @@ export default {
 
                 this.worksheet.exercises.push(exercise);
             });
+        },
+        checkAndFormatValue(event) {
+            const key = event.keyCode || event.charCode;
+            if (key == 48 || key == 96) {
+                event.preventDefault();
+            }
         },
         upPosition(exercise) {
             if (exercise.position > 0) {

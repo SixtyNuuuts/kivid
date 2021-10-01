@@ -19,11 +19,10 @@
 {% endblock %}
 {% block vueData %}
 	{
-    "patient": {{ patient|serialize('json', {'groups': 'patient_read'})|raw }},
-	"csrfTokenEdit": {{ csrf_token('edit_profil' ~ app.user.id)|serialize('json')|raw }},
-	"stripeSubPlans": {{ stripeSubPlans|serialize('json')|raw }},
-  	"status": {{ status|serialize('json')|raw }},
-    "stripeSubscription": {{ stripeSubscription|serialize('json')|raw }},
-    "activeTab": "2"
+		"currentUser": {{ currentUser|serialize('json', {'groups': 'user_read'})|raw }},
+		"status": {{ status|serialize('json')|raw }},
+		"stripeSubPlans": {{ stripeSubPlans|serialize('json')|raw }},
+		"stripeSubscription": {{ stripeSubscription|serialize('json')|raw }},
+		"activeTab": "2"
 	}
 {% endblock %}

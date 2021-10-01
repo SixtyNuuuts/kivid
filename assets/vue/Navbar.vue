@@ -181,7 +181,8 @@
                                     class="md"
                                     @click="mySubscription()"
                                 >
-                                    <i class="fas fa-medal"></i> Mon Abonnement
+                                    <i class="kiv-subscription icon-20"></i> Mon
+                                    Abonnement
                                 </li>
                                 <li class="sm" @click="lexique()">
                                     <i class="kiv-lexique icon-1"></i>
@@ -741,8 +742,8 @@ export default {
                                         font-size: 1.8rem;
                                     }
 
-                                    &.fa-medal {
-                                        font-size: 1.9rem;
+                                    &.kiv-subscription {
+                                        font-size: 1.8rem;
                                     }
 
                                     &.kiv-profil {

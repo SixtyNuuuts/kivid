@@ -84,7 +84,7 @@ export default {
       icon: "<i class='far fa-check-circle text-primary'></i>",
       color: null,
       position: "top-right",
-      title: `<strong class='text-success'>${titleText}</strong>`,
+      title: `<strong class='text-primary'>${titleText}</strong>`,
       text: `${messageText}`,
     });
   },

@@ -14,19 +14,16 @@
         </header>
         <main>
             <section id="menu" class="kiv-block">
-                <h3>Général</h3>
                 <ul>
                     <li
-                        @click="activeTab = '1'"
+                        @click="myProfil()"
                         :class="{ active: activeTab === '1' }"
                     >
                         Mon Profil
                     </li>
-                </ul>
-                <h3 v-if="'patient' === userType">Facturation</h3>
-                <ul v-if="'patient' === userType">
                     <li
-                        @click="activeTab = '2'"
+                        v-if="'patient' === userType"
+                        @click="mySubscription()"
                         :class="{ active: activeTab === '2' }"
                     >
                         Mon Abonnement
@@ -271,114 +268,155 @@
                 >
                     <h2>Mon Abonnement</h2>
                     <div>
-                        <vs-button
-                            v-if="!stripeSubscription"
-                            size="large"
-                            @click="stripeCheckout(0)"
-                            ><i class="fe fe-plus-circle"></i>
-                            Abonnement premium
-                        </vs-button>
-                        <div v-if="stripeSubscription">
-                            <vs-alert
-                                v-if="!stripeSubscription.cancel_at_period_end"
-                            >
-                                <template #title>
-                                    Abonnement en cours
-                                </template>
-                                <p>
-                                    Période de l'abonnement : du
-                                    <strong>
-                                        {{
-                                            formatDate(
-                                                new Date(
-                                                    stripeSubscription.current_period_start *
-                                                        1000
-                                                )
-                                            )
-                                        }}
-                                    </strong>
-                                    au
-                                    <strong>
-                                        {{
-                                            formatDate(
-                                                new Date(
-                                                    stripeSubscription.current_period_end *
-                                                        1000
-                                                )
-                                            )
-                                        }}
-                                    </strong>
-                                </p>
+                        <div
+                            class="sub-frame"
+                            :class="{ active: stripeSubscription }"
+                        >
+                            <h3 v-if="stripeSubscription" class="active">
+                                Abonnement en cours
+                            </h3>
+                            <h3 v-if="!stripeSubscription">Aucun abonnement</h3>
+                            <div>
+                                <div>
+                                    <div
+                                        v-if="stripeSubscription"
+                                        class="sub-details"
+                                    >
+                                        <div class="sub-name">
+                                            {{
+                                                stripeSubPlans.find(
+                                                    (p) =>
+                                                        p.planId ===
+                                                        stripeSubscription.plan
+                                                            .id
+                                                ).name
+                                            }}
+                                        </div>
+                                        <div class="sub-price">
+                                            {{
+                                                stripeSubPlans.find(
+                                                    (p) =>
+                                                        p.planId ===
+                                                        stripeSubscription.plan
+                                                            .id
+                                                ).price / 100
+                                            }}
+                                            € <span>/ mois</span>
+                                        </div>
+                                    </div>
 
-                                <p>
-                                    Votre abonnement sera automatiquement
-                                    renouvellé à la fin de la période.
-                                </p>
-                            </vs-alert>
-                            <vs-alert
-                                v-if="stripeSubscription.cancel_at_period_end"
-                            >
-                                <template #title>
-                                    Abonnement jusqu'à la fin de la période
-                                </template>
-                                <p>
-                                    Période de l'abonnement : du
-                                    <strong>
-                                        {{
-                                            formatDate(
-                                                new Date(
-                                                    stripeSubscription.current_period_start *
-                                                        1000
-                                                )
-                                            )
-                                        }}
-                                    </strong>
-                                    au
-                                    <strong>
-                                        {{
-                                            formatDate(
-                                                new Date(
-                                                    stripeSubscription.current_period_end *
-                                                        1000
-                                                )
-                                            )
-                                        }}
-                                    </strong>
-                                </p>
+                                    <div
+                                        v-if="!stripeSubscription"
+                                        class="sub-details"
+                                    >
+                                        <div class="sub-name">
+                                            Pour accéder complètement à mes
+                                            prescriptions :
+                                        </div>
+                                    </div>
 
-                                <p>
-                                    Votre abonnement sera annulé à la fin de la
-                                    période
-                                </p>
-                            </vs-alert>
-                            <vs-button
-                                v-if="
-                                    stripeSubscription.customer &&
-                                    !stripeSubscription.cancel_at_period_end
-                                "
-                                size="large"
-                                @click="
-                                    stripeCustomerPortalSession(
-                                        stripeSubscription.customer
-                                    )
-                                "
-                                ><i class="fe fe-settings"></i>
-                                Annuler votre abonnement
-                            </vs-button>
-                            <vs-button
-                                v-if="
-                                    stripeSubscription.customer &&
-                                    stripeSubscription.cancel_at_period_end
-                                "
-                                size="large"
-                                @click="
-                                    stripeCustomerPortalSession(
-                                        stripeSubscription.customer
-                                    )
-                                "
-                                ><i class="fe fe-settings"></i>
-                                Renouveler votre abonnement
-                            </vs-button>
+                                    <p
+                                        v-if="
+                                            stripeSubscription &&
+                                            !stripeSubscription.cancel_at_period_end
+                                        "
+                                    >
+                                        <i class="kiv-info icon-17"></i>
+                                        Renouvellement automatique activé
+                                    </p>
+
+                                    <p
+                                        v-if="
+                                            stripeSubscription &&
+                                            stripeSubscription.cancel_at_period_end
+                                        "
+                                    >
+                                        <i class="kiv-info icon-17"></i>
+                                        Renouvellement automatique désactivé
+                                    </p>
+
+                                    <p v-if="stripeSubscription">
+                                        <i class="kiv-info icon-17"></i>
+                                        Pour accéder à vos factures, cliquez sur
+                                        le bouton "Gérer l'abonnement" et allez
+                                        en bas de page, dans la partie
+                                        "Historique de facturation"
+                                    </p>
+
+                                    <vs-button
+                                        v-if="
+                                            stripeSubscription &&
+                                            stripeSubscription.customer
+                                        "
+                                        @click="
+                                            stripeCustomerPortalSession(
+                                                stripeSubscription.customer
+                                            )
+                                        "
+                                        ><i class="fas fa-sliders-h"></i>
+                                        Gérer l'abonnement
+                                    </vs-button>
+                                    <vs-button
+                                        v-if="!stripeSubscription"
+                                        @click="stripeCheckout(0)"
+                                        class="mt-2"
+                                    >
+                                        <i class="kiv-subscription icon-20"></i>
+                                        Je m’abonne
+                                    </vs-button>
+                                </div>
+                                <div>
+                                    <div class="sub-illus">
+                                        <img
+                                            v-if="stripeSubscription"
+                                            src="../img/perso-boule.svg"
+                                            alt="personnage sur une grosse balle"
+                                        />
+                                        <img
+                                            v-if="!stripeSubscription"
+                                            src="../img/boule-seule.svg"
+                                            alt="personnage sur une grosse balle"
+                                        />
+                                    </div>
+                                    <p
+                                        v-if="
+                                            stripeSubscription &&
+                                            !stripeSubscription.cancel_at_period_end
+                                        "
+                                    >
+                                        Votre abonnement actuel est valide
+                                        jusqu'au
+                                        <strong>
+                                            {{
+                                                formatDate(
+                                                    new Date(
+                                                        stripeSubscription.current_period_end *
+                                                            1000
+                                                    )
+                                                )
+                                            }}
+                                        </strong>
+                                    </p>
+                                    <p
+                                        v-if="
+                                            stripeSubscription &&
+                                            stripeSubscription.cancel_at_period_end
+                                        "
+                                    >
+                                        Votre abonnement se terminera le
+                                        <strong>
+                                            {{
+                                                formatDate(
+                                                    new Date(
+                                                        stripeSubscription.current_period_end *
+                                                            1000
+                                                    )
+                                                )
+                                            }}
+                                        </strong>
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -410,7 +448,6 @@ export default {
             hasVisiblePasswordConfirm: false,
             csrfTokenEdit: null,
             btnLoadingEdit: false,
-            patient: null,
             stripeSubPlans: null,
             status: null,
             stripeSubscription: null,
@@ -560,21 +597,28 @@ export default {
         logout() {
             document.location.href = "/logout";
         },
-        formatDate(datetime) {
+        formatDateBirthdate(datetime) {
             return moment(datetime).format("YYYY-MM-DD");
+        },
+        formatDate(datetime) {
+            return moment(datetime).format("DD/MM/YYYY");
         },
         stripeCheckout(indice) {
             this.axios
-                .post(`/${this.patient.id}/subscription/checkout`, {
+                .post(`/subscription/checkout`, {
                     stripeSubPlanId: this.stripeSubPlans[indice].planId,
                     stripeCustomerId: this.stripeSubscription
                         ? this.stripeSubscription.customer
                         : null,
+                    successUrl: "subscription/success",
+                    cancelUrl: "subscription/cancel",
                 })
                 .then((response) => {
                     window.location.href = response.data;
                 })
                 .catch((error) => {
+                    console.log(error);
+
                     f.openErrorNotification(
                         "Erreur",
                         "Erreur lors du processus d'abonnement"
@@ -583,28 +627,33 @@ export default {
         },
         stripeCustomerPortalSession(stripeCustomerId) {
             this.axios
-                .post(
-                    `/${this.patient.id}/subscription/customer-portal-session`,
-                    {
-                        stripeCustomerId: stripeCustomerId,
-                    }
-                )
+                .post(`/subscription/customer-portal-session`, {
+                    stripeCustomerId: stripeCustomerId,
+                })
                 .then((response) => {
                     window.location.href = response.data;
                 })
                 .catch((error) => {
+                    console.log(error);
+
                     f.openErrorNotification(
                         "Erreur",
                         "Erreur lors du processus de modification d'abonnement"
                     );
                 });
         },
+        myProfil() {
+            document.location.href = "/settings/user/edit";
+        },
+        mySubscription() {
+            document.location.href = "/subscription";
+        },
     },
     computed: {
         currentUserBirthdateFormated: {
             get() {
                 if (this.currentUser.birthdate) {
-                    return this.formatDate(this.currentUser.birthdate);
+                    return this.formatDateBirthdate(this.currentUser.birthdate);
                 }
             },
             set(newValue) {
@@ -652,12 +701,7 @@ export default {
 
         this.activeTab = data.activeTab;
         this.currentUser = data.currentUser;
-        this.patient = data.patient;
         this.csrfTokenEdit = data.csrfTokenEdit;
-
-        if (!this.currentUser && this.patient) {
-            this.currentUser = this.patient;
-        }
 
         if (this.currentUser.firstname === null) {
             this.currentUser.firstname = "";
@@ -689,13 +733,9 @@ export default {
         this.currentUser.gender =
             this.currentUser.gender === "female" ? 2 : this.currentUser.gender;
 
-        if (this.currentUser.roles) {
-            this.userType = this.currentUser.roles.includes("ROLE_PATIENT")
-                ? "patient"
-                : "doctor";
-        } else {
-            this.userType = "patient";
-        }
+        this.userType = this.currentUser.roles.includes("ROLE_PATIENT")
+            ? "patient"
+            : "doctor";
 
         this.stripeSubPlans = data.stripeSubPlans;
         this.stripeSubscription = data.stripeSubscription;
@@ -720,6 +760,10 @@ export default {
 
 <style lang="scss">
 @import "../scss/variables";
+
+.mt-2 {
+    margin-top: 2rem;
+}
 
 #settings {
     header {
@@ -814,24 +858,30 @@ export default {
                 display: flex;
             }
 
-            h3 {
-                text-transform: uppercase;
-                font-size: 1rem;
-                font-weight: 700;
-                color: #d3cfc3;
+            // h3 {
+            //     text-transform: uppercase;
+            //     font-size: 1rem;
+            //     font-weight: 700;
+            //     color: #d3cfc3;
 
-                &:not(:first-child) {
-                    margin-top: 2rem;
-                }
-            }
+            //     &:not(:first-child) {
+            //         margin-top: 2rem;
+            //     }
+            // }
 
             li {
                 font-size: 1.3rem;
-                margin-top: 0.5rem;
                 position: relative;
                 cursor: pointer;
                 white-space: nowrap;
                 transition: all 0.1s;
+                padding: 1.4rem 0;
+                border-bottom: 1px solid #e0e0df;
+                border-top: 1px solid #e0e0df;
+
+                &:not(:first-child) {
+                    border-top: 0px solid #e0e0df;
+                }
 
                 &.active {
                     font-weight: 700;
@@ -844,7 +894,7 @@ export default {
                         height: 1.2rem;
                         position: absolute;
                         left: -2.6rem;
-                        top: 0.2rem;
+                        top: 1.5rem;
                         border-radius: 50%;
                         background-color: $orange;
                     }
@@ -1008,6 +1058,146 @@ export default {
                                 position: relative;
                                 top: 0.1rem;
                             }
+                        }
+                    }
+                }
+            }
+
+            .sub-frame {
+                border: 2px solid #e0dfde;
+                border-radius: 0.5rem;
+                max-width: 64.3rem;
+
+                &.active {
+                    border: 2px solid #ffc3b1;
+
+                    h3 {
+                        color: $orange;
+                    }
+                }
+
+                h3 {
+                    position: relative;
+                    top: -0.9rem;
+                    background-color: white;
+                    width: 14.6rem;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    margin-left: 1rem;
+                    color: #c3beb3;
+                    font-size: 1.5rem;
+                    font-weight: 600;
+
+                    &.active {
+                        width: 16.6rem;
+                    }
+                }
+
+                > div {
+                    display: flex;
+                    justify-content: space-between;
+                    flex-direction: column;
+
+                    @media (min-width: 690px) {
+                        flex-direction: row;
+                    }
+
+                    > :first-child {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        padding: 2.7rem;
+                        padding-top: 1.7rem;
+                        justify-content: space-between;
+
+                        .sub-details {
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: center;
+                            align-items: center;
+
+                            .sub-name {
+                                font-size: 2rem;
+                                font-weight: 700;
+                                color: #fb8b68;
+                                text-align: center;
+                            }
+
+                            .sub-price {
+                                font-size: 3.8rem;
+                                font-weight: 700;
+                                color: #ffc5b4;
+
+                                span {
+                                    font-size: 1.3rem;
+                                }
+                            }
+                        }
+
+                        p {
+                            color: #a8a396;
+                            max-width: 33rem;
+                            text-align: center;
+                            margin: 1.8rem 0;
+                            line-height: 1.2;
+
+                            &:nth-child(2) {
+                                margin-top: 1rem;
+                                margin-bottom: 0;
+                            }
+
+                            &:nth-child(3) {
+                                margin-top: 1rem;
+                            }
+
+                            i {
+                                color: $orange;
+                                font-size: 0.9rem;
+                            }
+                        }
+
+                        .vs-button {
+                            font-size: 1.2rem;
+
+                            i {
+                                font-size: 1.4rem;
+                                top: -0.1rem;
+                            }
+
+                            .vs-button__content {
+                                padding: 1rem 1.6rem;
+                            }
+                        }
+                    }
+
+                    > :last-child {
+                        display: flex;
+                        flex-grow: 1;
+                        flex-direction: column;
+                        align-items: center;
+                        padding: 0 2.7rem;
+
+                        p {
+                            position: relative;
+                            top: -1.2rem;
+                            font-size: 1.2rem;
+                            color: #8b867a;
+                            text-align: center;
+                            line-height: 1.3;
+
+                            strong {
+                                color: $orange;
+                            }
+                        }
+                    }
+
+                    .sub-illus {
+                        height: 100%;
+                        width: 23rem;
+
+                        @media (min-width: 450px) {
+                            width: 31rem;
                         }
                     }
                 }
