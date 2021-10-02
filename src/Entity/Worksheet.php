@@ -40,12 +40,6 @@ class Worksheet
     private $exercises;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"worksheet_read", "dashboard_worksheet_read", "patient_read"})
-     */
-    private $partOfBody;
-
-    /**
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"worksheet_read", "dashboard_worksheet_read"})
      */
@@ -91,6 +85,12 @@ class Worksheet
      * @Groups({"dashboard_worksheet_read"})
      */
     private $exerciseStats;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=PartOfBody::class, inversedBy="worksheets")
+     * @Groups({"worksheet_read", "dashboard_worksheet_read", "patient_read"})
+     */
+    private $partOfBody;
 
     public function __construct()
     {
@@ -166,18 +166,6 @@ class Worksheet
     public function __toString()
     {
         return $this->getTitle();
-    }
-
-    public function getPartOfBody(): ?string
-    {
-        return $this->partOfBody;
-    }
-
-    public function setPartOfBody(?string $partOfBody): self
-    {
-        $this->partOfBody = $partOfBody;
-
-        return $this;
     }
 
     public function getDuration(): ?int
@@ -326,6 +314,18 @@ class Worksheet
                 $exerciseStat->setWorksheet(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPartOfBody(): ?PartOfBody
+    {
+        return $this->partOfBody;
+    }
+
+    public function setPartOfBody(?PartOfBody $partOfBody): self
+    {
+        $this->partOfBody = $partOfBody;
 
         return $this;
     }

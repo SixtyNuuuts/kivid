@@ -334,28 +334,33 @@ export default {
 
             const variationSlice = 1;
 
-            const lastStats = stats
-                .sort(function (a, b) {
-                    return new Date(a.doneAt) - new Date(b.doneAt);
-                })
-                .filter((es, i) => i > stats.length - 1 - variationSlice);
+            const result = 0;
 
-            const lastStatsAverage = this.statsAverage(lastStats);
+            if (stats.length > variationSlice) {
+                const lastStats = stats
+                    .sort(function (a, b) {
+                        return new Date(a.doneAt) - new Date(b.doneAt);
+                    })
+                    .filter((es, i) => i > stats.length - 1 - variationSlice);
 
-            if (!lastStats.length) {
-                return null;
+                const lastStatsAverage = this.statsAverage(lastStats);
+
+                if (!lastStats.length) {
+                    return null;
+                }
+
+                const oldStats = stats
+                    .sort(function (a, b) {
+                        return new Date(a.doneAt) - new Date(b.doneAt);
+                    })
+                    .filter((es, i) => i <= stats.length - 1 - variationSlice);
+
+                const oldStatsAverage = this.statsAverage(oldStats);
+
+                const result =
+                    Math.round((lastStatsAverage - oldStatsAverage) * 10 * 10) /
+                    10;
             }
-
-            const oldStats = stats
-                .sort(function (a, b) {
-                    return new Date(a.doneAt) - new Date(b.doneAt);
-                })
-                .filter((es, i) => i <= stats.length - 1 - variationSlice);
-
-            const oldStatsAverage = this.statsAverage(oldStats);
-
-            const result =
-                Math.round((lastStatsAverage - oldStatsAverage) * 10 * 10) / 10;
 
             return {
                 variation:

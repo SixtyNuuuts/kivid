@@ -18,7 +18,8 @@
                         <h1>{{ getWorksheet.title }}</h1>
                     </div>
                     <TagPartOfBody
-                        :partOfBody="getWorksheet.partOfBody.toLowerCase()"
+                        v-if="getWorksheet.partOfBody"
+                        :partOfBody="getWorksheet.partOfBody"
                     />
                 </div>
                 <div v-else class="title">
@@ -86,27 +87,27 @@
                                 sessions.
                             </p>
                         </div>
-                        <div class="worksheet-period">
-                            <i class="kiv-clock icon-11"></i>
+                        <div class="worksheet-timing-perweek">
+                            <i class="kiv-calendar icon-10"></i>
                             <vs-input
-                                v-model="worksheet.duration"
-                                id="duration"
-                                label-placeholder="Durée en sem. (max: 52)"
+                                v-model="worksheet.perWeek"
+                                id="perWeek"
+                                label-placeholder="X par sem. (max: 7)"
                                 type="number"
                                 @keyup="
                                     checkAndFormatDurationValue(
-                                        worksheet.duration,
+                                        worksheet.perWeek,
                                         $event
                                     )
                                 "
                                 @blur="
                                     checkIfDurationValueIsEmptyOrNull(
-                                        worksheet.duration,
+                                        worksheet.perWeek,
                                         $event
                                     )
                                 "
                                 min="1"
-                                max="52"
+                                max="7"
                             >
                             </vs-input>
                         </div>
@@ -134,34 +135,35 @@
                             >
                             </vs-input>
                         </div>
-                        <div class="worksheet-timing-perweek">
-                            <i class="kiv-calendar icon-10"></i>
+                        <div class="worksheet-period">
+                            <i class="kiv-clock icon-11"></i>
                             <vs-input
-                                v-model="worksheet.perWeek"
-                                id="perWeek"
-                                label-placeholder="X par sem. (max: 7)"
+                                v-model="worksheet.duration"
+                                id="duration"
+                                label-placeholder="Durée en sem. (max: 52)"
                                 type="number"
                                 @keyup="
                                     checkAndFormatDurationValue(
-                                        worksheet.perWeek,
+                                        worksheet.duration,
                                         $event
                                     )
                                 "
                                 @blur="
                                     checkIfDurationValueIsEmptyOrNull(
-                                        worksheet.perWeek,
+                                        worksheet.duration,
                                         $event
                                     )
                                 "
                                 min="1"
-                                max="7"
+                                max="52"
                             >
                             </vs-input>
                         </div>
                     </div>
                     <SelectPartOfBody
-                        :partOfBody="worksheet.partOfBody.toLowerCase()"
+                        :partOfBody="worksheet.partOfBody"
                         @partOfBodySelected="setPartOfBody"
+                        @partOfBodyReset="resetPoB"
                     />
                 </div>
             </div>
@@ -229,7 +231,7 @@ export default {
             action: null,
             worksheetId: null,
             worksheet: {
-                partOfBody: "",
+                partOfBody: null,
                 duration: 1,
                 perDay: 1,
                 perWeek: 1,
@@ -263,6 +265,9 @@ export default {
     methods: {
         setPartOfBody(partOfBody) {
             this.worksheet.partOfBody = partOfBody;
+        },
+        resetPoB() {
+            this.worksheet.partOfBody = null;
         },
         rederictToDashboard() {
             document.location.href = `/doctor/${this.doctor.id}/dashboard`;
@@ -341,7 +346,7 @@ export default {
                         _token: this.csrfTokenEditWorksheet,
                         worksheetId: this.worksheet.id,
                         title: this.worksheet.title,
-                        partOfBody: this.worksheet.partOfBody,
+                        partOfBodyId: this.worksheet.partOfBody.id,
                         duration: this.worksheet.duration,
                         perWeek: this.worksheet.perWeek,
                         perDay: this.worksheet.perDay,
@@ -382,7 +387,7 @@ export default {
                         worksheetId: this.worksheet.id,
                         patientId: this.patient ? this.patient.id : null,
                         title: this.worksheet.title,
-                        partOfBody: this.worksheet.partOfBody,
+                        partOfBodyId: this.worksheet.partOfBody.id,
                         duration: this.worksheet.duration,
                         perWeek: this.worksheet.perWeek,
                         perDay: this.worksheet.perDay,

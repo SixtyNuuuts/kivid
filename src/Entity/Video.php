@@ -56,6 +56,12 @@ class Video
     private $options;
 
     /**
+    * @ORM\ManyToMany(targetEntity=PartOfBody::class, inversedBy="videos")
+    * @Groups({"video_read", "dashboard_worksheet_read", "worksheet_read"})
+    */
+    private $partOfBodys;
+
+    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"worksheet_read", "video_read"})
      */
@@ -75,8 +81,9 @@ class Video
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->tags = new ArrayCollection();
-        $this->exercises = new ArrayCollection();
         $this->options = new ArrayCollection();
+        $this->partOfBodys = new ArrayCollection();
+        $this->exercises = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -176,6 +183,30 @@ class Video
     public function removeOption(Option $option): self
     {
         $this->options->removeElement($option);
+
+        return $this;
+    }
+
+    /**
+         * @return Collection|PartOfBody[]
+         */
+    public function getPartOfBodys(): Collection
+    {
+        return $this->partOfBodys;
+    }
+
+    public function addPartOfBody(PartOfBody $partOfBody): self
+    {
+        if (!$this->partOfBodys->contains($partOfBody)) {
+            $this->partOfBodys[] = $partOfBody;
+        }
+
+        return $this;
+    }
+
+    public function removePartOfBody(PartOfBody $partOfBody): self
+    {
+        $this->partOfBodys->removeElement($partOfBody);
 
         return $this;
     }

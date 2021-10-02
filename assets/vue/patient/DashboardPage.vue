@@ -89,7 +89,7 @@
                                         size="116"
                                     >
                                         <img
-                                            src="/img/icons/smiley/60.svg"
+                                            src="../../img/icons/smiley/60.svg"
                                             alt="Smiley Monocle"
                                         />
                                     </vs-avatar>

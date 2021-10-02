@@ -19,7 +19,7 @@
                 <TagPartOfBody
                     v-if="getWorksheet.partOfBody"
                     :class="{ completed: allExercisesIsCompleted }"
-                    :partOfBody="getWorksheet.partOfBody.toLowerCase()"
+                    :partOfBody="getWorksheet.partOfBody"
                 />
             </div>
         </header>

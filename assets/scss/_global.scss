@@ -783,6 +783,12 @@ body {
     margin-bottom: 0rem;
     display: flex;
     justify-content: center;
+    flex-direction: column;
+    align-items: center;
+
+    @media (min-width: 576px) {
+        flex-direction: row;
+    }
 
     .count-page {
         display: inline-block;
@@ -790,10 +796,15 @@ body {
         padding-top: 0.35rem;
         margin: 0;
         font-size: 1.3rem;
-        background-color: #fffcf7;
+        background-color: #fbfbfb;
         border-radius: 3px;
         color: $black;
         box-shadow: inset 0 0 20px 0 rgb(0, 0, 0, 0.04);
+        margin-top: 1.5rem;
+
+        @media (min-width: 576px) {
+            margin-top: 0;
+        }
     }
 }
 

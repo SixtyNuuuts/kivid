@@ -31,10 +31,17 @@
                             >
                                 {{ tag }}
                             </vs-option>
-                            <template slot="notData"> Aucun mot-clé </template>
+                            <template slot="notData">
+                                Aucun mot-clé ne correspond.</template
+                            >
                         </vs-select>
                         <div v-else class="loading select-tags"></div>
                     </div>
+                    <SelectPartOfBody
+                        :partOfBody="null"
+                        @partOfBodySelected="filterByPartOfBody"
+                        @partOfBodyReset="resetSelectedPoB"
+                    />
                 </div>
                 <div class="video-library-content">
                     <div
@@ -112,7 +119,8 @@
                             !loadingVideos &&
                             !getVideos.length &&
                             !search &&
-                            !selectedTags.length
+                            !selectedTags.length &&
+                            !selectedPoB
                         "
                     >
                         <p>
@@ -125,7 +133,7 @@
                         v-if="
                             !loadingVideos &&
                             !getVideos.length &&
-                            (search || selectedTags.length)
+                            (search || selectedTags.length || selectedPoB)
                         "
                     >
                         <p>
@@ -136,7 +144,10 @@
                                     >"<strong>{{ search }}</strong
                                     >"</span
                                 ><span
-                                    v-if="search && selectedTags.length"
+                                    v-if="
+                                        (search && selectedTags.length) ||
+                                        (search && selectedPoB)
+                                    "
                                     class="et"
                                 >
                                     et</span
@@ -147,7 +158,11 @@
                                         :key="i"
                                     >
                                         {{ tag }}
-                                    </div>
+                                    </div> </span
+                                ><span v-if="selectedPoB" class="part-of-body">
+                                    <span class="text">{{
+                                        selectedPoB.name
+                                    }}</span>
                                 </span></span
                             >
                         </p>
@@ -188,6 +203,7 @@
 <script>
 import f from "../../../services/function";
 import { PlusIcon, CheckIcon, XIcon } from "vue-feather-icons";
+import SelectPartOfBody from "../../../components/SelectPartOfBody.vue";
 
 export default {
     props: {
@@ -197,6 +213,7 @@ export default {
         PlusIcon,
         CheckIcon,
         XIcon,
+        SelectPartOfBody,
     },
     data() {
         return {
@@ -213,6 +230,7 @@ export default {
             },
             timeout: false,
             selectedTags: [],
+            selectedPoB: null,
             selectedVideos: [],
             modalAddVideo: false,
             modalViewVideo: false,
@@ -239,6 +257,14 @@ export default {
         },
     },
     methods: {
+        filterByPartOfBody(partOfBody) {
+            this.selectedPoB = partOfBody;
+            this.page = 1;
+        },
+        resetSelectedPoB() {
+            this.selectedPoB = null;
+            this.page = 1;
+        },
         viewVideo(video) {
             this.selectedViewVideo = video;
 
@@ -282,6 +308,22 @@ export default {
                     if (v.tags) {
                         v.tags.forEach((tag) => {
                             if (this.selectedTags.includes(tag.name)) {
+                                result = true;
+                            }
+                        });
+                    }
+
+                    return result;
+                });
+            }
+
+            if (this.selectedPoB) {
+                videosListFiltered = videosListFiltered.filter((v) => {
+                    let result = false;
+
+                    if (v.partOfBodys) {
+                        v.partOfBodys.forEach((partOfBody) => {
+                            if (partOfBody.id === this.selectedPoB.id) {
                                 result = true;
                             }
                         });
@@ -387,6 +429,8 @@ export default {
 
         .kiv-select.tags {
             width: 100%;
+            margin-bottom: 1rem;
+            margin-right: 0;
 
             .loading.select-tags {
                 border-radius: 0.5rem;
@@ -396,14 +440,83 @@ export default {
             }
         }
 
+        .select-filter {
+            width: 100%;
+
+            .loading-pob {
+                height: 4.2rem;
+                opacity: 0.2;
+            }
+
+            .partofbody-selected {
+                padding-top: 1.33rem !important;
+                padding-bottom: 1rem !important;
+                padding: 1.15rem 1.5rem !important;
+                background: $white;
+                border: 0.2rem solid #faf6ef;
+            }
+
+            .part-of-body {
+                background: $white;
+
+                &:hover {
+                    background: $gray-light;
+                }
+            }
+
+            input {
+                padding: 1.15rem 1.5rem;
+                border: 0.2rem solid #faf6ef;
+                min-height: 4.2rem;
+                border-radius: 0.4rem;
+            }
+
+            input.b-r-b-zero {
+                border-radius: 0.4rem 0.4rem 0 0;
+            }
+
+            .placeholder {
+                top: 1.35rem;
+                left: 1.65rem;
+                font-size: 1.4rem;
+                color: #b7bdc2;
+                font-weight: 400;
+
+                .gray {
+                    color: #b7bdc2;
+                    left: 1.7rem;
+                }
+            }
+
+            .arrow-toggle-box {
+                top: 0.3rem;
+                right: 0rem;
+
+                i.vs-icon-arrow {
+                    width: 0.85rem;
+                    height: 0.85rem;
+                }
+            }
+
+            .select-box {
+                top: 4.3rem;
+            }
+        }
+
         @media (min-width: 576px) {
             .search {
-                width: 50%;
+                width: 33%;
                 margin-bottom: 0;
             }
 
             .kiv-select.tags {
-                width: 50%;
+                width: 33%;
+                margin-bottom: 0;
+                margin-right: 1.7rem;
+            }
+
+            .select-filter {
+                width: 33%;
             }
         }
     }
@@ -473,13 +586,13 @@ export default {
         }
 
         #video-library {
-            height: 100%;
+            // height: 100%;
             width: 100%;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            min-height: 64rem;
-            max-height: 69rem;
+            // min-height: 64rem;
+            // max-height: 69rem;
 
             .tags {
                 display: flex;
@@ -550,8 +663,7 @@ export default {
                         padding: 0;
                         flex: 1;
                         position: relative;
-                        height: 46%;
-                        max-height: 17em;
+                        height: 16rem;
                         overflow: hidden;
                         min-width: 45%;
                         max-width: 45%;
@@ -729,6 +841,38 @@ export default {
                 justify-content: center;
                 margin-top: 3rem;
                 margin-bottom: 1rem;
+            }
+        }
+    }
+
+    .not-found {
+        min-height: 19rem;
+
+        .part-of-body {
+            background: #fff;
+            color: #222e54;
+            letter-spacing: 0.02rem;
+            transition: all 0.3s;
+            display: inline-flex;
+            box-shadow: 0px 0rem 0.8rem rgba(137, 137, 137, 0.2);
+            padding: 0.2rem 0.6rem;
+            border-radius: 0.6rem;
+            margin-left: 0.5rem;
+            top: -0.1rem;
+
+            .text {
+                font-size: 1.1rem;
+            }
+        }
+
+        .tags {
+            display: inline-flex !important;
+            top: -0.05rem;
+            margin-left: 0.2rem;
+
+            .tag-chip {
+                padding: 0.2rem 0.8rem;
+                font-size: 1rem;
             }
         }
     }

@@ -166,7 +166,14 @@
                                 :key="i"
                             >
                                 <div class="worksheet-header">
-                                    <div class="user-title">
+                                    <div
+                                        class="user-title"
+                                        @click="
+                                            redirectToWorksheetPage(
+                                                worksheet.id
+                                            )
+                                        "
+                                    >
                                         <h3 class="worksheet-title">
                                             {{ worksheet.title }}
                                         </h3>
@@ -183,9 +190,7 @@
                                         </div>
                                     </div>
                                     <TagPartOfBody
-                                        :partOfBody="
-                                            worksheet.partOfBody.toLowerCase()
-                                        "
+                                        :partOfBody="worksheet.partOfBody"
                                     />
                                 </div>
                                 <div class="worksheet-content">
@@ -1204,6 +1209,7 @@ export default {
                 .user-title {
                     max-width: 70vw;
                     margin-right: 1rem;
+                    cursor: pointer;
 
                     @media (min-width: 550px) {
                         max-width: 62vw;
