@@ -1,71 +1,69 @@
 <template>
     <div v-click-outside="hideSelectBox" class="select-filter">
-        <div>
+        <div v-show="!loadingPartsOfBody">
             <div
-                v-show="getPartOfBodySelected.length"
+                v-show="getPartOfBodySelected"
                 class="partofbody-selected part-of-body"
                 @click="resetSelect"
             >
                 <img
-                    v-if="groupPOB[0].includes(getPartOfBodySelected)"
+                    v-if="getPartOfBodySelected.icon === 'pied'"
                     src="../../img/icons/part-of-body/pied.svg"
                     alt="Icone Pied"
                     class="icon-pied"
                 />
                 <img
-                    v-if="groupPOB[1].includes(getPartOfBodySelected)"
+                    v-if="getPartOfBodySelected.icon === 'jambe'"
                     src="../../img/icons/part-of-body/jambe.svg"
                     alt="Icone Jambe"
                     class="icon-jambe"
                 />
                 <img
-                    v-if="groupPOB[2].includes(getPartOfBodySelected)"
+                    v-if="getPartOfBodySelected.icon === 'bras'"
                     src="../../img/icons/part-of-body/bras.svg"
                     alt="Icone Bras"
                     class="icon-bras"
                 />
                 <img
-                    v-if="groupPOB[3].includes(getPartOfBodySelected)"
+                    v-if="getPartOfBodySelected.icon === 'main'"
                     src="../../img/icons/part-of-body/main.svg"
                     alt="Icone Main"
                     class="icon-main"
                 />
                 <img
-                    v-if="groupPOB[4].includes(getPartOfBodySelected)"
+                    v-if="getPartOfBodySelected.icon === 'epaule'"
                     src="../../img/icons/part-of-body/epaule.svg"
                     alt="Icone Épaule"
                     class="icon-epaule"
                 />
                 <img
-                    v-if="groupPOB[5].includes(getPartOfBodySelected)"
+                    v-if="getPartOfBodySelected.icon === 'dos'"
                     src="../../img/icons/part-of-body/dos.svg"
                     alt="Icone Dos"
                     class="icon-dos"
                 />
                 <img
-                    v-if="groupPOB[6].includes(getPartOfBodySelected)"
+                    v-if="getPartOfBodySelected.icon === 'cervicales'"
                     src="../../img/icons/part-of-body/cervicales.svg"
                     alt="Icone Cervicales"
                     class="icon-cervicales"
                 />
                 <img
-                    v-if="groupPOB[7].includes(getPartOfBodySelected)"
+                    v-if="getPartOfBodySelected.icon === 'lombaires'"
                     src="../../img/icons/part-of-body/lombaires.svg"
                     alt="Icone Lombaires"
                     class="icon-lombaires"
                 />
                 <img
-                    v-if="groupPOB[8].includes(getPartOfBodySelected)"
+                    v-if="getPartOfBodySelected.icon === 'thoracique'"
                     src="../../img/icons/part-of-body/thoracique.svg"
                     alt="Icone Thoracique"
                     class="icon-thoracique"
                 />
-                <span class="text">{{
-                    formatPartOfBodyName(getPartOfBodySelected)
-                }}</span>
+                <span class="text">{{ getPartOfBodySelected.name }}</span>
             </div>
             <input
-                v-show="!getPartOfBodySelected.length"
+                v-show="!getPartOfBodySelected"
                 v-model="filter"
                 @click="selectBox = true"
                 id="partofbody-choice-select"
@@ -74,14 +72,10 @@
             />
             <div
                 class="placeholder"
-                :class="{ hidden: filter || getPartOfBodySelected.length }"
+                :class="{ hidden: filter || getPartOfBodySelected }"
             >
-                <span v-show="!selectBox">
-                    Sélectionnez la partie du corps concernée
-                </span>
-                <span v-show="selectBox" class="gray">
-                    Recherchez la partie du corps concernée
-                </span>
+                <span v-show="!selectBox"> Partie du corps </span>
+                <span v-show="selectBox" class="gray"> Recherchez </span>
             </div>
             <div
                 class="arrow-toggle-box"
@@ -96,75 +90,79 @@
                     class="select-box"
                     @click="focusInputSelect"
                 >
-                    <ul>
+                    <ul v-if="partsOfBodyFiltered.length">
                         <li v-for="(part, i) in partsOfBodyFiltered" :key="i">
                             <div
                                 class="part-of-body"
                                 @click="selectPartOfBody(part)"
                             >
                                 <img
-                                    v-if="groupPOB[0].includes(part)"
+                                    v-if="part.icon === 'pied'"
                                     src="../../img/icons/part-of-body/pied.svg"
                                     alt="Icone Pied"
                                     class="icon-pied"
                                 />
                                 <img
-                                    v-if="groupPOB[1].includes(part)"
+                                    v-if="part.icon === 'jambe'"
                                     src="../../img/icons/part-of-body/jambe.svg"
                                     alt="Icone Jambe"
                                     class="icon-jambe"
                                 />
                                 <img
-                                    v-if="groupPOB[2].includes(part)"
+                                    v-if="part.icon === 'bras'"
                                     src="../../img/icons/part-of-body/bras.svg"
                                     alt="Icone Bras"
                                     class="icon-bras"
                                 />
                                 <img
-                                    v-if="groupPOB[3].includes(part)"
+                                    v-if="part.icon === 'main'"
                                     src="../../img/icons/part-of-body/main.svg"
                                     alt="Icone Main"
                                     class="icon-main"
                                 />
                                 <img
-                                    v-if="groupPOB[4].includes(part)"
+                                    v-if="part.icon === 'epaule'"
                                     src="../../img/icons/part-of-body/epaule.svg"
                                     alt="Icone Épaule"
                                     class="icon-epaule"
                                 />
                                 <img
-                                    v-if="groupPOB[5].includes(part)"
+                                    v-if="part.icon === 'dos'"
                                     src="../../img/icons/part-of-body/dos.svg"
                                     alt="Icone Dos"
                                     class="icon-dos"
                                 />
                                 <img
-                                    v-if="groupPOB[6].includes(part)"
+                                    v-if="part.icon === 'cervicales'"
                                     src="../../img/icons/part-of-body/cervicales.svg"
                                     alt="Icone Cervicales"
                                     class="icon-cervicales"
                                 />
                                 <img
-                                    v-if="groupPOB[7].includes(part)"
+                                    v-if="part.icon === 'lombaires'"
                                     src="../../img/icons/part-of-body/lombaires.svg"
                                     alt="Icone Lombaires"
                                     class="icon-lombaires"
                                 />
                                 <img
-                                    v-if="groupPOB[8].includes(part)"
+                                    v-if="part.icon === 'thoracique'"
                                     src="../../img/icons/part-of-body/thoracique.svg"
                                     alt="Icone Thoracique"
                                     class="icon-thoracique"
                                 />
-                                <span class="text">{{
-                                    formatPartOfBodyName(part)
-                                }}</span>
+                                <span class="text">{{ part.name }}</span>
                             </div>
                         </li>
                     </ul>
+                    <div v-else>
+                        <p class="not-found-pob">
+                            Aucune partie du corps ne correspond.
+                        </p>
+                    </div>
                 </div>
             </transition>
         </div>
+        <div v-show="loadingPartsOfBody" class="loading-gray loading-pob"></div>
     </div>
 </template>
 
@@ -173,7 +171,7 @@ import ClickOutside from "vue-click-outside";
 
 export default {
     props: {
-        partOfBody: String,
+        partOfBody: Object,
     },
     directives: {
         ClickOutside,
@@ -181,60 +179,11 @@ export default {
     data() {
         return {
             partOfBodySelected: null,
-            partsOfBody: [
-                "pied",
-                "cheville",
-                "jambe",
-                "cuisse",
-                "genou",
-                "bras",
-                "coude",
-                "avantbras",
-                "main",
-                "epaule",
-                "dos",
-                "dorsales",
-                "cervicales",
-                "lombaires",
-                "bassin",
-                "hanche",
-                "thoracique",
-                "abdominal",
-            ],
-            iconsForPOB: {
-                pied: "pied",
-                cheville: "pied",
-                jambe: "jambe",
-                cuisse: "jambe",
-                genou: "jambe",
-                bras: "bras",
-                coude: "bras",
-                avantbras: "bras",
-                main: "main",
-                epaule: "epaule",
-                dos: "dos",
-                dorsales: "dos",
-                cervicales: "cervicales",
-                lombaires: "lombaires",
-                bassin: "lombaires",
-                hanche: "lombaires",
-                thoracique: "thoracique",
-                abdominal: "thoracique",
-            },
-            groupPOB: [
-                ["pied", "cheville"],
-                ["jambe", "cuisse", "genou"],
-                ["bras", "coude", "avantbras"],
-                ["main"],
-                ["epaule"],
-                ["dos", "dorsales"],
-                ["cervicales"],
-                ["lombaires", "bassin", "hanche"],
-                ["thoracique", "abdominal"],
-            ],
+            partsOfBody: [],
             filter: "",
             selectBox: false,
             selectInput: null,
+            loadingPartsOfBody: false,
         };
     },
     computed: {
@@ -242,11 +191,14 @@ export default {
             if (this.partOfBodySelected != null) {
                 return this.partOfBodySelected;
             }
+            if (!this.partOfBody) {
+                return "";
+            }
             return this.partOfBody;
         },
         partsOfBodyFiltered() {
             return this.partsOfBody.filter((p) =>
-                p.includes(
+                p.name.toLowerCase().includes(
                     this.filter
                         .normalize("NFD")
                         .replace(/[\u0300-\u036f]/g, "")
@@ -256,15 +208,6 @@ export default {
         },
     },
     methods: {
-        formatPartOfBodyName(partOfBody) {
-            if ("epaule" === partOfBody) {
-                return "Épaule";
-            }
-            if ("avantbras" === partOfBody) {
-                return "Avant-bras";
-            }
-            return partOfBody.charAt(0).toUpperCase() + partOfBody.slice(1);
-        },
         toggleSelectBox() {
             this.selectBox = !this.selectBox;
             if (
@@ -287,6 +230,7 @@ export default {
         },
         resetSelect() {
             this.partOfBodySelected = "";
+            this.$emit("partOfBodyReset", true);
 
             setTimeout(() => {
                 this.selectInput = document.getElementById(
@@ -299,6 +243,25 @@ export default {
         focusInputSelect() {
             this.selectInput.focus();
         },
+    },
+    created() {
+        this.loadingPartsOfBody = true;
+
+        this.axios
+            .get(`/get/parts-of-body`)
+            .then((response) => {
+                this.partsOfBody = response.data;
+
+                this.loadingPartsOfBody = false;
+            })
+            .catch((error) => {
+                const errorMess =
+                    "object" === typeof error.response.data
+                        ? error.response.data.detail
+                        : error.response.data;
+
+                console.error(errorMess);
+            });
     },
     mounted() {
         this.selectInput = document.getElementById("partofbody-choice-select");
@@ -314,6 +277,12 @@ export default {
     position: relative;
     transition: all 0.25s;
     border-radius: 0.5rem;
+
+    .loading-pob {
+        border-radius: 0.6rem;
+        height: 4.8rem;
+        width: 100%;
+    }
 
     &:hover {
         input {
@@ -443,6 +412,16 @@ export default {
         max-height: 26rem;
         overflow-y: auto;
         min-height: 1.7rem;
+
+        .not-found-pob {
+            font-size: 1.3rem;
+            animation: fadeEnter 0.5s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            margin: 1.2rem;
+        }
     }
 
     .partofbody-selected {
@@ -450,8 +429,8 @@ export default {
         border-radius: 0.5rem;
         padding: 1.5rem 2rem !important;
         padding-right: 4.6rem !important;
-        padding-top: 1.7rem !important;
-        padding-bottom: 1.4rem !important;
+        padding-top: 1.6rem !important;
+        padding-bottom: 1.3rem !important;
         cursor: pointer;
         border: 1px solid $white;
         background: $white;
@@ -465,59 +444,6 @@ export default {
             // transform: translate(0, -0.4rem);
             box-shadow: 0px 5px 25px -4px rgba(0, 0, 0, 0.1);
             background: $white !important;
-        }
-    }
-
-    .partofbody {
-        padding: 1.5rem 2.2rem;
-        display: flex;
-        align-items: center;
-        cursor: pointer;
-        animation: fadeEnter 0.5s;
-
-        &:hover {
-            background: rgba($gray-middle, 0.15);
-        }
-
-        .avatar {
-            margin-right: 1.5rem;
-            max-height: 3.5rem;
-            min-width: 3.5rem;
-        }
-
-        .text {
-            flex: 1;
-            overflow: hidden;
-
-            .name {
-                font-size: 1.4rem;
-                flex-grow: 1;
-                text-align: left;
-                white-space: nowrap;
-                text-overflow: ellipsis;
-                overflow: hidden;
-                font-weight: 600;
-                margin-bottom: 0.2rem;
-
-                .birthdate {
-                    background: #fff8ee;
-                    color: #f5b85d;
-                    font-size: 1.1rem;
-                    padding: 0.2em 0.4em;
-                    border-radius: 0.4em;
-                    position: relative;
-                    top: 0;
-                    white-space: nowrap;
-                    margin-left: 0.4rem;
-                }
-            }
-
-            .email {
-                font-size: 1.2rem;
-                color: #91a3bd;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
         }
     }
 
@@ -579,6 +505,12 @@ export default {
                 top: -0.1rem;
                 height: 1.6rem;
             }
+        }
+
+        .text {
+            position: relative;
+            top: 0.1rem;
+            font-size: 1.5rem;
         }
     }
 

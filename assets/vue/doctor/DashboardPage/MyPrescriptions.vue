@@ -117,9 +117,7 @@
                                     </div>
                                 </div>
                                 <TagPartOfBody
-                                    :partOfBody="
-                                        worksheet.partOfBody.toLowerCase()
-                                    "
+                                    :partOfBody="worksheet.partOfBody"
                                 />
                             </div>
                             <div class="worksheet-progress-line">

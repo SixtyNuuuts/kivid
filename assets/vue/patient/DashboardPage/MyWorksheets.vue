@@ -31,7 +31,7 @@
                                 {{ worksheet.title }}
                             </h3>
                             <TagPartOfBody
-                                :partOfBody="worksheet.partOfBody.toLowerCase()"
+                                :partOfBody="worksheet.partOfBody"
                                 :class="{
                                     completed:
                                         (worksheet.currentWorksheetSession &&

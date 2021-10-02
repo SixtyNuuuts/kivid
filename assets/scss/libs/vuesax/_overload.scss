@@ -675,7 +675,8 @@
     }
 }
 
-.kiv-select.tags {
+.kiv-select.tags,
+.kiv-select.block {
     min-width: 30%;
     .vs-select-content {
         .vs-select__input {
@@ -686,6 +687,12 @@
             align-items: center;
         }
 
+        .vs-select__label {
+            top: 1.3rem;
+            font-size: 1.4rem;
+            color: #b7bdc2;
+        }
+
         .vs-select__chips__chip {
             background-color: $orange;
             color: $white;
@@ -693,7 +700,15 @@
             padding-right: 1.5rem;
             font-size: 1.24rem;
         }
+
+        .vs-select__input:hover ~ .vs-select__label {
+            margin-top: 0;
+        }
     }
+}
+
+.vs-select.activeOptions .vs-select__label {
+    margin-top: 0;
 }
 
 .vs-select__options {

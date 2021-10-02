@@ -616,7 +616,7 @@ export default {
                             : w.title;
 
                     return (w = {
-                        name: `${truncateTitle} - ${w.partOfBody}`,
+                        name: `${truncateTitle} - ${w.partOfBody.name}`,
                         data: exerciseStatsFormated.filter(
                             (s, i) => i >= dataSlice
                         ),

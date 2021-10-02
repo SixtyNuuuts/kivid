@@ -29,6 +29,7 @@ class VideoCrudController extends AbstractCrudController
             TextEditorField::new('description'),
             AssociationField::new('tags', 'Tag(s)'),
             AssociationField::new('options', 'Option(s)'),
+            AssociationField::new('partOfBodys', 'Partie(s) du corps'),
         ];
     }
 }

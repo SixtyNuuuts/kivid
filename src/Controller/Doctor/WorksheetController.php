@@ -4,11 +4,13 @@ namespace App\Controller\Doctor;
 
 use App\Entity\Doctor;
 use App\Entity\Exercise;
+use App\Entity\PartOfBody;
 use App\Entity\Worksheet;
 use App\Service\NotificationService;
 use App\Repository\VideoRepository;
 use App\Repository\PatientRepository;
 use App\Repository\ExerciseRepository;
+use App\Repository\PartOfBodyRepository;
 use App\Repository\WorksheetRepository;
 use App\Repository\WorksheetSessionRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -28,6 +30,7 @@ class WorksheetController extends AbstractController
     private $worksheetSessionRepository;
     private $videoRepository;
     private $exerciseRepository;
+    private $partOfBodyRepository;
     private $notificationService;
     private $em;
 
@@ -38,6 +41,7 @@ class WorksheetController extends AbstractController
         VideoRepository $videoRepository,
         ExerciseRepository $exerciseRepository,
         NotificationService $notificationService,
+        PartOfBodyRepository $partOfBodyRepository,
         EntityManagerInterface $em
     ) {
         $this->patientRepository = $patientRepository;
@@ -45,6 +49,7 @@ class WorksheetController extends AbstractController
         $this->worksheetSessionRepository = $worksheetSessionRepository;
         $this->videoRepository = $videoRepository;
         $this->exerciseRepository = $exerciseRepository;
+        $this->partOfBodyRepository = $partOfBodyRepository;
         $this->notificationService = $notificationService;
         $this->em = $em;
     }
@@ -169,11 +174,12 @@ class WorksheetController extends AbstractController
 
             if ($this->isCsrfTokenValid('create_worksheet' . $doctor->getId(), $data->_token)) {
                 $patient = $this->patientRepository->findOneBy(['id' => $data->patientId]);
+                $partOfBody = $this->partOfBodyRepository->findOneBy(['id' => $data->partOfBodyId]);
 
                 $worksheet = new Worksheet();
 
                 $worksheet->setTitle($data->title)
-                          ->setPartOfBody($data->partOfBody)
+                          ->setPartOfBody($partOfBody)
                           ->setDuration($data->duration)
                           ->setPerWeek($data->perWeek)
                           ->setPerDay($data->perDay)
@@ -216,10 +222,11 @@ class WorksheetController extends AbstractController
 
             if ($this->isCsrfTokenValid('edit_worksheet' . $doctor->getId(), $data->_token)) {
                 $worksheet = $this->worksheetRepository->findOneBy(['id' => $data->worksheetId]);
+                $partOfBody = $this->partOfBodyRepository->findOneBy(['id' => $data->partOfBodyId]);
 
                 if ($worksheet->getDoctor() === $doctor) {
                     $worksheet->setTitle($data->title)
-                              ->setPartOfBody($data->partOfBody)
+                              ->setPartOfBody($partOfBody)
                     ;
 
                     $checkIfWorksheetSessionsExist = $this->worksheetSessionRepository->findOneBy(
