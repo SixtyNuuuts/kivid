@@ -22,14 +22,21 @@ Encore
      */
     .addEntry('app', './assets/app.js')
     .addEntry('navbar', './assets/vue/navbar.js')
+    .addEntry('settings-page', './assets/vue/settings-page.js')
+    .addEntry('login', './assets/vue/fullpage/login.js')
+    .addEntry('register', './assets/vue/fullpage/register.js')
+    .addEntry('reset-pass', './assets/vue/fullpage/resetpassword/reset-pass.js')
+    .addEntry('reset-pass-request', './assets/vue/fullpage/resetpassword/reset-pass-request.js')
+    .addEntry('patient-create-pass', './assets/vue/fullpage/patientcreatepass/patient-create-pass.js')
+
+    .addEntry('maquette', './assets/vue/maquette.js')
+
     // Doctor
-    .addEntry('doctor-my-patients-page', './assets/vue/doctor/my-patients-page.js')
-    .addEntry('doctor-my-worksheets-page', './assets/vue/doctor/my-worksheets-page.js')
-    .addEntry('doctor-create-worksheet-page', './assets/vue/doctor/create-worksheet-page.js')
+    .addEntry('doctor-dashboard-page', './assets/vue/doctor/dashboard-page.js')
+    .addEntry('doctor-worksheet-page', './assets/vue/doctor/worksheet-page.js')
     // Patient
-    .addEntry('patient-my-worksheets-page', './assets/vue/patient/my-worksheets-page.js')
     .addEntry('patient-dashboard-page', './assets/vue/patient/dashboard-page.js')
-    .addEntry('patient-subscription-page', './assets/vue/patient/subscription-page.js')
+    .addEntry('patient-read-worksheet-page', './assets/vue/patient/read-worksheet-page.js')
 
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
     // .enableStimulusBridge('./assets/controllers.json')

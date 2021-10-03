@@ -2,100 +2,104 @@
 
 namespace App\Controller\Patient;
 
-use App\Entity\Exercise;
-use App\Entity\ExerciseStat;
 use App\Entity\Patient;
-use App\Repository\VideoRepository;
-use App\Repository\DoctorRepository;
+use App\Entity\ExerciseStat;
 use App\Repository\ExerciseRepository;
-use App\Repository\ExerciseStatRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Repository\PrescriptionRepository;
+use App\Repository\ExerciseStatRepository;
+use App\Repository\WorksheetRepository;
+use App\Repository\WorksheetSessionRepository;
+use App\Service\ScoreService;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
  * @Route("/patient")
  */
 class StatController extends AbstractController
 {
-    private $doctorRepository;
-    private $prescriptionRepository;
     private $exerciseRepository;
     private $exerciseStatRepository;
-    private $videoRepository;
-    private $mailer;
-    private $serializer;
+    private $worksheetRepository;
+    private $worksheetSessionRepository;
+    private $scoreService;
     private $em;
 
     public function __construct(
-        DoctorRepository $doctorRepository,
-        PrescriptionRepository $prescriptionRepository,
         ExerciseRepository $exerciseRepository,
         ExerciseStatRepository $exerciseStatRepository,
-        VideoRepository $videoRepository,
-        MailerInterface $mailer,
-        SerializerInterface $serializerInterface,
+        WorksheetRepository $worksheetRepository,
+        WorksheetSessionRepository $worksheetSessionRepository,
+        ScoreService $scoreService,
         EntityManagerInterface $em
     ) {
-        $this->doctorRepository = $doctorRepository;
-        $this->prescriptionRepository = $prescriptionRepository;
         $this->exerciseRepository = $exerciseRepository;
         $this->exerciseStatRepository = $exerciseStatRepository;
-        $this->videoRepository = $videoRepository;
-        $this->mailer = $mailer;
-        $this->serializer = $serializerInterface;
+        $this->worksheetRepository = $worksheetRepository;
+        $this->worksheetSessionRepository = $worksheetSessionRepository;
+        $this->scoreService = $scoreService;
         $this->em = $em;
     }
 
     /**
-     * @Route("/{id}/get/exercise-stats", name="app_patient_get_exercise_stats", methods={"GET"})
+     * @Route("/{id}/create/exercise-stat/{statCriterion}", name="app_patient_create_exercise_stat", methods={"POST"})
      */
-    public function getExerciseStats(Patient $patient): JsonResponse
-    {
-        return $this->json(
-            $this->prescriptionRepository->findBy(['patient' => $patient]),
-            200,
-            [],
-            ['groups' => 'exercise_stats_read']
-        );
-    }
-
-    /**
-     * @Route("/{id}/save/exercise-stat/{statCriterion}", name="app_patient_save_exercise_stat", methods={"POST"})
-     */
-    public function saveExerciseStat(Request $request, Patient $patient, string $statCriterion): JsonResponse
+    public function createExerciseStat(Request $request, Patient $patient, string $statCriterion): JsonResponse
     {
         if ($request->isMethod('post')) {
             $data = json_decode($request->getContent());
 
-            if ($this->isCsrfTokenValid('save_exercise_stat' . $patient->getId(), $data->_token)) {
+            if ($this->isCsrfTokenValid('create_exercise_stat' . $patient->getId(), $data->_token)) {
                 $exerciseStat =  $this->exerciseStatRepository->findOneBy([
                     'criterion' => $statCriterion,
-                    'exercise' => $data->exercise_id,
-                    'worksheetSession' => $data->worksheet_session_id
+                    'exercise' => $data->exerciseId,
+                    'worksheetSession' => $data->worksheetSessionId
                 ]);
 
-                $exerciseStat->setRating($data->exercise_stat_value);
-                $exerciseStat->setDoneAt(new \DateTime());
+                if (!$exerciseStat) {
+                    $exercise = $this->exerciseRepository->findOneBy(['id' => $data->exerciseId]);
+
+                    $worksheet = $this->worksheetRepository->findOneBy(['id' => $data->worksheetId]);
+
+                    $worksheetSession = $this->worksheetSessionRepository->findOneBy(
+                        ['id' => $data->worksheetSessionId]
+                    );
+
+                    $exerciseStat = new ExerciseStat();
+
+                    $exerciseStat->setCriterion($statCriterion)
+                                 ->setExercise($exercise)
+                                 ->setWorksheet($worksheet)
+                                 ->setWorksheetSession($worksheetSession)
+                    ;
+                }
+
+                $exerciseStat->setDoneAt(new \DateTime())
+                             ->setRating($data->exerciseStatValue)
+                ;
+
+                $ponderation = $this->scoreService->getPonderation($statCriterion, $data->exerciseStatValue);
+
+                $this->em->persist($exerciseStat);
 
                 $this->em->flush();
 
                 return $this->json(
-                    'Merci, nous avons bien enregistré votre note',
-                    200,
+                    [
+                        'message' => 'Stat enregistrée',
+                        'criterion' => $statCriterion,
+                        'ponderation' => $ponderation,
+                    ],
+                    200
                 );
             }
         }
 
         return $this->json(
-            'Nous n\'avons pas pu enregistrer la notation',
-            500,
+            "Une erreur s'est produite lors de la création de la statistique",
+            500
         );
     }
 }

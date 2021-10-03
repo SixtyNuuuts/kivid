@@ -64,4 +64,4 @@ security:
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/patient, roles: [ROLE_PATIENT, ROLE_ADMIN, ROLE_DOCTOR] }
-        - { path: ^/kine, roles: [ROLE_DOCTOR, ROLE_ADMIN] }
+        - { path: ^/doctor, roles: [ROLE_DOCTOR, ROLE_ADMIN] }

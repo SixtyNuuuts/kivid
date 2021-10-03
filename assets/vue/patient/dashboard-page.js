@@ -9,14 +9,16 @@ Vue.use(VueAxios, axios)
 // Vuesax (UX lib)
 import Vuesax from 'vuesax'
 
-Vue.use(Vuesax, {
-    colors: {
-        primary: '#ffab2c',
-        success: '#17c964',
-        danger: '#d60f3a',
-        warning: '#ffd667',
-        dark: '#0c0b13'
-    }
+// Ellipse Progress Bar
+import VueEllipseProgress from 'vue-ellipse-progress';
+Vue.use(VueEllipseProgress);
+
+// Vue-Chartist
+// + Plugin for tooltips
+import * as ChartistTooltips from 'chartist-plugin-tooltips';
+Vue.use(require('vue-chartist'), {
+    messageNoData: "Aucune donnée",
+    classNoData: "empty"
 })
 
 new Vue({

@@ -1,0 +1,140 @@
+#dashboard {
+    main {
+        display: grid;
+        grid-gap: 2rem;
+
+        grid-template-columns: 1fr;
+
+        @media (min-width: 1100px) {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        aside {
+            grid-area: aside;
+            display: flex;
+            flex-direction: column;
+
+            @media (min-width: 650px) {
+                flex-direction: row;
+            }
+
+            @media (min-width: 992px) {
+                margin-bottom: 2rem;
+                flex-direction: column;
+            }
+
+            #my-doctor {
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+
+                @media (min-width: 650px) {
+                    width: 49%;
+                }
+
+                @media (min-width: 992px) {
+                    width: 100%;
+                }
+
+                .doctor-details {
+                    display: flex;
+                    align-items: center;
+                    flex-grow: 1;
+
+                    .doctor-avatar {
+                        .avatar {
+                            margin-right: 1.9rem;
+
+                            @media (min-width: 992px) {
+                                margin-right: 1.5vw;
+                            }
+
+                            &.waiting {
+                                img {
+                                    width: 35%;
+                                }
+                            }
+                        }
+
+                        .avatar.loading {
+                            width: 11.6rem;
+                            height: 11.6rem;
+                            min-width: 11.6rem;
+                            min-height: 11.6rem;
+                            max-height: 11.6rem;
+                            border-radius: 50%;
+                        }
+                    }
+
+                    .doctor-infos {
+                        font-size: 1.8rem;
+                        width: 100%;
+
+                        .name {
+                            margin: 0.5rem 0;
+
+                            &.loading {
+                                height: 2.3rem;
+                            }
+                        }
+
+                        .city {
+                            margin: 0.5rem 0;
+                            font-weight: 200;
+                            font-size: 1.5rem;
+
+                            &.loading {
+                                height: 1.8rem;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    #patient {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+
+        @media (min-width: 650px) {
+            width: 49%;
+        }
+
+        @media (min-width: 992px) {
+            width: 100%;
+        }
+
+        .patient-details {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+
+            .patient-avatar {
+                .avatar {
+                    margin-right: 1.9rem;
+
+                    @media (min-width: 992px) {
+                        margin-right: 1.5vw;
+                    }
+                }
+            }
+
+            .patient-infos {
+                font-size: 1.8rem;
+                width: 100%;
+
+                .name {
+                    margin: 0.5rem 0;
+                }
+
+                .birthdate {
+                    margin: 0.5rem 0;
+                    font-weight: 200;
+                    font-size: 1.5rem;
+                }
+            }
+        }
+    }
+}

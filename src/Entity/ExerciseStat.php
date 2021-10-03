@@ -15,25 +15,24 @@ class ExerciseStat
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"prescription_read", "exercise_stats_read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"prescription_read", "exercise_stats_read"})
+     * @Groups({"dashboard_worksheet_read"})
      */
     private $doneAt;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"prescription_read", "exercise_stats_read"})
+     * @Groups({"dashboard_worksheet_read"})
      */
     private $criterion;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"prescription_read", "exercise_stats_read"})
+     * @ORM\Column(type="float")
+     * @Groups({"dashboard_worksheet_read"})
      */
     private $rating;
 
@@ -45,9 +44,14 @@ class ExerciseStat
 
     /**
      * @ORM\ManyToOne(targetEntity=WorksheetSession::class, inversedBy="exerciseStats")
-     * @Groups({"prescription_read"})
      */
     private $worksheetSession;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Worksheet::class, inversedBy="exerciseStats")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $worksheet;
 
     public function getId(): ?int
     {
@@ -78,12 +82,12 @@ class ExerciseStat
         return $this;
     }
 
-    public function getRating(): ?int
+    public function getRating(): ?float
     {
         return $this->rating;
     }
 
-    public function setRating(?int $rating): self
+    public function setRating(float $rating): self
     {
         $this->rating = $rating;
 
@@ -110,6 +114,18 @@ class ExerciseStat
     public function setWorksheetSession(?WorksheetSession $worksheetSession): self
     {
         $this->worksheetSession = $worksheetSession;
+
+        return $this;
+    }
+
+    public function getWorksheet(): ?Worksheet
+    {
+        return $this->worksheet;
+    }
+
+    public function setWorksheet(?Worksheet $worksheet): self
+    {
+        $this->worksheet = $worksheet;
 
         return $this;
     }

@@ -1,53 +1,28 @@
-{% extends 'layout/main.html.twig' %}
+{% extends 'layout/vue.html.twig' %}
 
-{% block title %}Tableaux de bord Kiné
+{% block title %}Tableaux de bord{% endblock %}
+
+{% block stylesheets %}
+	{{ parent() }}
+
+	{{ encore_entry_link_tags('doctor-dashboard-page') }}
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+
+	{{ encore_entry_script_tags('doctor-dashboard-page') }}
 {% endblock %}
 
 {% block body %}
-	<section class="pt-6 pt-md-8 pb-8 mb-md-8">
-		<div class="container">
-			<div class="row">
-				<div class="col-12 col-md-8">
-					<div class="card card-border border-primary-desat shadow-lg mb-6 mb-md-8 mb-lg-0 lift lift-lg pb-5">
-						<div class="d-flex flex-center justify-content-center mt-5">
-							<span class="badge rounded-pill bg-dark-soft h6 text-uppercase">
-								{{ 'profil' | upper }}
-							</span>
-						</div>
-						<div class="d-flex flex-row-reverse position-absolute w-100">
-							<a class="btn btn btn-rounded-circle btn-primary m-3" href="{{ path('app_user_edit', {'userType' : 'doctor', 'id' : doctor.id }) }}">
-								<i class="fe fe-edit"></i>
-							</a>
-						</div>
-						<div class="d-flex flex-center flex-column">
-							<div class="d-flex justify-content-center mt-4">
-								<div class="avatar avatar-xxl">
-									<img class="avatar-img rounded-circle" src="{{ doctor.avatarUrl|default('/img/avatar-default.svg') }}" alt="avatar">
-								</div>
-							</div>
-							<div>
-								<p class="text-center mt-3 mb-0">
-									{{ doctor.firstname }}
-									{{ doctor.lastname }}
-								</p>
-								<p class="text-center d-block small text-truncate text-gray-700 m-0" href="#!">
-									{{ doctor.email }}
-								</p>
-								{% if doctor.city %}
-									<div class="d-flex align-items-center flex-column border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 mx-5 mt-3">
-										<div class="fs-6 fw-boldest text-gray-700">{{ 'Ville' | upper }}</div>
-										<div class="fw-bold text-gray-400">{{ doctor.city }}</div>
-									</div>
-								{% endif %}
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="col-12 col-md-4">
-					<a href="{{ path('app_doctor_patients', {'id' : doctor.id}) ~ '?add_patient=true' }}" class="btn w-100 btn-primaki mt-3 btn-pill lift py-4"><i class="fe fe-user-plus me-2"></i>Ajouter un patient</a>
-					<a href="{{ path('app_doctor_worksheets', {'id' : doctor.id, 'listType' : 'prescriptions'}) ~ '?create_prescription=true' }}" class="btn w-100 btn-primaki mt-3 btn-pill lift py-4"><i class="fe fe-file-plus me-2"></i>Créer un traitement</a>
-				</div>
-			</div>
-		</div>
-	</section>
+	<div id="vue"></div>
+{% endblock %}
+{% block vueData %}
+	{
+		"doctor": {{ doctor|serialize('json', {'groups': 'doctor_read'})|raw }},
+		"csrfTokenAddPatient": {{ csrf_token('add_patient' ~ doctor.id)|serialize('json')|raw }},
+		"csrfTokenRemovePatient": {{ csrf_token('remove_patient' ~ doctor.id)|serialize('json')|raw }},
+		"csrfTokenRemoveWorksheet": {{ csrf_token('remove_worksheet' ~ doctor.id)|serialize('json')|raw }},
+		"csrfTokenCreatePatient": {{ csrf_token('create_patient' ~ doctor.id)|serialize('json')|raw }}
+	}
 {% endblock %}

@@ -1,20 +1,23 @@
-// Bootstrap functions
-@import "~bootstrap/scss/functions";
+@import "./utils/normalize";
 
-// Theme functions
-@import "theme/functions";
+@import "./variables";
 
-// Theme variables
-@import "theme/variables";
+@import "./root";
 
-// Bootstrap core
-@import "~bootstrap/scss/bootstrap";
+@import "./fonts";
 
-// Theme core
-@import "theme/theme";
+@import "./global";
 
-// Libs
-@import "libs";
+@import "./libs/vuesax/overload";
 
-// custom (Damien)
-@import "custom";
+@import "./libs/vueslider/overload";
+
+@import "./libs/chartist/overload";
+
+@import "./dashboard/dashboard";
+
+@import "./dashboard/my-dashboard-notifications";
+
+@import "./dashboard/my-worksheets";
+
+@import "./worksheet/worksheet";

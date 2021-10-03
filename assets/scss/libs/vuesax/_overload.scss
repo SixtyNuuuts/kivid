@@ -1,0 +1,978 @@
+@import "~vuesax/dist/vuesax.css";
+
+/// ROOT VARIABLES
+:root {
+    // --vs-primary: 255, 104, 56; Sanguine
+    --vs-primary: 251, 139, 104;
+    --vs-warn: 255, 203, 70;
+    --vs-danger: 255, 86, 75;
+    --vs-success: 61, 200, 99;
+    --vs-dark: 34, 46, 84;
+    --vs-light: 244, 247, 248;
+}
+
+/// BUTTON
+.vs-button {
+    // --vs-color-rotate: var(--vs-primary);
+    // --vs-color-darken: var(--vs-primary);
+    --vs-button-padding: 1.5rem 2.4rem;
+    --vs-button-border-radius: 0.8rem;
+    --vs-button-margin: 0;
+    // --vs-button-text-color: #fff;
+}
+
+.vs-button {
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: 0.05rem;
+
+    &.w-100 {
+        width: 100%;
+    }
+
+    i {
+        font-size: 1.8rem;
+        position: relative;
+        top: 0rem;
+        margin-right: 0.95rem;
+    }
+
+    &.vs-button--active,
+    &:hover {
+        background: $sanguine;
+    }
+
+    &.secondary {
+        background: transparent;
+        color: $orange;
+        border: 0.1rem solid $gray-middle;
+
+        &.vs-button--active,
+        &:hover {
+            background: $orange;
+            color: $white;
+            border: 0.1rem solid $orange;
+        }
+    }
+
+    &:not(:disabled):not(.secondary):not(.part-of-body) {
+        box-shadow: 0rem 0.4rem 1.4rem 0rem rgba(251, 139, 104, 0.5);
+    }
+
+    &:disabled {
+        opacity: 1;
+        background: $gray-middle;
+        color: $gray-dark;
+    }
+}
+
+.btn-navbar {
+    .vs-button {
+        box-shadow: 0rem 0.2rem 0.6rem 0rem rgba(251, 139, 104, 0.5) !important;
+
+        .vs-button__content {
+            padding: 0.9rem 2rem;
+            font-size: 1.4rem;
+        }
+    }
+}
+
+.vs-button-group {
+    display: flex;
+    border: 0.2rem solid $gray-light;
+    border-radius: 0.3rem;
+    background: $white;
+
+    .vs-button.vs-button--flat {
+        box-shadow: none !important;
+        flex-grow: 1;
+        border-radius: 0.3rem !important;
+        background: transparent;
+        color: $black;
+        font-size: 1.2rem;
+        letter-spacing: 0.02rem;
+
+        &.vs-button--active {
+            background: $orange;
+            color: $white;
+        }
+
+        .vs-button__content {
+            padding: 0.65rem 2rem;
+            padding-top: 0.8rem;
+        }
+    }
+}
+.vs-button.btn-go {
+    width: 5.6rem;
+    height: 5.6rem;
+    min-width: 5.6rem;
+    min-height: 5.6rem;
+    max-height: 5.6rem;
+    white-space: nowrap;
+    background: $sanguine;
+    border-radius: 50%;
+    font-size: 2rem;
+    font-weight: 700;
+
+    .vs-button__content {
+        padding: 0;
+    }
+
+    &:disabled {
+        box-shadow: none;
+        background: $gray-middle;
+        color: $gray-dark;
+    }
+}
+
+.vs-button.btn-consult {
+    .vs-button__content {
+        padding: 0.9rem 2.4rem;
+    }
+}
+
+.vs-button--size-mini.tag {
+    border-radius: 0.4rem;
+
+    .vs-button__content {
+        padding: 0.5rem 1rem;
+    }
+
+    &.part-of-body {
+        background: #feeee8;
+        color: $black;
+        letter-spacing: 0.02rem;
+        overflow: visible;
+
+        &:hover {
+            box-shadow: none;
+            transform: none;
+            cursor: initial;
+        }
+
+        &.completed {
+            background: #def1df;
+            color: $green;
+
+            i.kiv-completed {
+                opacity: 1;
+            }
+        }
+
+        i.kiv-completed {
+            position: absolute;
+            top: -0.7rem;
+            right: -1.8rem;
+            font-size: 1.7rem;
+            border-radius: 50%;
+            color: $green;
+            opacity: 0;
+            transition: opacity 0.2s;
+
+            &::before {
+                position: relative;
+                z-index: 1;
+            }
+
+            &::after {
+                content: "";
+                background: #fff;
+                position: absolute;
+                top: 0.125rem;
+                right: 0.125rem;
+                z-index: 0;
+                border-radius: 50%;
+                display: block;
+                width: 1.5rem;
+                height: 1.5rem;
+            }
+        }
+
+        .vs-button__content {
+            padding: 0.4rem 1rem;
+            padding-top: 0.5rem;
+
+            img {
+                position: relative;
+                margin-right: 0.6rem;
+
+                &.icon-pied {
+                    top: -0.1rem;
+                    height: 1.5rem;
+                }
+
+                &.icon-jambe {
+                    top: 0rem;
+                    height: 1.85rem;
+                }
+
+                &.icon-bras {
+                    top: -0.1rem;
+                    height: 1.7rem;
+                }
+
+                &.icon-main {
+                    top: -0.1rem;
+                    height: 1.7rem;
+                }
+
+                &.icon-epaule {
+                    top: -0.1rem;
+                    height: 1.7rem;
+                }
+
+                &.icon-dos {
+                    top: -0.1rem;
+                    height: 1.7rem;
+                }
+
+                &.icon-cervicales {
+                    top: -0.1rem;
+                    height: 1.7rem;
+                }
+
+                &.icon-lombaires {
+                    top: 0rem;
+                    height: 1.8rem;
+                }
+
+                &.icon-thoracique {
+                    top: -0.1rem;
+                    height: 1.7rem;
+                }
+            }
+        }
+    }
+}
+
+.vs-button--size-mini.btn-chart {
+    border-radius: 0.4rem;
+    font-size: 1.2rem;
+
+    .vs-button__content {
+        padding: 0.4rem 0.6rem;
+    }
+
+    &.part-of-body {
+        background: #feeee8;
+        color: $black;
+        letter-spacing: 0.02rem;
+        overflow: visible;
+
+        &:hover {
+            box-shadow: none;
+            transform: none;
+        }
+
+        .vs-button__content {
+            padding: 0.4rem 0.7rem;
+            padding-top: 0.5rem;
+
+            img {
+                position: relative;
+                margin-right: 0.6rem;
+
+                &.icon-pied {
+                    top: -0.1rem;
+                    height: 1.2rem;
+                }
+
+                &.icon-jambe {
+                    top: 0rem;
+                    height: 1.55rem;
+                }
+
+                &.icon-bras {
+                    top: -0.1rem;
+                    height: 1.4rem;
+                }
+
+                &.icon-main {
+                    top: -0.1rem;
+                    height: 1.4rem;
+                }
+
+                &.icon-epaule {
+                    top: -0.1rem;
+                    height: 1.4rem;
+                }
+
+                &.icon-dos {
+                    top: -0.1rem;
+                    height: 1.4rem;
+                }
+
+                &.icon-cervicales {
+                    top: -0.1rem;
+                    height: 1.4rem;
+                }
+
+                &.icon-lombaires {
+                    top: 0rem;
+                    height: 1.5rem;
+                }
+
+                &.icon-thoracique {
+                    top: -0.1rem;
+                    height: 1.4rem;
+                }
+            }
+        }
+    }
+}
+
+.disactive {
+    .vs-button--size-mini.btn-chart {
+        background: #faf8f4;
+    }
+}
+
+.btn-next .vs-button {
+    .vs-button__content {
+        padding: 1.2rem 2rem;
+    }
+}
+/// INPUT
+.vs-input-content {
+    border-radius: 0.6rem;
+
+    .vs-input {
+        width: 100%;
+        padding: 1.6rem 1.7rem;
+        background: $white;
+        color: $black;
+        border: 0.1rem solid $gray-middle;
+        font-size: 1.4rem;
+        border-radius: 0.5rem;
+
+        &:focus {
+            background: $white;
+            border: 0.1rem solid $gray-dark;
+        }
+
+        &:hover,
+        &:focus:hover {
+            border: 0.1rem solid $gray-dark;
+            box-shadow: 0 0.5rem 2.5rem -0.4rem rgba(0, 0, 0, 0.05);
+            // transform: translate(0, -0.4rem);
+
+            // ~ .vs-input__label {
+            //     transform: translate(0, -0.4rem);
+            // }
+
+            // ~ .vs-input__icon {
+            //     transform: translate(0, -0.4rem);
+            // }
+        }
+
+        &[disabled] {
+            opacity: 1;
+            background: $gray-middle;
+            border: 0.1rem solid $gray-middle;
+
+            &:hover {
+                border: 0.1rem solid $gray-middle;
+                box-shadow: none;
+            }
+
+            & ~ .vs-input__label {
+                text-shadow: none;
+            }
+        }
+    }
+
+    .vs-input__label {
+        top: 1.6rem;
+        left: 1.6rem;
+        font-size: 1.4rem;
+        color: $gray-dark;
+        opacity: 1;
+        height: initial;
+        width: initial;
+        padding: 0.05rem 0.5rem;
+        border-radius: 0.4rem;
+    }
+
+    .vs-input:focus ~ .vs-input__label--placeholder {
+        transform: none;
+        // color: $orange;
+    }
+
+    .vs-input__label--hidden.vs-input__label--placeholder {
+        transform: none;
+    }
+
+    .vs-input:focus ~ .vs-input__label--placeholder,
+    .vs-input__label--hidden.vs-input__label--placeholder {
+        font-size: 1.4rem;
+        top: -0.8rem;
+        left: 1.3rem;
+        text-shadow: 0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white,
+            0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white,
+            0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white,
+            0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white;
+    }
+
+    .vs-input__icon--click:hover.vs-input__icon--after {
+        transform: none;
+    }
+
+    .vs-input__icon {
+        left: auto;
+        right: 0.8rem;
+        box-shadow: none;
+        background: transparent;
+        color: $black;
+
+        i.error {
+            color: $red;
+        }
+
+        i {
+            font-size: 2rem;
+        }
+    }
+
+    .vs-input__icon--click:hover {
+        box-shadow: none;
+        transform: none;
+        background: transparent;
+    }
+
+    .vs-input--has-icon--after {
+        padding-right: 4.2rem;
+    }
+
+    .vs-input:focus ~ .vs-input__icon--after {
+        transform: none;
+    }
+
+    .vs-input:focus ~ .vs-input__icon {
+        box-shadow: none;
+        transform: none;
+        background: $white;
+    }
+
+    & + .vs-input__message {
+        padding-top: 0.7rem;
+        font-size: 1.3rem;
+        padding-left: 0;
+    }
+}
+
+.vs-input-parent[type="date"] {
+    .vs-input-content .vs-input__label {
+        top: 0.4rem;
+        text-shadow: 0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white,
+            0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white,
+            0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white,
+            0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white, 0 0 0.3rem $white;
+    }
+}
+
+.error {
+    .vs-input-content {
+        .vs-input {
+            border: 0.1rem solid $red;
+            padding-right: 3.8rem;
+
+            &:hover {
+                border: 0.1rem solid $red;
+
+                & ~ .vs-input__icon {
+                    // transform: translate(0, -0.4rem);
+                    transform: none;
+                }
+            }
+
+            &:focus {
+                border: 0.1rem solid $red;
+            }
+        }
+
+        .vs-input__icon {
+            color: $red;
+            font-size: 2rem;
+        }
+
+        .vs-input__label {
+            color: $red;
+        }
+    }
+}
+
+.vs-input__progress {
+    width: 100%;
+    left: 0;
+    height: 0.4rem;
+    margin-top: 1rem;
+
+    .vs-input__progress__bar {
+        height: 0.4rem;
+    }
+}
+
+/// SELECT
+.vs-select-content {
+    max-width: none;
+
+    .vs-select__label {
+        // font-size: 1.5rem;
+        // color: $black;
+        // opacity: 1;
+        // top: 1.95rem;
+        // left: 2rem;
+        max-width: 75%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        top: 1.6rem;
+        left: 1.6rem;
+        font-size: 1.4rem;
+        color: $gray-dark;
+        opacity: 1;
+        height: initial;
+        width: initial;
+        padding: 0.05rem 0.5rem;
+        border-radius: 0.4rem;
+    }
+
+    .vs-select__input,
+    .vs-select.activeOptions .vs-select__input {
+        padding-right: 3rem;
+        background: $white;
+        font-size: 1.4rem;
+        border: 0.1rem solid $gray-middle;
+        border-radius: 0.5rem;
+        padding: 1.6rem 1.7rem;
+
+        &:focus {
+            border-radius: 0.5rem;
+            border: 0.1rem solid $gray-dark;
+
+            ~ .vs-select__label {
+                // margin-left: 0.3rem;
+                // color: $gray-middle;
+            }
+        }
+
+        &:hover {
+            border: 0.1rem solid $gray-dark;
+
+            ~ .vs-icon-arrow {
+                margin-top: -1.3rem;
+            }
+        }
+    }
+
+    // .vs-select__input:hover {
+    //     box-shadow: none;
+    //     transform: none;
+    // }
+
+    .vs-icon-arrow {
+        width: 1rem;
+        height: 1rem;
+        color: $black;
+        margin-top: -0.5rem;
+        right: 1.6rem;
+    }
+}
+
+.vs-select__options {
+    transform: translateY(3px);
+}
+
+.kiv-select {
+    .vs-select-content {
+        max-width: none;
+
+        .vs-select__label {
+            font-size: 1.3rem;
+            color: $black;
+            opacity: 1;
+            top: 1.25rem;
+            left: 1.2rem;
+            max-width: 75%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .vs-select.activeOptions .vs-select__input {
+            transform: none;
+        }
+
+        .vs-select__input,
+        .vs-select.activeOptions .vs-select__input {
+            padding: 0.6rem 1.3rem;
+            padding-right: 3rem;
+            border-radius: 0.3rem;
+            background: $white;
+            font-size: 1.3rem;
+            border: 0.2rem solid #faf6ef;
+            min-height: 32px;
+            padding-top: 0.7rem;
+
+            &:focus {
+                ~ .vs-select__label {
+                    margin-left: 0.3rem;
+                    color: $gray-middle;
+                }
+            }
+
+            &:hover {
+                ~ .vs-icon-arrow {
+                    margin-top: -0.5rem;
+                }
+            }
+        }
+
+        .vs-icon-arrow {
+            width: 0.8rem;
+            height: 0.8rem;
+            color: $black;
+            margin-top: -0.5rem;
+            right: 1.6rem;
+        }
+
+        .vs-select.activeOptions .vs-icon-arrow {
+            margin-top: 0.4rem !important;
+        }
+    }
+
+    .vs-select.activeOptions .vs-select__chips,
+    .vs-select__chips,
+    .vs-select__chips:hover {
+        background: transparent;
+    }
+
+    .vs-select__input.multiple {
+        color: transparent;
+    }
+
+    .vs-select:not(.activeOptions) .vs-select__chips:hover,
+    .vs-select__input:hover,
+    .vs-select__input:focus {
+        transform: none;
+    }
+
+    .vs-select__chips input {
+        font-size: 1.4rem;
+        padding: 0.3rem 0.5rem;
+        padding-left: 0.7rem;
+    }
+
+    .vs-select.activeOptions .vs-select__input {
+        min-height: 3.8rem;
+    }
+
+    .vs-select.activeOptions .vs-select__chips {
+        transform: none;
+    }
+}
+
+.kiv-select.tags,
+.kiv-select.block {
+    min-width: 30%;
+    .vs-select-content {
+        .vs-select__input {
+            border-radius: 0.5rem !important;
+            min-height: 4.3rem !important;
+        }
+        .vs-select__chips {
+            align-items: center;
+        }
+
+        .vs-select__label {
+            top: 1.3rem;
+            font-size: 1.4rem;
+            color: #b7bdc2;
+        }
+
+        .vs-select__chips__chip {
+            background-color: $orange;
+            color: $white;
+            padding: 0.3rem 0.9rem;
+            padding-right: 1.5rem;
+            font-size: 1.24rem;
+        }
+
+        .vs-select__input:hover ~ .vs-select__label {
+            margin-top: 0;
+        }
+    }
+}
+
+.vs-select.activeOptions .vs-select__label {
+    margin-top: 0;
+}
+
+.vs-select__options {
+    border-radius: 0 0 0.3rem 0.3rem;
+}
+// .vs-checkbox-mask:after {
+//     background: $tournesol !important;
+// }
+
+.vs-select__options__content {
+    color: $black;
+
+    .vs-select__option {
+        padding: 0.7rem 1rem;
+        font-size: 1.3rem;
+
+        &.hiddenOption {
+            padding: 0;
+        }
+    }
+
+    .vs-select__options__content__not-data {
+        font-size: 1.3rem;
+    }
+}
+
+.vs-select__option.activeOption {
+    background: #fcfaf7;
+    color: #987a40;
+}
+
+.vs-select__option:hover:not(:disabled) {
+    color: #987a40;
+}
+/// CHECKBOX
+.vs-checkbox-mask {
+    background: $white;
+}
+
+.vs-checkbox:hover ~ .vs-checkbox-mask {
+    background: $white;
+}
+
+.vs-checkbox:hover ~ .vs-checkbox-mask:after {
+    background: $sanguine;
+}
+
+.vs-checkbox-label {
+    font-size: 1.4rem;
+    color: $black;
+}
+
+/// SWITCH
+.vs-switch {
+    max-width: 4rem;
+
+    &:hover {
+        .vs-switch__background {
+            background: $sanguine;
+        }
+    }
+}
+
+/// AVATAR
+
+.vs-avatar {
+    background: #f6f4f0;
+
+    img {
+        color: #f6f4f0;
+    }
+}
+
+.vs-avatar-content.loading {
+    .vs-avatar {
+        background: transparent;
+    }
+}
+
+/// DIALOG / MODAL
+
+.vs-dialog__content.notFooter {
+    margin-bottom: 5px;
+}
+
+.vs-dialog-content {
+    backdrop-filter: blur(0.5rem);
+    background: rgba(34, 46, 84, 0.8);
+
+    .vs-dialog__content {
+        padding: 2rem 2rem;
+
+        h2 {
+            position: relative;
+            top: -0.4rem;
+            margin-bottom: 3rem;
+            margin-top: 1rem;
+            font-size: 2.3rem;
+
+            &::before {
+                content: "";
+                display: block;
+                width: 0.3rem;
+                height: 2.4rem;
+                background: $orange;
+                position: absolute;
+                left: -2rem;
+                top: 0;
+                border-radius: 0.2rem;
+            }
+
+            // @media (min-width: 768px) {
+            //     &::before {
+            //         top: 0.1rem;
+            //     }
+            // }
+        }
+    }
+
+    .vs-dialog {
+        border-radius: 1rem;
+    }
+
+    .vs-dialog__close {
+        border-radius: 50%;
+    }
+
+    &.modal-mobile {
+        padding: 1.6rem;
+
+        &.vs-dialog-enter-active .vs-dialog:not(.vs-dialog--fullScreen) {
+            animation: none;
+        }
+
+        .vs-dialog {
+            margin: 0;
+            min-width: initial;
+            max-width: initial;
+            width: 100%;
+            height: 100%;
+
+            .vs-dialog__content {
+                padding: 0;
+                width: 100%;
+                height: 100%;
+            }
+        }
+    }
+}
+
+/// notification
+.vs-notification {
+    border-radius: 1rem;
+    background-color: $black;
+    color: $white;
+    box-shadow: 0px 1rem 1.3rem -0.5rem rgba(24, 7, 4, 0.5);
+    max-width: 250px;
+
+    .vs-notification__content__header h4 {
+        font-size: 1.2rem;
+    }
+    .vs-notification__content__text p {
+        font-size: 1.2rem;
+        line-height: 1.6rem;
+    }
+
+    .vs-notification__icon i {
+        font-size: 1.7rem;
+    }
+
+    .vs-icon-close:before {
+        background: $white;
+    }
+
+    .vs-icon-close:after {
+        background: $white;
+    }
+}
+
+.vs-notification__progress {
+    background: $white;
+    background: rgba($white, 0.3);
+}
+
+.vs-notification-parent--top-right {
+    top: 5.8rem;
+    right: 1.9rem;
+
+    &.fullpage {
+        top: 1.8rem;
+    }
+
+    @media (max-width: 600px) {
+        right: 0;
+    }
+}
+
+////pagination
+.vs-pagination__button,
+.vs-pagination__active,
+.vs-pagination__arrow {
+    border-radius: 0.8rem;
+    font-size: 1.2rem;
+    width: 30px;
+    height: 30px;
+}
+
+// tooltip
+.vs-tooltip {
+    padding: 0.5rem 1rem;
+    padding-top: 0.85rem;
+    border-radius: 0.5rem;
+    font-size: 1.3rem;
+}
+
+.vs-avatar img {
+    border-radius: initial;
+}
+
+/* VueSax Overload */
+// :root {
+//   --vs-primary: 25, 91, 255;
+//   --vs-warn: 255, 186, 0;
+//   --vs-danger: 255, 71, 87;
+//   --vs-success: 70, 201, 58;
+//   --vs-dark: 30, 30, 30;
+//   --vs-light: 244, 247, 248;
+//   --vs-color: 17, 18, 20;
+//   --vs-facebook: 59, 89, 153;
+//   --vs-twitter: 29, 161, 242;
+//   --vs-youtube: 255, 0, 0;
+//   --vs-pinterest: 189, 8, 28;
+//   --vs-linkedin: 0, 119, 181;
+//   --vs-snapchat: 255, 252, 0;
+//   --vs-whatsapp: 37, 211, 102;
+//   --vs-tumblr: 54, 70, 93;
+//   --vs-reddit: 255, 69, 0;
+//   --vs-spotify: 30, 215, 96;
+//   --vs-amazon: 255, 153, 0;
+//   --vs-medium: 2, 184, 117;
+//   --vs-vimeo: 26, 183, 234;
+//   --vs-skype: 0, 175, 240;
+//   --vs-dribbble: 234, 76, 137;
+//   --vs-slack: 74, 21, 75;
+//   --vs-yahoo: 67, 2, 151;
+//   --vs-twitch: 100, 65, 164;
+//   --vs-discord: 114, 137, 218;
+//   --vs-telegram: 0, 136, 204;
+//   --vs-google-plus: 219, 68, 55;
+//   --vs-messenger: 0, 132, 255;
+//   --vs-background: 255, 255, 255;
+//   --vs-text: 44, 62, 80;
+//   --vs-gray-1: 249, 251, 253;
+//   --vs-gray-2: 241, 244, 248;
+//   --vs-gray-3: 217, 226, 239;
+//   --vs-gray-4: 198, 211, 230;
+// }
+
+// :root {
+//   --vs-shadow-opacity: .05;
+//   --vs-radius: 20px;
+//   --vs-zindex-1: 100000;
+//   --vs-zindex-2: 99000;
+//   --vs-zindex-3: 98000;
+//   --vs-zindex-4: 97000;
+//   --vs-background-opacity: .2;
+// }

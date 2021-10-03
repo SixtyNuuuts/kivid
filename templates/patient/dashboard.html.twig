@@ -1,6 +1,6 @@
 {% extends 'layout/vue.html.twig' %}
 
-{% block title %}Tableaux de bord Patient{% endblock %}
+{% block title %}Tableaux de bord{% endblock %}
 
 {% block stylesheets %}
 	{{ parent() }}
@@ -15,16 +15,15 @@
 {% endblock %}
 
 {% block body %}
-	<div class="container my-8">
-		<div id="vue"></div>
-	</div>
+	<div id="vue"></div>
 {% endblock %}
 {% block vueData %}
 	{
 		"patient": {{ patient|serialize('json', {'groups': 'patient_read'})|raw }},
 		"doctorView": {{ doctorView|serialize('json')|raw }},
-		"csrfTokenAcceptAddRequest": {{ csrf_token('accept_add_request' ~ patient.id)|serialize('json')|raw }},
-		"csrfTokenDeclineAddRequest": {{ csrf_token('decline_add_request' ~ patient.id)|serialize('json')|raw }}
-
+		"csrfTokenSelectDoctor": {{ csrf_token('select_doctor' ~ patient.id)|serialize('json')|raw }},
+		"csrfTokenAcceptDoctor": {{ csrf_token('accept_doctor' ~ patient.id)|serialize('json')|raw }},
+		"csrfTokenDeclineDoctor": {{ csrf_token('decline_doctor' ~ patient.id)|serialize('json')|raw }},
+		"csrfTokenContact": {{ csrf_token('contact')|serialize('json')|raw }}
 	}
 {% endblock %}

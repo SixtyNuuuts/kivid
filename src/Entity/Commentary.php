@@ -15,13 +15,13 @@ class Commentary
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"patient_read", "doctor_read", "user_read", "prescription_read"})
+     * @Groups({"worksheet_read", "dashboard_worksheet_read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="datetime_immutable")
-     * @Groups({"patient_read", "doctor_read", "user_read", "prescription_read"})
+     * @Groups({"worksheet_read"})
      */
     private $createdAt;
 
@@ -37,7 +37,7 @@ class Commentary
 
     /**
      * @ORM\Column(type="text")
-     * @Groups({"patient_read", "doctor_read", "user_read", "prescription_read"})
+     * @Groups({"worksheet_read"})
      */
     private $content;
 
@@ -51,6 +51,13 @@ class Commentary
      * @ORM\ManyToOne(targetEntity=Doctor::class, inversedBy="commentaries")
      */
     private $doctor;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=WorksheetSession::class, inversedBy="commentaries")
+     * @ORM\JoinColumn(nullable=false)
+     * @Groups({"worksheet_read"})
+     */
+    private $worksheetSession;
 
     public function __construct()
     {
@@ -130,6 +137,18 @@ class Commentary
     public function setDoctor(?Doctor $doctor): self
     {
         $this->doctor = $doctor;
+
+        return $this;
+    }
+
+    public function getWorksheetSession(): ?WorksheetSession
+    {
+        return $this->worksheetSession;
+    }
+
+    public function setWorksheetSession(?WorksheetSession $worksheetSession): self
+    {
+        $this->worksheetSession = $worksheetSession;
 
         return $this;
     }

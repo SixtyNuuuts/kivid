@@ -1,3 +1,6 @@
+import Vue from 'vue';
+import moment from "moment";
+
 export default {
 
   getTagsFromAllVideos(videos) {
@@ -38,9 +41,87 @@ export default {
     });
   },
 
-  formatDate(datetime) {
-    let date = new Date(Date.parse(datetime));
-    return new Intl.DateTimeFormat('fr-FR').format(date);
+  getTimeLeftBeforeNextSession(endDateCurrentSession) {
+    const start = moment().format("DD/MM/YYYY HH:mm:ss");
+
+    const end = moment(endDateCurrentSession).format(
+      "DD/MM/YYYY HH:mm:ss"
+    );
+
+    const days = this.getDiffBetweenTwoDates(start, end).asDays();
+
+    const hours = this.getDiffBetweenTwoDates(start, end).asHours();
+
+    const minutes = this.getDiffBetweenTwoDates(start, end).asMinutes();
+
+    const seconds = this.getDiffBetweenTwoDates(start, end).asSeconds();
+
+    return { days, hours, minutes, seconds };
+  },
+
+  getDiffBetweenTwoDates(start, end) {
+    return moment.duration(
+      moment(end, "DD/MM/YYYY HH:mm:ss").diff(
+        moment(start, "DD/MM/YYYY HH:mm:ss")
+      )
+    );
+  },
+
+  openSuccessNotification(titleText, messageText) {
+    Vue.prototype.$vs.notification({
+      progress: "auto",
+      icon: "<i class='far fa-check-circle text-success'></i>",
+      color: null,
+      position: "top-right",
+      title: `<strong class='text-success'>${titleText}</strong>`,
+      text: `${messageText}`,
+    });
+  },
+
+  openPrimaryNotification(titleText, messageText) {
+    Vue.prototype.$vs.notification({
+      progress: "auto",
+      icon: "<i class='far fa-check-circle text-primary'></i>",
+      color: null,
+      position: "top-right",
+      title: `<strong class='text-primary'>${titleText}</strong>`,
+      text: `${messageText}`,
+    });
+  },
+
+  openErrorNotification(titleText, messageText) {
+    Vue.prototype.$vs.notification({
+      progress: "auto",
+      icon: "<i class='far fa-times-circle text-danger'></i>",
+      color: null,
+      position: "top-right",
+      title: `<strong class='text-danger'>${titleText}</strong>`,
+      text: `${messageText}`,
+    });
+  },
+
+  openSuccessNotificationStay(titleText, messageText) {
+    Vue.prototype.$vs.notification({
+      duration: 'none',
+      classNotification: 'fullpage',
+      icon: "<i class='far fa-check-circle text-success'></i>",
+      color: null,
+      position: "top-right",
+      title: `<strong class='text-success'>${titleText}</strong>`,
+      text: `${messageText}`,
+    });
+  },
+
+  openErrorNotificationStay(titleText, messageText) {
+    Vue.prototype.$vs.notification({
+      duration: 'none',
+      classNotification: 'fullpage',
+      icon: "<i class='far fa-times-circle text-danger'></i>",
+      color: null,
+      position: "top-right",
+      title: `<strong class='text-danger'>${titleText}</strong>`,
+      text: `${messageText}`,
+    });
   },
 
   generateAgeFromDateOfBirth(dateString) {
@@ -64,6 +145,13 @@ export default {
     return array
   },
 
+  sortByCreatedAtDesc(array) {
+    array.sort(function (a, b) {
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    });
+    return array;
+  },
+
   hexToRgbA(hex, alpha) {
     let c;
     if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
@@ -75,6 +163,38 @@ export default {
       return 'rgba(' + [(c >> 16) & 255, (c >> 8) & 255, c & 255].join(',') + ', ' + alpha + ')';
     }
     throw new Error('Bad Hex');
+  },
+
+  // timeForNotification(notificationDate) {
+  //   const timeNow = new Date().getTime();
+  //   const timeNotification = new Date(notificationDate).getTime();
+
+  //   const msDiff = timeNow - timeNotification;
+
+  //   const dayDiff = msDiff / 86400 / 1000;
+  //   const nbDays = Math.round(dayDiff);
+
+  //   const restInHours = (msDiff - 86400 * nbDays * 1000) / 3600 / 1000;
+  //   const nbHours = Math.round(restInHours);
+
+  //   const restInMin =
+  //     (msDiff - (3600 * nbHours * 1000 + 86400 * nbDays * 1000)) /
+  //     60 /
+  //     1000;
+  //   const nbMin = Math.round(restInMin);
+
+  //   let minutes = nbMin > 0 ? `${nbMin} min.` : `À l'instant`;
+
+  //   const hoursOrMinutes = nbHours >= 1 ? `${nbHours} h.` : minutes;
+
+  //   const timeForNotif =
+  //     nbDays > 1 ? this.formatDate(notificationDate) : hoursOrMinutes;
+
+  //   return timeForNotif;
+  // },
+
+  getCivility(gender) {
+    return "male" === gender ? "M." : "Mme";
   },
 
   // Vuesax functions
@@ -116,7 +236,7 @@ export default {
     }
   },
 
-  getSearch(data, search) {
+  getSearch(data, search, exclude) {
     if (search === void 0) {
       search = '';
     }
@@ -128,7 +248,10 @@ export default {
     }
 
     function getValues(obj) {
-      const searchFields = ["firstname", "lastname", "email", "title", "name", "worksheet", "patient", "prescriber"]
+      let searchFields = ["firstname", "lastname", "email", "title", "name", "worksheet", "patient", "doctor"];
+      if ('doctor' === exclude) {
+        searchFields = ["firstname", "lastname", "email", "title", "name", "worksheet", "patient"];
+      }
 
       const objFilteredBySearchField = Object.keys(obj).reduce((r, key) => {
         if (searchFields.includes(key)) {

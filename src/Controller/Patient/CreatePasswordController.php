@@ -3,14 +3,14 @@
 namespace App\Controller\Patient;
 
 use App\Form\PasswordFormType;
+use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
+use SymfonyCasts\Bundle\ResetPassword\Controller\ResetPasswordControllerTrait;
+use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use SymfonyCasts\Bundle\ResetPassword\Controller\ResetPasswordControllerTrait;
-use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
 
 class CreatePasswordController extends AbstractController
 {
@@ -51,49 +51,48 @@ class CreatePasswordController extends AbstractController
         try {
             $user = $this->passwordHelper->validateTokenAndFetchUser($token);
         } catch (ResetPasswordExceptionInterface $e) {
-            $this->addFlash('danger', sprintf(
-                'Un problème est survenu lors de la création de votre mot de passe - %s',
-                $e->getReason()
-            ));
-
-            return $this->redirectToRoute('app_home');
+            return $this->json(
+                "Erreur lors du processus de réinitialisation de mot de passe",
+                500
+            );
         }
 
-        // The token is valid.
-        $form = $this->createForm(PasswordFormType::class);
+        if ($request->isMethod('post')) {
+            $data = json_decode($request->getContent());
 
-        $form->handleRequest($request);
+            if ($this->isCsrfTokenValid('patient_create_pass', $data->_token)) {
+                // A password reset token should be used only once, remove it.
+                $this->passwordHelper->removeResetRequest($token);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            // A password creation token should be used only once, remove it.
-            $this->passwordHelper->removeResetRequest($token);
+                // Hash the plain password, and set it.
+                $hashedPassword = $passwordHasher->hashPassword(
+                    $user,
+                    $data->plainPassword
+                );
 
-            // Hash the plain password, and set it.
-            $hashedPassword = $passwordHasher->hashPassword(
-                $user,
-                $form->get('plainPassword')->getData()
+                $user->setPassword($hashedPassword);
+
+                // email verification ok.
+                $user->setIsVerified(true);
+
+                $this->getDoctrine()->getManager()->flush();
+
+                // The session is cleaned up after the password has been changed.
+                $this->cleanSessionAfterReset();
+
+                return $this->json(
+                    "Votre mot de passe a été créé",
+                    200
+                );
+            }
+
+            return $this->json(
+                "Erreur lors du processus de création de mot de passe",
+                500
             );
-
-            $user->setPassword($hashedPassword);
-
-            // email verification ok.
-            $user->setIsVerified(true);
-
-            $this->getDoctrine()->getManager()->flush();
-
-            // The session is cleaned up after the password has been created.
-            $this->cleanSessionAfterReset();
-
-            $this->addFlash(
-                'success',
-                'Votre mot de passe a été créé, vous pouvez vous connecter avec votre email et ce mot de passe.'
-            );
-
-            return $this->redirectToRoute('app_login');
         }
 
-        return $this->render('patient/create_pass/form.html.twig', [
-            'createpassForm' => $form->createView(),
-        ]);
+
+        return $this->render('patient/create_pass/create_pass.html.twig');
     }
 }

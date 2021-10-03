@@ -1,0 +1,28 @@
+{% extends 'layout/vue.html.twig' %}
+
+{% block title %}Mon Abonnement{% endblock %}
+
+{% block stylesheets %}
+	{{ parent() }}
+
+	{{ encore_entry_link_tags('settings-page') }}
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+
+	{{ encore_entry_script_tags('settings-page') }}
+{% endblock %}
+
+{% block body %}
+	<div id="vue"></div>
+{% endblock %}
+{% block vueData %}
+	{
+		"currentUser": {{ currentUser|serialize('json', {'groups': 'user_read'})|raw }},
+		"status": {{ status|serialize('json')|raw }},
+		"stripeSubPlans": {{ stripeSubPlans|serialize('json')|raw }},
+		"stripeSubscription": {{ stripeSubscription|serialize('json')|raw }},
+		"activeTab": "2"
+	}
+{% endblock %}

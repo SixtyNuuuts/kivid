@@ -17,43 +17,53 @@ class Video
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"worksheet_read", "video_read", "prescription_read"})
+     * @Groups({"worksheet_read", "video_read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"worksheet_read", "video_read", "prescription_read"})
+     * @Groups({"worksheet_read", "video_read"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"worksheet_read", "video_read", "prescription_read"})
      */
     private $url;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"worksheet_read", "video_read", "prescription_read"})
+     * @Groups({"worksheet_read", "video_read"})
      */
     private $thumbnailUrl;
 
     /**
      * @ORM\Column(type="text", nullable=true)
-     * @Groups({"worksheet_read", "video_read", "prescription_read"})
      */
     private $description;
 
     /**
      * @ORM\ManyToMany(targetEntity=Tag::class, inversedBy="videos")
-     * @Groups({"worksheet_read", "video_read", "prescription_read"})
+     * @Groups({"video_read", "dashboard_worksheet_read"})
      */
     private $tags;
 
     /**
+     * @ORM\ManyToMany(targetEntity=Option::class, inversedBy="videos")
+     * @Groups({"video_read", "worksheet_read"})
+     */
+    private $options;
+
+    /**
+    * @ORM\ManyToMany(targetEntity=PartOfBody::class, inversedBy="videos")
+    * @Groups({"video_read", "dashboard_worksheet_read", "worksheet_read"})
+    */
+    private $partOfBodys;
+
+    /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"worksheet_read", "video_read", "prescription_read"})
+     * @Groups({"worksheet_read", "video_read"})
      */
     private $youtubeId;
 
@@ -71,6 +81,8 @@ class Video
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->tags = new ArrayCollection();
+        $this->options = new ArrayCollection();
+        $this->partOfBodys = new ArrayCollection();
         $this->exercises = new ArrayCollection();
     }
 
@@ -147,6 +159,54 @@ class Video
     public function removeTag(Tag $tag): self
     {
         $this->tags->removeElement($tag);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Option[]
+     */
+    public function getOptions(): Collection
+    {
+        return $this->options;
+    }
+
+    public function addOption(Option $option): self
+    {
+        if (!$this->options->contains($option)) {
+            $this->options[] = $option;
+        }
+
+        return $this;
+    }
+
+    public function removeOption(Option $option): self
+    {
+        $this->options->removeElement($option);
+
+        return $this;
+    }
+
+    /**
+         * @return Collection|PartOfBody[]
+         */
+    public function getPartOfBodys(): Collection
+    {
+        return $this->partOfBodys;
+    }
+
+    public function addPartOfBody(PartOfBody $partOfBody): self
+    {
+        if (!$this->partOfBodys->contains($partOfBody)) {
+            $this->partOfBodys[] = $partOfBody;
+        }
+
+        return $this;
+    }
+
+    public function removePartOfBody(PartOfBody $partOfBody): self
+    {
+        $this->partOfBodys->removeElement($partOfBody);
 
         return $this;
     }

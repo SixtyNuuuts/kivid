@@ -21,7 +21,7 @@ class Subscription
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient_read", "user_read"})
+     * @Groups({"patient_read"})
      */
     private $stripeSubscriptionId;
 
@@ -33,13 +33,13 @@ class Subscription
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"patient_read", "user_read"})
+     * @Groups({"patient_read"})
      */
     private $currentPeriodStart;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"patient_read", "user_read"})
+     * @Groups({"patient_read"})
      */
     private $currentPeriodEnd;
 
@@ -48,12 +48,6 @@ class Subscription
      * @ORM\JoinColumn(nullable=false)
      */
     private $patient;
-
-    /**
-     * @ORM\Column(type="boolean")
-     * @Groups({"patient_read", "user_read"})
-     */
-    private $isActive;
 
     public function getId(): ?int
     {
@@ -116,18 +110,6 @@ class Subscription
     public function setPatient(?Patient $patient): self
     {
         $this->patient = $patient;
-
-        return $this;
-    }
-
-    public function getIsActive(): ?bool
-    {
-        return $this->isActive;
-    }
-
-    public function setIsActive(bool $isActive): self
-    {
-        $this->isActive = $isActive;
 
         return $this;
     }

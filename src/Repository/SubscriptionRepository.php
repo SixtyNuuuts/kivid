@@ -2,9 +2,10 @@
 
 namespace App\Repository;
 
+use App\Entity\User;
 use App\Entity\Subscription;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method Subscription|null find($id, $lockMode = null, $lockVersion = null)
@@ -19,32 +20,18 @@ class SubscriptionRepository extends ServiceEntityRepository
         parent::__construct($registry, Subscription::class);
     }
 
-    // /**
-    //  * @return Subscription[] Returns an array of Subscription objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function findCurrentSubscription(User $user): ?Subscription
     {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('s.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+        $now = new \DateTime();
 
-    /*
-    public function findOneBySomeField($value): ?Subscription
-    {
         return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
+            ->where('s.currentPeriodStart <= :now')
+            ->andWhere('s.currentPeriodEnd >= :now')
+            ->andWhere('s.patient = :user')
+            ->setParameter('now', $now)
+            ->setParameter('user', $user)
             ->getQuery()
             ->getOneOrNullResult()
         ;
     }
-    */
 }

@@ -53,6 +53,11 @@ class Notification
      */
     private $createdAt;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $typeId;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -132,6 +137,18 @@ class Notification
     public function setCreatedAt(\DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getTypeId(): ?int
+    {
+        return $this->typeId;
+    }
+
+    public function setTypeId(?int $typeId): self
+    {
+        $this->typeId = $typeId;
 
         return $this;
     }

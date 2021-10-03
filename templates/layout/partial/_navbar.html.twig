@@ -6,22 +6,16 @@
 			"csrfTokenReadNotification": {{ csrf_token('read_notifications')|serialize('json')|raw }},
 			"homePath": {{ path('app_home')|serialize('json')|raw }},
 			"loginPath": {{ path('app_login')|serialize('json')|raw }},
+			"logoutPath": {{ path('app_logout')|serialize('json')|raw }},
 			"adminDashboardPath": {{ path('app_admin_dashboard')|serialize('json')|raw }},
 			"currentUser": {{ app.user|serialize('json', {'groups': 'user_read'})|raw }},
 			"currentRoute": {{ app.request.get('_route')|serialize('json')|raw }},
 			"patientDashboardPath": {{ path('app_patient_dashboard', {'id':app.user.id})|serialize('json')|raw }},
-			"patientWorksheetsPath": {{ path('app_patient_worksheets', {'id':app.user.id})|serialize('json')|raw }},
-			"patientEditPath": {{ path('app_user_edit', {'id': app.user.id, 'userType': 'patient'})|serialize('json')|raw }},
+			"settingsUserEditPath": {{ path('app_settings_user_edit')|serialize('json')|raw }},
+			"settingsSubscriptionPath": {{ path('app_subscription')|serialize('json')|raw }},
 			"doctorDashboardPath": {{ path('app_doctor_dashboard', {'id':app.user.id})|serialize('json')|raw }},
-			"doctorWorksheetsPath": {{ path('app_doctor_worksheets', {'id':app.user.id, 'listType' : 'prescriptions'})|serialize('json')|raw }},
-			"doctorPatientsPath": {{ path('app_doctor_patients', {'id':app.user.id})|serialize('json')|raw }},
-			"doctorEditPath": {{ path('app_user_edit', {'id': app.user.id, 'userType': 'doctor'})|serialize('json')|raw }},
 			"patientDashboardRoute": "app_patient_dashboard",
-			"doctorDashboardRoute": "app_doctor_dashboard",
-			"patientWorksheetsRoute": "app_patient_worksheets",
-			"doctorWorksheetsRoute": "app_doctor_worksheets",
-			"doctorPatientsRoute": "app_doctor_patients",
-			"logoutPath": {{ path('app_logout')|serialize('json')|raw }}
+			"doctorDashboardRoute": "app_doctor_dashboard"
 		}
 	</script>
 {% else %}

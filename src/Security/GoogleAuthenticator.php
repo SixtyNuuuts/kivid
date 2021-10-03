@@ -7,10 +7,10 @@ use App\Entity\Doctor;
 use App\Entity\Patient;
 use App\Repository\DoctorRepository;
 use App\Repository\PatientRepository;
-use Symfony\Component\HttpClient\HttpClient;
-use League\OAuth2\Client\Provider\GoogleUser;
 use App\Security\Exception\NotVerifiedEmailException;
+use League\OAuth2\Client\Provider\GoogleUser;
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
+use Symfony\Component\HttpClient\HttpClient;
 
 class GoogleAuthenticator extends AbstractSocialAuthenticator
 {

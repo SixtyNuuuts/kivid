@@ -1,0 +1,27 @@
+@import "~vue-slider-component/theme/default.css";
+
+.vue-slider-rail {
+    background-color: $gray-middle;
+    border-radius: 0.6rem;
+}
+
+.vue-slider-dot {
+    width: 3.4rem !important;
+    height: 3.4rem !important;
+    transition: none !important;
+    // transition: left 0.1s ease 0s !important;
+
+    .vue-slider-dot-handle {
+        background: $white;
+        border: 0.8rem solid $sanguine;
+        box-shadow: none;
+    }
+}
+
+.vue-slider-process {
+    background-color: transparent;
+}
+
+.vue-slider-mark-step {
+    background-color: transparent;
+}
