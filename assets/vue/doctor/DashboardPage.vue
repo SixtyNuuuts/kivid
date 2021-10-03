@@ -305,7 +305,7 @@ export default {
                             )
                             .then((response) => {
                                 worksheet.currentWorksheetSession =
-                                    response.data;
+                                    response.data.currentWorksheetSession;
 
                                 this.axios
                                     .get(

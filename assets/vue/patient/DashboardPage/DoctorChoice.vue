@@ -105,11 +105,89 @@
                 </transition>
             </div>
         </div>
+        <a class="contact" @click="modalContact = true"
+            >Vous n'avez pas de praticien ?</a
+        >
         <div class="btn-container">
             <vs-button :disabled="!doctorSelected" @click="valideDoctorChoice"
                 >Valider et accéder à mon dashboard</vs-button
             >
         </div>
+        <vs-dialog width="450px" v-model="modalContact">
+            <h2>Demande de praticien</h2>
+
+            <div class="contact-form">
+                <vs-input
+                    v-model="patient.firstname"
+                    label-placeholder="Prénom"
+                    type="text"
+                >
+                </vs-input>
+
+                <vs-input
+                    v-model="patient.lastname"
+                    label-placeholder="Nom"
+                    type="text"
+                >
+                </vs-input>
+
+                <vs-input
+                    :danger="validationMessage.email != null"
+                    v-model="patient.email"
+                    @keyup="validationEmail"
+                    label-placeholder="Email"
+                    autocomplete="email"
+                    type="email"
+                    icon-after
+                    :class="{
+                        error: validationMessage.email && patient.email,
+                    }"
+                >
+                    <template
+                        v-if="validationMessage.email && patient.email"
+                        #icon
+                    >
+                        <i class="kiv-error error icon-24"></i>
+                    </template>
+
+                    <template
+                        v-if="validationMessage.email && patient.email"
+                        #message-danger
+                    >
+                        {{ validationMessage.email }}
+                    </template>
+                </vs-input>
+
+                <div class="message-block">
+                    <textarea
+                        v-model="contactMessage"
+                        id="contact-message"
+                        cols="30"
+                        rows="6"
+                        :class="{ filled: contactMessage != '' }"
+                    >
+                    </textarea>
+                    <label for="contact-message">Message</label>
+                </div>
+            </div>
+            <div
+                class="btn-container"
+                :class="{ disabled: btnLoadingValidContact }"
+            >
+                <vs-button
+                    :disabled="
+                        validationMessage.email ||
+                        !patient.email ||
+                        btnLoadingValidContact ||
+                        !contactMessage
+                    "
+                    :loading="btnLoadingValidContact"
+                    class="w-100"
+                    @click="validContact"
+                    >Envoyer</vs-button
+                >
+            </div>
+        </vs-dialog>
     </section>
 </template>
 
@@ -121,6 +199,7 @@ export default {
     props: {
         patient: Object,
         csrfTokenSelectDoctor: String,
+        csrfTokenContact: String,
     },
     directives: {
         ClickOutside,
@@ -134,6 +213,12 @@ export default {
             selectInput: null,
             loading: false,
             footer: null,
+            modalContact: false,
+            btnLoadingValidContact: false,
+            validationMessage: {
+                email: null,
+            },
+            contactMessage: "",
         };
     },
     computed: {
@@ -202,6 +287,46 @@ export default {
         getCivility(gender) {
             return f.getCivility(gender);
         },
+        validContact() {
+            this.btnLoadingValidContact = true;
+
+            this.axios
+                .post(`/contact`, {
+                    _token: this.csrfTokenContact,
+                    firstname: this.patient.firstname,
+                    lastname: this.patient.lastname,
+                    email: this.patient.email,
+                    contactMessage: this.contactMessage,
+                })
+                .then((response) => {
+                    f.openSuccessNotification("Message envoyé", response.data);
+
+                    this.contactMessage = "";
+                    this.modalContact = false;
+                    this.btnLoadingValidContact = false;
+                })
+                .catch((error) => {
+                    const errorMess =
+                        "object" === typeof error.response.data
+                            ? error.response.data.detail
+                            : error.response.data;
+
+                    this.modalContact = false;
+                    this.btnLoadingValidContact = false;
+                    f.openErrorNotification("Erreur", errorMess);
+                });
+        },
+        validationEmail() {
+            this.validationMessage.email = null;
+
+            const re =
+                /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+            if (!re.test(String(this.patient.email).toLowerCase())) {
+                this.validationMessage.email =
+                    "Merci d'entrer un email valide.";
+            }
+        },
     },
     mounted() {
         this.footer = document.querySelector(".footer");
@@ -244,7 +369,7 @@ export default {
 
     .select-filter {
         width: 100%;
-        margin-bottom: 3rem;
+        margin-bottom: 2.1rem;
         position: relative;
         transition: all 0.25s;
         min-height: 5.9rem;
@@ -410,6 +535,78 @@ export default {
     .select-container {
         width: 100%;
         margin-bottom: 3rem;
+    }
+
+    .contact {
+        color: $gray-dark;
+        font-size: 1.4rem;
+        display: flex;
+        justify-content: center;
+        margin: 0;
+        margin-bottom: 3rem;
+        text-decoration: underline;
+        cursor: pointer;
+    }
+}
+.contact-form {
+    .vs-input-parent {
+        margin-bottom: 1.5rem;
+    }
+
+    .message-block {
+        position: relative;
+
+        textarea {
+            width: 100%;
+            padding: 1.6rem 1.7rem;
+            background: $white;
+            color: $black;
+            border: 0.1rem solid #e7dfcd;
+            font-size: 1.4rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+
+            &:focus,
+            &:hover,
+            &:focus-visible {
+                border: 0.1rem solid #c1b79d;
+                outline: none;
+            }
+
+            &:focus ~ label,
+            &.filled ~ label {
+                font-size: 1.4rem;
+                top: -0.8rem;
+                left: 1.3rem;
+                text-shadow: 0 0 0.3rem #fff, 0 0 0.3rem #fff, 0 0 0.3rem #fff,
+                    0 0 0.3rem #fff, 0 0 0.3rem #fff, 0 0 0.3rem #fff,
+                    0 0 0.3rem #fff, 0 0 0.3rem #fff, 0 0 0.3rem #fff,
+                    0 0 0.3rem #fff, 0 0 0.3rem #fff, 0 0 0.3rem #fff,
+                    0 0 0.3rem #fff, 0 0 0.3rem #fff, 0 0 0.3rem #fff,
+                    0 0 0.3rem #fff, 0 0 0.3rem #fff, 0 0 0.3rem #fff,
+                    0 0 0.3rem #fff, 0 0 0.3rem #fff;
+            }
+        }
+
+        label {
+            top: 1.6rem;
+            left: 1.6rem;
+            font-size: 1.4rem;
+            color: #c1b79d;
+            opacity: 1;
+            padding: 0.05rem 0.5rem;
+            border-radius: 0.4rem;
+            position: absolute;
+            transition: all 0.25s ease;
+            cursor: text;
+            user-select: none;
+            pointer-events: none;
+            width: initial;
+            height: initial;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
     }
 }
 </style>

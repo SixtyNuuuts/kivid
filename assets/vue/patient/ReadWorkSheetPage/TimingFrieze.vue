@@ -120,6 +120,7 @@ export default {
     props: {
         loading: Boolean,
         worksheet: Object,
+        exercises: Array,
         currentWorksheetSession: [Object, Boolean],
         totalWorksheetSessions: Number,
     },
@@ -132,6 +133,9 @@ export default {
         getWorksheet() {
             return this.worksheet;
         },
+        getExercises() {
+            return this.exercises;
+        },
         getCurrentWorksheetSession() {
             return this.currentWorksheetSession;
         },
@@ -141,17 +145,12 @@ export default {
         getTimingPercentage() {
             let progression = 0;
 
-            if (
-                this.getWorksheet.exercises &&
-                this.getWorksheet.exercises.length
-            ) {
-                const exercisePercentPart =
-                    100 / this.getWorksheet.exercises.length;
+            if (this.getExercises && this.getExercises.length) {
+                const exercisePercentPart = 100 / this.getExercises.length;
 
-                const exercisesCompletedCount =
-                    this.getWorksheet.exercises.filter(
-                        (e) => e.isCompleted
-                    ).length;
+                const exercisesCompletedCount = this.getExercises.filter(
+                    (e) => e.isCompleted
+                ).length;
 
                 progression = Math.round(
                     exercisePercentPart * exercisesCompletedCount

@@ -2,9 +2,14 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Mime\Address;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class HomeController extends AbstractController
 {
@@ -38,5 +43,38 @@ class HomeController extends AbstractController
     public function maquette(): Response
     {
         return $this->render('home/maquette.html.twig');
+    }
+
+    /**
+     * @Route("/contact", name="app_contact", methods={"POST"})
+     */
+    public function contact(Request $request, MailerInterface $mailer): JsonResponse
+    {
+        if ($request->isMethod('post')) {
+            $data = json_decode($request->getContent());
+
+            if ($this->isCsrfTokenValid('contact', $data->_token)) {
+                $email = (new TemplatedEmail())
+                ->from(new Address($data->email, "{$data->firstname} {$data->lastname}"))
+                ->to('contact@kivid.fr')
+                ->subject("Demande de praticien")
+                ->htmlTemplate('home/contact_email.html.twig')
+                ->context([
+                    'contactMessage' => $data->contactMessage,
+                ])
+                ;
+
+                $mailer->send($email);
+
+                return $this->json(
+                    "Votre demande a été envoyée",
+                    200,
+                );
+            }
+        }
+        return $this->json(
+            "Une erreur s'est produite lors de l'envoi du message",
+            500,
+        );
     }
 }

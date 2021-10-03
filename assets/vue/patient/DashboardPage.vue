@@ -4,6 +4,7 @@
             v-if="!patient.doctor && !doctorView"
             :patient="patient"
             :csrfTokenSelectDoctor="csrfTokenSelectDoctor"
+            :csrfTokenContact="csrfTokenContact"
         />
         <section v-else id="dashboard" class="db-patient">
             <h1>
@@ -205,6 +206,7 @@ export default {
             csrfTokenSelectDoctor: null,
             csrfTokenAcceptDoctor: null,
             csrfTokenDeclineDoctor: null,
+            csrfTokenContact: null,
             myDBNotificationsContent: true,
             myScoresContent: true,
             myDoctorContent: true,
@@ -290,6 +292,7 @@ export default {
         this.csrfTokenAcceptDoctor = data.csrfTokenAcceptDoctor;
         this.csrfTokenDeclineDoctor = data.csrfTokenDeclineDoctor;
         this.csrfTokenSelectDoctor = data.csrfTokenSelectDoctor;
+        this.csrfTokenContact = data.csrfTokenContact;
 
         this.loadingPatientWorksheets = true;
 
@@ -311,16 +314,69 @@ export default {
                         if (!this.doctorView) {
                             this.axios
                                 .get(
-                                    `/patient/${this.patient.id}/get/current-worksheet-session/${worksheet.id}`
+                                    `/patient/${this.patient.id}/get/current-worksheet-session/${worksheet.id}/time-left-before-next`
                                 )
                                 .then((response) => {
                                     worksheet.currentWorksheetSession =
-                                        response.data;
+                                        response.data.currentWorksheetSession;
 
                                     worksheet.timeLeftBeforeNextSession =
                                         this.getTimeLeftBeforeNextSession(
-                                            response.data.endAt
+                                            response.data
+                                                .currentWorksheetSession.endAt
                                         );
+
+                                    if (response.data.notifTimeLeft) {
+                                        const userNotifList =
+                                            document.getElementById(
+                                                "user-notif-list"
+                                            );
+                                        const notifBell =
+                                            document.getElementById(
+                                                "notif-bell"
+                                            );
+
+                                        notifBell.classList.add(
+                                            "has-notifications"
+                                        );
+
+                                        let li = document.createElement("li");
+                                        li.classList.add("prio");
+                                        li.classList.add("active");
+                                        li.addEventListener(
+                                            "mouseover",
+                                            () => {
+                                                li.classList.remove("active");
+                                            },
+                                            false
+                                        );
+
+                                        let divIcon =
+                                            document.createElement("div");
+                                        divIcon.classList.add("notif-icon");
+
+                                        let img = document.createElement("img");
+                                        img.src =
+                                            "/img/icons/colored/clock.svg";
+                                        img.alt =
+                                            "Icone d'une montre / horloge";
+                                        img.classList.add("icon-clock");
+
+                                        let p = document.createElement("p");
+                                        let span =
+                                            document.createElement("span");
+                                        span.innerText = `Plus que quelques ${response.data.notifTimeLeft.time} pour réaliser vos exercices de "${response.data.notifTimeLeft.worksheet}", je m'y met maintenant !`;
+
+                                        p.appendChild(span);
+
+                                        divIcon.appendChild(img);
+
+                                        li.appendChild(divIcon);
+
+                                        li.appendChild(p);
+
+                                        userNotifList.appendChild(li);
+                                    }
 
                                     this.loadingPatientWorksheets = false;
                                 })
@@ -339,12 +395,14 @@ export default {
                                 )
                                 .then((response) => {
                                     worksheet.currentWorksheetSession =
-                                        response.data;
+                                        response.data.currentWorksheetSession;
 
                                     if (worksheet.currentWorksheetSession) {
                                         worksheet.timeLeftBeforeNextSession =
                                             this.getTimeLeftBeforeNextSession(
-                                                response.data.endAt
+                                                response.data
+                                                    .currentWorksheetSession
+                                                    .endAt
                                             );
                                     }
 

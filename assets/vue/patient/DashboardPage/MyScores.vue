@@ -272,7 +272,11 @@ export default {
         },
         getScorePercentage() {
             if (this.score > 0) {
-                const scorePercentage = (this.score * 100) / this.scoreMax;
+                let scorePercentage = (this.score * 100) / this.scoreMax;
+
+                if (scorePercentage > 100) {
+                    scorePercentage = 100;
+                }
 
                 return scorePercentage > 1 ? scorePercentage : 1;
             }
@@ -334,7 +338,7 @@ export default {
 
             const variationSlice = 1;
 
-            const result = 0;
+            let result = 0;
 
             if (stats.length > variationSlice) {
                 const lastStats = stats
@@ -357,9 +361,11 @@ export default {
 
                 const oldStatsAverage = this.statsAverage(oldStats);
 
-                const result =
+                result =
                     Math.round((lastStatsAverage - oldStatsAverage) * 10 * 10) /
                     10;
+            } else {
+                return null;
             }
 
             return {
@@ -389,13 +395,54 @@ export default {
             );
         },
     },
-    created() {
+    mounted() {
         this.loading = true;
 
         this.axios
             .get(`/patient/${this.patient.id}/get/score`)
             .then((response) => {
-                this.score = response.data ? response.data : 0;
+                this.score = response.data.score ? response.data.score : 0;
+
+                if (response.data.notifScoreRank) {
+                    const userNotifList =
+                        document.getElementById("user-notif-list");
+                    const notifBell = document.getElementById("notif-bell");
+
+                    notifBell.classList.add("has-notifications");
+
+                    let li = document.createElement("li");
+                    li.classList.add("prio");
+                    li.classList.add("active");
+                    li.addEventListener(
+                        "mouseover",
+                        () => {
+                            li.classList.remove("active");
+                        },
+                        false
+                    );
+
+                    let divIcon = document.createElement("div");
+                    divIcon.classList.add("notif-icon");
+
+                    let img = document.createElement("img");
+                    img.src = "/img/icons/colored/confettis.svg";
+                    img.alt = "Icone de confettis";
+                    img.classList.add("icon-confettis");
+
+                    let p = document.createElement("p");
+                    let span = document.createElement("span");
+                    span.innerText = `Vous avez atteint le niveau ${response.data.notifScoreRank} ! Félicitation !`;
+
+                    p.appendChild(span);
+
+                    divIcon.appendChild(img);
+
+                    li.appendChild(divIcon);
+
+                    li.appendChild(p);
+
+                    userNotifList.appendChild(li);
+                }
 
                 this.loading = false;
             })
