@@ -34,12 +34,14 @@ class NotificationService
     public function createNotification(
         string $type,
         array $content,
-        User $recipient
+        User $recipient,
+        int $typeId = null
     ): void {
         $notification = new Notification();
 
         $notification->setType($type)
                      ->setContent($content)
+                     ->setTypeId($typeId)
         ;
 
         if ($recipient instanceof Patient) {
@@ -70,6 +72,27 @@ class NotificationService
                 ],
             ],
             $patient
+        );
+    }
+
+    public function createWorksheetCompletedNotification(
+        Doctor $doctor,
+        Worksheet $worksheet,
+        Patient $patient
+    ): void {
+        $this->createNotification(
+            'worksheet-completed',
+            [
+                [
+                    'type' => 'user',
+                    'content' => "{$this->userService->getUserName($patient)}",
+                ],
+                [
+                    'type' => 'text',
+                    'content' => " a complété \"{$worksheet->getTitle()}\"",
+                ],
+            ],
+            $doctor
         );
     }
 
@@ -162,23 +185,29 @@ class NotificationService
     }
 
     public function createTimingWorksheetNotification(
-        Patient $patient
+        Patient $patient,
+        string $type,
+        Worksheet $worksheet,
+        int $typeID
     ): void {
         $this->createNotification(
             'timing-worksheet',
             [
                 [
                     'type' => 'text',
-                    'content' => "Plus que quelques heures pour réaliser vos exercices, je m'y met maintenant !",
+                    'content' => "Plus que quelques {$type} pour réaliser vos exercices 
+                    de \"{$worksheet->getTitle()}\", je m'y met maintenant !",
                 ],
             ],
-            $patient
+            $patient,
+            $typeID
         );
     }
 
     public function createScoreRankNotification(
         string $scoreRank,
-        Patient $patient
+        Patient $patient,
+        int $typeID
     ): void {
         $this->createNotification(
             'score-rank',
@@ -188,7 +217,8 @@ class NotificationService
                     'content' => "Vous avez atteint le niveau {$scoreRank} ! Félicitation !",
                 ],
             ],
-            $patient
+            $patient,
+            $typeID
         );
     }
 

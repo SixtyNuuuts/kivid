@@ -3,14 +3,16 @@
 namespace App\Controller\Patient;
 
 use App\Entity\Patient;
+use App\Service\NotificationService;
 use App\Repository\WorksheetRepository;
-use App\Repository\WorksheetSessionRepository;
 use App\Service\WorksheetSessionService;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Repository\NotificationRepository;
 use Symfony\Component\HttpFoundation\Request;
+use App\Repository\WorksheetSessionRepository;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
  * @Route("/patient")
@@ -35,13 +37,15 @@ class WorksheetSessionController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/get/current-worksheet-session/{worksheetId}/{doctorView}",
+     * @Route("/{id}/get/current-worksheet-session/{worksheetId}/{param}",
      * name="app_patient_get_current_worksheet_session", methods={"GET"})
      */
     public function getCurrentWorksheetSession(
         Patient $patient,
         int $worksheetId,
-        string $doctorView = ''
+        NotificationRepository $notificationRepository,
+        NotificationService $notificationService,
+        string $param = ''
     ): JsonResponse {
         $worksheet = $this->worksheetRepository->findOneBy(['id' => $worksheetId]);
 
@@ -51,7 +55,61 @@ class WorksheetSessionController extends AbstractController
 
         $currentWorksheetSession = $this->worksheetSessionRepository->findCurrentWorksheetSession($worksheet);
 
-        if (!$currentWorksheetSession && $doctorView != 'doctorview') {
+        if ($currentWorksheetSession && $param === 'time-left-before-next') {
+            $now = new \DateTime();
+            $endDate = $currentWorksheetSession->getEndAt();
+            $differenceInSeconds = $endDate->format('U') - $now->format('U');
+
+            if (
+                $differenceInSeconds >= 3600
+                && $differenceInSeconds <= 43200
+                && !$currentWorksheetSession->getIsCompleted()
+            ) {
+                $notifTimeLeftExist = $notificationRepository->findOneBy([
+                    "type" => "timing-worksheet", "typeId" => 1 + $currentWorksheetSession->getId()
+                ]);
+
+                if (!$notifTimeLeftExist) {
+                    $notificationService->createTimingWorksheetNotification(
+                        $patient,
+                        'heures',
+                        $currentWorksheetSession->getWorksheet(),
+                        1 + $currentWorksheetSession->getId()
+                    );
+                    $notifTimeLeft = [
+                        'time' => 'heures',
+                        'worksheet' => $currentWorksheetSession->getWorksheet()->getTitle(),
+                    ];
+                }
+            }
+
+            if (
+                $differenceInSeconds >= 60
+                && $differenceInSeconds <= 3599
+                && !$currentWorksheetSession->getIsCompleted()
+            ) {
+                $notifTimeLeftExist = $notificationRepository->findOneBy([
+                    "type" => "timing-worksheet", "typeId" => 2 + $currentWorksheetSession->getId()
+                ]);
+
+                if (!$notifTimeLeftExist) {
+                    $notificationService->createTimingWorksheetNotification(
+                        $patient,
+                        'minutes',
+                        $currentWorksheetSession->getWorksheet(),
+                        2 + $currentWorksheetSession->getId()
+                    );
+                    $notifTimeLeft = [
+                        'time' => 'minutes',
+                        'worksheet' => $currentWorksheetSession->getWorksheet()->getTitle()
+                    ];
+                }
+            }
+
+            $this->em->flush();
+        }
+
+        if (!$currentWorksheetSession && $param != 'doctorview') {
             $firstGenerateWorksheetSession =
                 $this->worksheetSessionService->generateWorksheetSessionsAndGetFirst($worksheet);
 
@@ -65,8 +123,10 @@ class WorksheetSessionController extends AbstractController
             $currentWorksheetSession = $firstGenerateWorksheetSession;
         }
 
+        $notifTimeLeft = $notifTimeLeft ?? null;
+
         return $this->json(
-            $currentWorksheetSession,
+            ['currentWorksheetSession' => $currentWorksheetSession, 'notifTimeLeft' => $notifTimeLeft],
             200,
             [],
             ['groups' => 'session_read']
@@ -145,8 +205,11 @@ class WorksheetSessionController extends AbstractController
     /**
      * @Route("/{id}/complete/worksheet-session", name="app_patient_complete_worksheet_session", methods={"POST"})
      */
-    public function completeWorksheetSession(Request $request, Patient $patient): JsonResponse
-    {
+    public function completeWorksheetSession(
+        Request $request,
+        Patient $patient,
+        NotificationService $notificationService
+    ): JsonResponse {
         if ($request->isMethod('post')) {
             $data = json_decode($request->getContent());
 
@@ -158,6 +221,12 @@ class WorksheetSessionController extends AbstractController
                 $worksheetSession->setIsCompleted(true);
 
                 $worksheetSession->setDoneAt(new \DateTime());
+
+                $notificationService->createWorksheetCompletedNotification(
+                    $patient->getDoctor(),
+                    $worksheetSession->getWorksheet(),
+                    $patient
+                );
 
                 $this->em->flush();
 

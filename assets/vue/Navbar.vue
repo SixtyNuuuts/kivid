@@ -28,6 +28,7 @@
                 <li class="notifications" v-click-outside="hideNotifications">
                     <div
                         @click="openNotifications"
+                        id="notif-bell"
                         :class="{
                             active: showNotifications,
                             'has-notifications':
@@ -42,12 +43,12 @@
                     <transition name="height">
                         <div
                             class="user-notification dropdown-frame"
-                            v-if="
+                            v-show="
                                 showNotifications &&
                                 getNavbarNotifications.length
                             "
                         >
-                            <ul>
+                            <ul id="user-notif-list">
                                 <li
                                     v-for="(notif, i) in getNavbarNotifications"
                                     :key="i"
@@ -60,6 +61,15 @@
                                             src="../img/icons/colored/prescription.svg"
                                             alt="Icone d'une prescription"
                                             class="icon-prescription"
+                                        />
+                                        <img
+                                            v-if="
+                                                'worksheet-completed' ===
+                                                notif.type
+                                            "
+                                            src="../img/icons/colored/worksheetcompleted.svg"
+                                            alt="Icone d'une fiche"
+                                            class="icon-fiche"
                                         />
                                         <img
                                             v-if="
@@ -82,7 +92,7 @@
                                             "
                                             src="../img/icons/colored/user-add.svg"
                                             alt="Icone de confettis"
-                                            class="icon-confettis"
+                                            class="icon-user"
                                         />
                                         <img
                                             v-if="
@@ -90,7 +100,7 @@
                                             "
                                             src="../img/icons/colored/user-add.svg"
                                             alt="Icone de confettis"
-                                            class="icon-confettis"
+                                            class="icon-user"
                                         />
                                         <img
                                             v-if="
@@ -98,7 +108,7 @@
                                             "
                                             src="../img/icons/colored/user-decl.svg"
                                             alt="Icone de confettis"
-                                            class="icon-confettis"
+                                            class="icon-user"
                                         />
                                     </div>
                                     <p>
@@ -373,7 +383,7 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 @import "../scss/variables";
 
 .navbar {
@@ -544,11 +554,20 @@ export default {
                             padding: 0;
                             max-height: 28.8rem;
                             overflow: auto;
+                            display: flex;
+                            flex-direction: column;
 
                             li {
                                 display: flex;
                                 padding: 1rem 1.7rem;
                                 transition: all 0.2s;
+                                order: 2;
+
+                                &.prio {
+                                    order: 1;
+                                    padding-top: 1.5rem !important;
+                                    padding-bottom: 0.5rem !important;
+                                }
 
                                 &:hover {
                                     background: rgba($gray-middle, 0.2);
@@ -612,6 +631,10 @@ export default {
 
                                         &.icon-confettis {
                                             height: 65%;
+                                        }
+
+                                        &.icon-user {
+                                            height: 52%;
                                         }
 
                                         &.icon-clock {

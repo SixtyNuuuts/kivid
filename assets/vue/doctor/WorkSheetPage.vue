@@ -160,11 +160,16 @@
                             </vs-input>
                         </div>
                     </div>
-                    <SelectPartOfBody
-                        :partOfBody="worksheet.partOfBody"
-                        @partOfBodySelected="setPartOfBody"
-                        @partOfBodyReset="resetPoB"
-                    />
+                    <div class="select-filter-block">
+                        <SelectPartOfBody
+                            :partOfBody="worksheet.partOfBody"
+                            @partOfBodySelected="setPartOfBody"
+                            @partOfBodyReset="resetPoB"
+                        />
+                        <div v-if="partOfBodyIsEmptyMessage" class="error-mess">
+                            {{ partOfBodyIsEmptyMessage }}
+                        </div>
+                    </div>
                 </div>
             </div>
         </header>
@@ -182,7 +187,11 @@
         </main>
         <div
             class="btn-valid"
-            :class="{ disabled: btnLoadingValidEditWorksheet }"
+            :class="{
+                disabled:
+                    btnLoadingValidEditWorksheet ||
+                    btnLoadingValidCreateWorksheet,
+            }"
         >
             <vs-button
                 v-if="'edition' === action"
@@ -195,7 +204,7 @@
             <vs-button
                 v-if="'creation' === action && !patient"
                 @click="validCreate"
-                :loading="btnLoadingValidEditWorksheet"
+                :loading="btnLoadingValidCreateWorksheet"
             >
                 <i class="fas fa-check-circle"></i>
                 Créer la fiche
@@ -203,7 +212,7 @@
             <vs-button
                 v-if="'creation' === action && patient"
                 @click="validCreate"
-                :loading="btnLoadingValidEditWorksheet"
+                :loading="btnLoadingValidCreateWorksheet"
             >
                 <i class="fas fa-check-circle"></i>
                 Créer la prescription
@@ -252,6 +261,7 @@ export default {
             btnLoadingValidCreateWorksheet: false,
             checkIfWorksheetSessionsExist: null,
             titleIsEmptyMessage: null,
+            partOfBodyIsEmptyMessage: null,
         };
     },
     computed: {
@@ -265,6 +275,7 @@ export default {
     methods: {
         setPartOfBody(partOfBody) {
             this.worksheet.partOfBody = partOfBody;
+            this.partOfBodyIsEmptyMessage = "";
         },
         resetPoB() {
             this.worksheet.partOfBody = null;
@@ -326,21 +337,29 @@ export default {
                 }
             }
         },
-        checkIfTitleIsEmpty() {
+        checkIfEmpty() {
+            let check = true;
+
             if (this.worksheet.title === "" || this.worksheet.title === null) {
                 this.titleIsEmptyMessage =
                     "Vous devez entrer un titre pour la fiche.";
-                return false;
+                check = false;
             }
 
-            return true;
+            if (!this.worksheet.partOfBody) {
+                this.partOfBodyIsEmptyMessage =
+                    "Vous devez choisir une partie du corps";
+                check = false;
+            }
+
+            return check;
         },
         validEdit() {
             this.btnLoadingValidEditWorksheet = true;
 
-            const titleIsNotEmpty = this.checkIfTitleIsEmpty();
+            const isNotEmpty = this.checkIfEmpty();
 
-            if (titleIsNotEmpty) {
+            if (isNotEmpty) {
                 this.axios
                     .post(`/doctor/${this.doctor.id}/edit/worksheet`, {
                         _token: this.csrfTokenEditWorksheet,
@@ -373,14 +392,16 @@ export default {
 
                         f.openErrorNotification("Erreur", errorMess);
                     });
+            } else {
+                this.btnLoadingValidEditWorksheet = false;
             }
         },
         validCreate() {
             this.btnLoadingValidCreateWorksheet = true;
 
-            const titleIsNotEmpty = this.checkIfTitleIsEmpty();
+            const isNotEmpty = this.checkIfEmpty();
 
-            if (titleIsNotEmpty) {
+            if (isNotEmpty) {
                 this.axios
                     .post(`/doctor/${this.doctor.id}/create/worksheet`, {
                         _token: this.csrfTokenCreateWorksheet,
@@ -425,6 +446,8 @@ export default {
                         this.btnLoadingValidCreateWorksheet = false;
                         f.openErrorNotification("Erreur", errorMess);
                     });
+            } else {
+                this.btnLoadingValidCreateWorksheet = false;
             }
         },
         getCivility(gender) {
@@ -822,9 +845,10 @@ export default {
                     }
                 }
 
-                .select-filter {
+                .select-filter-block {
                     max-width: initial;
                     margin-left: 0;
+                    width: 100%;
 
                     @media (min-width: 768px) {
                         max-width: 23rem;
@@ -834,6 +858,12 @@ export default {
                     .part-of-body {
                         margin-top: 0;
                         margin-left: 0;
+                    }
+
+                    .error-mess {
+                        color: $red;
+                        margin-top: 0.7rem;
+                        font-size: 1.2rem;
                     }
                 }
             }
