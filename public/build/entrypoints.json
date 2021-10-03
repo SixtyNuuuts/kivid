@@ -1,0 +1,141 @@
+{
+  "entrypoints": {
+    "app": {
+      "js": [
+        "/build/runtime.fffd7536.js",
+        "/build/app.969dc679.js"
+      ],
+      "css": [
+        "/build/795.235ed843.css",
+        "/build/app.270f818b.css"
+      ]
+    },
+    "navbar": {
+      "js": [
+        "/build/runtime.fffd7536.js",
+        "/build/429.c471c0fe.js",
+        "/build/navbar.80e87dfe.js"
+      ],
+      "css": [
+        "/build/navbar.791ede18.css"
+      ]
+    },
+    "settings-page": {
+      "js": [
+        "/build/runtime.fffd7536.js",
+        "/build/429.c471c0fe.js",
+        "/build/settings-page.389b3575.js"
+      ],
+      "css": [
+        "/build/settings-page.bba322ca.css"
+      ]
+    },
+    "login": {
+      "js": [
+        "/build/runtime.fffd7536.js",
+        "/build/429.c471c0fe.js",
+        "/build/login.754b98c4.js"
+      ]
+    },
+    "register": {
+      "js": [
+        "/build/runtime.fffd7536.js",
+        "/build/429.c471c0fe.js",
+        "/build/register.ee19b396.js"
+      ],
+      "css": [
+        "/build/register.31d6cfe0.css"
+      ]
+    },
+    "reset-pass": {
+      "js": [
+        "/build/runtime.fffd7536.js",
+        "/build/429.c471c0fe.js",
+        "/build/reset-pass.933c3079.js"
+      ],
+      "css": [
+        "/build/reset-pass.75e0df7d.css"
+      ]
+    },
+    "reset-pass-request": {
+      "js": [
+        "/build/runtime.fffd7536.js",
+        "/build/429.c471c0fe.js",
+        "/build/reset-pass-request.55c3bc31.js"
+      ],
+      "css": [
+        "/build/reset-pass-request.1bcadc96.css"
+      ]
+    },
+    "patient-create-pass": {
+      "js": [
+        "/build/runtime.fffd7536.js",
+        "/build/429.c471c0fe.js",
+        "/build/patient-create-pass.490b162b.js"
+      ],
+      "css": [
+        "/build/patient-create-pass.ad7eaeb9.css"
+      ]
+    },
+    "maquette": {
+      "js": [
+        "/build/runtime.fffd7536.js",
+        "/build/429.c471c0fe.js",
+        "/build/maquette.61f7cb82.js"
+      ],
+      "css": [
+        "/build/maquette.6fa3c1b3.css"
+      ]
+    },
+    "doctor-dashboard-page": {
+      "js": [
+        "/build/runtime.fffd7536.js",
+        "/build/429.c471c0fe.js",
+        "/build/912.4cd1479e.js",
+        "/build/900.cb96cf5a.js",
+        "/build/doctor-dashboard-page.b20f1def.js"
+      ],
+      "css": [
+        "/build/doctor-dashboard-page.a7048b52.css"
+      ]
+    },
+    "doctor-worksheet-page": {
+      "js": [
+        "/build/runtime.fffd7536.js",
+        "/build/429.c471c0fe.js",
+        "/build/912.4cd1479e.js",
+        "/build/770.ec01566d.js",
+        "/build/900.cb96cf5a.js",
+        "/build/doctor-worksheet-page.5d446a39.js"
+      ],
+      "css": [
+        "/build/doctor-worksheet-page.cdf2d49d.css"
+      ]
+    },
+    "patient-dashboard-page": {
+      "js": [
+        "/build/runtime.fffd7536.js",
+        "/build/429.c471c0fe.js",
+        "/build/665.3d40f4d1.js",
+        "/build/900.cb96cf5a.js",
+        "/build/patient-dashboard-page.144ced88.js"
+      ],
+      "css": [
+        "/build/patient-dashboard-page.336b5d5a.css"
+      ]
+    },
+    "patient-read-worksheet-page": {
+      "js": [
+        "/build/runtime.fffd7536.js",
+        "/build/429.c471c0fe.js",
+        "/build/770.ec01566d.js",
+        "/build/724.07b1a09d.js",
+        "/build/900.cb96cf5a.js",
+        "/build/patient-read-worksheet-page.720b560c.js"
+      ],
+      "css": [
+        "/build/patient-read-worksheet-page.2ac140fa.css"
+      ]
+    }
+  }
+}
