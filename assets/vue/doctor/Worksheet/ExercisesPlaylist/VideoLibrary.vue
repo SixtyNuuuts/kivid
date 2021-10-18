@@ -339,18 +339,38 @@ export default {
             clearTimeout(this.timeout);
 
             this.timeout = setTimeout(() => {
-                if (window.innerWidth < 600) {
+                if (window.innerWidth < 472) {
                     this.max = 4;
                     this.page = 1;
                 }
 
-                if (window.innerWidth >= 600 && window.innerWidth <= 900) {
+                if (window.innerWidth >= 472 && window.innerWidth <= 610) {
+                    this.max = 6;
+                    this.page = 1;
+                }
+
+                if (window.innerWidth > 610 && window.innerWidth <= 748) {
                     this.max = 8;
                     this.page = 1;
                 }
 
-                if (window.innerWidth > 900) {
+                if (window.innerWidth > 748 && window.innerWidth <= 886) {
+                    this.max = 10;
+                    this.page = 1;
+                }
+
+                if (window.innerWidth > 886 && window.innerWidth <= 1028) {
                     this.max = 12;
+                    this.page = 1;
+                }
+
+                if (window.innerWidth > 1028 && window.innerWidth <= 1166) {
+                    this.max = 14;
+                    this.page = 1;
+                }
+
+                if (window.innerWidth > 1166) {
+                    this.max = 16;
                     this.page = 1;
                 }
             }, 250);
@@ -593,13 +613,11 @@ export default {
         }
 
         #video-library {
-            // height: 100%;
             width: 100%;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            // min-height: 64rem;
-            // max-height: 69rem;
+            max-width: 105rem;
 
             .tags {
                 display: flex;
@@ -669,9 +687,14 @@ export default {
                         justify-content: space-between;
                         padding: 0;
                         position: relative;
-                        height: 16rem;
+                        height: 15rem;
+                        width: 9rem;
                         overflow: hidden;
                         background: white;
+
+                        @media (min-width: 335px) {
+                            width: 11rem;
+                        }
 
                         &.selected-video {
                             border: 1px solid $orange !important;
@@ -717,8 +740,7 @@ export default {
                     }
 
                     .video-thumbnail {
-                        height: 49%;
-                        min-height: 6.15em;
+                        height: 6.1rem;
                         overflow: hidden;
                         position: relative;
                         cursor: pointer;
@@ -771,7 +793,7 @@ export default {
 
                         .video-name {
                             font-size: 1.1rem;
-                            max-height: 40%;
+                            max-height: 35%;
                             font-weight: 700;
 
                             > div {
