@@ -389,7 +389,7 @@ export default {
         margin-bottom: 2.5rem;
         display: block;
 
-        @media (min-width: 576px) {
+        @media (min-width: 768px) {
             display: none;
         }
     }
@@ -403,9 +403,13 @@ export default {
             display: none;
             max-width: initial;
 
-            @media (min-width: 576px) {
+            @media (min-width: 768px) {
                 display: block;
                 width: 50%;
+                max-width: 26rem;
+            }
+
+            @media (min-width: 1300px) {
                 max-width: 31rem;
             }
         }

@@ -22,7 +22,10 @@
             </div>
         </div>
         <transition name="fade">
-            <div v-if="prescriProcess" class="prescri-process-dialog">
+            <div
+                v-if="prescriProcess && getWorksheetTemplates.length"
+                class="prescri-process-dialog"
+            >
                 <span class="step-num"
                     ><i class="fas fa-folder-plus"></i>Etape
                     {{ !$parent.prescriProcessPatientSelected ? 1 : 2 }}
@@ -42,7 +45,10 @@
                     ><i class="fas fa-folder-plus"></i>Etape
                     {{ !$parent.prescriProcessPatientSelected ? 1 : 2 }}
                 </span>
-                <p>Ou créez une nouvelle fiche</p>
+                <p>
+                    <span v-if="getWorksheetTemplates.length">Ou créez</span
+                    ><span v-else>Créez</span> une nouvelle fiche
+                </p>
             </div>
         </transition>
         <transition name="height">

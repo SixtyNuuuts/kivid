@@ -349,6 +349,11 @@ body {
     }
 }
 
+body.no-scrollbar::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+}
+
 .loading {
     animation-duration: 1.2s;
     animation-fill-mode: forwards;
@@ -1218,7 +1223,7 @@ body {
     background: $white;
     border-radius: 1rem;
     padding: 4.3rem;
-    margin-top: 3rem;
+    margin-top: 5rem;
 
     .icon-request-subscription {
         width: 5rem;

@@ -392,9 +392,16 @@ export default {
 .vs-dialog-content.view-video {
     .vs-dialog {
         width: 100%;
+        margin: auto 2rem;
+        max-width: 650px;
 
         .vs-dialog__content {
-            height: 40rem;
+            height: 54vw;
+            max-height: 382px;
+
+            @media (min-width: 672px) {
+                height: 55vw;
+            }
         }
     }
 }
@@ -661,27 +668,19 @@ export default {
                         align-items: center;
                         justify-content: space-between;
                         padding: 0;
-                        flex: 1;
                         position: relative;
                         height: 16rem;
                         overflow: hidden;
-                        min-width: 45%;
-                        max-width: 45%;
                         background: white;
-
-                        @media (min-width: 600px) {
-                            min-width: 22%;
-                            max-width: 22%;
-                        }
-
-                        @media (min-width: 900px) {
-                            min-width: 15%;
-                            max-width: 15%;
-                        }
 
                         &.selected-video {
                             border: 1px solid $orange !important;
                             transition: border 0.15s ease;
+
+                            .video-thumbnail {
+                                background-color: $orange;
+                            }
+
                             .video-details {
                                 padding: 0.5em !important;
                             }
@@ -823,10 +822,6 @@ export default {
 
                         .vs-button__content {
                             padding: 1px 7px;
-                        }
-
-                        &:hover {
-                            background: $red;
                         }
 
                         svg {
