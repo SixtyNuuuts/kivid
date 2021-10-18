@@ -105,18 +105,6 @@
                                 id="perWeek"
                                 label-placeholder="X par sem. (max: 7)"
                                 type="number"
-                                @keyup="
-                                    checkAndFormatDurationValue(
-                                        worksheet.perWeek,
-                                        $event
-                                    )
-                                "
-                                @change="
-                                    checkAndFormatDurationValue(
-                                        worksheet.perWeek,
-                                        $event
-                                    )
-                                "
                                 @blur="
                                     checkIfDurationValueIsEmptyOrNull(
                                         worksheet.perWeek,
@@ -134,18 +122,6 @@
                                 id="perDay"
                                 label-placeholder="X par jour (max: 3)"
                                 type="number"
-                                @keyup="
-                                    checkAndFormatDurationValue(
-                                        worksheet.perDay,
-                                        $event
-                                    )
-                                "
-                                @change="
-                                    checkAndFormatDurationValue(
-                                        worksheet.perDay,
-                                        $event
-                                    )
-                                "
                                 @blur="
                                     checkIfDurationValueIsEmptyOrNull(
                                         worksheet.perDay,
@@ -163,18 +139,6 @@
                                 id="duration"
                                 label-placeholder="Durée en sem. (max: 52)"
                                 type="number"
-                                @keyup="
-                                    checkAndFormatDurationValue(
-                                        worksheet.duration,
-                                        $event
-                                    )
-                                "
-                                @change="
-                                    checkAndFormatDurationValue(
-                                        worksheet.duration,
-                                        $event
-                                    )
-                                "
                                 @blur="
                                     checkIfDurationValueIsEmptyOrNull(
                                         worksheet.duration,
@@ -309,39 +273,6 @@ export default {
         rederictToDashboard() {
             document.location.href = `/doctor/${this.doctor.id}/dashboard`;
         },
-        checkAndFormatDurationValue(durationValue, event) {
-            const durationType = event.target.id;
-            const key = event.keyCode || event.charCode;
-
-            if (!("Backspace" === event.code) || !(key == 8)) {
-                if ("vs-input--duration" === durationType) {
-                    if (durationValue < 1) {
-                        this.worksheet.duration = 1;
-                    }
-                    if (durationValue > this.maxDuration.duration) {
-                        this.worksheet.duration = this.maxDuration.duration;
-                    }
-                }
-
-                if ("vs-input--perDay" === durationType) {
-                    if (durationValue < 1) {
-                        this.worksheet.perDay = 1;
-                    }
-                    if (durationValue > this.maxDuration.perDay) {
-                        this.worksheet.perDay = this.maxDuration.perDay;
-                    }
-                }
-
-                if ("vs-input--perWeek" === durationType) {
-                    if (durationValue < 1) {
-                        this.worksheet.perWeek = 1;
-                    }
-                    if (durationValue > this.maxDuration.perWeek) {
-                        this.worksheet.perWeek = this.maxDuration.perWeek;
-                    }
-                }
-            }
-        },
         checkIfDurationValueIsEmptyOrNull(durationValue, event) {
             const durationType = event.target.id;
 
@@ -349,17 +280,35 @@ export default {
                 if ("" === durationValue || null === durationValue) {
                     this.worksheet.duration = 1;
                 }
+                if (durationValue < 1) {
+                    this.worksheet.duration = 1;
+                }
+                if (durationValue > this.maxDuration.duration) {
+                    this.worksheet.duration = this.maxDuration.duration;
+                }
             }
 
             if ("vs-input--perDay" === durationType) {
                 if ("" === durationValue || null === durationValue) {
                     this.worksheet.perDay = 1;
                 }
+                if (durationValue < 1) {
+                    this.worksheet.perDay = 1;
+                }
+                if (durationValue > this.maxDuration.perDay) {
+                    this.worksheet.perDay = this.maxDuration.perDay;
+                }
             }
 
             if ("vs-input--perWeek" === durationType) {
                 if ("" === durationValue || null === durationValue) {
                     this.worksheet.perWeek = 1;
+                }
+                if (durationValue < 1) {
+                    this.worksheet.perWeek = 1;
+                }
+                if (durationValue > this.maxDuration.perWeek) {
+                    this.worksheet.perWeek = this.maxDuration.perWeek;
                 }
             }
         },

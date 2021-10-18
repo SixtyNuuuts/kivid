@@ -75,7 +75,7 @@
                 :class="{ hidden: filter || getPartOfBodySelected }"
             >
                 <span v-show="!selectBox"> Partie du corps </span>
-                <span v-show="selectBox" class="gray"> Recherchez </span>
+                <!-- <span v-show="selectBox" class="gray"> Recherchez </span> -->
             </div>
             <div
                 class="arrow-toggle-box"

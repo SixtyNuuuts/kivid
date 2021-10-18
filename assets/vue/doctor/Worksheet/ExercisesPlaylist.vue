@@ -120,18 +120,6 @@
                                         v-model="exercise.numberOfSeries"
                                         label-placeholder="Nb de séries"
                                         type="number"
-                                        @keyup="
-                                            checkAndFormatValue(
-                                                exercise,
-                                                $event
-                                            )
-                                        "
-                                        @change="
-                                            checkAndFormatValue(
-                                                exercise,
-                                                $event
-                                            )
-                                        "
                                         @blur="
                                             checkIfValueIsEmptyOrNull(exercise)
                                         "
@@ -144,18 +132,6 @@
                                         v-model="exercise.numberOfRepetitions"
                                         label-placeholder="Nb de répétitions"
                                         type="number"
-                                        @keyup="
-                                            checkAndFormatValue(
-                                                exercise,
-                                                $event
-                                            )
-                                        "
-                                        @change="
-                                            checkAndFormatValue(
-                                                exercise,
-                                                $event
-                                            )
-                                        "
                                         @blur="
                                             checkIfValueIsEmptyOrNull(exercise)
                                         "
@@ -413,20 +389,15 @@ export default {
                 this.exercises.push(exercise);
             });
         },
-        checkAndFormatValue(exercise, event) {
-            const key = event.keyCode || event.charCode;
-
-            if (!("Backspace" === event.code) || !(key == 8)) {
-                if (exercise.numberOfSeries < 1) {
-                    exercise.numberOfSeries = 1;
-                }
-
-                if (exercise.numberOfRepetitions < 1) {
-                    exercise.numberOfRepetitions = 1;
-                }
-            }
-        },
         checkIfValueIsEmptyOrNull(exercise) {
+            if (exercise.numberOfSeries < 1) {
+                exercise.numberOfSeries = 1;
+            }
+
+            if (exercise.numberOfRepetitions < 1) {
+                exercise.numberOfRepetitions = 1;
+            }
+
             if (
                 "" === exercise.numberOfSeries ||
                 null === exercise.numberOfSeries
