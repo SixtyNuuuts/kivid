@@ -159,7 +159,7 @@
             >
                 <p>
                     <i class="far fa-calendar-minus"></i>
-                    <span>Vous n'avez pas encore de statistiques</span>
+                    <span>Vous n'avez pas encore de statistique</span>
                 </p>
             </div>
             <div v-if="loadingPatientWorksheets" class="loading"></div>
@@ -271,7 +271,7 @@
             >
                 <p>
                     <i class="far fa-calendar-minus"></i>
-                    <span>Vous n'avez pas encore de statistiques</span>
+                    <span>Vous n'avez pas encore de statistique</span>
                 </p>
             </div>
             <div v-if="loadingPatientWorksheets" class="loading"></div>
@@ -386,7 +386,7 @@
             >
                 <p>
                     <i class="far fa-calendar-minus"></i>
-                    <span>Vous n'avez pas encore de statistiques</span>
+                    <span>Vous n'avez pas encore de statistique</span>
                 </p>
             </div>
             <div v-if="loadingPatientWorksheets" class="loading"></div>

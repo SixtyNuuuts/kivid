@@ -112,15 +112,17 @@
                                         />
                                     </div>
                                     <p>
-                                        <span
-                                            v-for="(e, i) in notif.content"
-                                            :key="i"
-                                        >
-                                            <span v-if="'text' === e.type">
-                                                {{ e.content }}
-                                            </span>
-                                            <span v-if="'user' === e.type">
-                                                {{ e.content }}
+                                        <span>
+                                            <span
+                                                v-for="(e, i) in notif.content"
+                                                :key="i"
+                                            >
+                                                <span v-if="'text' === e.type">
+                                                    {{ e.content }}
+                                                </span>
+                                                <span v-if="'user' === e.type">
+                                                    {{ e.content }}
+                                                </span>
                                             </span>
                                         </span>
                                     </p>
@@ -202,7 +204,7 @@
                                     <i class="kiv-help icon-15"></i>
                                     Aide
                                 </li>
-                                <li @click="myProfil()">
+                                <li @click="myProfil()" class="desktop">
                                     <i class="kiv-settings icon-16"></i>
                                     Paramètres
                                 </li>
@@ -634,7 +636,9 @@ export default {
                                         }
 
                                         &.icon-user {
-                                            height: 52%;
+                                            height: 63%;
+                                            top: -0.2rem;
+                                            left: 0rem;
                                         }
 
                                         &.icon-clock {
@@ -646,6 +650,8 @@ export default {
 
                                 p {
                                     margin: 0;
+                                    display: flex;
+                                    align-items: center;
                                 }
                             }
                         }
@@ -748,6 +754,14 @@ export default {
                                 &.md {
                                     @media (min-width: 850px) {
                                         display: none;
+                                    }
+                                }
+
+                                &.desktop {
+                                    display: none;
+
+                                    @media (min-width: 850px) {
+                                        display: list-item;
                                     }
                                 }
 

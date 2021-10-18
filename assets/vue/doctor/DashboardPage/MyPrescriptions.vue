@@ -299,7 +299,8 @@
                                             <vs-button
                                                 @click="
                                                     redirectToEditPage(
-                                                        worksheet.id
+                                                        worksheet.id,
+                                                        worksheet.patient.id
                                                     )
                                                 "
                                                 class="btn-action"
@@ -617,14 +618,14 @@ export default {
         prescriProcess() {
             this.$emit("prescriProcess", true);
         },
-        redirectToEditPage(worksheetId) {
-            document.location.href = `/doctor/${this.doctor.id}/fiche/edition/${worksheetId}`;
+        redirectToEditPage(worksheetId, patientId) {
+            document.location.href = `/doctor/${this.doctor.id}/fiche/edition/${worksheetId}/${patientId}`;
         },
         redirectToWorksheetPage(worksheetId, patientId, hasSessions) {
             if (hasSessions) {
                 document.location.href = `/doctor/${this.doctor.id}/voir/${worksheetId}/${patientId}`;
             } else {
-                document.location.href = `/doctor/${this.doctor.id}/fiche/voir/${worksheetId}`;
+                document.location.href = `/doctor/${this.doctor.id}/fiche/voir/${worksheetId}/${patientId}`;
             }
         },
         redirectToPatientDashboard(patientId) {

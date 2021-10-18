@@ -20,6 +20,7 @@
 {% block vueData %}
 	{
 		"patient": {{ patient|serialize('json', {'groups': 'patient_read'})|raw }},
+		"currentUser": {{ app.user|serialize('json', {'groups': 'user_read'})|raw }},
 		"doctorView": {{ doctorView|serialize('json')|raw }},
 		"csrfTokenSelectDoctor": {{ csrf_token('select_doctor' ~ patient.id)|serialize('json')|raw }},
 		"csrfTokenAcceptDoctor": {{ csrf_token('accept_doctor' ~ patient.id)|serialize('json')|raw }},

@@ -93,7 +93,9 @@
                         ></div>
                     </div>
                     <div class="content">
-                        <h2>{{ exercise.video.name }}</h2>
+                        <h2>
+                            <span>{{ exercise.video.name }}</span>
+                        </h2>
                         <div class="details">
                             <div class="series-reps">
                                 <div class="series">
@@ -279,9 +281,11 @@ export default {
     methods: {
         openVideoPlayer() {
             this.videoPlayerToggle = true;
+            document.body.classList.add("no-scrollbar");
         },
         closeVideoPlayer() {
             this.videoPlayerToggle = false;
+            document.body.classList.remove("no-scrollbar");
         },
         setCommentary(exercise) {
             this.axios
@@ -389,25 +393,43 @@ export default {
         }
 
         .thumbnail-wrapper {
-            height: 18rem;
+            height: 52vw;
             width: 100%;
-            background-color: $black;
+            background-color: $gray-dark;
             border-radius: 0.8rem;
             margin-right: 0;
             margin-bottom: 2rem;
             position: relative;
             overflow: hidden;
-            // min-width: 50%;
+
+            @media (min-width: 768px) {
+                height: 33vw;
+            }
+
+            @media (min-width: 900px) {
+                height: 36vw;
+            }
 
             @media (min-width: 992px) {
-                height: 31.6rem;
-                width: 50%;
+                height: 24vw;
                 margin-right: 2.3rem;
                 margin-bottom: 0;
             }
 
-            @media (min-width: 1550px) {
-                width: 60rem;
+            @media (min-width: 1090px) {
+                height: 25vw;
+            }
+
+            @media (min-width: 1200px) {
+                height: 26vw;
+            }
+
+            @media (min-width: 1300px) {
+                height: 19vw;
+                max-width: 56rem;
+                max-height: 31.7rem;
+                min-width: 56rem;
+                min-height: 31.7rem;
             }
 
             .btn-playlist {
@@ -422,11 +444,11 @@ export default {
                 align-items: center;
 
                 .vs-button {
-                    box-shadow: none;
+                    box-shadow: 0px 0rem 1.5rem rgba(173, 100, 74, 0.88);
                 }
 
                 &:hover ~ .thumbnail {
-                    transform: scale(1.15, 1.15);
+                    transform: scale(1.05);
                     opacity: 1;
                 }
             }
@@ -441,7 +463,7 @@ export default {
                 background-repeat: no-repeat;
                 background-size: cover;
                 background-position: center center;
-                transform: scale(1.1);
+                transform: scale(1);
                 transition: all 3s;
                 opacity: 0.9;
             }
@@ -464,6 +486,76 @@ export default {
                 margin-bottom: 2.5rem;
                 margin-left: 2rem;
                 max-width: 80%;
+
+                &::before {
+                    content: "";
+                    display: block;
+                    width: 0.3rem;
+                    height: 2.2rem;
+                    background: $orange;
+                    position: absolute;
+                    left: -2rem;
+                    top: 0.2rem;
+                    border-radius: 0.3rem;
+                }
+            }
+
+            h2 {
+                position: relative;
+                margin-bottom: 2.5rem;
+                margin-left: 2rem;
+                max-width: 95%;
+
+                @media (min-width: 768px) {
+                    max-width: 55vw;
+                }
+
+                @media (min-width: 870px) {
+                    max-width: 58vw;
+                }
+
+                @media (min-width: 992px) {
+                    max-width: 18vw;
+                }
+
+                @media (min-width: 1050px) {
+                    max-width: 19vw;
+                }
+
+                @media (min-width: 1100px) {
+                    max-width: 20vw;
+                }
+
+                @media (min-width: 1250px) {
+                    max-width: 22vw;
+                }
+
+                @media (min-width: 1350px) {
+                    max-width: 25vw;
+                }
+
+                @media (min-width: 1400px) {
+                    max-width: 27vw;
+                }
+
+                @media (min-width: 1450px) {
+                    max-width: 29vw;
+                }
+
+                @media (min-width: 1550px) {
+                    max-width: 35vw;
+                }
+
+                @media (min-width: 1650px) {
+                    max-width: 40vw;
+                }
+
+                span {
+                    display: block;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
 
                 &::before {
                     content: "";
@@ -532,6 +624,64 @@ export default {
                 .option,
                 .tempo,
                 .hold {
+                    display: flex;
+                    align-items: center;
+                    white-space: nowrap;
+                    max-width: 95%;
+
+                    @media (min-width: 768px) {
+                        max-width: 55vw;
+                    }
+
+                    @media (min-width: 870px) {
+                        max-width: 58vw;
+                    }
+
+                    @media (min-width: 992px) {
+                        max-width: 18vw;
+                    }
+
+                    @media (min-width: 1050px) {
+                        max-width: 19vw;
+                    }
+
+                    @media (min-width: 1100px) {
+                        max-width: 20vw;
+                    }
+
+                    @media (min-width: 1250px) {
+                        max-width: 22vw;
+                    }
+
+                    @media (min-width: 1350px) {
+                        max-width: 25vw;
+                    }
+
+                    @media (min-width: 1400px) {
+                        max-width: 27vw;
+                    }
+
+                    @media (min-width: 1450px) {
+                        max-width: 29vw;
+                    }
+
+                    @media (min-width: 1550px) {
+                        max-width: 35vw;
+                    }
+
+                    @media (min-width: 1650px) {
+                        max-width: 40vw;
+                    }
+
+                    span {
+                        display: inline-block;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        margin-left: 0.5rem;
+                        position: relative;
+                        top: 0.05rem;
+                    }
                 }
             }
             .commentary {
@@ -558,6 +708,8 @@ export default {
                     p {
                         margin: 0;
                         margin-top: 0.5rem;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
                     }
                 }
             }

@@ -207,14 +207,15 @@ export default {
 
             .video-frame {
                 width: 100%;
-                max-width: 130rem;
-                height: 50%;
+                height: 50.4vw;
+                max-width: 108.5rem;
+                max-height: 61rem;
                 transform: translateY(-11rem);
                 border-radius: 1rem;
                 overflow: hidden;
 
                 @media (min-width: 768px) {
-                    height: 100%;
+                    height: 45vw;
                     transform: translateY(-4.7rem);
                 }
             }

@@ -60,6 +60,7 @@ class HomeController extends AbstractController
                 ->subject("Demande de praticien")
                 ->htmlTemplate('home/contact_email.html.twig')
                 ->context([
+                    'contactTel' => $data->contactTel,
                     'contactMessage' => $data->contactMessage,
                 ])
                 ;

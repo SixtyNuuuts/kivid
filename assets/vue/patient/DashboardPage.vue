@@ -8,6 +8,11 @@
         />
         <section v-else id="dashboard" class="db-patient">
             <h1>
+                <i
+                    v-if="doctorView"
+                    class="kiv-arrow-left icon-31"
+                    @click="rederictToDashboard()"
+                ></i>
                 <span v-if="!doctorView">
                     Bienvenue sur votre dashboard !
                     <i>
@@ -202,6 +207,7 @@ export default {
     data() {
         return {
             patient: null,
+            currentUser: null,
             doctorView: null,
             csrfTokenSelectDoctor: null,
             csrfTokenAcceptDoctor: null,
@@ -277,6 +283,9 @@ export default {
         getAge(birthdate) {
             return f.generateAgeFromDateOfBirth(birthdate);
         },
+        rederictToDashboard() {
+            document.location.href = `/doctor/${this.currentUser.id}/dashboard`;
+        },
     },
     created() {
         Vue.prototype.$vs = this.$vs;
@@ -288,6 +297,7 @@ export default {
         const data = JSON.parse(document.getElementById("vueData").innerHTML);
 
         this.patient = data.patient;
+        this.currentUser = data.currentUser;
         this.doctorView = data.doctorView;
         this.csrfTokenAcceptDoctor = data.csrfTokenAcceptDoctor;
         this.csrfTokenDeclineDoctor = data.csrfTokenDeclineDoctor;
@@ -439,6 +449,14 @@ export default {
 
 <style lang="scss" scoped>
 #dashboard.db-patient {
+    h1 {
+        i {
+            font-size: 2.4rem;
+            position: relative;
+            top: -0.2rem;
+            cursor: pointer;
+        }
+    }
     main {
         grid-template-areas:
             "myscores"

@@ -9,10 +9,45 @@
                 <div class="loading-gray part-of-body"></div>
             </div>
             <div v-else>
+                <div v-if="patient" class="prescri-for-patient-content">
+                    <i
+                        class="kiv-arrow-left icon-31"
+                        @click="rederictToDashboard()"
+                    ></i>
+                    <div class="prescri-for-patient">
+                        <div class="label">prescription pour</div>
+                        <vs-avatar size="26" class="user-avatar" circle>
+                            <img
+                                :src="
+                                    patient.avatarUrl
+                                        ? patient.avatarUrl
+                                        : '/img/avatar-default.svg'
+                                "
+                                :alt="`Avatar de ${patient.firstname} ${patient.lastname}`"
+                            />
+                        </vs-avatar>
+                        <div class="user-name">
+                            <div>
+                                <div
+                                    v-if="patient.firstname || patient.lastname"
+                                >
+                                    {{ getCivility(patient.gender) }}
+                                    {{ patient.firstname }}
+                                    {{ patient.lastname }}
+                                </div>
+                                <div v-else>
+                                    {{ patient.email }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div v-if="'voir' === action" class="title-view">
                     <div class="title">
                         <i
                             class="kiv-arrow-left icon-31"
+                            :class="{ hidden: patient }"
                             @click="rederictToDashboard()"
                         ></i>
                         <h1>{{ getWorksheet.title }}</h1>
@@ -25,6 +60,7 @@
                 <div v-else class="title">
                     <i
                         class="kiv-arrow-left icon-31"
+                        :class="{ hidden: patient }"
                         @click="rederictToDashboard()"
                     ></i>
                     <vs-input
@@ -37,31 +73,6 @@
                             {{ titleIsEmptyMessage }}
                         </template>
                     </vs-input>
-                </div>
-                <div v-if="patient" class="prescri-for-patient">
-                    <div class="label">prescription pour</div>
-                    <vs-avatar size="26" class="user-avatar" circle>
-                        <img
-                            :src="
-                                patient.avatarUrl
-                                    ? patient.avatarUrl
-                                    : '/img/avatar-default.svg'
-                            "
-                            :alt="`Avatar de ${patient.firstname} ${patient.lastname}`"
-                        />
-                    </vs-avatar>
-                    <div class="user-name">
-                        <div>
-                            <div v-if="patient.firstname || patient.lastname">
-                                {{ getCivility(patient.gender) }}
-                                {{ patient.firstname }}
-                                {{ patient.lastname }}
-                            </div>
-                            <div v-else>
-                                {{ patient.email }}
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
                 <div v-if="'voir' !== action" class="worksheet-params">
@@ -100,13 +111,18 @@
                                         $event
                                     )
                                 "
+                                @change="
+                                    checkAndFormatDurationValue(
+                                        worksheet.perWeek,
+                                        $event
+                                    )
+                                "
                                 @blur="
                                     checkIfDurationValueIsEmptyOrNull(
                                         worksheet.perWeek,
                                         $event
                                     )
                                 "
-                                min="1"
                                 max="7"
                             >
                             </vs-input>
@@ -124,13 +140,18 @@
                                         $event
                                     )
                                 "
+                                @change="
+                                    checkAndFormatDurationValue(
+                                        worksheet.perDay,
+                                        $event
+                                    )
+                                "
                                 @blur="
                                     checkIfDurationValueIsEmptyOrNull(
                                         worksheet.perDay,
                                         $event
                                     )
                                 "
-                                min="1"
                                 max="3"
                             >
                             </vs-input>
@@ -148,13 +169,18 @@
                                         $event
                                     )
                                 "
+                                @change="
+                                    checkAndFormatDurationValue(
+                                        worksheet.duration,
+                                        $event
+                                    )
+                                "
                                 @blur="
                                     checkIfDurationValueIsEmptyOrNull(
                                         worksheet.duration,
                                         $event
                                     )
                                 "
-                                min="1"
                                 max="52"
                             >
                             </vs-input>
@@ -555,50 +581,61 @@ export default {
 @import "../../scss/variables";
 
 #worksheet {
-    .prescri-for-patient {
-        background: #fff;
-        display: flex;
-        align-items: center;
-        padding: 0.55rem 0.9rem;
-        padding-top: 0.7rem;
-        box-shadow: 0px 0.4rem 0.7rem rgba(148, 96, 77, 0.04);
-        border-radius: 2.5rem;
-        font-weight: 600;
-        margin-bottom: 2.6rem;
-        margin-left: 3.4rem;
-        margin-top: -0.8rem;
-        position: relative;
+    .prescri-for-patient-content {
+        i {
+            font-size: 1.6rem;
+            margin-right: 1.8rem;
+            cursor: pointer;
+            position: relative;
+            top: 2.1rem;
+        }
 
-        .label {
-            position: absolute;
-            top: -0.7rem;
-            left: 4rem;
-            padding: 0.4rem 0.5rem;
-            padding-bottom: 0.1rem;
-            border-radius: 1.1rem;
-            background: #f5f5f5;
-            text-transform: uppercase;
-            font-size: 0.7rem;
+        .prescri-for-patient {
+            background: #fff;
             display: flex;
             align-items: center;
-            justify-content: center;
-        }
+            padding: 0.55rem 0.9rem;
+            padding-top: 0.7rem;
+            box-shadow: 0px 0.4rem 0.7rem rgba(148, 96, 77, 0.04);
+            border-radius: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 2.6rem;
+            margin-left: 3.4rem;
+            margin-top: -0.8rem;
+            position: relative;
 
-        .user-avatar {
-            min-width: 26px;
-            max-height: 26px;
-        }
+            .label {
+                position: absolute;
+                top: -1rem;
+                left: 4rem;
+                padding: 0.5rem 0.6rem;
+                padding-bottom: 0.3rem;
+                border-radius: 1.1rem;
+                background: #f5f5f5;
+                color: #9aa1b7;
+                text-transform: uppercase;
+                font-size: 0.8rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
 
-        .user-name {
-            font-size: 1.4rem;
-            margin-left: 0.9rem;
-            margin-right: 0.5rem;
-            max-width: 63vw;
+            .user-avatar {
+                min-width: 26px;
+                max-height: 26px;
+            }
 
-            div {
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
+            .user-name {
+                font-size: 1.4rem;
+                margin-left: 0.9rem;
+                margin-right: 0.5rem;
+                max-width: 63vw;
+
+                div {
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
             }
         }
     }

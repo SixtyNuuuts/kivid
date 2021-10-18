@@ -101,12 +101,6 @@
                     </div>
                     <div class="content">
                         <div class="input-h2">
-                            <!-- <vs-input
-                                v-model="exercise.video.name"
-                                label-placeholder="Nom de l'exercice"
-                                type="text"
-                            >
-                            </vs-input> -->
                             <h2>
                                 <span>{{ exercise.video.name }}</span>
                             </h2>
@@ -132,10 +126,15 @@
                                                 $event
                                             )
                                         "
+                                        @change="
+                                            checkAndFormatValue(
+                                                exercise,
+                                                $event
+                                            )
+                                        "
                                         @blur="
                                             checkIfValueIsEmptyOrNull(exercise)
                                         "
-                                        min="1"
                                     >
                                     </vs-input>
                                 </div>
@@ -151,10 +150,15 @@
                                                 $event
                                             )
                                         "
+                                        @change="
+                                            checkAndFormatValue(
+                                                exercise,
+                                                $event
+                                            )
+                                        "
                                         @blur="
                                             checkIfValueIsEmptyOrNull(exercise)
                                         "
-                                        min="1"
                                     >
                                     </vs-input>
                                 </div>
@@ -241,7 +245,6 @@
                                     v-model="exercise.hold"
                                     label-placeholder="Secondes"
                                     type="number"
-                                    min="1"
                                     :class="{ disabled: !exercise.holdActive }"
                                 >
                                 </vs-input>
@@ -531,15 +534,19 @@ export default {
         openVideoPlayer(exercise) {
             this.exerciseForPlaying = exercise;
             this.videoPlayerToggle = true;
+            document.body.classList.add("no-scrollbar");
         },
         openVideoLibrary() {
             this.videoLibraryToggle = true;
+            document.body.classList.add("no-scrollbar");
         },
         closeVideoPlayer() {
             this.videoPlayerToggle = false;
+            document.body.classList.remove("no-scrollbar");
         },
         closeVideoLibrary() {
             this.videoLibraryToggle = false;
+            document.body.classList.remove("no-scrollbar");
         },
     },
 };
@@ -642,15 +649,14 @@ export default {
         }
 
         .thumbnail-wrapper {
-            height: 18rem;
+            height: 52vw;
             width: 100%;
-            background-color: $black;
+            background-color: $gray-dark;
             border-radius: 0.8rem;
             margin-right: 0;
             margin-bottom: 2rem;
             position: relative;
             overflow: hidden;
-            min-width: 50%;
 
             .btns-arrow {
                 position: absolute;
@@ -660,6 +666,7 @@ export default {
                 .vs-button {
                     width: 3rem;
                     height: 3rem;
+                    box-shadow: 0px 0rem 1.5rem rgba(173, 100, 74, 0.88);
 
                     &:first-child {
                         margin-bottom: 0.7rem;
@@ -681,14 +688,13 @@ export default {
             }
 
             @media (min-width: 992px) {
-                height: 31.6rem;
-                width: 50%;
+                height: 35vw;
                 margin-right: 2.3rem;
                 margin-bottom: 0;
-            }
-
-            @media (min-width: 1550px) {
-                width: 60rem;
+                max-width: 67rem;
+                max-height: 38rem;
+                min-width: 67rem;
+                min-height: 38rem;
             }
 
             .btn-playlist {
@@ -703,11 +709,11 @@ export default {
                 align-items: center;
 
                 .vs-button {
-                    box-shadow: none;
+                    box-shadow: 0px 0rem 1.5rem rgba(173, 100, 74, 0.88);
                 }
 
                 &:hover ~ .thumbnail {
-                    transform: scale(1.15, 1.15);
+                    transform: scale(1.05);
                     opacity: 1;
                     transition: all 3s;
                 }
@@ -723,7 +729,7 @@ export default {
                 background-repeat: no-repeat;
                 background-size: cover;
                 background-position: center center;
-                transform: scale(1.1);
+                transform: scale(1);
                 transition: all 1s;
                 opacity: 0.9;
             }
@@ -744,36 +750,32 @@ export default {
             .input-h2 {
                 margin-bottom: 2rem;
                 position: relative;
-                // margin-top: 0.6rem;
-                // margin-left: 2rem;
 
-                // .vs-input-content {
-                //     .vs-input {
-                //         font-size: 2.1rem;
-                //         font-weight: 700;
-
-                //         @media (min-width: 576px) {
-                //             font-size: 2.2rem;
-                //         }
-                //     }
-                // }
-
-                // &::before {
-                //     content: "";
-                //     display: block;
-                //     width: 0.3rem;
-                //     height: 2.2rem;
-                //     background: $orange;
-                //     position: absolute;
-                //     left: -2rem;
-                //     top: 1.8rem;
-                //     border-radius: 0.3rem;
-                // }
                 h2 {
                     position: relative;
                     margin-bottom: 0.3rem;
                     margin-left: 2rem;
                     max-width: 80%;
+
+                    @media (min-width: 992px) {
+                        max-width: 18vw;
+                    }
+
+                    @media (min-width: 1040px) {
+                        max-width: 22vw;
+                    }
+
+                    @media (min-width: 1100px) {
+                        max-width: 27vw;
+                    }
+
+                    @media (min-width: 1370px) {
+                        max-width: 41vw;
+                    }
+
+                    @media (min-width: 1450px) {
+                        max-width: 43vw;
+                    }
 
                     span {
                         display: block;
@@ -982,6 +984,7 @@ export default {
                         background: #ded5c2de;
                         min-width: 38px;
                         height: 23px;
+                        margin-left: 0.3rem;
 
                         .vs-switch__input:checked ~ .vs-switch__circle {
                             left: calc(100% - 19px);
