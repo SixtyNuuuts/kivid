@@ -352,22 +352,12 @@ export default {
             justify-content: space-between;
             margin-bottom: 0.5rem;
 
-            @media (min-width: 576px) {
-                padding-left: 0;
-                padding-right: 1.6rem;
-            }
-
-            @media (min-width: 610px) {
-                padding-left: 1rem;
-                padding-right: 2.4rem;
-            }
-
-            @media (min-width: 700px) {
-                padding-right: 3.5rem;
-            }
-
             @media (min-width: 760px) {
-                padding-right: 5.2rem;
+                padding-right: 0.6rem;
+            }
+
+            @media (min-width: 850px) {
+                padding-right: 3vw;
             }
 
             .progressbar-steps {
@@ -525,14 +515,14 @@ export default {
                         padding: 1.3rem 1.6rem;
 
                         @media (min-width: 576px) {
-                            font-size: 1.2rem;
-                            margin-right: 1rem;
+                            font-size: 1.3rem;
+                            margin-right: 1.2rem;
                             padding: 1.1rem 1.4rem;
                         }
 
-                        @media (min-width: 768px) {
+                        @media (min-width: 1300px) {
                             font-size: 1.4rem;
-                            margin-right: 1.8rem;
+                            margin-right: 1.4rem;
                             padding: 1.3rem 1.6rem;
                         }
 

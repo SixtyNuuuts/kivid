@@ -114,7 +114,7 @@
             >
         </div>
         <vs-dialog width="450px" v-model="modalContact">
-            <h2>Demande de praticien</h2>
+            <h2>Je n'ai pas de praticien</h2>
 
             <div class="contact-form">
                 <vs-input
@@ -158,6 +158,28 @@
                     </template>
                 </vs-input>
 
+                <VuePhoneNumberInput
+                    default-country-code="FR"
+                    :only-countries="['FR']"
+                    :no-example="true"
+                    :no-country-selector="true"
+                    :translations="{
+                        countrySelectorLabel: 'Code pays',
+                        countrySelectorError: 'Choisir un pays',
+                        phoneNumberLabel: 'Numéro de téléphone',
+                        example: 'Exemple :',
+                    }"
+                    v-model="contactTel"
+                    :class="{
+                        filled: contactTel != null,
+                        error: errorTel,
+                    }"
+                    color="#c1b79d"
+                    valid-color="#c1b79d"
+                    error-color="#ff564b"
+                    :error="errorTel"
+                />
+
                 <div class="message-block">
                     <textarea
                         v-model="contactMessage"
@@ -178,13 +200,12 @@
                     :disabled="
                         validationMessage.email ||
                         !patient.email ||
-                        btnLoadingValidContact ||
-                        !contactMessage
+                        btnLoadingValidContact
                     "
                     :loading="btnLoadingValidContact"
                     class="w-100"
                     @click="validContact"
-                    >Envoyer</vs-button
+                    >Me contacter</vs-button
                 >
             </div>
         </vs-dialog>
@@ -194,6 +215,7 @@
 <script>
 import f from "../../services/function";
 import ClickOutside from "vue-click-outside";
+import VuePhoneNumberInput from "vue-phone-number-input";
 
 export default {
     props: {
@@ -203,6 +225,9 @@ export default {
     },
     directives: {
         ClickOutside,
+    },
+    components: {
+        VuePhoneNumberInput,
     },
     data() {
         return {
@@ -218,12 +243,28 @@ export default {
             validationMessage: {
                 email: null,
             },
+            contactTel: null,
             contactMessage: "",
         };
     },
     computed: {
         getDoctors() {
             return f.getSearch(this.doctors, this.filter);
+        },
+        errorTel() {
+            let error = false;
+
+            if (this.contactTel && this.contactTel.length > 4) {
+                let contactTelFormated = this.contactTel.replace(/ /g, "");
+
+                const re = /^0[1-9]([-. ]?[0-9]{2}){4}$/;
+
+                if (!re.test(String(contactTelFormated))) {
+                    error = true;
+                }
+            }
+
+            return error;
         },
     },
     methods: {
@@ -296,6 +337,7 @@ export default {
                     firstname: this.patient.firstname,
                     lastname: this.patient.lastname,
                     email: this.patient.email,
+                    contactTel: this.contactTel,
                     contactMessage: this.contactMessage,
                 })
                 .then((response) => {
@@ -332,6 +374,14 @@ export default {
         this.footer = document.querySelector(".footer");
         this.footer.classList.add("hidden");
 
+        if (this.patient.firstname === null) {
+            this.patient.firstname = "";
+        }
+
+        if (this.patient.lastname === null) {
+            this.patient.lastname = "";
+        }
+
         this.loading = true;
 
         this.axios
@@ -355,7 +405,7 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 @import "../../../scss/variables";
 
 #doctor-choice {
@@ -512,12 +562,13 @@ export default {
 
         .not-found {
             font-size: 1.35rem;
-            margin: 2.3rem 0;
-            animation: fadeEnter 0.5s;
+            margin: 0;
+            padding: 3.3rem 2rem;
+            min-height: initial;
 
             i {
                 font-size: 1.4rem;
-                margin-right: 0.3rem;
+                margin-right: 1.1rem;
                 position: relative;
                 top: 0;
             }
@@ -553,10 +604,12 @@ export default {
         margin-bottom: 1.5rem;
     }
 
-    .message-block {
+    .message-block,
+    .vue-phone-number-input {
         position: relative;
 
-        textarea {
+        textarea,
+        input {
             width: 100%;
             padding: 1.6rem 1.7rem;
             background: $white;
@@ -571,6 +624,7 @@ export default {
             &:focus-visible {
                 border: 0.1rem solid #c1b79d;
                 outline: none;
+                box-shadow: 0 0.5rem 2.5rem -0.4rem rgba(0, 0, 0, 0.05);
             }
 
             &:focus ~ label,
@@ -606,6 +660,45 @@ export default {
             display: flex;
             align-items: center;
             justify-content: flex-start;
+        }
+    }
+
+    .vue-phone-number-input {
+        &.filled {
+            label {
+                font-size: 1.4rem;
+                top: -0.8rem;
+                left: 1.3rem;
+                text-shadow: 0 0 0.3rem #fff, 0 0 0.3rem #fff, 0 0 0.3rem #fff,
+                    0 0 0.3rem #fff, 0 0 0.3rem #fff, 0 0 0.3rem #fff,
+                    0 0 0.3rem #fff, 0 0 0.3rem #fff, 0 0 0.3rem #fff,
+                    0 0 0.3rem #fff, 0 0 0.3rem #fff, 0 0 0.3rem #fff,
+                    0 0 0.3rem #fff, 0 0 0.3rem #fff, 0 0 0.3rem #fff,
+                    0 0 0.3rem #fff, 0 0 0.3rem #fff, 0 0 0.3rem #fff,
+                    0 0 0.3rem #fff, 0 0 0.3rem #fff;
+            }
+        }
+
+        input {
+            &:focus {
+                box-shadow: none !important;
+                caret-color: initial !important;
+            }
+
+            &:focus ~ label {
+                color: #c1b79d !important;
+            }
+
+            &::placeholder {
+                color: transparent;
+                font-size: 0.01rem;
+            }
+        }
+
+        &.error {
+            input:focus ~ label {
+                color: rgb(255, 86, 75) !important;
+            }
         }
     }
 }
