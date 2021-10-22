@@ -129,7 +129,7 @@ export default {
     margin-bottom: 0;
     width: 100%;
 
-    @media (min-width: 992px) {
+    @media (min-width: 1100px) {
         margin-bottom: 2rem;
     }
 

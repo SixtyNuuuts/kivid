@@ -98,7 +98,7 @@
                     <img src="../../../../img/score-fanion.svg" alt="fanion" />
                 </div>
                 <div class="score-text">
-                    <div class="label">Félicitation !</div>
+                    <div class="label">Félicitations !</div>
                     <div v-if="exerciseScorePoints" class="score">
                         {{ exerciseScorePoints }} points
                     </div>
@@ -231,6 +231,9 @@ export default {
     methods: {
         videoEnded() {
             this.btnValidVideoCompleted = true;
+
+            this.$refs.youtube.player.playVideo();
+            this.$refs.youtube.player.stopVideo();
         },
         validVideoCompleted() {
             this.videoFrame = false;

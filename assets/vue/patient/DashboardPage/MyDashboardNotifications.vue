@@ -267,3 +267,9 @@ export default {
     },
 };
 </script>
+
+<style lang="scss">
+#dashboard-notifications {
+    grid-area: mydashboardnotif;
+}
+</style>

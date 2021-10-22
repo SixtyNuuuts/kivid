@@ -12,7 +12,10 @@
     >
         <transition name="fade" mode="out-in">
             <div v-if="!loading && 'nouveau' === rank" key="nouveau">
-                <h4>Votre niveau</h4>
+                <h4>
+                    <span v-if="!doctorView">Votre</span
+                    ><span v-if="doctorView">Son</span> niveau
+                </h4>
                 <i class="rank-img">
                     <img
                         src="../../../../img/icons/colored/hand.svg"
@@ -107,6 +110,7 @@ export default {
     props: {
         rank: String,
         loading: Boolean,
+        doctorView: Boolean,
     },
 };
 </script><style lang="scss" scoped>

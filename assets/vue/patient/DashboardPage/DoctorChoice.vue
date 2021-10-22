@@ -40,17 +40,19 @@
                     v-else
                     v-model="filter"
                     @click="selectBox = true"
+                    @keyup="selectBoxWithThrottle"
                     id="doctor-choice-select"
-                    :class="{ 'b-r-b-zero': selectBox }"
+                    :class="{
+                        'b-r-b-zero': selectBox,
+                        'placeholder-gray': selectBox,
+                    }"
+                    :placeholder="
+                        !selectBox
+                            ? 'Sélectionnez un praticien'
+                            : 'Recherchez un praticien'
+                    "
                     autocomplete="off"
                 />
-                <div
-                    class="placeholder"
-                    :class="{ hidden: filter || doctorSelected }"
-                >
-                    <span v-if="!selectBox"> Sélectionnez un praticien </span>
-                    <span v-else class="gray"> Recherchez un praticien </span>
-                </div>
                 <div
                     class="arrow-toggle-box"
                     :class="{ active: selectBox }"
@@ -95,10 +97,11 @@
                         <div v-else>
                             <p class="not-found">
                                 <i class="fas fa-users-slash"></i>
-                                Aucun praticien n'a été trouvé avec "<strong>{{
-                                    filter
-                                }}</strong
-                                >"
+                                <span>
+                                    Aucun praticien n'a été trouvé avec "<strong
+                                        >{{ filter }}</strong
+                                    >"</span
+                                >
                             </p>
                         </div>
                     </div>
@@ -369,6 +372,17 @@ export default {
                     "Merci d'entrer un email valide.";
             }
         },
+        selectBoxWithThrottle() {
+            if (!this.selectBoxThrottle) {
+                this.selectBoxThrottle = true;
+                this.selectBox = true;
+                console.log("selectBox");
+
+                setTimeout(() => {
+                    this.selectBoxThrottle = false;
+                }, 1000);
+            }
+        },
     },
     mounted() {
         this.footer = document.querySelector(".footer");
@@ -452,23 +466,17 @@ export default {
                 transform: none;
                 border-radius: 0.8rem 0.8rem 0 0;
             }
-        }
 
-        .placeholder {
-            position: absolute;
-            top: 2.1rem;
-            left: 2.2rem;
-            font-size: 1.5rem;
-            color: $black;
-            transition: all 0.25s;
-            pointer-events: none;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            overflow: hidden;
-            max-width: 70%;
+            &::placeholder {
+                color: $black;
+                position: relative;
+                top: 0.1rem;
+            }
 
-            .gray {
-                color: $gray-middle;
+            &.placeholder-gray {
+                &::placeholder {
+                    color: $gray-middle;
+                }
             }
         }
 

@@ -143,28 +143,34 @@
                                 <span v-if="search"
                                     >"<strong>{{ search }}</strong
                                     >"</span
-                                ><span
+                                >
+                                <span
                                     v-if="
                                         (search && selectedTags.length) ||
                                         (search && selectedPoB)
                                     "
                                     class="et"
                                 >
-                                    et</span
-                                ><span v-if="selectedTags.length" class="tags">
-                                    <div
-                                        class="tag-chip"
+                                    et
+                                </span>
+                                <span v-if="selectedTags.length">
+                                    <span
                                         v-for="(tag, i) in selectedTags"
                                         :key="i"
+                                        class="nf-tag tag"
                                     >
-                                        {{ tag }}
-                                    </div> </span
-                                ><span v-if="selectedPoB" class="part-of-body">
-                                    <span class="text">{{
-                                        selectedPoB.name
-                                    }}</span>
-                                </span></span
-                            >
+                                        <span class="text">{{ tag }}</span>
+                                    </span>
+                                </span>
+                                <span
+                                    v-if="selectedPoB"
+                                    class="nf-tag part-of-body"
+                                >
+                                    <span class="text">
+                                        {{ selectedPoB.name }}
+                                    </span>
+                                </span>
+                            </span>
                         </p>
                     </div>
                     <div class="loading videos-list" v-if="loadingVideos"></div>
@@ -176,7 +182,7 @@
                         :length="getLength(getSearch(videos, search), max)"
                     />
                     <div class="count-page">
-                        Page: <b>{{ page }}</b>
+                        Page : <b>{{ page }}</b>
                     </div>
                 </div>
                 <div class="btn-valid-selection">
@@ -208,6 +214,8 @@ import SelectPartOfBody from "../../../components/SelectPartOfBody.vue";
 export default {
     props: {
         doctor: Object,
+        loadingVideos: Boolean,
+        videos: Array,
     },
     components: {
         PlusIcon,
@@ -220,8 +228,6 @@ export default {
             search: "",
             page: 1,
             max: 6,
-            videos: [],
-            loadingVideos: false,
             playerVars: {
                 rel: 0,
                 showinfo: 0,
@@ -377,26 +383,6 @@ export default {
         },
     },
     created() {
-        this.loadingVideos = true;
-
-        this.axios
-            .get(`/get/videos`)
-            .then((response) => {
-                this.loadingVideos = false;
-
-                this.videos = response.data;
-            })
-            .catch((error) => {
-                const errorMess =
-                    "object" === typeof error.response.data
-                        ? error.response.data.detail
-                        : error.response.data;
-
-                f.openErrorNotification("Erreur", errorMess);
-
-                this.loadingVideos = false;
-            });
-
         window.addEventListener("resize", this.resizeWindowEventHandler);
 
         this.resizeWindowEventHandler();
@@ -493,26 +479,20 @@ export default {
 
             input {
                 padding: 1.15rem 1.5rem;
+                padding-right: 3.4rem;
                 border: 0.2rem solid #faf6ef;
                 min-height: 4.2rem;
                 border-radius: 0.4rem;
+
+                &::placeholder {
+                    color: #b7bdc2;
+                    font-weight: 300;
+                    font-size: 1.4rem;
+                }
             }
 
             input.b-r-b-zero {
                 border-radius: 0.4rem 0.4rem 0 0;
-            }
-
-            .placeholder {
-                top: 1.35rem;
-                left: 1.65rem;
-                font-size: 1.4rem;
-                color: #b7bdc2;
-                font-weight: 400;
-
-                .gray {
-                    color: #b7bdc2;
-                    left: 1.7rem;
-                }
             }
 
             .arrow-toggle-box {
@@ -551,8 +531,8 @@ export default {
     .btn-close-library {
         position: absolute;
         z-index: 20;
-        top: -0.7rem;
-        right: -0.8rem;
+        top: -4.4vw;
+        right: -4.4vw;
         background: transparent;
         border: none;
         padding: 2rem;
@@ -568,6 +548,21 @@ export default {
         i {
             font-size: 1.5rem;
             color: $white;
+        }
+
+        @media (min-width: 350px) {
+            top: -3.4vw;
+            right: -3.4vw;
+        }
+
+        @media (min-width: 410px) {
+            top: -2.4vw;
+            right: -2.4vw;
+        }
+
+        @media (min-width: 500px) {
+            top: -1vw;
+            right: -1vw;
         }
 
         @media (min-width: 680px) {
@@ -607,7 +602,21 @@ export default {
         justify-content: center;
         align-items: center;
 
-        @media (max-height: 700px) {
+        &::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+            display: block;
+            background: transparent;
+            border-radius: 4px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: #2e3858a1;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+
+        @media (max-height: 815px) {
             align-items: flex-start;
             overflow-y: auto;
         }
@@ -865,31 +874,29 @@ export default {
     .not-found {
         min-height: 19rem;
 
-        .part-of-body {
-            background: #fff;
-            color: #222e54;
+        .nf-tag {
             letter-spacing: 0.02rem;
             transition: all 0.3s;
             display: inline-flex;
             box-shadow: 0px 0rem 0.8rem rgba(137, 137, 137, 0.2);
             padding: 0.2rem 0.6rem;
             border-radius: 0.6rem;
-            margin-left: 0.5rem;
+            margin-left: 0.45rem;
             top: -0.1rem;
 
             .text {
-                font-size: 1.1rem;
-            }
-        }
-
-        .tags {
-            display: inline-flex !important;
-            top: -0.05rem;
-            margin-left: 0.2rem;
-
-            .tag-chip {
-                padding: 0.2rem 0.8rem;
                 font-size: 1rem;
+            }
+
+            &.tag {
+                background: $orange;
+                color: $white;
+            }
+
+            &.part-of-body {
+                background: $white;
+                color: $black;
+                top: 0;
             }
         }
     }

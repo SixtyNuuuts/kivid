@@ -514,8 +514,8 @@ export default {
                         margin-right: 1.4rem;
                         padding: 1.3rem 1.6rem;
 
-                        @media (min-width: 576px) {
-                            font-size: 1.3rem;
+                        @media (min-width: 768px) {
+                            font-size: 1.2rem;
                             margin-right: 1.2rem;
                             padding: 1.1rem 1.4rem;
                         }
@@ -543,13 +543,13 @@ export default {
                             margin-top: 0.8rem;
                             padding-bottom: 0.4rem;
 
-                            @media (min-width: 576px) {
-                                font-size: 1.15rem;
+                            @media (min-width: 768px) {
+                                font-size: 1.1rem;
                                 margin-top: 0.6rem;
                                 padding-bottom: 0.3rem;
                             }
 
-                            @media (min-width: 768px) {
+                            @media (min-width: 1300px) {
                                 font-size: 1.3rem;
                                 margin-top: 0.7rem;
                                 padding-bottom: 0.4rem;

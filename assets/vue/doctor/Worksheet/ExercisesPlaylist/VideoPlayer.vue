@@ -9,6 +9,7 @@
                     <youtube
                         :player-vars="playerVars"
                         :video-id="getExercise.video.youtubeId"
+                        @ended="videoEnded"
                         ref="youtube"
                     ></youtube>
                 </div>
@@ -103,6 +104,10 @@ export default {
         },
     },
     methods: {
+        videoEnded() {
+            this.$refs.youtube.player.playVideo();
+            this.$refs.youtube.player.stopVideo();
+        },
         nextExercise() {
             if (this.getExercise === this.getTheLastExercise) {
                 this.closeVideoPlayer();

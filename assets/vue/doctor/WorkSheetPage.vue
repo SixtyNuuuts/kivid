@@ -111,6 +111,7 @@
                                         $event
                                     )
                                 "
+                                min="1"
                                 max="7"
                             >
                             </vs-input>
@@ -128,6 +129,7 @@
                                         $event
                                     )
                                 "
+                                min="1"
                                 max="3"
                             >
                             </vs-input>
@@ -145,6 +147,7 @@
                                         $event
                                     )
                                 "
+                                min="1"
                                 max="52"
                             >
                             </vs-input>
@@ -171,6 +174,8 @@
                     :action="action"
                     :worksheet="getWorksheet"
                     :exercises="getExercises"
+                    :loadingVideos="loadingVideos"
+                    :videos="videos"
                     :csrfTokenRemoveExercise="csrfTokenRemoveExercise"
                 />
             </section>
@@ -238,6 +243,8 @@ export default {
             },
             exercises: [],
             patient: null,
+            loadingVideos: false,
+            videos: [],
             csrfTokenCreateWorksheet: null,
             csrfTokenEditWorksheet: null,
             csrfTokenRemoveExercise: null,
@@ -315,16 +322,29 @@ export default {
         checkIfEmpty() {
             let check = true;
 
-            if (this.worksheet.title === "" || this.worksheet.title === null) {
-                this.titleIsEmptyMessage =
-                    "Vous devez entrer un titre pour la fiche.";
-                check = false;
-            }
-
             if (!this.worksheet.partOfBody) {
                 this.partOfBodyIsEmptyMessage =
                     "Vous devez choisir une partie du corps";
                 check = false;
+                f.openErrorNotification(
+                    "Erreur",
+                    this.partOfBodyIsEmptyMessage + " pour la fiche."
+                );
+            }
+
+            if (this.worksheet.title === "" || this.worksheet.title === null) {
+                this.titleIsEmptyMessage =
+                    "Vous devez entrer un titre pour la fiche.";
+                check = false;
+                f.openErrorNotification("Erreur", this.titleIsEmptyMessage);
+            }
+
+            if (!this.exercises.length) {
+                check = false;
+                f.openErrorNotification(
+                    "Erreur",
+                    "La fiche ne peut pas être vide, vous devez ajouter des vidéos."
+                );
             }
 
             return check;
@@ -347,14 +367,26 @@ export default {
                         exercises: this.exercises,
                     })
                     .then((response) => {
-                        f.openSuccessNotification(
-                            "Edition de la fiche",
-                            response.data
-                        );
+                        if (this.patient) {
+                            f.openSuccessNotification(
+                                "Edition de la prescription",
+                                `La prescription a bien été modifiée`
+                            );
+                        } else {
+                            f.openSuccessNotification(
+                                "Edition de la fiche",
+                                response.data
+                            );
+                        }
+
                         this.btnLoadingValidEditWorksheet = false;
 
                         setTimeout(() => {
-                            document.location.href = `/doctor/${this.doctor.id}/dashboard`;
+                            if (this.patient) {
+                                document.location.href = `/doctor/${this.doctor.id}/dashboard`;
+                            } else {
+                                document.location.href = `/doctor/${this.doctor.id}/dashboard/?tab=ws`;
+                            }
                         }, 2000);
                     })
                     .catch((error) => {
@@ -410,7 +442,11 @@ export default {
                         }
                         this.btnLoadingValidCreateWorksheet = false;
                         setTimeout(() => {
-                            document.location.href = `/doctor/${this.doctor.id}/dashboard`;
+                            if (this.patient) {
+                                document.location.href = `/doctor/${this.doctor.id}/dashboard`;
+                            } else {
+                                document.location.href = `/doctor/${this.doctor.id}/dashboard/?tab=ws`;
+                            }
                         }, 2000);
                     })
                     .catch((error) => {
@@ -522,6 +558,26 @@ export default {
         } else {
             this.loading = false;
         }
+
+        this.loadingVideos = true;
+
+        this.axios
+            .get(`/get/videos`)
+            .then((response) => {
+                this.loadingVideos = false;
+
+                this.videos = response.data;
+            })
+            .catch((error) => {
+                const errorMess =
+                    "object" === typeof error.response.data
+                        ? error.response.data.detail
+                        : error.response.data;
+
+                f.openErrorNotification("Erreur", errorMess);
+
+                this.loadingVideos = false;
+            });
     },
 };
 </script>
@@ -714,10 +770,11 @@ export default {
                 align-items: flex-start;
                 justify-content: space-between;
                 width: 100%;
-                margin-bottom: 3.9rem;
+                margin-bottom: 0;
 
                 @media (min-width: 768px) {
                     flex-direction: row;
+                    margin-bottom: 1.9rem;
                 }
 
                 .worksheet-details {
@@ -860,13 +917,24 @@ export default {
 
         #exercises-playlist {
             width: 100%;
+            margin-top: 4.5rem;
+
+            @media (min-width: 768px) {
+                margin-top: 2.5rem;
+            }
         }
     }
     .btn-valid {
         position: fixed;
         z-index: 1111;
-        bottom: 2rem;
-        right: 2rem;
+        bottom: 2.3rem;
+        right: 3rem;
+
+        @media (max-width: 550px) {
+            bottom: 0;
+            right: 0;
+            width: 100%;
+        }
 
         .vs-button {
             background: $black;
@@ -876,6 +944,15 @@ export default {
             font-size: 1.4rem;
             box-shadow: 0px 0.8rem 1.8rem rgba(75, 61, 56, 0.55);
             border-radius: 0.5rem;
+
+            @media (max-width: 550px) {
+                width: 100%;
+                border-radius: 0.5rem 0.5rem 0 0;
+
+                &:hover {
+                    transform: none;
+                }
+            }
 
             .vs-button__loading {
                 background: $black;
