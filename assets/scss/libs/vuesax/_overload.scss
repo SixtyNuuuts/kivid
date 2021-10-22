@@ -664,6 +664,12 @@
         font-size: 1.4rem;
         padding: 0.3rem 0.5rem;
         padding-left: 0.7rem;
+        caret-color: $gray-dark;
+
+        &::placeholder {
+            color: #b7bdc2;
+            font-weight: 300;
+        }
     }
 
     .vs-select.activeOptions .vs-select__input {
@@ -797,6 +803,20 @@
 .vs-dialog-content {
     backdrop-filter: blur(0.5rem);
     background: rgba(34, 46, 84, 0.8);
+
+    &::-webkit-scrollbar {
+        width: 4px;
+        height: 4px;
+        display: block;
+        background: transparent;
+        border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: #2e3858a1;
+        border: 1px solid transparent;
+        border-radius: 4px;
+    }
 
     .vs-dialog__content {
         padding: 2rem 2rem;

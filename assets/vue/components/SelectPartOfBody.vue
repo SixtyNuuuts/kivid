@@ -66,17 +66,12 @@
                 v-show="!getPartOfBodySelected"
                 v-model="filter"
                 @click="selectBox = true"
+                @keyup="selectBoxWithThrottle"
                 id="partofbody-choice-select"
                 :class="{ 'b-r-b-zero': selectBox }"
                 autocomplete="off"
+                :placeholder="!selectBox ? 'Partie du corps' : 'Recherchez'"
             />
-            <div
-                class="placeholder"
-                :class="{ hidden: filter || getPartOfBodySelected }"
-            >
-                <span v-show="!selectBox"> Partie du corps </span>
-                <!-- <span v-show="selectBox" class="gray"> Recherchez </span> -->
-            </div>
             <div
                 class="arrow-toggle-box"
                 :class="{ active: selectBox }"
@@ -184,6 +179,7 @@ export default {
             selectBox: false,
             selectInput: null,
             loadingPartsOfBody: false,
+            selectBoxThrottle: false,
         };
     },
     computed: {
@@ -198,12 +194,16 @@ export default {
         },
         partsOfBodyFiltered() {
             return this.partsOfBody.filter((p) =>
-                p.name.toLowerCase().includes(
-                    this.filter
-                        .normalize("NFD")
-                        .replace(/[\u0300-\u036f]/g, "")
-                        .toLowerCase()
-                )
+                p.name
+                    .normalize("NFD")
+                    .replace(/[\u0300-\u036f]/g, "")
+                    .toLowerCase()
+                    .includes(
+                        this.filter
+                            .normalize("NFD")
+                            .replace(/[\u0300-\u036f]/g, "")
+                            .toLowerCase()
+                    )
             );
         },
     },
@@ -242,6 +242,17 @@ export default {
         },
         focusInputSelect() {
             this.selectInput.focus();
+        },
+        selectBoxWithThrottle() {
+            if (!this.selectBoxThrottle) {
+                this.selectBoxThrottle = true;
+                this.selectBox = true;
+                console.log("selectBox");
+
+                setTimeout(() => {
+                    this.selectBoxThrottle = false;
+                }, 1000);
+            }
         },
     },
     created() {
@@ -301,6 +312,7 @@ export default {
         font-size: 1.5rem;
         border-radius: 0.5rem;
         padding: 1.4rem 1.7rem;
+        padding-right: 4.3rem;
         cursor: pointer;
         transition: all 0.25s;
         border: 0.1rem solid $gray-middle;
@@ -317,23 +329,10 @@ export default {
             border-radius: 0.5rem 0.5rem 0 0;
             border: 0.1rem solid $gray-middle;
         }
-    }
 
-    .placeholder {
-        position: absolute;
-        top: 1.7rem;
-        left: 1.8rem;
-        font-size: 1.4rem;
-        color: $gray-dark;
-        transition: all 0.25s;
-        pointer-events: none;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        max-width: 65%;
-
-        .gray {
-            color: #d2ccbd;
+        &::placeholder {
+            color: $gray-dark;
+            font-size: 1.4rem;
         }
     }
 

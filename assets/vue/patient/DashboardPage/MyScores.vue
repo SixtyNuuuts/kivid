@@ -72,8 +72,9 @@
                                         : '100%',
                             }"
                         >
-                            <span
-                                >Votre niveau
+                            <span>
+                                <span v-if="!doctorView">Votre</span
+                                ><span v-if="doctorView">Son</span> score
                                 <span class="score">{{
                                     `(${formatNumbThousand(getScore)} pts)`
                                 }}</span></span
@@ -105,7 +106,10 @@
                     <div class="stat-icon">
                         <i class="kiv-sensitivity icon-8"></i>
                     </div>
-                    <h4 class="stat-label">Votre sensibilité</h4>
+                    <h4 class="stat-label">
+                        <span v-if="!doctorView">Votre</span
+                        ><span v-if="doctorView">Sa</span> sensibilité
+                    </h4>
                     <div class="stat-result">
                         <h3 v-if="!loadingPatientWorksheets">
                             <span
@@ -170,7 +174,10 @@
                     <div class="stat-icon">
                         <i class="kiv-technical icon-9"></i>
                     </div>
-                    <h4 class="stat-label">Votre technique</h4>
+                    <h4 class="stat-label">
+                        <span v-if="!doctorView">Votre</span
+                        ><span v-if="doctorView">Sa</span> technique
+                    </h4>
                     <div class="stat-result">
                         <h3 v-if="!loadingPatientWorksheets">
                             <span
@@ -229,7 +236,11 @@
                         ></div>
                     </div>
                 </div>
-                <ScoreRankBlock :rank="getRank" :loading="loading" />
+                <ScoreRankBlock
+                    :rank="getRank"
+                    :loading="loading"
+                    :doctorView="doctorView"
+                />
             </div>
         </transition>
     </section>
@@ -431,7 +442,7 @@ export default {
 
                     let p = document.createElement("p");
                     let span = document.createElement("span");
-                    span.innerText = `Vous avez atteint le niveau ${response.data.notifScoreRank} ! Félicitation !`;
+                    span.innerText = `Vous avez atteint le niveau ${response.data.notifScoreRank} ! Félicitations !`;
 
                     p.appendChild(span);
 

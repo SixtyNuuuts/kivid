@@ -5,7 +5,16 @@
         </div>
         <nav v-if="currentUser">
             <ul>
-                <li class="dashboard dashboard-icon" @click="dashboard()">
+                <li
+                    class="dashboard dashboard-icon"
+                    v-if="
+                        ('doctor' === currentUserType &&
+                            currentRoute != doctorDashboardRoute) ||
+                        ('patient' === currentUserType &&
+                            currentRoute != patientDashboardRoute)
+                    "
+                    @click="dashboard()"
+                >
                     <i class="kiv-dashboard icon-26"></i>
                 </li>
                 <li
@@ -21,9 +30,6 @@
                         <i class="kiv-dashboard icon-26"></i>
                         Dashboard
                     </vs-button>
-                </li>
-                <li class="lexique">
-                    <i class="kiv-lexique icon-1"></i>
                 </li>
                 <li class="notifications" v-click-outside="hideNotifications">
                     <div
@@ -196,17 +202,13 @@
                                     <i class="kiv-subscription icon-20"></i> Mon
                                     Abonnement
                                 </li>
-                                <li class="sm" @click="lexique()">
-                                    <i class="kiv-lexique icon-1"></i>
-                                    Lexique
+                                <li @click="myProfil()" class="desktop">
+                                    <i class="kiv-settings icon-16"></i>
+                                    Paramètres
                                 </li>
                                 <li @click="help()">
                                     <i class="kiv-help icon-15"></i>
                                     Aide
-                                </li>
-                                <li @click="myProfil()" class="desktop">
-                                    <i class="kiv-settings icon-16"></i>
-                                    Paramètres
                                 </li>
                                 <hr />
                                 <li @click="logout()">
@@ -422,11 +424,13 @@ export default {
                 display: flex;
                 align-items: center;
                 padding: 0 2rem;
-                border-left: 1px solid $gray-middle;
                 color: $black;
                 font-size: 1.5rem;
                 max-height: 1.65rem;
-                border-left: 1px solid $gray-middle;
+
+                &:not(:first-child) {
+                    border-left: 1px solid $gray-middle;
+                }
 
                 &:last-child {
                     padding-right: 0;
@@ -652,6 +656,7 @@ export default {
                                     margin: 0;
                                     display: flex;
                                     align-items: center;
+                                    font-size: 1.4rem;
                                 }
                             }
                         }

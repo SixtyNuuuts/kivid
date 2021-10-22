@@ -103,37 +103,81 @@
                             "
                             class="worksheet-content session-completed"
                         >
-                            <p v-if="worksheet.currentWorksheetSession">
-                                Bravo, vos exercices de cette session ont été
-                                faits avec succès ! <br />
-                                <transition name="fade">
-                                    <span
-                                        v-if="
-                                            worksheet.timeLeftBeforeNextSession
-                                        "
-                                    >
-                                        Rendez-vous dans
-                                        <strong>{{
-                                            worksheet.timeLeftBeforeNextSession
-                                        }}</strong>
-                                        pour une nouvelle session.
-                                    </span>
-                                </transition>
+                            <p
+                                v-if="
+                                    worksheet.currentWorksheetSession &&
+                                    worksheet.totalWorksheetSessions !=
+                                        worksheet.currentWorksheetSession
+                                            .execOrder
+                                "
+                            >
+                                <span v-if="!doctorView">
+                                    Bravo, vos exercices de cette session ont
+                                    été faits avec succès ! <br />
+                                    <transition name="fade">
+                                        <span
+                                            v-if="
+                                                worksheet.timeLeftBeforeNextSession
+                                            "
+                                        >
+                                            Rendez-vous dans
+                                            <strong>{{
+                                                worksheet.timeLeftBeforeNextSession
+                                            }}</strong>
+                                            pour une nouvelle session.
+                                        </span>
+                                    </transition>
+                                </span>
+                                <span v-if="doctorView">
+                                    Exercices terminés pour cette session.<br />
+                                    <transition name="fade">
+                                        <span
+                                            v-if="
+                                                worksheet.timeLeftBeforeNextSession
+                                            "
+                                        >
+                                            Prochaine session dans
+                                            <strong>{{
+                                                worksheet.timeLeftBeforeNextSession
+                                            }}</strong
+                                            >.
+                                        </span>
+                                    </transition>
+                                </span>
                             </p>
                             <p
                                 v-if="
-                                    !worksheet.currentWorksheetSession &&
-                                    worksheet.exerciseStats.length > 0
+                                    (!worksheet.currentWorksheetSession &&
+                                        worksheet.exerciseStats.length > 0) ||
+                                    worksheet.totalWorksheetSessions ==
+                                        worksheet.currentWorksheetSession
+                                            .execOrder
                                 "
                             >
-                                Traitement terminé<br />
+                                <span v-if="!doctorView"
+                                    >Félicitations, votre traitement est terminé
+                                    !</span
+                                >
+                                <span v-if="doctorView"
+                                    >Traitement terminé.</span
+                                >
+                                <br />
                             </p>
                             <vs-button
+                                v-if="!doctorView"
                                 :disabled="redirectInProgress === worksheet.id"
                                 @click="redirectToWorksheetPage(worksheet.id)"
                                 class="btn-consult"
                             >
                                 Consulter
+                            </vs-button>
+                            <vs-button
+                                v-if="doctorView"
+                                :disabled="redirectInProgress === worksheet.id"
+                                @click="redirectToDoctorView(worksheet.id)"
+                                class="btn-consult"
+                            >
+                                Voir
                             </vs-button>
                         </div>
                         <div v-else class="worksheet-content">
@@ -172,9 +216,9 @@
                             </div>
                             <div class="buttons">
                                 <vs-button
+                                    v-if="!doctorView"
                                     :disabled="
-                                        redirectInProgress === worksheet.id ||
-                                        doctorView
+                                        redirectInProgress === worksheet.id
                                     "
                                     @click="
                                         redirectToWorksheetPage(worksheet.id)
@@ -185,7 +229,21 @@
                                 >
                                     Go !
                                 </vs-button>
-                                <!-- <vs-button class="btn-consult"> Consulter </vs-button> -->
+                                <vs-button
+                                    v-if="doctorView"
+                                    :disabled="
+                                        redirectInProgress === worksheet.id ||
+                                        (!worksheet.currentWorksheetSession &&
+                                            worksheet.exerciseStats.length ===
+                                                0)
+                                    "
+                                    @click="redirectToDoctorView(worksheet.id)"
+                                    class="btn-go"
+                                    circle
+                                    floating
+                                >
+                                    Voir
+                                </vs-button>
                             </div>
                         </div>
                     </div>
@@ -199,7 +257,10 @@
                 >
                     <p>
                         <i class="fas fa-folder-minus"></i>
-                        <span>Vous n'avez pas de fiche</span>
+                        <span v-if="!doctorView">Vous n'avez pas de fiche</span>
+                        <span v-if="doctorView"
+                            >Le patient n'a pas encore de fiche</span
+                        >
                     </p>
                 </div>
                 <div v-if="loadingPatientWorksheets">
@@ -273,6 +334,7 @@ export default {
         patientWorksheets: Array,
         loadingPatientWorksheets: Boolean,
         doctorView: Boolean,
+        doctor: Object,
     },
     components: {
         TagPartOfBody,
@@ -298,6 +360,11 @@ export default {
             this.redirectInProgress = worksheetId;
 
             document.location.href = `/patient/${this.patient.id}/fiche/${worksheetId}`;
+        },
+        redirectToDoctorView(worksheetId) {
+            this.redirectInProgress = worksheetId;
+
+            document.location.href = `/doctor/${this.doctor.id}/voir/${worksheetId}/${this.patient.id}/?ref=dashp`;
         },
     },
 };

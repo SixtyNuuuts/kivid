@@ -800,7 +800,7 @@
                         "
                     />
                     <div class="count-page">
-                        Page: <b>{{ page }}</b>
+                        Page : <b>{{ page }}</b>
                     </div>
                 </div>
             </div>
@@ -1105,8 +1105,8 @@ export default {
 
     .big-buttons {
         display: flex;
-        margin-top: -0.7rem;
-        margin-bottom: 2.4rem;
+        margin-top: 1.5rem;
+        margin-bottom: -0.3rem;
 
         @media (min-width: 550px) {
             margin-top: 1.4rem;
@@ -1121,8 +1121,12 @@ export default {
                 background: $white;
                 font-size: 1.4rem;
                 color: $orange;
-                box-shadow: 0rem 0.4rem 1.4rem 0rem rgba(255, 107, 38, 0.43);
                 border-radius: 0.5rem;
+                box-shadow: 0rem 0.2rem 0.8rem 0rem rgba(255, 104, 56, 0.15);
+
+                &:hover {
+                    box-shadow: 0rem 0.4rem 1.4rem 0rem rgba(255, 104, 56, 0.43);
+                }
 
                 i {
                     font-size: 1.5rem;
@@ -1144,7 +1148,7 @@ export default {
             width: 8.8rem;
             margin-right: 1.7rem;
 
-            @media (max-width: 400px) {
+            @media (max-width: 449px) {
                 margin-right: 1.2rem;
             }
 
@@ -1194,13 +1198,21 @@ export default {
             flex-direction: column;
             align-items: center;
 
+            @media (max-width: 550px) {
+                padding-top: 4.2rem;
+            }
+
             @media (min-width: 550px) {
                 align-items: flex-start;
             }
 
             .worksheet-header {
-                margin-top: 1.1rem;
+                margin-top: 0.2rem;
                 max-width: 100%;
+
+                @media (max-width: 550px) {
+                    margin-bottom: 0.6rem;
+                }
 
                 @media (min-width: 550px) {
                     margin-top: 0;
@@ -1294,10 +1306,14 @@ export default {
                 }
 
                 .vs-button--size-mini.tag.part-of-body {
-                    font-size: 0.9rem;
-                    top: 0;
+                    font-size: 1rem;
+                    top: 1.2rem;
                     right: 50%;
                     transform: translateX(50%);
+
+                    @media (max-width: 379px) {
+                        top: 0.9rem;
+                    }
 
                     @media (min-width: 550px) {
                         top: 1.6rem;
@@ -1310,12 +1326,8 @@ export default {
 
             .worksheet-content {
                 flex-direction: column;
-                margin-bottom: 2.1rem;
+                margin-bottom: 0;
                 width: 100%;
-
-                @media (min-width: 550px) {
-                    margin-bottom: 0;
-                }
 
                 > div {
                     .worksheet-details {
@@ -1342,7 +1354,11 @@ export default {
                             justify-content: flex-start;
                             margin-bottom: 0.2rem;
                             overflow: hidden;
-                            max-width: 96%;
+                            max-width: 98%;
+
+                            @media (max-width: 499px) {
+                                margin-bottom: 0;
+                            }
 
                             @media (min-width: 410px) {
                                 justify-content: center;
@@ -1370,7 +1386,7 @@ export default {
                         }
 
                         @media (min-width: 992px) {
-                            max-width: 36.5vw;
+                            max-width: 41vw;
                             overflow: hidden;
                             font-size: 1.15rem !important;
                         }
@@ -1398,23 +1414,28 @@ export default {
 
                     .btns-date {
                         display: flex;
-                        flex-direction: row;
-                        width: 99%;
-                        margin-top: 3rem;
+                        flex-direction: row-reverse;
+                        width: 106%;
                         align-items: center;
                         position: absolute;
-                        bottom: -0.7rem;
-                        right: 0;
-                        padding: 1.6rem;
+                        top: 1rem;
+                        bottom: auto;
+                        right: -1.2rem;
+                        padding: 0 1.6rem;
                         justify-content: space-between;
+
+                        @media (min-width: 370px) {
+                            width: 104.4%;
+                        }
 
                         @media (min-width: 550px) {
                             flex-direction: column;
                             margin-top: 0rem;
                             align-items: flex-end;
                             padding: 0;
+                            top: auto;
                             bottom: 2rem;
-                            right: 2rem;
+                            right: 1.8rem;
                         }
                     }
                 }
@@ -1424,15 +1445,32 @@ export default {
                 .created-at-date {
                     margin-bottom: 0;
                     margin-right: 0.7rem;
+                    position: relative;
+                    top: 0;
 
                     @media (max-width: 550px) {
+                        font-size: 0.95rem;
+
                         &:first-child:last-child {
                             margin: auto;
                         }
                     }
 
                     @media (min-width: 550px) {
+                        top: -0.9rem;
                         margin-right: 0rem;
+                    }
+
+                    @media (min-width: 700px) {
+                        top: -0.7rem;
+                    }
+
+                    .user-avatar {
+                        display: none;
+
+                        @media (min-width: 400px) {
+                            display: block;
+                        }
                     }
 
                     > span {
@@ -1442,10 +1480,14 @@ export default {
 
                         .creator {
                             display: block;
-                            max-width: 12rem;
+                            max-width: 8rem;
                             white-space: nowrap;
                             overflow: hidden;
                             text-overflow: ellipsis;
+
+                            @media (min-width: 500px) {
+                                max-width: 12rem;
+                            }
                         }
                     }
                 }

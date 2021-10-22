@@ -38,14 +38,6 @@ class HomeController extends AbstractController
     }
 
     /**
-     * @Route("/maquette", name="app_maquette")
-     */
-    public function maquette(): Response
-    {
-        return $this->render('home/maquette.html.twig');
-    }
-
-    /**
      * @Route("/contact", name="app_contact", methods={"POST"})
      */
     public function contact(Request $request, MailerInterface $mailer): JsonResponse

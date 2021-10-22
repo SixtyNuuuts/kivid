@@ -123,6 +123,7 @@
                                         @blur="
                                             checkIfValueIsEmptyOrNull(exercise)
                                         "
+                                        min="1"
                                     >
                                     </vs-input>
                                 </div>
@@ -135,6 +136,7 @@
                                         @blur="
                                             checkIfValueIsEmptyOrNull(exercise)
                                         "
+                                        min="1"
                                     >
                                     </vs-input>
                                 </div>
@@ -278,8 +280,10 @@
         </transition>
         <transition name="fade">
             <VideoLibrary
-                v-if="videoLibraryToggle"
+                v-show="videoLibraryToggle"
                 :doctor="doctor"
+                :loadingVideos="loadingVideos"
+                :videos="videos"
                 @closeVideoLibrary="closeVideoLibrary"
                 @videos-selection="addVideosSelection"
             />
@@ -336,6 +340,8 @@ export default {
         exercises: Array,
         action: String,
         csrfTokenRemoveExercise: String,
+        loadingVideos: Boolean,
+        videos: Array,
     },
     data() {
         return {
@@ -562,8 +568,10 @@ export default {
     .exercise {
         display: flex;
         flex-direction: column;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1.5rem;
 
-        &:not(:last-child) {
+        @media (min-width: 768px) {
             margin-bottom: 2rem;
             padding-bottom: 2rem;
         }
@@ -983,8 +991,7 @@ export default {
         align-items: center;
         background: $white;
         border-radius: 1rem;
-        padding: 4.3rem;
-        margin-top: 3rem;
+        padding: 4rem;
 
         .icon-add-videos {
             width: 5rem;

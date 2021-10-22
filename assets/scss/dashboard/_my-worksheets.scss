@@ -643,6 +643,15 @@
                                 transform: none;
                                 margin: 0 0.4rem;
 
+                                @media (max-width: 379px) {
+                                    width: 2rem;
+                                    height: 2rem;
+                                    min-width: 2rem;
+                                    min-height: 2rem;
+                                    max-height: 2rem;
+                                    margin: 0 0.2rem;
+                                }
+
                                 &:last-child {
                                     margin-right: 0;
                                 }
@@ -679,6 +688,10 @@
                             font-size: 1rem;
                             border-radius: 1.5rem;
                             color: #e3dbc9;
+
+                            @media (max-width: 379px) {
+                                font-size: 0.8rem;
+                            }
 
                             display: flex;
                             align-items: center;

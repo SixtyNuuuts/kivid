@@ -184,6 +184,7 @@ export default {
             this.prescriProcess = true;
             this.prescriProcessWorksheet = true;
             this.myWorksheetTemplatesContent = true;
+            this.myPatientsContent = true;
             this.activeTab = 2;
         },
         stopPrescriProcess() {
@@ -281,6 +282,13 @@ export default {
         this.csrfTokenRemovePatient = data.csrfTokenRemovePatient;
         this.csrfTokenCreatePatient = data.csrfTokenCreatePatient;
         this.csrfTokenRemoveWorksheet = data.csrfTokenRemoveWorksheet;
+
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const triggerTab = urlParams.get("tab");
+        if (triggerTab === "ws") {
+            this.activeTab = 2;
+        }
 
         this.loadingDoctorWorksheets = true;
 
@@ -442,18 +450,18 @@ export default {
         }
 
         .desktop-view {
-            display: none;
+            display: none !important;
         }
         .mobile-view {
-            display: block;
+            display: block !important;
         }
 
         @media (min-width: 1100px) {
             .desktop-view {
-                display: block;
+                display: block !important;
             }
             .mobile-view {
-                display: none;
+                display: none !important;
             }
         }
     }

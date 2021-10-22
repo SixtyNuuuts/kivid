@@ -445,7 +445,7 @@
                         "
                     />
                     <div class="count-page">
-                        Page: <b>{{ page }}</b>
+                        Page : <b>{{ page }}</b>
                     </div>
                 </div>
             </div>
@@ -533,7 +533,9 @@ export default {
     computed: {
         getDoctorPatients() {
             return this.getPage(
-                f.getSearch(this.doctorPatients, this.search, "doctor"),
+                this.sortByLastLogin(
+                    f.getSearch(this.doctorPatients, this.search, "doctor")
+                ),
                 this.page,
                 this.max
             );
@@ -611,6 +613,18 @@ export default {
         redirectToPatientDashboard(patientId) {
             document.location.href = `/doctor/${this.doctor.id}/voir/patient/${patientId}`;
         },
+        sortByLastLogin(array) {
+            array.sort(function (a, b) {
+                return new Date(b.lastLoginAt) - new Date(a.lastLoginAt);
+            });
+            return array;
+        },
+        sortByCreatedAt(array) {
+            array.sort(function (a, b) {
+                return new Date(b.createdAt) - new Date(a.createdAt);
+            });
+            return array;
+        },
     },
     created() {
         this.loadingDoctorPatients = true;
@@ -619,6 +633,12 @@ export default {
             .get(`/doctor/${this.doctor.id}/get/patients`)
             .then((response) => {
                 this.doctorPatients = response.data;
+
+                this.doctorPatients.forEach((p) => {
+                    if (p.worksheets) {
+                        p.worksheets = this.sortByCreatedAt(p.worksheets);
+                    }
+                });
 
                 this.loadingDoctorPatients = false;
             })
@@ -725,6 +745,7 @@ export default {
             animation: 0.6s ease 0s forwards fadeEnter;
             opacity: 0;
             position: relative;
+            display: flex;
 
             &:not(:last-child) {
                 margin-bottom: 1.4rem;
@@ -734,8 +755,8 @@ export default {
                 position: absolute;
                 top: 0.6rem;
                 right: 0.6rem;
-                width: 2rem;
-                height: 2rem;
+                width: 1.7rem;
+                height: 1.7rem;
                 border-radius: 50%;
                 display: flex;
                 justify-content: center;
@@ -747,7 +768,7 @@ export default {
                 background: transparent;
 
                 i {
-                    font-size: 0.8rem;
+                    font-size: 0.7rem;
                     position: relative;
                     left: 0.05rem;
                 }
@@ -759,11 +780,16 @@ export default {
             }
 
             .patient-details {
+                width: 100%;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
                 justify-content: space-between;
                 margin-bottom: 0;
+
+                @media (max-width: 499px) {
+                    align-items: flex-start;
+                }
 
                 @media (min-width: 500px) {
                     flex-direction: row;
@@ -795,30 +821,66 @@ export default {
                                 padding-top: 0.3rem;
                                 font-size: 0.8rem;
                                 box-shadow: 0rem 0rem 0.8rem
-                                    rgba(34, 46, 84, 0.09);
+                                    rgba(228, 221, 204, 0.9);
                             }
                         }
 
                         .user-name {
-                            max-width: 39vw;
+                            max-width: 35vw;
                             display: flex;
                             flex-direction: column;
                             justify-content: center;
 
+                            @media (min-width: 350px) {
+                                max-width: 41vw;
+                            }
+
+                            @media (min-width: 370px) {
+                                max-width: 45vw;
+                            }
+
+                            @media (min-width: 400px) {
+                                max-width: 47vw;
+                            }
+
+                            @media (min-width: 410px) {
+                                max-width: 51vw;
+                            }
+
+                            @media (min-width: 450px) {
+                                max-width: 54vw;
+                            }
+
+                            @media (min-width: 470px) {
+                                max-width: 57vw;
+                            }
+
                             @media (min-width: 500px) {
-                                max-width: 30vw;
+                                max-width: 35vw;
+                            }
+
+                            @media (min-width: 550px) {
+                                max-width: 40vw;
+                            }
+
+                            @media (min-width: 600px) {
+                                max-width: 43vw;
                             }
 
                             @media (min-width: 650px) {
-                                max-width: 46vw;
+                                max-width: 47vw;
                             }
 
-                            @media (min-width: 950px) {
-                                max-width: 60vw;
+                            @media (min-width: 700px) {
+                                max-width: 50vw;
                             }
 
                             @media (min-width: 1100px) {
                                 max-width: 9.5vw;
+                            }
+
+                            @media (min-width: 1450px) {
+                                max-width: 11vw;
                             }
 
                             @media (min-width: 1550px) {
@@ -881,12 +943,26 @@ export default {
                                     display: flex;
                                     flex-wrap: wrap;
                                     overflow: hidden;
-                                    max-height: 2.2rem;
+                                    max-height: 4.1rem;
                                     overflow-y: auto;
                                     border-radius: 0.3rem;
                                     padding: 0.15rem 0.2rem;
                                     position: relative;
                                     left: -0.35rem;
+
+                                    &::-webkit-scrollbar {
+                                        width: 4px;
+                                        height: 4px;
+                                        display: block;
+                                        background: #f6f3eb;
+                                        border-radius: 4px;
+                                    }
+
+                                    &::-webkit-scrollbar-thumb {
+                                        background: #ece5d5;
+                                        border: 1px solid transparent;
+                                        border-radius: 4px;
+                                    }
 
                                     .prescription {
                                         background-color: $white;
@@ -894,8 +970,8 @@ export default {
                                         font-size: 0.8rem;
                                         margin: 0.2rem;
                                         max-height: 2.15rem;
-                                        box-shadow: 0rem 0rem 0.8rem
-                                            rgba(34, 46, 84, 0.09);
+                                        box-shadow: 0rem 0rem 0.4rem
+                                            rgba(228, 221, 204, 0.9);
                                         cursor: initial;
 
                                         &.vs-button--size-mini.btn-chart.part-of-body {
@@ -987,17 +1063,17 @@ export default {
                             margin-bottom: 2.3rem;
                             margin-top: 1.2rem;
                             color: $orange;
-                            box-shadow: 0rem 0.4rem 1.4rem 0rem
-                                rgba(255, 104, 56, 0.43);
                             border-radius: 0.5rem;
-                            // border: 1px solid $tournesol;
+                            box-shadow: 0rem 0.2rem 0.8rem 0rem
+                                rgba(255, 104, 56, 0.15);
+
+                            &:hover {
+                                box-shadow: 0rem 0.4rem 1.4rem 0rem
+                                    rgba(255, 104, 56, 0.43);
+                            }
 
                             @media (min-width: 500px) {
                                 margin-bottom: 1.1rem;
-                            }
-
-                            @media (min-width: 650px) {
-                                margin-bottom: 2.3rem;
                             }
 
                             @media (min-width: 950px) {

@@ -22,71 +22,71 @@
                 margin-bottom: 2rem;
                 flex-direction: column;
             }
+        }
+    }
 
-            #my-doctor {
-                display: flex;
-                flex-direction: column;
-                width: 100%;
+    #my-doctor {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
 
-                @media (min-width: 650px) {
-                    width: 49%;
-                }
+        @media (min-width: 650px) {
+            width: 49%;
+        }
 
-                @media (min-width: 992px) {
-                    width: 100%;
-                }
+        @media (min-width: 992px) {
+            width: 100%;
+        }
 
-                .doctor-details {
-                    display: flex;
-                    align-items: center;
-                    flex-grow: 1;
+        .doctor-details {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
 
-                    .doctor-avatar {
-                        .avatar {
-                            margin-right: 1.9rem;
+            .doctor-avatar {
+                .avatar {
+                    margin-right: 1.9rem;
 
-                            @media (min-width: 992px) {
-                                margin-right: 1.5vw;
-                            }
-
-                            &.waiting {
-                                img {
-                                    width: 35%;
-                                }
-                            }
-                        }
-
-                        .avatar.loading {
-                            width: 11.6rem;
-                            height: 11.6rem;
-                            min-width: 11.6rem;
-                            min-height: 11.6rem;
-                            max-height: 11.6rem;
-                            border-radius: 50%;
-                        }
+                    @media (min-width: 992px) {
+                        margin-right: 1.5vw;
                     }
 
-                    .doctor-infos {
-                        font-size: 1.8rem;
-                        width: 100%;
-
-                        .name {
-                            margin: 0.5rem 0;
-
-                            &.loading {
-                                height: 2.3rem;
-                            }
+                    &.waiting {
+                        img {
+                            width: 35%;
                         }
+                    }
+                }
 
-                        .city {
-                            margin: 0.5rem 0;
-                            font-weight: 200;
-                            font-size: 1.5rem;
+                .avatar.loading {
+                    width: 11.6rem;
+                    height: 11.6rem;
+                    min-width: 11.6rem;
+                    min-height: 11.6rem;
+                    max-height: 11.6rem;
+                    border-radius: 50%;
+                }
+            }
 
-                            &.loading {
-                                height: 1.8rem;
-                            }
-                        }
+            .doctor-infos {
+                font-size: 1.8rem;
+                width: 100%;
+
+                .name {
+                    margin: 0.5rem 0;
+
+                    &.loading {
+                        height: 2.3rem;
+                    }
+                }
+
+                .city {
+                    margin: 0.5rem 0;
+                    font-weight: 200;
+                    font-size: 1.5rem;
+
+                    &.loading {
+                        height: 1.8rem;
                     }
                 }
             }

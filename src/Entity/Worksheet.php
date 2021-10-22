@@ -29,7 +29,7 @@ class Worksheet
 
     /**
      * @ORM\Column(type="datetime_immutable")
-     * @Groups({"dashboard_worksheet_read"})
+     * @Groups({"dashboard_worksheet_read", "patient_read"})
      */
     private $createdAt;
 

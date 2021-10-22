@@ -159,7 +159,12 @@
             >
                 <p>
                     <i class="far fa-calendar-minus"></i>
-                    <span>Vous n'avez pas encore de statistique</span>
+                    <span v-if="!doctorView"
+                        >Vous n'avez pas encore de statistique</span
+                    >
+                    <span v-if="doctorView"
+                        >Le patient n'a pas encore de statistique</span
+                    >
                 </p>
             </div>
             <div v-if="loadingPatientWorksheets" class="loading"></div>
@@ -271,7 +276,12 @@
             >
                 <p>
                     <i class="far fa-calendar-minus"></i>
-                    <span>Vous n'avez pas encore de statistique</span>
+                    <span v-if="!doctorView"
+                        >Vous n'avez pas encore de statistique</span
+                    >
+                    <span v-if="doctorView"
+                        >Le patient n'a pas encore de statistique</span
+                    >
                 </p>
             </div>
             <div v-if="loadingPatientWorksheets" class="loading"></div>
@@ -386,7 +396,12 @@
             >
                 <p>
                     <i class="far fa-calendar-minus"></i>
-                    <span>Vous n'avez pas encore de statistique</span>
+                    <span v-if="!doctorView"
+                        >Vous n'avez pas encore de statistique</span
+                    >
+                    <span v-if="doctorView"
+                        >Le patient n'a pas encore de statistique</span
+                    >
                 </p>
             </div>
             <div v-if="loadingPatientWorksheets" class="loading"></div>
@@ -403,6 +418,7 @@ export default {
         patient: Object,
         patientWorksheets: Array,
         loadingPatientWorksheets: Boolean,
+        doctorView: Boolean,
     },
     components: {
         BtnChartWorksheetPartOfBody,
