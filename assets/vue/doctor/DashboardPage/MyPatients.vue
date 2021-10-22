@@ -943,7 +943,7 @@ export default {
                                     display: flex;
                                     flex-wrap: wrap;
                                     overflow: hidden;
-                                    max-height: 4.1rem;
+                                    max-height: 4.4rem;
                                     overflow-y: auto;
                                     border-radius: 0.3rem;
                                     padding: 0.15rem 0.2rem;

@@ -222,7 +222,9 @@ class WorksheetSessionController extends AbstractController
 
                 $worksheetSession->setDoneAt(new \DateTime());
 
-                $worksheetSessionsCount = $this->worksheetSessionRepository->countWorksheetSessions($worksheetSession->getWorksheet());
+                $worksheetSessionsCount = $this->worksheetSessionRepository->countWorksheetSessions(
+                    $worksheetSession->getWorksheet()
+                );
 
                 if ($worksheetSession->getExecOrder() == $worksheetSessionsCount) {
                     $notificationService->createWorksheetCompletedNotification(
