@@ -89,7 +89,7 @@ class NotificationService
                 ],
                 [
                     'type' => 'text',
-                    'content' => " a complété \"{$worksheet->getTitle()}\"",
+                    'content' => " a terminé la dernière session de sa fiche \"{$worksheet->getTitle()}\"",
                 ],
             ],
             $doctor
@@ -214,7 +214,7 @@ class NotificationService
             [
                 [
                     'type' => 'text',
-                    'content' => "Vous avez atteint le niveau {$scoreRank} ! Félicitation !",
+                    'content' => "Vous avez atteint le niveau {$scoreRank} ! Félicitations !",
                 ],
             ],
             $patient,

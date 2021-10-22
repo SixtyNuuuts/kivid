@@ -33,7 +33,7 @@
                         />
                     </i>
                     <p>
-                        Félicitation, vous avez fait tous les exercices de la
+                        Félicitations, vous avez fait tous les exercices de la
                         fiche.
                         <span v-if="currentWorksheetSession"
                             >Vous pouvez laisser un commentaire à votre
@@ -179,7 +179,14 @@ export default {
         },
         rederictToDashboard() {
             if (this.doctorView && this.doctor) {
-                document.location.href = `/doctor/${this.doctor.id}/dashboard`;
+                const queryString = window.location.search;
+                const urlParams = new URLSearchParams(queryString);
+                const referer = urlParams.get("ref");
+                if (referer === "dashp") {
+                    document.location.href = `/doctor/${this.doctor.id}/voir/patient/${this.patient.id}`;
+                } else {
+                    document.location.href = `/doctor/${this.doctor.id}/dashboard`;
+                }
             } else {
                 document.location.href = `/patient/${this.patient.id}/dashboard`;
             }
@@ -407,6 +414,7 @@ export default {
                 display: block;
                 width: 50%;
                 max-width: 26rem;
+                min-height: 45rem;
             }
 
             @media (min-width: 1300px) {

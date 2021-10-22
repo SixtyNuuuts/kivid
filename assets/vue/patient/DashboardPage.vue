@@ -6,27 +6,72 @@
             :csrfTokenSelectDoctor="csrfTokenSelectDoctor"
             :csrfTokenContact="csrfTokenContact"
         />
-        <section v-else id="dashboard" class="db-patient">
-            <h1>
+        <section
+            v-else
+            id="dashboard"
+            class="db-patient"
+            :class="{ 'doctor-view': doctorView }"
+        >
+            <div>
                 <i
                     v-if="doctorView"
                     class="kiv-arrow-left icon-31"
                     @click="rederictToDashboard()"
                 ></i>
-                <span v-if="!doctorView">
-                    Bienvenue sur votre dashboard !
-                    <i>
-                        <img
-                            src="../../img/icons/colored/hand.svg"
-                            alt="Icone d'une main qui fait 'coucou'"
-                        />
-                    </i>
-                </span>
-                <span v-if="doctorView">
-                    Dashboard de {{ patient.firstname }} {{ patient.lastname }}
-                </span>
-            </h1>
+                <h1>
+                    <span v-if="!doctorView">
+                        Bienvenue sur votre dashboard !
+                        <i>
+                            <img
+                                src="../../img/icons/colored/hand.svg"
+                                alt="Icone d'une main qui fait 'coucou'"
+                            />
+                        </i>
+                    </span>
+                    <span v-if="doctorView">
+                        Dashboard de {{ patient.firstname }}
+                        {{ patient.lastname }}
+                    </span>
+                </h1>
+            </div>
             <main>
+                <section
+                    v-if="doctorView"
+                    class="kiv-block mobile-view"
+                    id="patient"
+                >
+                    <h2>Le patient</h2>
+                    <div v-if="myDoctorContent" class="patient-details">
+                        <div class="patient-avatar">
+                            <vs-avatar class="avatar" circle size="116">
+                                <img
+                                    :src="
+                                        patient.avatarUrl
+                                            ? patient.avatarUrl
+                                            : '/img/avatar-default.svg'
+                                    "
+                                    :alt="`Avatar de ${patient.firstname} ${patient.lastname}`"
+                                />
+                            </vs-avatar>
+                        </div>
+                        <div class="patient-infos">
+                            <div>
+                                <p class="name">
+                                    {{
+                                        patient.gender
+                                            ? getCivility(patient.gender)
+                                            : ""
+                                    }}
+                                    {{ patient.lastname }}
+                                    {{ patient.firstname }}
+                                </p>
+                                <p v-if="patient.birthdate" class="birthdate">
+                                    {{ getAge(patient.birthdate) }} ans
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
                 <MyScores
                     :patient="patient"
                     :doctorView="doctorView"
@@ -36,6 +81,7 @@
                 <MyWorksheets
                     :patient="patient"
                     :doctorView="doctorView"
+                    :doctor="currentUser"
                     :patientWorksheets="patientWorksheets"
                     :loadingPatientWorksheets="loadingPatientWorksheets"
                 />
@@ -139,8 +185,12 @@
                             </div>
                         </transition>
                     </section>
-                    <section v-if="doctorView" class="kiv-block" id="patient">
-                        <h2>Patient</h2>
+                    <section
+                        v-if="doctorView"
+                        class="kiv-block desktop-view"
+                        id="patient"
+                    >
+                        <h2>Le patient</h2>
                         <div v-if="myDoctorContent" class="patient-details">
                             <div class="patient-avatar">
                                 <vs-avatar class="avatar" circle size="116">
@@ -178,6 +228,7 @@
                 </aside>
                 <MyExerciseStats
                     :patient="patient"
+                    :doctorView="doctorView"
                     :patientWorksheets="patientWorksheets"
                     :loadingPatientWorksheets="loadingPatientWorksheets"
                 />
@@ -315,6 +366,7 @@ export default {
                         worksheetProgression:
                             this.calculWorksheetProgression(worksheet),
                         timeLeftBeforeNextSession: null,
+                        totalWorksheetSessions: null,
                         currentWorksheetSession: {},
                     };
                 });
@@ -388,7 +440,24 @@ export default {
                                         userNotifList.appendChild(li);
                                     }
 
-                                    this.loadingPatientWorksheets = false;
+                                    this.axios
+                                        .get(
+                                            `/patient/${this.patient.id}/get/total-worksheet-sessions/${worksheet.id}`
+                                        )
+                                        .then((response) => {
+                                            worksheet.totalWorksheetSessions =
+                                                response.data;
+                                            this.loadingPatientWorksheets = false;
+                                        })
+                                        .catch((error) => {
+                                            const errorMess =
+                                                "object" ===
+                                                typeof error.response.data
+                                                    ? error.response.data.detail
+                                                    : error.response.data;
+
+                                            console.error(errorMess);
+                                        });
                                 })
                                 .catch((error) => {
                                     const errorMess =
@@ -416,7 +485,24 @@ export default {
                                             );
                                     }
 
-                                    this.loadingPatientWorksheets = false;
+                                    this.axios
+                                        .get(
+                                            `/patient/${this.patient.id}/get/total-worksheet-sessions/${worksheet.id}`
+                                        )
+                                        .then((response) => {
+                                            worksheet.totalWorksheetSessions =
+                                                response.data;
+                                            this.loadingPatientWorksheets = false;
+                                        })
+                                        .catch((error) => {
+                                            const errorMess =
+                                                "object" ===
+                                                typeof error.response.data
+                                                    ? error.response.data.detail
+                                                    : error.response.data;
+
+                                            console.error(errorMess);
+                                        });
                                 })
                                 .catch((error) => {
                                     const errorMess =
@@ -449,12 +535,48 @@ export default {
 
 <style lang="scss" scoped>
 #dashboard.db-patient {
-    h1 {
-        i {
-            font-size: 2.4rem;
+    &.doctor-view {
+        > div:first-child {
+            display: flex;
+            margin-top: 0.5rem;
             position: relative;
-            top: -0.2rem;
-            cursor: pointer;
+            left: -0.5rem;
+
+            i {
+                font-size: 1.6rem;
+                margin-right: -1.2rem;
+                position: relative;
+                top: 0.7rem;
+                cursor: pointer;
+                min-width: 3.6rem;
+
+                @media (min-width: 768px) {
+                    top: 1rem;
+                }
+            }
+
+            h1 {
+                margin-bottom: 2rem;
+            }
+        }
+
+        main {
+            #patient {
+                grid-template-areas: patient;
+            }
+
+            grid-template-areas:
+                "patient"
+                "myscores"
+                "myworksheets"
+                "myexercisestats";
+
+            @media (min-width: 992px) {
+                grid-template-areas:
+                    "myscores      myscores      aside"
+                    "myworksheets  myworksheets  aside"
+                    "myexercisestats  myexercisestats  aside";
+            }
         }
     }
     main {
@@ -469,6 +591,22 @@ export default {
                 "myscores      myscores      aside"
                 "myworksheets  myworksheets  aside"
                 "myexercisestats  myexercisestats  aside";
+        }
+
+        .desktop-view {
+            display: none !important;
+        }
+        .mobile-view {
+            display: block !important;
+        }
+
+        @media (min-width: 992px) {
+            .desktop-view {
+                display: block !important;
+            }
+            .mobile-view {
+                display: none !important;
+            }
         }
     }
 }

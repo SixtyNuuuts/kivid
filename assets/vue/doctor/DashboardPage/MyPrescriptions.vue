@@ -540,7 +540,7 @@
                         "
                     />
                     <div class="count-page">
-                        Page: <b>{{ page }}</b>
+                        Page : <b>{{ page }}</b>
                     </div>
                 </div>
             </div>
@@ -724,6 +724,10 @@ export default {
             flex-direction: column;
             align-items: center;
 
+            @media (max-width: 500px) {
+                padding-top: 4.2rem;
+            }
+
             @media (min-width: 500px) {
                 align-items: flex-start;
             }
@@ -817,10 +821,14 @@ export default {
                 }
 
                 .vs-button--size-mini.tag.part-of-body {
-                    font-size: 0.9rem;
-                    top: 0;
+                    font-size: 1rem;
+                    top: 1.2rem;
                     right: 50%;
                     transform: translateX(50%);
+
+                    @media (max-width: 379px) {
+                        top: 0.9rem;
+                    }
 
                     @media (min-width: 500px) {
                         top: 1.6rem;
@@ -843,14 +851,22 @@ export default {
                 }
 
                 @media (min-width: 700px) {
-                    max-width: 46rem;
+                    max-width: 45rem;
                 }
 
                 @media (min-width: 992px) {
-                    max-width: 36vw;
+                    max-width: 40vw;
+                }
+
+                @media (min-width: 1020px) {
+                    max-width: 38vw;
                 }
 
                 @media (min-width: 1100px) {
+                    max-width: 44rem;
+                }
+
+                @media (min-width: 1450px) {
                     max-width: 46rem;
                 }
 
@@ -886,12 +902,8 @@ export default {
             }
             .worksheet-content {
                 flex-direction: column;
-                margin-bottom: 2.1rem;
+                margin-bottom: 0;
                 width: 100%;
-
-                @media (min-width: 500px) {
-                    margin-bottom: 0;
-                }
 
                 > div {
                     .worksheet-details {
@@ -909,7 +921,11 @@ export default {
                             justify-content: flex-start;
                             margin-bottom: 0.2rem;
                             overflow: hidden;
-                            max-width: 96%;
+                            max-width: 98%;
+
+                            @media (max-width: 499px) {
+                                margin-bottom: 0;
+                            }
 
                             @media (min-width: 410px) {
                                 justify-content: center;
@@ -929,7 +945,7 @@ export default {
                         }
 
                         @media (min-width: 992px) {
-                            max-width: 36.5vw;
+                            max-width: 41vw;
                             overflow: hidden;
                             font-size: 1.15rem !important;
                         }
@@ -957,24 +973,24 @@ export default {
 
                     .btns-date {
                         display: flex;
-                        flex-direction: row;
-                        width: 99%;
-                        margin-top: 3rem;
+                        flex-direction: row-reverse;
+                        width: 103.4%;
                         align-items: center;
                         position: absolute;
-                        bottom: -0.7rem;
-                        right: 0;
-                        padding: 1.6rem;
+                        top: 1rem;
+                        bottom: auto;
+                        right: -0.8rem;
+                        padding: 0 1.6rem;
                         justify-content: space-between;
 
                         @media (min-width: 500px) {
                             flex-direction: column;
-                            width: initial;
                             margin-top: 0rem;
                             align-items: flex-end;
                             padding: 0;
+                            top: auto;
                             bottom: 2rem;
-                            right: 2rem;
+                            right: 1.8rem;
                         }
 
                         .created-at-date {

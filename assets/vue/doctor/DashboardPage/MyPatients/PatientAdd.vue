@@ -48,21 +48,19 @@
                     v-show="!userSelected.email"
                     v-model="filter"
                     @click="selectBox = true"
+                    @keyup="selectBoxWithThrottle"
                     id="user-choice-select"
-                    :class="{ 'b-r-b-zero': selectBox }"
+                    :class="{
+                        'b-r-b-zero': selectBox,
+                        'placeholder-gray': selectBox,
+                    }"
+                    :placeholder="
+                        !selectBox
+                            ? 'Sélectionnez un patient kivid'
+                            : 'Recherchez un patient kivid'
+                    "
                     autocomplete="off"
                 />
-                <div
-                    class="placeholder"
-                    :class="{ hidden: filter || userSelected.email }"
-                >
-                    <span v-show="!selectBox">
-                        Sélectionnez un patient kivid
-                    </span>
-                    <span v-show="selectBox" class="gray">
-                        Recherchez un patient kivid
-                    </span>
-                </div>
                 <div
                     class="arrow-toggle-box"
                     :class="{ active: selectBox }"
@@ -122,10 +120,11 @@
                         <div v-if="!allPatientsFiltered.length && filter">
                             <p class="not-found">
                                 <i class="fas fa-users-slash"></i>
-                                Aucun patient n'a été trouvé avec "<strong>{{
-                                    filter
-                                }}</strong
-                                >"
+                                <span>
+                                    Aucun patient n'a été trouvé avec "<strong
+                                        >{{ filter }}</strong
+                                    >"
+                                </span>
                             </p>
                         </div>
                         <div v-if="!allPatientsFiltered.length && !filter">
@@ -409,6 +408,17 @@ export default {
         getCivility(gender) {
             return f.getCivility(gender);
         },
+        selectBoxWithThrottle() {
+            if (!this.selectBoxThrottle) {
+                this.selectBoxThrottle = true;
+                this.selectBox = true;
+                console.log("selectBox");
+
+                setTimeout(() => {
+                    this.selectBoxThrottle = false;
+                }, 1000);
+            }
+        },
     },
     mounted() {
         this.selectInput = document.getElementById("user-choice-select");
@@ -486,7 +496,7 @@ h4 {
         font-size: 1.5rem;
         border-radius: 0.5rem;
         padding: 1.4rem 1.7rem;
-        // padding-right: 4.5rem;
+        padding-right: 4.5rem;
         cursor: pointer;
         border: 1px solid $white;
         transition: all 0.25s;
@@ -498,23 +508,17 @@ h4 {
             border-radius: 0.5rem 0.5rem 0 0;
             border: 0.1rem solid $gray-middle;
         }
-    }
 
-    .placeholder {
-        position: absolute;
-        top: 2rem;
-        left: 2.2rem;
-        font-size: 1.4rem;
-        color: $black;
-        transition: all 0.25s;
-        pointer-events: none;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        max-width: 65%;
+        &::placeholder {
+            color: $black;
+            position: relative;
+            top: 0.1rem;
+        }
 
-        .gray {
-            color: #d2ccbd;
+        &.placeholder-gray {
+            &::placeholder {
+                color: #d2ccbd;
+            }
         }
     }
 
@@ -570,23 +574,6 @@ h4 {
                 }
             }
         }
-
-        // .vs-select-content .vs-select__input:hover ~ .vs-icon-arrow,
-        // .vs-select-content
-        //     .vs-select.activeOptions
-        //     .vs-select__input:hover
-        //     ~ .vs-icon-arrow {
-        //     margin-top: -1.3rem;
-        // }
-
-        // .vs-select__input:hover ~ .vs-icon-arrow {
-        //     margin-top: -6px;
-        // }
-        // .vs-select.activeOptions .vs-icon-arrow {
-        //     -webkit-transform: rotate(45deg);
-        //     transform: rotate(45deg);
-        //     margin-top: -2px !important;
-        // }
 
         &.active {
             i {

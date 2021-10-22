@@ -222,11 +222,17 @@ class WorksheetSessionController extends AbstractController
 
                 $worksheetSession->setDoneAt(new \DateTime());
 
-                $notificationService->createWorksheetCompletedNotification(
-                    $patient->getDoctor(),
-                    $worksheetSession->getWorksheet(),
-                    $patient
+                $worksheetSessionsCount = $this->worksheetSessionRepository->countWorksheetSessions(
+                    $worksheetSession->getWorksheet()
                 );
+
+                if ($worksheetSession->getExecOrder() == $worksheetSessionsCount) {
+                    $notificationService->createWorksheetCompletedNotification(
+                        $patient->getDoctor(),
+                        $worksheetSession->getWorksheet(),
+                        $patient
+                    );
+                }
 
                 $this->em->flush();
 
