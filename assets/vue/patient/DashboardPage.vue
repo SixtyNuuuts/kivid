@@ -29,8 +29,14 @@
                         </i>
                     </span>
                     <span v-if="doctorView">
-                        Dashboard de {{ patient.firstname }}
-                        {{ patient.lastname }}
+                        Dashboard de
+                        <span v-if="patient.firstname || patient.lastname">
+                            {{ patient.firstname }}
+                            {{ patient.lastname }}
+                        </span>
+                        <span v-else>
+                            {{ patient.email }}
+                        </span>
                     </span>
                 </h1>
             </div>
@@ -57,13 +63,7 @@
                         <div class="patient-infos">
                             <div>
                                 <p class="name">
-                                    {{
-                                        patient.gender
-                                            ? getCivility(patient.gender)
-                                            : ""
-                                    }}
-                                    {{ patient.lastname }}
-                                    {{ patient.firstname }}
+                                    {{ getUserName(patient) }}
                                 </p>
                                 <p v-if="patient.birthdate" class="birthdate">
                                     {{ getAge(patient.birthdate) }} ans
@@ -158,18 +158,35 @@
                                         "
                                     >
                                         <p class="name">
-                                            {{
-                                                patient.doctor.gender
-                                                    ? getCivility(
-                                                          patient.doctor.gender
-                                                      )
-                                                    : ""
-                                            }}
-                                            {{ patient.doctor.lastname }}
-                                            {{ patient.doctor.firstname }}
+                                            {{ getUserName(patient.doctor) }}
                                         </p>
-                                        <p class="city">
-                                            {{ patient.doctor.city }}
+                                        <p class="entity-city">
+                                            <span
+                                                v-if="
+                                                    patient.doctor.entityName &&
+                                                    !patient.doctor.city
+                                                "
+                                            >
+                                                {{ patient.doctor.entityName }}
+                                            </span>
+                                            <span
+                                                v-if="
+                                                    !patient.doctor
+                                                        .entityName &&
+                                                    patient.doctor.city
+                                                "
+                                            >
+                                                {{ patient.doctor.city }}
+                                            </span>
+                                            <span
+                                                v-if="
+                                                    patient.doctor.entityName &&
+                                                    patient.doctor.city
+                                                "
+                                            >
+                                                {{ patient.doctor.entityName }},
+                                                {{ patient.doctor.city }}
+                                            </span>
                                         </p>
                                     </div>
                                     <div
@@ -207,13 +224,7 @@
                             <div class="patient-infos">
                                 <div>
                                     <p class="name">
-                                        {{
-                                            patient.gender
-                                                ? getCivility(patient.gender)
-                                                : ""
-                                        }}
-                                        {{ patient.lastname }}
-                                        {{ patient.firstname }}
+                                        {{ getUserName(patient) }}
                                     </p>
                                     <p
                                         v-if="patient.birthdate"
@@ -320,8 +331,8 @@ export default {
 
             return progression;
         },
-        getCivility(gender) {
-            return f.getCivility(gender);
+        getUserName(user) {
+            return f.getUserName(user);
         },
         onResize() {
             if (window.innerWidth > 576) {
@@ -382,11 +393,14 @@ export default {
                                     worksheet.currentWorksheetSession =
                                         response.data.currentWorksheetSession;
 
-                                    worksheet.timeLeftBeforeNextSession =
-                                        this.getTimeLeftBeforeNextSession(
-                                            response.data
-                                                .currentWorksheetSession.endAt
-                                        );
+                                    if (response.data.currentWorksheetSession) {
+                                        worksheet.timeLeftBeforeNextSession =
+                                            this.getTimeLeftBeforeNextSession(
+                                                response.data
+                                                    .currentWorksheetSession
+                                                    .endAt
+                                            );
+                                    }
 
                                     if (response.data.notifTimeLeft) {
                                         const userNotifList =
@@ -460,12 +474,12 @@ export default {
                                         });
                                 })
                                 .catch((error) => {
-                                    const errorMess =
-                                        "object" === typeof error.response.data
-                                            ? error.response.data.detail
-                                            : error.response.data;
+                                    // const errorMess =
+                                    //     "object" === typeof error.response.data
+                                    //         ? error.response.data.detail
+                                    //         : error.response.data;
 
-                                    console.error(errorMess);
+                                    console.error(error);
                                 });
                         } else {
                             this.axios
@@ -563,6 +577,14 @@ export default {
         main {
             #patient {
                 grid-template-areas: patient;
+            }
+
+            aside {
+                display: none;
+
+                @media (min-width: 992px) {
+                    display: flex;
+                }
             }
 
             grid-template-areas:

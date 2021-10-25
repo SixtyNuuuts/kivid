@@ -27,13 +27,7 @@
                         />
                     </vs-avatar>
                     <div class="name">
-                        {{
-                            doctorSelected.gender
-                                ? getCivility(doctorSelected.gender)
-                                : ""
-                        }}
-                        {{ doctorSelected.lastname }}
-                        {{ doctorSelected.firstname }}
+                        {{ getUserName(doctorSelected) }}
                     </div>
                 </div>
                 <input
@@ -83,13 +77,7 @@
                                         />
                                     </vs-avatar>
                                     <div class="name">
-                                        {{
-                                            doctor.gender
-                                                ? getCivility(doctor.gender)
-                                                : ""
-                                        }}
-                                        {{ doctor.lastname }}
-                                        {{ doctor.firstname }}
+                                        {{ getUserName(doctor) }}
                                     </div>
                                 </div>
                             </li>
@@ -328,8 +316,8 @@ export default {
         focusInputSelect() {
             this.selectInput.focus();
         },
-        getCivility(gender) {
-            return f.getCivility(gender);
+        getUserName(user) {
+            return f.getUserName(user);
         },
         validContact() {
             this.btnLoadingValidContact = true;

@@ -32,7 +32,7 @@
                 </span>
                 <p>
                     Veuillez Sélectionner une fiche, vous pourrez la
-                    personnaliser/modifier à l'étape suivante
+                    personnaliser à l'étape suivante
                 </p>
             </div>
         </transition>
@@ -100,6 +100,7 @@
                                 <vs-button
                                     v-if="!$parent.prescriProcess"
                                     @click="redirectToCreatePage(0)"
+                                    :loading="btnLoadingAddWorksheet"
                                     class="btn-action add"
                                     circle
                                     floating
@@ -125,6 +126,10 @@
                                 }"
                             >
                                 <vs-button
+                                    :loading="
+                                        btnLoadingWorksheetPrescriProcessRedirect ===
+                                        0
+                                    "
                                     @click="
                                         prescriProcessWorksheetChoice({
                                             id: null,
@@ -401,6 +406,11 @@
                                 <div class="big-buttons">
                                     <div class="btn-create-action">
                                         <vs-button
+                                            :disabled="$parent.prescriProcess"
+                                            :loading="
+                                                btnLoadingCopyWorksheet ===
+                                                worksheet.id
+                                            "
                                             @click="
                                                 redirectToCreatePage(
                                                     worksheet.id
@@ -424,6 +434,10 @@
                                         }"
                                     >
                                         <vs-button
+                                            :loading="
+                                                btnLoadingWorksheetPrescriProcessRedirect ===
+                                                worksheet.id
+                                            "
                                             @click="
                                                 prescriProcessWorksheetChoice(
                                                     worksheet
@@ -853,6 +867,7 @@ export default {
         loadingAllWorksheets: Boolean,
         tagsFromExercises: Array,
         prescriProcess: Boolean,
+        btnLoadingWorksheetPrescriProcessRedirect: Number,
         csrfTokenRemoveWorksheet: String,
     },
     components: {
@@ -869,6 +884,8 @@ export default {
             modalConfirmRemoveWorksheet: false,
             removeWorksheetDetails: {},
             btnLoadingValidRemoveWorksheet: false,
+            btnLoadingAddWorksheet: false,
+            btnLoadingCopyWorksheet: null,
         };
     },
     computed: {
@@ -894,6 +911,13 @@ export default {
             document.location.href = `/doctor/${this.doctor.id}/fiche/edition/${worksheetId}`;
         },
         redirectToCreatePage(worksheetId) {
+            console.log(worksheetId);
+            if (worksheetId) {
+                this.btnLoadingCopyWorksheet = worksheetId;
+            } else {
+                this.btnLoadingAddWorksheet = true;
+            }
+
             document.location.href = `/doctor/${this.doctor.id}/fiche/creation/${worksheetId}`;
         },
         redirectToWorksheetPage(worksheetId) {
@@ -1159,6 +1183,10 @@ export default {
                 font-weight: 500;
                 font-size: 1.3rem;
 
+                .vs-button__loading {
+                    background: rgba($black, 0.7);
+                }
+
                 i {
                     margin-right: 0.7rem;
                     font-size: 1.4rem;
@@ -1172,7 +1200,6 @@ export default {
         align-items: center;
         justify-content: flex-start;
         overflow: hidden;
-        position: relative;
 
         .tag-chip {
             display: inline-flex;
@@ -1197,6 +1224,7 @@ export default {
             display: flex;
             flex-direction: column;
             align-items: center;
+            position: relative;
 
             @media (max-width: 550px) {
                 padding-top: 4.2rem;
@@ -1303,6 +1331,22 @@ export default {
                             }
                         }
                     }
+                }
+
+                &::after {
+                    content: "";
+                    display: block;
+                    height: 100%;
+                    width: 1.1rem;
+                    position: absolute;
+                    top: 4.3rem;
+                    right: 1.9rem;
+                    height: 2rem;
+                    background: linear-gradient(
+                        90deg,
+                        rgba(250, 248, 244, 0) 0%,
+                        rgba(250, 248, 244, 1) 100%
+                    );
                 }
 
                 .vs-button--size-mini.tag.part-of-body {

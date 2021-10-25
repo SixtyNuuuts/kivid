@@ -182,29 +182,6 @@
                                 </div>
                             </div>
                             <div
-                                class="tempo"
-                                :class="{ active: exercise.tempoActive }"
-                            >
-                                <span>Tempo</span>
-                                <vs-switch
-                                    v-model="exercise.tempoActive"
-                                    @change="
-                                        checkValue(
-                                            exercise.tempoActive,
-                                            exercise,
-                                            'tempo'
-                                        )
-                                    "
-                                />
-                                <vs-input
-                                    v-model="exercise.tempo"
-                                    label-placeholder="(ex: 2/0/1)"
-                                    type="text"
-                                    :class="{ disabled: !exercise.tempoActive }"
-                                >
-                                </vs-input>
-                            </div>
-                            <div
                                 class="hold"
                                 :class="{ active: exercise.holdActive }"
                             >
@@ -226,6 +203,45 @@
                                     :class="{ disabled: !exercise.holdActive }"
                                 >
                                 </vs-input>
+                            </div>
+                            <div
+                                class="tempo"
+                                :class="{ active: exercise.tempoActive }"
+                            >
+                                <span>Tempo</span>
+                                <vs-switch
+                                    v-model="exercise.tempoActive"
+                                    @change="
+                                        checkValue(
+                                            exercise.tempoActive,
+                                            exercise,
+                                            'tempo'
+                                        )
+                                    "
+                                />
+                                <vs-input
+                                    v-model="exercise.tempo"
+                                    label-placeholder="(ex: 2/0/1)"
+                                    type="text"
+                                    :class="{ disabled: !exercise.tempoActive }"
+                                >
+                                </vs-input>
+                                <vs-tooltip class="kiv-help">
+                                    <div
+                                        class="icon-help"
+                                        :class="{
+                                            active: exercise.tempoActive,
+                                        }"
+                                    >
+                                        <i class="fas fa-question"></i>
+                                    </div>
+                                    <template #tooltip>
+                                        Le tempo, c'est tout simplement le
+                                        rythme de la répétition, indiquant que
+                                        le mouvement doit être lent, explosif ou
+                                        contrôlé.
+                                    </template>
+                                </vs-tooltip>
                             </div>
                         </div>
                         <div v-if="'voir' === action" class="details">
@@ -975,10 +991,37 @@ export default {
                             left: 3px;
                         }
                     }
-                }
-                .option,
-                .tempo,
-                .hold {
+
+                    .kiv-help {
+                        margin-left: 1.2rem;
+
+                        .icon-help {
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            width: 1.5rem;
+                            height: 1.5rem;
+                            min-width: 1.5rem;
+                            min-height: 1.5rem;
+                            max-height: 1.5rem;
+                            border-radius: 1.5rem;
+                            border: 1px solid #efe9df;
+
+                            &.active {
+                                border: 1px solid #d8d1c0;
+
+                                i {
+                                    color: #d8d1c0;
+                                }
+                            }
+
+                            i {
+                                font-size: 0.7rem;
+                                color: #efe9df;
+                                transition: all;
+                            }
+                        }
+                    }
                 }
             }
         }

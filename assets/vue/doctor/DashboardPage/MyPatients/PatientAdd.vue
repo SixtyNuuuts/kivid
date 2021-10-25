@@ -24,13 +24,7 @@
                     </vs-avatar>
                     <div class="text">
                         <div class="name">
-                            {{
-                                userSelected.gender
-                                    ? getCivility(userSelected.gender)
-                                    : ""
-                            }}
-                            {{ userSelected.lastname }}
-                            {{ userSelected.firstname }}
+                            {{ getUserName(userSelected) }}
                             <span
                                 class="birthdate"
                                 v-show="userSelected.birthdate"
@@ -93,15 +87,7 @@
                                     </vs-avatar>
                                     <div class="text">
                                         <div class="name">
-                                            {{
-                                                patient.gender
-                                                    ? getCivility(
-                                                          patient.gender
-                                                      )
-                                                    : ""
-                                            }}
-                                            {{ patient.lastname }}
-                                            {{ patient.firstname }}
+                                            {{ getUserName(patient) }}
                                             <span
                                                 class="birthdate"
                                                 v-show="patient.birthdate"
@@ -405,8 +391,8 @@ export default {
         focusInputSelect() {
             this.selectInput.focus();
         },
-        getCivility(gender) {
-            return f.getCivility(gender);
+        getUserName(user) {
+            return f.getUserName(user);
         },
         selectBoxWithThrottle() {
             if (!this.selectBoxThrottle) {

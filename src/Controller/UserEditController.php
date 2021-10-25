@@ -2,8 +2,6 @@
 
 namespace App\Controller;
 
-use App\Form\DoctorFormType;
-use App\Form\PatientFormType;
 use App\Repository\DoctorRepository;
 use App\Repository\PatientRepository;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,10 +9,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\String\Slugger\SluggerInterface;
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Translation\Exception\NotFoundResourceException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserEditController extends AbstractController
@@ -53,25 +49,6 @@ class UserEditController extends AbstractController
         }
 
         if ($request->isMethod('post')) {
-            $avatar = $request->files->get('avatar');
-
-            if ($avatar) {
-                $destination = $this->getParameter('kernel.project_dir') . '/public/uploads/avatar';
-                $originalFilename = pathinfo($avatar->getClientOriginalName(), PATHINFO_FILENAME);
-                $newFilename = strtolower($slugger->slug($originalFilename))
-                                . '-' . uniqid() . '.' . $avatar->guessExtension();
-                $avatar->move($destination, $newFilename);
-                $avatarUrl = '/uploads/avatar/' . $newFilename;
-                $user->setAvatarUrl($avatarUrl);
-
-                $this->getDoctrine()->getManager()->flush();
-
-                return $this->json(
-                    ['message' => "L'avatar a été mis à jour", 'avatarUrl' => $avatarUrl],
-                    200,
-                );
-            }
-
             $data = json_decode($request->getContent());
 
             if ($this->isCsrfTokenValid('edit_profil' . $user->getId(), $data->_token)) {
@@ -101,7 +78,6 @@ class UserEditController extends AbstractController
                 }
 
                 $resendEmail = false;
-
                 if ($data->email !== $user->getEmail()) {
                     $patientWithThisEmail = $this->patientRepository->findOneBy(['email' => $data->email]);
                     $doctorWithThisEmail = $this->doctorRepository->findOneBy(['email' => $data->email]);
@@ -120,12 +96,28 @@ class UserEditController extends AbstractController
                     $resendEmail = true;
                 }
 
+                $avatarUrl = null;
+                if ($data->avatar) {
+                    $avatarParts = explode(";base64,", $data->avatar);
+                    $avatarTypeAux = explode("image/", $avatarParts[0]);
+                    $avatarType = $avatarTypeAux[1];
+                    $avatarBase64 = base64_decode($avatarParts[1]);
+                    $destination = $this->getParameter('kernel.project_dir') . '/public/uploads/avatar';
+                    $filename =  uniqid() . '.' . $avatarType;
+
+                    file_put_contents($destination . '/' . $filename, $avatarBase64);
+
+                    $avatarUrl = '/uploads/avatar/' . $filename;
+                    $user->setAvatarUrl($avatarUrl);
+                }
+
                 $this->getDoctrine()->getManager()->flush();
 
                 return $this->json(
                     [
                         'message' => "Votre profil a été mis à jour !",
-                        'resendEmail' => $resendEmail
+                        'resendEmail' => $resendEmail,
+                        'avatarUrl' => $avatarUrl
                     ],
                     200,
                 );

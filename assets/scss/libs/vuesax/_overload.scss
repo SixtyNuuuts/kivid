@@ -62,8 +62,9 @@
 
     &:disabled {
         opacity: 1;
-        background: $gray-middle;
-        color: $gray-dark;
+        background: #e7dfcd !important;
+        color: #c1b79d !important;
+        box-shadow: none !important;
     }
 }
 
