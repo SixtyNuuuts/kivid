@@ -115,13 +115,19 @@
                                                 )
                                             "
                                             class="name"
-                                            v-if="
-                                                patient.firstname ||
-                                                patient.lastname
-                                            "
                                         >
-                                            {{ patient.firstname }}
-                                            {{ patient.lastname }}
+                                            <span
+                                                v-if="
+                                                    patient.firstname ||
+                                                    patient.lastname
+                                                "
+                                            >
+                                                {{ patient.firstname }}
+                                                {{ patient.lastname }}
+                                            </span>
+                                            <span v-else>
+                                                {{ patient.email }}
+                                            </span>
                                         </div>
                                         <div
                                             class="mail"
@@ -185,6 +191,10 @@
                                     }"
                                 >
                                     <vs-button
+                                        :loading="
+                                            btnLoadingPatientPrescriProcessRedirect ===
+                                            patient.id
+                                        "
                                         @click="
                                             prescriProcessPatientChoice(patient)
                                         "
@@ -459,15 +469,7 @@
                 </div>
                 <p>
                     <span>
-                        {{
-                            removePatientDetails.gender
-                                ? "male" === removePatientDetails.gender
-                                    ? "M."
-                                    : "Mme"
-                                : ""
-                        }}
-                        {{ removePatientDetails.lastname }}
-                        {{ removePatientDetails.firstname }}
+                        {{ getUserName(removePatientDetails) }}
                     </span>
                 </p>
             </div>
@@ -509,6 +511,7 @@ export default {
         csrfTokenRemovePatient: String,
         csrfTokenCreatePatient: String,
         prescriProcess: Boolean,
+        btnLoadingPatientPrescriProcessRedirect: Number,
     },
     components: {
         BtnChartWorksheetPartOfBody,
@@ -519,7 +522,7 @@ export default {
         return {
             search: "",
             page: 1,
-            max: 6,
+            max: 5,
             doctorPatients: [],
             allPatients: [],
             modalAddPatient: false,
@@ -624,6 +627,9 @@ export default {
                 return new Date(b.createdAt) - new Date(a.createdAt);
             });
             return array;
+        },
+        getUserName(user) {
+            return f.getUserName(user);
         },
     },
     created() {
@@ -943,7 +949,7 @@ export default {
                                     display: flex;
                                     flex-wrap: wrap;
                                     overflow: hidden;
-                                    max-height: 4.4rem;
+                                    max-height: 4.5rem;
                                     overflow-y: auto;
                                     border-radius: 0.3rem;
                                     padding: 0.15rem 0.2rem;
@@ -979,6 +985,7 @@ export default {
                                                 padding: 0.2rem 0.4rem;
                                                 padding-top: 0.3rem;
                                                 padding-left: 0.4rem;
+                                                white-space: nowrap;
 
                                                 img {
                                                     position: relative;

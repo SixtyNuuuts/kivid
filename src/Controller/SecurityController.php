@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Form\LoginFormType;
 use App\Controller\RedirectFromIsGrantedTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;

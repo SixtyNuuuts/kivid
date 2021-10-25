@@ -77,26 +77,15 @@
                                     circle
                                 >
                                     <img
-                                        :src="
-                                            currentUser.avatarUrl
-                                                ? currentUser.avatarUrl
-                                                : '/img/avatar-default.svg'
-                                        "
+                                        :src="getCurrentAvatar"
                                         :alt="`Avatar de ${currentUser.firstname} ${currentUser.lastname}`"
                                     />
                                 </vs-avatar>
                                 <div>
-                                    <input
-                                        type="file"
-                                        @change="uploadFile"
-                                        id="avatar-upload-btn"
-                                        ref="file"
-                                        hidden
-                                    />
-                                    <label for="avatar-upload-btn">
-                                        <i class="fas fa-image"></i> Choisir une
-                                        image
-                                    </label>
+                                    <button @click="openModalAvatar">
+                                        <i class="fas fa-image"></i> Modifier ma
+                                        photo
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -172,7 +161,6 @@
                         <div class="passwords">
                             <vs-input
                                 type="password"
-                                autocomplete="current-password"
                                 v-model="newPass.plainPassword"
                                 label-placeholder="Nouveau mot de passe"
                                 :visiblePassword="hasVisiblePassword"
@@ -183,6 +171,7 @@
                                     hasVisiblePassword = !hasVisiblePassword
                                 "
                                 :progress="getSecurePassProgress"
+                                autocomplete="off"
                             >
                                 <template #icon>
                                     <i
@@ -217,6 +206,7 @@
                                         newPass.plainPassword &&
                                         newPass.passwordConfirm,
                                 }"
+                                autocomplete="off"
                             >
                                 <template #icon>
                                     <i
@@ -256,7 +246,7 @@
                                 class="w-100"
                                 type="submit"
                                 @click="validEdition"
-                                >Valider les modifications</vs-button
+                                >Enregistrer les modifications</vs-button
                             >
                         </div>
                     </div>
@@ -422,6 +412,46 @@
                 </section>
             </transition>
         </main>
+        <div class="cropper-modal" v-if="modalAvatar">
+            <button class="btn-close-modal" @click="closeModalAvatar">
+                <i class="kiv-x icon-21"></i>
+            </button>
+            <div class="content">
+                <section id="cropper" class="kiv-block">
+                    <h2>Modifier ma photo</h2>
+
+                    <div class="avatar-cropper">
+                        <cropper
+                            ref="cropper"
+                            :stencil-component="
+                                $options.components.CircleStencil
+                            "
+                            class="cropper"
+                            check-orientation
+                            :src="getCropperAvatar"
+                        />
+                    </div>
+
+                    <div class="btn-container">
+                        <vs-button
+                            class="w-100 upload-avatar secondary"
+                            @click="$refs.file.click()"
+                        >
+                            <input
+                                ref="file"
+                                type="file"
+                                accept="image/*"
+                                @change="loadImage($event)"
+                            />
+                            Importer une image
+                        </vs-button>
+                        <vs-button class="w-100" @click="crop()">
+                            Valider
+                        </vs-button>
+                    </div>
+                </section>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -429,8 +459,14 @@
 import Vue from "vue";
 import f from "./services/function";
 import moment from "moment";
+import { Cropper, CircleStencil } from "vue-advanced-cropper";
+import "vue-advanced-cropper/dist/style.css";
 
 export default {
+    components: {
+        Cropper,
+        CircleStencil,
+    },
     data() {
         return {
             activeTab: "1",
@@ -451,23 +487,22 @@ export default {
             stripeSubPlans: null,
             status: null,
             stripeSubscription: null,
+            modalAvatar: false,
+            image: {
+                src: null,
+                type: null,
+            },
         };
     },
     methods: {
-        uploadFile() {
-            const inputFile = this.$refs.file;
+        openModalAvatar() {
+            this.modalAvatar = true;
 
-            if (inputFile.files && inputFile.files[0]) {
-                this.newAvatar = inputFile.files[0];
-
-                const reader = new FileReader();
-
-                reader.onload = (e) => {
-                    this.currentUser.avatarUrl = e.target.result;
-                };
-
-                reader.readAsDataURL(inputFile.files[0]);
-            }
+            document.body.classList.add("no-scrollbar");
+        },
+        closeModalAvatar() {
+            this.modalAvatar = false;
+            document.body.classList.remove("no-scrollbar");
         },
         validEdition() {
             this.btnLoadingEdit = true;
@@ -499,6 +534,7 @@ export default {
                         ? this.currentUser.street
                         : null,
                     city: this.currentUser.city ? this.currentUser.city : null,
+                    avatar: this.newAvatar,
                 })
                 .then((response) => {
                     f.openSuccessNotification(
@@ -506,9 +542,14 @@ export default {
                         response.data.message
                     );
 
-                    document.getElementById(
-                        "u-name"
-                    ).innerText = `${this.currentUser.firstname} ${this.currentUser.lastname}`;
+                    if (
+                        this.currentUser.firstname ||
+                        this.currentUser.lastname
+                    ) {
+                        document.getElementById(
+                            "u-name"
+                        ).innerText = `${this.currentUser.firstname} ${this.currentUser.lastname}`;
+                    }
 
                     if (response.data.resendEmail) {
                         this.axios
@@ -531,11 +572,12 @@ export default {
                             });
                     }
 
-                    this.btnLoadingEdit = false;
+                    if (response.data.avatarUrl) {
+                        document.getElementById("u-avatar").src =
+                            response.data.avatarUrl;
+                    }
 
-                    // setTimeout(() => {
-                    //     document.location.href = `/login`;
-                    // }, 2000);
+                    this.btnLoadingEdit = false;
                 })
                 .catch((error) => {
                     const errorMess =
@@ -546,34 +588,6 @@ export default {
                     f.openErrorNotification("Erreur", errorMess);
                     this.btnLoadingEdit = false;
                 });
-
-            if (this.newAvatar) {
-                const formData = new FormData();
-                formData.append("avatar", this.newAvatar);
-                const headers = { "Content-Type": "multipart/form-data" };
-                this.axios
-                    .post(`/settings/user/edit`, formData, { headers })
-                    .then((response) => {
-                        f.openSuccessNotification(
-                            "Avatar modifié",
-                            response.data.message
-                        );
-
-                        document.getElementById("u-avatar").src =
-                            response.data.avatarUrl;
-
-                        this.btnLoadingEdit = false;
-                    })
-                    .catch((error) => {
-                        const errorMess =
-                            "object" === typeof error.response.data
-                                ? error.response.data.detail
-                                : error.response.data;
-
-                        f.openErrorNotification("Erreur", errorMess);
-                        this.btnLoadingEdit = false;
-                    });
-            }
         },
         validationEmail() {
             this.validationMessage.email = null;
@@ -648,6 +662,79 @@ export default {
         mySubscription() {
             document.location.href = "/subscription";
         },
+        getMimeType(file, fallback = null) {
+            const byteArray = new Uint8Array(file).subarray(0, 4);
+            let header = "";
+            for (let i = 0; i < byteArray.length; i++) {
+                header += byteArray[i].toString(16);
+            }
+            switch (header) {
+                case "89504e47":
+                    return "image/png";
+                case "47494638":
+                    return "image/gif";
+                case "ffd8ffe0":
+                case "ffd8ffe1":
+                case "ffd8ffe2":
+                case "ffd8ffe3":
+                case "ffd8ffe8":
+                    return "image/jpeg";
+                default:
+                    return fallback;
+            }
+        },
+        crop() {
+            this.newAvatar = this.$refs.cropper.getResult().canvas.toDataURL();
+
+            this.closeModalAvatar();
+        },
+        reset() {
+            this.image = {
+                src: null,
+                type: null,
+            };
+        },
+        loadImage(event) {
+            // Reference to the DOM input element
+            const { files } = event.target;
+            // Ensure that you have a file before attempting to read it
+            if (files && files[0]) {
+                // 1. Revoke the object URL, to allow the garbage collector to destroy the uploaded before file
+                if (this.image.src) {
+                    URL.revokeObjectURL(this.image.src);
+                }
+                // 2. Create the blob link to the file to optimize performance:
+                const blob = URL.createObjectURL(files[0]);
+                // 3. The steps below are designated to determine a file mime type to use it during the
+                // getting of a cropped image from the canvas. You can replace it them by the following string,
+                // but the type will be derived from the extension and it can lead to an incorrect result:
+                //
+                // this.image = {
+                //    src: blob;
+                //    type: files[0].type
+                // }
+                // Create a new FileReader to read this image binary data
+                const reader = new FileReader();
+                // Define a callback function to run, when FileReader finishes its job
+                reader.onload = (e) => {
+                    // Note: arrow function used here, so that "this.image" refers to the image of Vue component
+                    this.image = {
+                        // Read image as base64 and set it as src:
+                        src: blob,
+                        // Determine the image type to preserve it during the extracting the image from canvas:
+                        type: this.getMimeType(e.target.result, files[0].type),
+                    };
+                };
+                // Start the reader job - read file as a data url (base64 format)
+                reader.readAsArrayBuffer(files[0]);
+            }
+        },
+    },
+    destroyed() {
+        // Revoke the object URL, to allow the garbage collector to destroy the uploaded before file
+        if (this.image.src) {
+            URL.revokeObjectURL(this.image.src);
+        }
     },
     computed: {
         currentUserBirthdateFormated: {
@@ -659,6 +746,20 @@ export default {
             set(newValue) {
                 this.currentUser.birthdate = newValue;
             },
+        },
+        getCurrentAvatar() {
+            return this.newAvatar
+                ? this.newAvatar
+                : this.currentUser.avatarUrl
+                ? this.currentUser.avatarUrl
+                : "/img/avatar-default.svg";
+        },
+        getCropperAvatar() {
+            return this.image.src
+                ? this.image.src
+                : this.currentUser.avatarUrl
+                ? this.currentUser.avatarUrl
+                : "/img/avatar-default.svg";
         },
         getSecurePassProgress() {
             let progress = 0;
@@ -1032,7 +1133,7 @@ export default {
                         position: relative;
                         z-index: 1;
 
-                        label {
+                        button {
                             display: block;
                             padding: 0.6rem 1.3rem;
                             padding-top: 0.7rem;
@@ -1047,6 +1148,7 @@ export default {
                             white-space: nowrap;
                             font-size: 1.1rem;
                             margin-top: 1rem;
+                            border: none;
 
                             &:hover {
                                 background: #ecebeb;
@@ -1201,6 +1303,132 @@ export default {
                         }
                     }
                 }
+            }
+        }
+    }
+}
+
+.cropper-modal {
+    position: fixed;
+    z-index: 11111;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    &::after {
+        content: "";
+        position: absolute;
+        z-index: -1;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        backdrop-filter: blur(0.5rem);
+        background: rgba(34, 46, 84, 0.8);
+        height: 100vh;
+        width: 100%;
+    }
+
+    .btn-close-modal {
+        position: absolute;
+        z-index: 20;
+        top: -4.4vw;
+        right: -4.4vw;
+        background: transparent;
+        border: none;
+        padding: 2rem;
+        display: block;
+        transition: all 0.25;
+
+        i {
+            font-size: 1.5rem;
+            color: $white;
+        }
+
+        @media (min-width: 680px) {
+            top: 0;
+            right: 0;
+
+            i {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (min-width: 900px) {
+            top: 1rem;
+            right: 1rem;
+
+            i {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            top: 1.5rem;
+            right: 2rem;
+
+            i {
+                font-size: 2.5rem;
+            }
+        }
+    }
+
+    .content {
+        height: 100%;
+        width: 100%;
+        padding: 6%;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        &::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+            display: block;
+            background: transparent;
+            border-radius: 4px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: #2e3858a1;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+
+        @media (max-height: 815px) {
+            align-items: flex-start;
+            overflow-y: auto;
+        }
+
+        #cropper {
+            min-width: initial;
+            max-width: 45rem;
+        }
+
+        .avatar-cropper {
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+            user-select: none;
+            position: relative;
+
+            .cropper {
+                border: solid 1px #eee;
+                min-height: 300px;
+                max-height: 500px;
+                width: 100%;
+                user-select: none;
+            }
+        }
+
+        .btn-container {
+            .upload-avatar {
+                input {
+                    display: none;
+                }
+
+                margin-bottom: 1.5rem;
             }
         }
     }

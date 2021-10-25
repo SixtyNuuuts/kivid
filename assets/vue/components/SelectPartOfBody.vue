@@ -193,17 +193,19 @@ export default {
             return this.partOfBody;
         },
         partsOfBodyFiltered() {
-            return this.partsOfBody.filter((p) =>
-                p.name
-                    .normalize("NFD")
-                    .replace(/[\u0300-\u036f]/g, "")
-                    .toLowerCase()
-                    .includes(
-                        this.filter
-                            .normalize("NFD")
-                            .replace(/[\u0300-\u036f]/g, "")
-                            .toLowerCase()
-                    )
+            return this.sortedPoBNameByAlphabet(
+                this.partsOfBody.filter((p) =>
+                    p.name
+                        .normalize("NFD")
+                        .replace(/[\u0300-\u036f]/g, "")
+                        .toLowerCase()
+                        .includes(
+                            this.filter
+                                .normalize("NFD")
+                                .replace(/[\u0300-\u036f]/g, "")
+                                .toLowerCase()
+                        )
+                )
             );
         },
     },
@@ -253,6 +255,12 @@ export default {
                     this.selectBoxThrottle = false;
                 }, 1000);
             }
+        },
+        sortedPoBNameByAlphabet(array) {
+            array.sort(function (a, b) {
+                return a.name.localeCompare(b.name);
+            });
+            return array;
         },
     },
     created() {

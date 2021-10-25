@@ -24,7 +24,7 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
-     * @Groups({"patient_read", "doctor_read", "user_read"})
+     * @Groups({"patient_read", "doctor_read", "user_read", "dashboard_worksheet_read"})
      */
     private $email;
 

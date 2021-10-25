@@ -4,7 +4,6 @@ namespace App\Controller\Doctor;
 
 use App\Entity\Doctor;
 use App\Entity\Exercise;
-use App\Entity\PartOfBody;
 use App\Entity\Worksheet;
 use App\Service\NotificationService;
 use App\Repository\VideoRepository;

@@ -136,8 +136,10 @@
                                     !getCurrentWorksheetSession
                                 "
                                 v-model="exercise.commentary.content"
-                                @keyup="setCommentaryWithDebounce(exercise)"
-                                @blur="setCommentary(exercise)"
+                                @keyup="
+                                    setCommentaryWithDebounce(exercise, $event)
+                                "
+                                @blur="setCommentary(exercise, $event)"
                             />
                             <p
                                 v-if="
@@ -287,33 +289,39 @@ export default {
             this.videoPlayerToggle = false;
             document.body.classList.remove("no-scrollbar");
         },
-        setCommentary(exercise) {
-            this.axios
-                .post(`/patient/${this.patient.id}/create/commentary`, {
-                    _token: this.csrfTokenCreateCommentary,
-                    exerciseId: exercise.id,
-                    worksheetId: this.getWorksheet.id,
-                    worksheetSessionId: this.getCurrentWorksheetSession.id,
-                    commentaryId: exercise.commentary.id,
-                    commentaryContent: exercise.commentary.content,
-                })
-                .then((response) => {
-                    // console.log(response.data);
+        setCommentary(exercise, e) {
+            if (
+                exercise.commentary.content.trim() != "" ||
+                (exercise.commentary.content.trim() === "" &&
+                    (e.key === "Backspace" || e.key === "Delete"))
+            ) {
+                this.axios
+                    .post(`/patient/${this.patient.id}/create/commentary`, {
+                        _token: this.csrfTokenCreateCommentary,
+                        exerciseId: exercise.id,
+                        worksheetId: this.getWorksheet.id,
+                        worksheetSessionId: this.getCurrentWorksheetSession.id,
+                        commentaryId: exercise.commentary.id,
+                        commentaryContent: exercise.commentary.content.trim(),
+                    })
+                    .then((response) => {
+                        // console.log(response.data);
 
-                    exercise.commentary.id = response.data.commentaryId;
-                })
-                .catch((error) => {
-                    const errorMess =
-                        "object" === typeof error.response.data
-                            ? error.response.data.detail
-                            : error.response.data;
-                    console.error(errorMess);
-                });
+                        exercise.commentary.id = response.data.commentaryId;
+                    })
+                    .catch((error) => {
+                        const errorMess =
+                            "object" === typeof error.response.data
+                                ? error.response.data.detail
+                                : error.response.data;
+                        console.error(errorMess);
+                    });
+            }
         },
-        setCommentaryWithDebounce(exercise) {
+        setCommentaryWithDebounce(exercise, e) {
             clearTimeout(this.timeoutSetCommentary);
             this.timeoutSetCommentary = setTimeout(() => {
-                this.setCommentary(exercise);
+                this.setCommentary(exercise, e);
             }, 1500);
         },
         stripeCheckout() {

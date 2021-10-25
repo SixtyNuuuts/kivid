@@ -182,29 +182,6 @@
                                 </div>
                             </div>
                             <div
-                                class="tempo"
-                                :class="{ active: exercise.tempoActive }"
-                            >
-                                <span>Tempo</span>
-                                <vs-switch
-                                    v-model="exercise.tempoActive"
-                                    @change="
-                                        checkValue(
-                                            exercise.tempoActive,
-                                            exercise,
-                                            'tempo'
-                                        )
-                                    "
-                                />
-                                <vs-input
-                                    v-model="exercise.tempo"
-                                    label-placeholder="(ex: 2/0/1)"
-                                    type="text"
-                                    :class="{ disabled: !exercise.tempoActive }"
-                                >
-                                </vs-input>
-                            </div>
-                            <div
                                 class="hold"
                                 :class="{ active: exercise.holdActive }"
                             >
@@ -226,6 +203,43 @@
                                     :class="{ disabled: !exercise.holdActive }"
                                 >
                                 </vs-input>
+                            </div>
+                            <div
+                                class="tempo"
+                                :class="{ active: exercise.tempoActive }"
+                            >
+                                <span>Tempo</span>
+                                <vs-switch
+                                    v-model="exercise.tempoActive"
+                                    @change="
+                                        checkValue(
+                                            exercise.tempoActive,
+                                            exercise,
+                                            'tempo'
+                                        )
+                                    "
+                                />
+                                <vs-input
+                                    v-model="exercise.tempo"
+                                    label-placeholder="(ex: 2/0/1)"
+                                    type="text"
+                                    :class="{ disabled: !exercise.tempoActive }"
+                                >
+                                </vs-input>
+                                <vs-tooltip class="kiv-info">
+                                    <i
+                                        class="icon-17"
+                                        :class="{
+                                            active: exercise.tempoActive,
+                                        }"
+                                    ></i>
+                                    <template #tooltip>
+                                        Le tempo, c'est tout simplement le
+                                        rythme de la répétition, indiquant que
+                                        le mouvement doit être lent, explosif ou
+                                        contrôlé.
+                                    </template>
+                                </vs-tooltip>
                             </div>
                         </div>
                         <div v-if="'voir' === action" class="details">
@@ -975,10 +989,20 @@ export default {
                             left: 3px;
                         }
                     }
-                }
-                .option,
-                .tempo,
-                .hold {
+
+                    .kiv-info {
+                        margin-left: 1.2rem;
+
+                        i {
+                            font-size: 1.4rem;
+                            color: #e1d9c9;
+                            transition: all;
+
+                            &.active {
+                                color: $orange;
+                            }
+                        }
+                    }
                 }
             }
         }

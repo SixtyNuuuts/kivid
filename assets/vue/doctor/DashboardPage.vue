@@ -22,7 +22,16 @@
                     </span>
                 </transition>
             </h1>
-            <main>
+            <main
+                :class="{
+                    'with-notifs':
+                        !doctor.city ||
+                        !doctor.gender ||
+                        !doctor.firstname ||
+                        !doctor.lastname ||
+                        !doctor.isVerified,
+                }"
+            >
                 <MyDashboardNotifications
                     :doctor="doctor"
                     class="mobile-view"
@@ -44,6 +53,9 @@
                         :csrfTokenRemoveWorksheet="csrfTokenRemoveWorksheet"
                         :loadingAllWorksheets="loadingAllWorksheets"
                         :prescriProcess="prescriProcessWorksheet"
+                        :btnLoadingWorksheetPrescriProcessRedirect="
+                            btnLoadingWorksheetPrescriProcessRedirect
+                        "
                         @prescriProcessWorksheetChoice="
                             setPrescriProcessWorksheetChoice
                         "
@@ -60,6 +72,9 @@
                         :csrfTokenRemovePatient="csrfTokenRemovePatient"
                         :csrfTokenCreatePatient="csrfTokenCreatePatient"
                         :prescriProcess="prescriProcessPatient"
+                        :btnLoadingPatientPrescriProcessRedirect="
+                            btnLoadingPatientPrescriProcessRedirect
+                        "
                         @prescriProcessPatientChoice="
                             setPrescriProcessPatientChoice
                         "
@@ -108,6 +123,8 @@ export default {
             prescriProcessPatientSelected: null,
             prescriProcessWorksheet: false,
             prescriProcessWorksheetSelected: null,
+            btnLoadingPatientPrescriProcessRedirect: null,
+            btnLoadingWorksheetPrescriProcessRedirect: null,
         };
     },
     computed: {
@@ -148,6 +165,12 @@ export default {
                     .prescriProcessWorksheetSelected.id
                     ? this.prescriProcessWorksheetSelected.id
                     : 0;
+
+                this.btnLoadingPatientPrescriProcessRedirect =
+                    this.prescriProcessPatientSelected.id;
+                this.btnLoadingWorksheetPrescriProcessRedirect =
+                    prescriProcessWorksheetSelectedId;
+
                 document.location.href = `/doctor/${this.doctor.id}/fiche/creation/${prescriProcessWorksheetSelectedId}/${this.prescriProcessPatientSelected.id}`;
             }
         },
@@ -177,6 +200,12 @@ export default {
                     .prescriProcessWorksheetSelected.id
                     ? this.prescriProcessWorksheetSelected.id
                     : 0;
+
+                this.btnLoadingPatientPrescriProcessRedirect =
+                    this.prescriProcessPatientSelected.id;
+                this.btnLoadingWorksheetPrescriProcessRedirect =
+                    prescriProcessWorksheetSelectedId;
+
                 document.location.href = `/doctor/${this.doctor.id}/fiche/creation/${prescriProcessWorksheetSelectedId}/${this.prescriProcessPatientSelected.id}`;
             }
         },
@@ -193,6 +222,8 @@ export default {
             this.prescriProcessPatient = false;
             this.prescriProcessWorksheetSelected = null;
             this.prescriProcessPatientSelected = null;
+            this.btnLoadingPatientPrescriProcessRedirect = null;
+            this.btnLoadingWorksheetPrescriProcessRedirect = null;
             this.activeTab = 1;
         },
         sortByCreatedAt(array) {
@@ -200,9 +231,6 @@ export default {
                 return new Date(b.createdAt) - new Date(a.createdAt);
             });
             return array;
-        },
-        getCivility(gender) {
-            return f.getCivility(gender);
         },
         onResize() {
             if (window.innerWidth > 576) {
@@ -439,14 +467,25 @@ export default {
         }
     }
     main {
+        align-items: flex-start;
+
         grid-template-areas:
-            "mydashboardnotif"
             "myworksheets"
             "aside";
-        align-items: flex-start;
 
         @media (min-width: 1100px) {
             grid-template-areas: "myworksheets  myworksheets aside";
+        }
+
+        &.with-notifs {
+            grid-template-areas:
+                "mydashboardnotif"
+                "myworksheets"
+                "aside";
+
+            @media (min-width: 1100px) {
+                grid-template-areas: "myworksheets  myworksheets aside";
+            }
         }
 
         .desktop-view {

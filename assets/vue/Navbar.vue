@@ -1,7 +1,7 @@
 <template>
     <div class="navbar">
         <div class="logo" @click="homepage()">
-            <img src="../img/logo-kivid.svg" alt="Logo Kivid" />
+            <img src="../img/logo-kivid-navbar.svg" alt="Logo Kivid" />
         </div>
         <nav v-if="currentUser">
             <ul>
@@ -177,7 +177,7 @@
                                     {{ currentUser.firstname }}
                                     {{ currentUser.lastname }}
                                 </div>
-                                <div v-else>
+                                <div id="u-name" v-else>
                                     {{ currentUser.email }}
                                 </div>
                             </div>
