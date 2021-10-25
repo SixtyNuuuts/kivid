@@ -226,13 +226,15 @@
                                     :class="{ disabled: !exercise.tempoActive }"
                                 >
                                 </vs-input>
-                                <vs-tooltip class="kiv-info">
-                                    <i
-                                        class="icon-17"
+                                <vs-tooltip class="kiv-help">
+                                    <div
+                                        class="icon-help"
                                         :class="{
                                             active: exercise.tempoActive,
                                         }"
-                                    ></i>
+                                    >
+                                        <i class="fas fa-question"></i>
+                                    </div>
                                     <template #tooltip>
                                         Le tempo, c'est tout simplement le
                                         rythme de la répétition, indiquant que
@@ -990,16 +992,33 @@ export default {
                         }
                     }
 
-                    .kiv-info {
+                    .kiv-help {
                         margin-left: 1.2rem;
 
-                        i {
-                            font-size: 1.4rem;
-                            color: #e1d9c9;
-                            transition: all;
+                        .icon-help {
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            width: 1.5rem;
+                            height: 1.5rem;
+                            min-width: 1.5rem;
+                            min-height: 1.5rem;
+                            max-height: 1.5rem;
+                            border-radius: 1.5rem;
+                            border: 1px solid #efe9df;
 
                             &.active {
-                                color: $orange;
+                                border: 1px solid #d8d1c0;
+
+                                i {
+                                    color: #d8d1c0;
+                                }
+                            }
+
+                            i {
+                                font-size: 0.7rem;
+                                color: #efe9df;
+                                transition: all;
                             }
                         }
                     }
