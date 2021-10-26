@@ -7,14 +7,14 @@
       ],
       "css": [
         "/build/795.235ed843.css",
-        "/build/app.1e50e199.css"
+        "/build/app.81220ba6.css"
       ]
     },
     "navbar": {
       "js": [
         "/build/runtime.fffd7536.js",
         "/build/429.c471c0fe.js",
-        "/build/navbar.8d1fab1b.js"
+        "/build/navbar.6762e176.js"
       ],
       "css": [
         "/build/navbar.c0933ec5.css"
@@ -24,24 +24,26 @@
       "js": [
         "/build/runtime.fffd7536.js",
         "/build/429.c471c0fe.js",
-        "/build/settings-page.389b3575.js"
+        "/build/247.3f1777ea.js",
+        "/build/735.b06ed777.js",
+        "/build/settings-page.930b75ae.js"
       ],
       "css": [
-        "/build/settings-page.bba322ca.css"
+        "/build/settings-page.c26ca796.css"
       ]
     },
     "login": {
       "js": [
         "/build/runtime.fffd7536.js",
         "/build/429.c471c0fe.js",
-        "/build/login.754b98c4.js"
+        "/build/login.50a71d3c.js"
       ]
     },
     "register": {
       "js": [
         "/build/runtime.fffd7536.js",
         "/build/429.c471c0fe.js",
-        "/build/register.ee19b396.js"
+        "/build/register.cb8241ea.js"
       ],
       "css": [
         "/build/register.31d6cfe0.css"
@@ -51,7 +53,7 @@
       "js": [
         "/build/runtime.fffd7536.js",
         "/build/429.c471c0fe.js",
-        "/build/reset-pass.933c3079.js"
+        "/build/reset-pass.92ba49ad.js"
       ],
       "css": [
         "/build/reset-pass.75e0df7d.css"
@@ -61,7 +63,7 @@
       "js": [
         "/build/runtime.fffd7536.js",
         "/build/429.c471c0fe.js",
-        "/build/reset-pass-request.55c3bc31.js"
+        "/build/reset-pass-request.ea9060c8.js"
       ],
       "css": [
         "/build/reset-pass-request.1bcadc96.css"
@@ -71,7 +73,7 @@
       "js": [
         "/build/runtime.fffd7536.js",
         "/build/429.c471c0fe.js",
-        "/build/patient-create-pass.490b162b.js"
+        "/build/patient-create-pass.5c1a0618.js"
       ],
       "css": [
         "/build/patient-create-pass.ad7eaeb9.css"
@@ -81,13 +83,13 @@
       "js": [
         "/build/runtime.fffd7536.js",
         "/build/429.c471c0fe.js",
+        "/build/247.3f1777ea.js",
         "/build/912.4cd1479e.js",
-        "/build/285.d1ed7012.js",
-        "/build/900.cb96cf5a.js",
-        "/build/doctor-dashboard-page.1fea0ea4.js"
+        "/build/900.a73f7881.js",
+        "/build/doctor-dashboard-page.d7bd7c3f.js"
       ],
       "css": [
-        "/build/doctor-dashboard-page.074f2da9.css"
+        "/build/doctor-dashboard-page.a6203a52.css"
       ]
     },
     "doctor-worksheet-page": {
@@ -96,11 +98,11 @@
         "/build/429.c471c0fe.js",
         "/build/912.4cd1479e.js",
         "/build/770.ec01566d.js",
-        "/build/900.cb96cf5a.js",
-        "/build/doctor-worksheet-page.a059aa9b.js"
+        "/build/900.a73f7881.js",
+        "/build/doctor-worksheet-page.69655c84.js"
       ],
       "css": [
-        "/build/doctor-worksheet-page.e04e1419.css"
+        "/build/doctor-worksheet-page.4fe208f3.css"
       ]
     },
     "patient-dashboard-page": {
@@ -108,25 +110,25 @@
         "/build/runtime.fffd7536.js",
         "/build/429.c471c0fe.js",
         "/build/725.d49aa1d8.js",
-        "/build/900.cb96cf5a.js",
-        "/build/patient-dashboard-page.3206d33d.js"
+        "/build/900.a73f7881.js",
+        "/build/patient-dashboard-page.5178dd94.js"
       ],
       "css": [
-        "/build/patient-dashboard-page.5e2c2009.css"
+        "/build/patient-dashboard-page.cde4c146.css"
       ]
     },
     "patient-read-worksheet-page": {
       "js": [
         "/build/runtime.fffd7536.js",
         "/build/429.c471c0fe.js",
-        "/build/285.d1ed7012.js",
+        "/build/247.3f1777ea.js",
         "/build/770.ec01566d.js",
-        "/build/60.8f930649.js",
-        "/build/900.cb96cf5a.js",
-        "/build/patient-read-worksheet-page.aeadefd5.js"
+        "/build/806.9c439d56.js",
+        "/build/900.a73f7881.js",
+        "/build/patient-read-worksheet-page.50736f27.js"
       ],
       "css": [
-        "/build/patient-read-worksheet-page.11eb2d13.css"
+        "/build/patient-read-worksheet-page.abd501b5.css"
       ]
     }
   }
