@@ -6,11 +6,9 @@ use App\Service\StripeService;
 use App\Service\SubscriptionService;
 use App\Repository\SubscriptionRepository;
 use Symfony\Component\HttpFoundation\Request;
-use Stripe\Subscription as StripeSubscription;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Stripe\Checkout\Session as StripeCheckoutSession;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 

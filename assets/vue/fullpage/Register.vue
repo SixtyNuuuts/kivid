@@ -37,7 +37,6 @@
 
                 <vs-input
                     type="password"
-                    autocomplete="current-password"
                     v-model="registerDetails.plainPassword"
                     label-placeholder="Mot de passe"
                     :visiblePassword="hasVisiblePassword"
@@ -46,6 +45,7 @@
                     required
                     @click-icon="hasVisiblePassword = !hasVisiblePassword"
                     :progress="getSecurePassProgress"
+                    autocomplete="off"
                 >
                     <template #icon>
                         <i v-if="!hasVisiblePassword" class="fas fa-eye"></i>
@@ -77,6 +77,7 @@
                             registerDetails.plainPassword &&
                             passwordConfirm,
                     }"
+                    autocomplete="off"
                 >
                     <template #icon>
                         <i

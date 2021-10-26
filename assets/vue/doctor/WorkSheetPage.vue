@@ -28,16 +28,7 @@
                         </vs-avatar>
                         <div class="user-name">
                             <div>
-                                <div
-                                    v-if="patient.firstname || patient.lastname"
-                                >
-                                    {{ getCivility(patient.gender) }}
-                                    {{ patient.firstname }}
-                                    {{ patient.lastname }}
-                                </div>
-                                <div v-else>
-                                    {{ patient.email }}
-                                </div>
+                                {{ getUserName(patient) }}
                             </div>
                         </div>
                     </div>
@@ -185,7 +176,8 @@
             :class="{
                 disabled:
                     btnLoadingValidEditWorksheet ||
-                    btnLoadingValidCreateWorksheet,
+                    btnLoadingValidCreateWorksheet ||
+                    loading,
             }"
         >
             <vs-button
@@ -423,31 +415,77 @@ export default {
                     })
                     .then((response) => {
                         if (this.patient) {
-                            f.openSuccessNotification(
-                                "Création de la prescription",
-                                `La fiche <strong> ${
-                                    this.worksheet.title
-                                }</strong> a été prescrite à
-                                <strong>${this.getCivility(
-                                    this.patient.gender
-                                )} ${this.patient.firstname} ${
-                                    this.patient.lastname
-                                }</strong>.`
-                            );
+                            if (!this.worksheet.id) {
+                                // création du modèle de fiche (identique sans le patient)
+                                this.axios
+                                    .post(
+                                        `/doctor/${this.doctor.id}/create/worksheet`,
+                                        {
+                                            _token: this
+                                                .csrfTokenCreateWorksheet,
+                                            worksheetId: this.worksheet.id,
+                                            patientId: null,
+                                            title: this.worksheet.title,
+                                            partOfBodyId:
+                                                this.worksheet.partOfBody.id,
+                                            duration: this.worksheet.duration,
+                                            perWeek: this.worksheet.perWeek,
+                                            perDay: this.worksheet.perDay,
+                                            exercises: this.exercises,
+                                        }
+                                    )
+                                    .then((response) => {
+                                        f.openSuccessNotification(
+                                            "Création de la prescription",
+                                            `La fiche <strong> ${
+                                                this.worksheet.title
+                                            }</strong> 
+                                            a été prescrite à <strong>
+                                            ${this.getUserName(
+                                                this.patient
+                                            )}</strong>.`
+                                        );
+                                        this.btnLoadingValidCreateWorksheet = false;
+                                        setTimeout(() => {
+                                            document.location.href = `/doctor/${this.doctor.id}/dashboard`;
+                                        }, 2000);
+                                    })
+                                    .catch((error) => {
+                                        const errorMess =
+                                            "object" ===
+                                            typeof error.response.data
+                                                ? error.response.data.detail
+                                                : error.response.data;
+                                        this.btnLoadingValidCreateWorksheet = false;
+                                        f.openErrorNotification(
+                                            "Erreur",
+                                            errorMess
+                                        );
+                                    });
+                            } else {
+                                f.openSuccessNotification(
+                                    "Création de la prescription",
+                                    `La fiche <strong> ${
+                                        this.worksheet.title
+                                    }</strong> 
+                                    a été prescrite à <strong>
+                                    ${this.getUserName(this.patient)}</strong>.`
+                                );
+                                this.btnLoadingValidCreateWorksheet = false;
+                                setTimeout(() => {
+                                    document.location.href = `/doctor/${this.doctor.id}/dashboard`;
+                                }, 2000);
+                            }
                         } else {
                             f.openSuccessNotification(
                                 "Création de la fiche",
                                 response.data
                             );
-                        }
-                        this.btnLoadingValidCreateWorksheet = false;
-                        setTimeout(() => {
-                            if (this.patient) {
-                                document.location.href = `/doctor/${this.doctor.id}/dashboard`;
-                            } else {
+                            this.btnLoadingValidCreateWorksheet = false;
+                            setTimeout(() => {
                                 document.location.href = `/doctor/${this.doctor.id}/dashboard/?tab=ws`;
-                            }
-                        }, 2000);
+                            }, 2000);
+                        }
                     })
                     .catch((error) => {
                         const errorMess =
@@ -461,8 +499,8 @@ export default {
                 this.btnLoadingValidCreateWorksheet = false;
             }
         },
-        getCivility(gender) {
-            return f.getCivility(gender);
+        getUserName(user) {
+            return f.getUserName(user);
         },
     },
     created() {
@@ -607,6 +645,7 @@ export default {
             margin-bottom: 2.6rem;
             margin-left: 3.4rem;
             margin-top: -0.8rem;
+            min-width: 15rem;
             position: relative;
 
             .label {
@@ -947,7 +986,7 @@ export default {
 
             @media (max-width: 550px) {
                 width: 100%;
-                border-radius: 0.5rem 0.5rem 0 0;
+                border-radius: 1rem 1rem 0 0;
 
                 &:hover {
                     transform: none;

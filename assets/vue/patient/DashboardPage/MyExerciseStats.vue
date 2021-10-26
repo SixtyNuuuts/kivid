@@ -39,6 +39,7 @@
                     <vs-select
                         placeholder="Select"
                         v-model="sensitivityUnitOfTime"
+                        @change="resetDisableWorksheets('sensitivity')"
                     >
                         <vs-option label="Jour" value="day"> Jour </vs-option>
                         <vs-option label="Semaine" value="week">
@@ -51,6 +52,7 @@
                     </vs-select>
                 </div>
                 <chartist
+                    v-if="!loadingPatientWorksheets"
                     :class="{
                         'hide-content': !sensitivityExerciseStats.series.length,
                         labelsl: sensitivityExerciseStats.labels.length >= 25,
@@ -124,7 +126,10 @@
                         </i>
                     </div>
                 </chartist>
-                <div class="btns-worksheets-stats sensitivity">
+                <div
+                    v-if="!loadingPatientWorksheets"
+                    class="btns-worksheets-stats sensitivity"
+                >
                     <button
                         v-for="(worksheet, i) in getPatientWorksheets"
                         :key="i"
@@ -208,6 +213,7 @@
                     <vs-select
                         placeholder="Select"
                         v-model="technicalUnitOfTime"
+                        @change="resetDisableWorksheets('technical')"
                     >
                         <vs-option label="Jour" value="day"> Jour </vs-option>
                         <vs-option label="Semaine" value="week">
@@ -220,6 +226,7 @@
                     </vs-select>
                 </div>
                 <chartist
+                    v-if="!loadingPatientWorksheets"
                     :class="{
                         'hide-content': !technicalExerciseStats.series.length,
                         labelsl: technicalExerciseStats.labels.length >= 25,
@@ -241,7 +248,10 @@
                         <div><p>Médiocre</p></div>
                     </div>
                 </chartist>
-                <div class="btns-worksheets-stats">
+                <div
+                    v-if="!loadingPatientWorksheets"
+                    class="btns-worksheets-stats"
+                >
                     <button
                         v-for="(worksheet, i) in getPatientWorksheets"
                         :key="i"
@@ -325,6 +335,7 @@
                     <vs-select
                         placeholder="Select"
                         v-model="difficultyUnitOfTime"
+                        @change="resetDisableWorksheets('difficulty')"
                     >
                         <vs-option label="Jour" value="day"> Jour </vs-option>
                         <vs-option label="Semaine" value="week">
@@ -337,6 +348,7 @@
                     </vs-select>
                 </div>
                 <chartist
+                    v-if="!loadingPatientWorksheets"
                     :class="{
                         'hide-content': !difficultyExerciseStats.series.length,
                         labelsl: difficultyExerciseStats.labels.length >= 25,
@@ -361,7 +373,10 @@
                         <div><p>Beaucoup trop facile</p></div>
                     </div>
                 </chartist>
-                <div class="btns-worksheets-stats">
+                <div
+                    v-if="!loadingPatientWorksheets"
+                    class="btns-worksheets-stats"
+                >
                     <button
                         v-for="(worksheet, i) in getPatientWorksheets"
                         :key="i"
@@ -651,7 +666,7 @@ export default {
 
             if ("week" === unitOfTime) {
                 return labels.map((l) => {
-                    return `${l.split("-")[2]}/${l.split("-")[1]}/${
+                    return `sem. ${l.split("-")[2]}/${l.split("-")[1]}/${
                         l.split("-")[0]
                     }`;
                 });
@@ -711,12 +726,18 @@ export default {
         },
         changeSensitivityUnitOfTime(UnitOfTime) {
             this.sensitivityUnitOfTime = UnitOfTime;
+            this.resetDisableWorksheets("sensitivity");
         },
         changeTechnicalUnitOfTime(UnitOfTime) {
             this.technicalUnitOfTime = UnitOfTime;
+            this.resetDisableWorksheets("technical");
         },
         changeDifficultyUnitOfTime(UnitOfTime) {
             this.difficultyUnitOfTime = UnitOfTime;
+            this.resetDisableWorksheets("difficulty");
+        },
+        resetDisableWorksheets(criterion) {
+            this.disableWorksheets[criterion] = [];
         },
         generateChartAverageDataPointsByCriterion(
             criterion,
@@ -764,6 +785,10 @@ export default {
 
                 if ("day" === unitOfTime || "week" === unitOfTime) {
                     textTooltip = moment(pointDate).format("DD/MM/YYYY");
+
+                    if ("week" === unitOfTime) {
+                        textTooltip = `sem. ${textTooltip}`;
+                    }
                 }
 
                 chartDataPoints[ind] = {
@@ -1196,7 +1221,7 @@ export default {
         .btn-toggle-worksheet-stats {
             display: flex;
             align-items: center;
-            margin-right: 1.5rem;
+            margin-right: 0.8rem;
             min-height: 3.5rem;
             cursor: pointer;
             border: none;
