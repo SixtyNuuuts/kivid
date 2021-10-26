@@ -146,11 +146,22 @@
                             <div v-if="getExercise.option" class="option">
                                 Options : <span>{{ getExercise.option }}</span>
                             </div>
-                            <div v-if="getExercise.tempo" class="tempo">
-                                Tempo : <span>{{ getExercise.tempo }}</span>
-                            </div>
                             <div v-if="getExercise.hold" class="hold">
                                 Tenir : <span>{{ getExercise.hold }}s</span>
+                            </div>
+                            <div v-if="getExercise.tempo" class="tempo">
+                                Tempo : <span>{{ getExercise.tempo }}</span>
+                                <vs-tooltip class="kiv-help">
+                                    <div class="icon-help">
+                                        <i class="fas fa-question"></i>
+                                    </div>
+                                    <template #tooltip>
+                                        Le tempo, c'est tout simplement le
+                                        rythme de la répétition, indiquant que
+                                        le mouvement doit être lent, explosif ou
+                                        contrôlé.
+                                    </template>
+                                </vs-tooltip>
                             </div>
                         </div>
                     </div>
@@ -852,6 +863,45 @@ export default {
                 span {
                     // margin-right: 0.4rem;
                     font-weight: 700;
+                    margin-left: 0.3rem;
+                }
+
+                .tempo {
+                    display: flex;
+
+                    .kiv-help {
+                        margin-left: 0.6rem;
+                        position: relative;
+                        top: 0.2rem;
+
+                        .icon-help {
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            width: 1.5rem;
+                            height: 1.5rem;
+                            min-width: 1.5rem;
+                            min-height: 1.5rem;
+                            max-height: 1.5rem;
+                            border-radius: 1.5rem;
+                            border: 1px solid #e1dacd;
+
+                            &:hover {
+                                border: 1px solid #d8d1c0;
+
+                                i {
+                                    color: #d8d1c0;
+                                }
+                            }
+
+                            i {
+                                font-size: 0.7rem;
+                                color: #e1dacd;
+                                transition: all;
+                                margin-right: 0;
+                            }
+                        }
+                    }
                 }
             }
         }

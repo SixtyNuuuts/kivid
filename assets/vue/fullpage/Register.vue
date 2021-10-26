@@ -45,7 +45,7 @@
                     required
                     @click-icon="hasVisiblePassword = !hasVisiblePassword"
                     :progress="getSecurePassProgress"
-                    autocomplete="off"
+                    autocomplete="new-password"
                 >
                     <template #icon>
                         <i v-if="!hasVisiblePassword" class="fas fa-eye"></i>
@@ -77,7 +77,7 @@
                             registerDetails.plainPassword &&
                             passwordConfirm,
                     }"
-                    autocomplete="off"
+                    autocomplete="new-password"
                 >
                     <template #icon>
                         <i

@@ -634,8 +634,8 @@
                                 display: flex;
                                 justify-content: center;
                                 align-items: center;
-                                border: 1px solid $gray-middle;
-                                color: $gray-middle;
+                                border: 1px solid #e6decd;
+                                color: #e6decd;
                                 cursor: pointer;
                                 transition: all 0.2s;
                                 background: transparent;
@@ -687,7 +687,7 @@
                         .created-at-date {
                             font-size: 1rem;
                             border-radius: 1.5rem;
-                            color: #e3dbc9;
+                            color: #e6decd;
 
                             @media (max-width: 379px) {
                                 font-size: 0.8rem;

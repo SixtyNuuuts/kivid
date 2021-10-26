@@ -767,8 +767,8 @@ export default {
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                border: 1px solid $gray-middle;
-                color: $gray-middle;
+                border: 1px solid #e6decd;
+                color: #e6decd;
                 cursor: pointer;
                 transition: all 0.2s;
                 background: transparent;
@@ -933,7 +933,7 @@ export default {
                                         min-width: 1.2rem;
                                         min-height: 1.2rem;
                                         max-height: 1.2rem;
-                                        background-color: #e7dfcd;
+                                        background-color: #e6decd;
                                         border-radius: 50%;
                                         font-size: 0.7rem;
                                         display: inline-flex;
