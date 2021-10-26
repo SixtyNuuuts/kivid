@@ -171,7 +171,7 @@
                                     hasVisiblePassword = !hasVisiblePassword
                                 "
                                 :progress="getSecurePassProgress"
-                                autocomplete="off"
+                                autocomplete="new-password"
                             >
                                 <template #icon>
                                     <i
@@ -206,7 +206,7 @@
                                         newPass.plainPassword &&
                                         newPass.passwordConfirm,
                                 }"
-                                autocomplete="off"
+                                autocomplete="new-password"
                             >
                                 <template #icon>
                                     <i
@@ -1344,6 +1344,21 @@ export default {
         i {
             font-size: 1.5rem;
             color: $white;
+        }
+
+        @media (min-width: 350px) {
+            top: -3.4vw;
+            right: -3.4vw;
+        }
+
+        @media (min-width: 410px) {
+            top: -2.4vw;
+            right: -2.4vw;
+        }
+
+        @media (min-width: 500px) {
+            top: -1vw;
+            right: -1vw;
         }
 
         @media (min-width: 680px) {

@@ -57,7 +57,7 @@ class UserEditController extends AbstractController
                      ->setGender($data->gender)
                 ;
 
-                if ($userType === 'patient') {
+                if ($userType === 'patient' && $data->birthdate) {
                     $user->setBirthdate(new \DateTimeImmutable($data->birthdate));
                 }
 
