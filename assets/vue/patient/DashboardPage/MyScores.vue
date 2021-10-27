@@ -325,7 +325,7 @@ export default {
                 countStats += w.exerciseStats.length;
             });
 
-            return this.formatNumbThousand(countStats / 3);
+            return this.formatNumbThousand(Math.floor(countStats / 3));
         },
         getSensitivityVariation() {
             return this.calculVariation("sensitivity");

@@ -508,7 +508,7 @@ export default {
             this.btnLoadingEdit = true;
 
             this.axios
-                .post(`/settings/user/edit`, {
+                .post(`/parametres`, {
                     _token: this.csrfTokenEdit,
                     email: this.currentUser.email,
                     plainPassword:
@@ -624,8 +624,8 @@ export default {
                     stripeCustomerId: this.stripeSubscription
                         ? this.stripeSubscription.customer
                         : null,
-                    successUrl: "subscription/success",
-                    cancelUrl: "subscription/cancel",
+                    successUrl: "abonnement/success",
+                    cancelUrl: "abonnement/cancel",
                 })
                 .then((response) => {
                     window.location.href = response.data;
@@ -657,10 +657,10 @@ export default {
                 });
         },
         myProfil() {
-            document.location.href = "/settings/user/edit";
+            document.location.href = "/parametres";
         },
         mySubscription() {
-            document.location.href = "/subscription";
+            document.location.href = "/abonnement";
         },
         getMimeType(file, fallback = null) {
             const byteArray = new Uint8Array(file).subarray(0, 4);
@@ -779,8 +779,8 @@ export default {
                 progress += 20;
             }
 
-            // more than 5 digits
-            if (this.newPass.plainPassword.length >= 6) {
+            // more than 9 digits
+            if (this.newPass.plainPassword.length >= 9) {
                 progress += 20;
             }
 

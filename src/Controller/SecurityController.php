@@ -13,7 +13,7 @@ class SecurityController extends AbstractController
     use RedirectFromIsGrantedTrait;
 
     /**
-     * @Route("/login/{userType}", name="app_login")
+     * @Route("/connexion/{userType}", name="app_login")
      */
     public function login(AuthenticationUtils $authenticationUtils, string $userType = 'patient'): Response
     {

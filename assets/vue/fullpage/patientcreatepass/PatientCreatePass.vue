@@ -128,7 +128,7 @@ export default {
                     this.btnLoadingPatientCreatePass = false;
 
                     setTimeout(() => {
-                        document.location.href = `/login`;
+                        document.location.href = `/connexion`;
                     }, 1000);
                 })
                 .catch((error) => {
@@ -170,8 +170,8 @@ export default {
                 progress += 20;
             }
 
-            // more than 5 digits
-            if (this.plainPassword.length >= 6) {
+            // more than 9 digits
+            if (this.plainPassword.length >= 9) {
                 progress += 20;
             }
 
