@@ -2,10 +2,33 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    transition: background-color 0.2s;
 
     &.max-height-100vh {
         max-height: 100vh;
         overflow: hidden;
+    }
+
+    &.praticien {
+        background-color: #f18969 !important;
+
+        &.fuzzy-balls {
+            &.animated {
+                background: url(../img/ball-1-doctor.svg) top -10.4rem left -11rem no-repeat,
+                    url(../img/ball-2-doctor.svg) top 20.4rem left -25rem no-repeat,
+                    url(../img/ball-3-doctor.svg) top 11rem right -19rem no-repeat;
+                background-size: 30rem, 70rem, 30rem;
+
+                @media (min-width: 768px) {
+                    background: url(../img/ball-1-doctor.svg) top -22.4rem left -20rem no-repeat,
+                        url(../img/ball-2-doctor.svg) top 21.4rem left -48rem no-repeat,
+                        url(../img/ball-3-doctor.svg) top 10rem right -25rem no-repeat;
+                    background-size: 57rem, 135rem, 57rem;
+                }
+
+                animation: fuzzyBallsScale 10s linear alternate infinite;
+            }
+        }
     }
 
     &.fuzzy-balls {

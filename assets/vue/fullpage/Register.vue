@@ -1,7 +1,12 @@
 <template>
     <div class="container fullpage">
         <div class="logo">
-            <img src="../../img/logo-kivid.svg" alt="Logo Kivid" />
+            <img
+                v-if="userType === 'patient'"
+                src="../../img/logo-kivid.svg"
+                alt="Logo Kivid"
+            />
+            <img v-else src="../../img/logo-kivid-white.svg" alt="Logo Kivid" />
         </div>
 
         <section id="register" class="kiv-block">
@@ -116,13 +121,37 @@
                         class="w-100"
                         type="submit"
                         @click="validRegistration"
-                        >S'inscrire</vs-button
+                        ><span v-if="userType === 'patient'">S'inscrire</span
+                        ><span v-else>S'inscrire</span></vs-button
                     >
                 </div>
                 <div class="sign-up">
                     Vous avez déjà un compte ?
                     <a @click="login">Se connecter</a>
                 </div>
+            </div>
+
+            <div class="divider">
+                <div class="divider-text">ou</div>
+            </div>
+
+            <div class="btn-container" v-if="userType === 'patient'">
+                <vs-button
+                    class="w-100 secondary btn-register-switch"
+                    @click="switchUserType('doctor')"
+                >
+                    S'inscrire en tant que professionnel
+                    <i class="fas fa-user-nurse"></i>
+                </vs-button>
+            </div>
+            <div class="btn-container" v-if="userType === 'doctor'">
+                <vs-button
+                    class="w-100 secondary btn-register-switch"
+                    @click="switchUserType('patient')"
+                >
+                    S'inscrire en tant que particulier
+                    <i class="fas fa-user"></i>
+                </vs-button>
             </div>
 
             <div class="divider">
@@ -170,7 +199,7 @@ export default {
             this.btnLoadingRegister = true;
 
             this.axios
-                .post(`/register`, {
+                .post(`/inscription`, {
                     _token: this.csrfTokenRegister,
                     email: this.registerDetails.email,
                     plainPassword: this.registerDetails.plainPassword,
@@ -190,7 +219,7 @@ export default {
                     this.btnLoadingRegister = false;
 
                     setTimeout(() => {
-                        document.location.href = `/login`;
+                        document.location.href = `/connexion`;
                     }, 2000);
                 })
                 .catch((error) => {
@@ -227,9 +256,18 @@ export default {
         },
         login() {
             if ("doctor" === this.userType) {
-                document.location.href = `/login/praticien`;
+                document.location.href = `/connexion/praticien`;
             } else {
-                document.location.href = `/login`;
+                document.location.href = `/connexion`;
+            }
+        },
+        switchUserType(userType) {
+            this.userType = userType;
+
+            if (userType === "doctor") {
+                document.body.classList.add("praticien");
+            } else {
+                document.body.classList.remove("praticien");
             }
         },
     },
@@ -252,8 +290,8 @@ export default {
                 progress += 20;
             }
 
-            // more than 5 digits
-            if (this.registerDetails.plainPassword.length >= 6) {
+            // more than 9 digits
+            if (this.registerDetails.plainPassword.length >= 9) {
                 progress += 20;
             }
 
@@ -275,6 +313,10 @@ export default {
         this.userType = data.userType;
         this.csrfTokenRegister = data.csrfTokenRegister;
 
+        if (this.userType === "doctor") {
+            document.body.classList.add("praticien");
+        }
+
         // if (this.error) {
         //     f.openErrorNotificationStay("Erreur", this.error);
         // }
@@ -284,4 +326,32 @@ export default {
 
 <style lang="scss">
 @import "../../scss/variables";
+
+.vs-button.btn-register-switch {
+    font-size: 1.2rem;
+    border-radius: 0.5rem;
+    background: transparent;
+    color: #c1b79d;
+    border: 0.1rem solid #e7dfcd;
+
+    i {
+        font-size: 1.1rem;
+        position: relative;
+        top: -0.21rem;
+        margin-left: 0.65rem;
+    }
+
+    .vs-button__content {
+        padding: 0.9rem 1.8rem;
+        padding-top: 1rem;
+    }
+}
+
+body.praticien {
+    .vs-button.btn-register-switch {
+        i {
+            font-size: 1rem;
+        }
+    }
+}
 </style>

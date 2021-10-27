@@ -221,7 +221,7 @@
                                 />
                                 <vs-input
                                     v-model="exercise.tempo"
-                                    label-placeholder="(ex: 2/0/1)"
+                                    label-placeholder="(ex: 2 - 0 - 1 - 0)"
                                     type="text"
                                     :class="{ disabled: !exercise.tempoActive }"
                                 >

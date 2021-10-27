@@ -26,7 +26,7 @@ class SubscriptionController extends AbstractController
     }
 
     /**
-     * @Route("/subscription/{status}", name="app_subscription", methods={"GET"})
+     * @Route("/abonnement/{status}", name="app_subscription", methods={"GET"})
      */
     public function subscription(
         Request $request,

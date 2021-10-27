@@ -97,7 +97,7 @@
                 >
                     <p class="notification-label">Compléter votre profil</p>
                     <div class="notification-actions">
-                        <a class="action-link" :href="`/settings/user/edit`">
+                        <a class="action-link" :href="`/parametres`">
                             <i class="kiv-pen icon-4"></i>
                             <span>Compléter</span>
                         </a>
