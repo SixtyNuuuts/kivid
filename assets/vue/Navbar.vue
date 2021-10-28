@@ -3,7 +3,7 @@
         <div class="logo" @click="homepage()">
             <img src="../img/logo-kivid-navbar.svg" alt="Logo Kivid" />
         </div>
-        <nav v-if="currentUser">
+        <nav v-if="currentUser && 'admin' != currentUserType">
             <ul>
                 <li
                     class="dashboard dashboard-icon"
@@ -222,7 +222,51 @@
             </ul>
         </nav>
         <nav v-else>
-            <ul>
+            <ul v-if="'admin' === currentUserType">
+                <li class="dashboard dashboard-icon" @click="dashboard()">
+                    <i class="kiv-dashboard icon-26"></i>
+                </li>
+                <li class="dashboard btn-navbar">
+                    <vs-button @click="dashboard()">
+                        <i class="kiv-dashboard icon-26"></i>
+                        Dashboard
+                    </vs-button>
+                </li>
+                <li class="user" v-click-outside="hideMenu">
+                    <div
+                        @click="currentUserMenu = !currentUserMenu"
+                        :class="{ active: currentUserMenu }"
+                    >
+                        <vs-avatar size="26" class="user-avatar" circle>
+                            <img
+                                id="u-avatar"
+                                :src="'/img/avatar-default.svg'"
+                                :alt="`Avatar de l'admin`"
+                            />
+                        </vs-avatar>
+                        <div class="user-name">
+                            <div>
+                                {{ currentUser.username }}
+                            </div>
+                            <i class="kiv-chevron-down icon-3"></i>
+                        </div>
+                    </div>
+                    <transition name="height">
+                        <nav
+                            class="user-menu dropdown-frame"
+                            v-if="currentUserMenu"
+                        >
+                            <ul>
+                                <li @click="logout()">
+                                    <i class="kiv-logout icon-13"></i>
+                                    Déconnexion
+                                </li>
+                            </ul>
+                        </nav>
+                    </transition>
+                </li>
+            </ul>
+            <ul v-else>
                 <li class="login dashboard-icon" @click="login()">
                     <i class="kiv-login icon-14"></i>
                 </li>
@@ -327,7 +371,7 @@ export default {
             this.currentUserMenu = false;
         },
         dashboard() {
-            if ("admin" === this.currentUser) {
+            if ("admin" === this.currentUserType) {
                 document.location.href = this.adminDashboardPath;
             }
 
@@ -365,9 +409,9 @@ export default {
         this.currentUser = data.currentUser;
 
         if (this.currentUser) {
-            this.currentUserType = this.currentUser.roles.includes(
-                "ROLE_PATIENT"
-            )
+            this.currentUserType = this.currentUser.roles.includes("ROLE_ADMIN")
+                ? "admin"
+                : this.currentUser.roles.includes("ROLE_PATIENT")
                 ? "patient"
                 : "doctor";
             this.currentRoute = data.currentRoute;
@@ -381,7 +425,9 @@ export default {
             this.settingsSubscriptionPath = data.settingsSubscriptionPath;
             this.csrfTokenReadNotification = data.csrfTokenReadNotification;
 
-            this.getNotifications();
+            if ("admin" != this.currentUserType) {
+                this.getNotifications();
+            }
         }
     },
 };
