@@ -1,23 +1,36 @@
 <nav id="navbar-vue"></nav>
 
 {% if app.user %}
-	<script id="navbar-vueData" type="application/json">
-		{
-			"csrfTokenReadNotification": {{ csrf_token('read_notifications')|serialize('json')|raw }},
-			"homePath": {{ path('app_home')|serialize('json')|raw }},
-			"loginPath": {{ path('app_login')|serialize('json')|raw }},
-			"logoutPath": {{ path('app_logout')|serialize('json')|raw }},
-			"adminDashboardPath": {{ path('app_admin_dashboard')|serialize('json')|raw }},
-			"currentUser": {{ app.user|serialize('json', {'groups': 'user_read'})|raw }},
-			"currentRoute": {{ app.request.get('_route')|serialize('json')|raw }},
-			"patientDashboardPath": {{ path('app_patient_dashboard', {'id':app.user.id})|serialize('json')|raw }},
-			"settingsUserEditPath": {{ path('app_settings_user_edit')|serialize('json')|raw }},
-			"settingsSubscriptionPath": {{ path('app_subscription')|serialize('json')|raw }},
-			"doctorDashboardPath": {{ path('app_doctor_dashboard', {'id':app.user.id})|serialize('json')|raw }},
-			"patientDashboardRoute": "app_patient_dashboard",
-			"doctorDashboardRoute": "app_doctor_dashboard"
-		}
-	</script>
+	{% if is_granted('ROLE_ADMIN') %}
+		<script id="navbar-vueData" type="application/json">
+			{
+				"homePath": {{ path('app_home')|serialize('json')|raw }},
+				"loginPath": {{ path('app_login')|serialize('json')|raw }},
+				"logoutPath": {{ path('app_logout')|serialize('json')|raw }},
+				"adminDashboardPath": {{ path('app_admin_dashboard')|serialize('json')|raw }},
+				"adminDashboardRoute": "app_admin_dashboard",
+				"currentUser": {{ app.user|serialize('json')|raw }},
+				"currentRoute": {{ app.request.get('_route')|serialize('json')|raw }}
+			}
+		</script>
+	{% else %}
+		<script id="navbar-vueData" type="application/json">
+			{
+				"csrfTokenReadNotification": {{ csrf_token('read_notifications')|serialize('json')|raw }},
+				"homePath": {{ path('app_home')|serialize('json')|raw }},
+				"loginPath": {{ path('app_login')|serialize('json')|raw }},
+				"logoutPath": {{ path('app_logout')|serialize('json')|raw }},
+				"currentUser": {{ app.user|serialize('json', {'groups': 'user_read'})|raw }},
+				"currentRoute": {{ app.request.get('_route')|serialize('json')|raw }},
+				"patientDashboardPath": {{ path('app_patient_dashboard', {'id':app.user.id})|serialize('json')|raw }},
+				"settingsUserEditPath": {{ path('app_settings_user_edit')|serialize('json')|raw }},
+				"settingsSubscriptionPath": {{ path('app_subscription')|serialize('json')|raw }},
+				"doctorDashboardPath": {{ path('app_doctor_dashboard', {'id':app.user.id})|serialize('json')|raw }},
+				"patientDashboardRoute": "app_patient_dashboard",
+				"doctorDashboardRoute": "app_doctor_dashboard"
+			}
+		</script>
+	{% endif %}
 {% else %}
 	<script id="navbar-vueData" type="application/json">
 		{
