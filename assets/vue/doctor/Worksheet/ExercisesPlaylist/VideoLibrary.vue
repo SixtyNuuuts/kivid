@@ -345,38 +345,23 @@ export default {
             clearTimeout(this.timeout);
 
             this.timeout = setTimeout(() => {
-                if (window.innerWidth < 472) {
+                if (window.innerWidth < 399) {
+                    this.max = 2;
+                    this.page = 1;
+                }
+
+                if (window.innerWidth >= 399 && window.innerWidth <= 649) {
                     this.max = 4;
                     this.page = 1;
                 }
 
-                if (window.innerWidth >= 472 && window.innerWidth <= 610) {
+                if (window.innerWidth > 649 && window.innerWidth <= 849) {
                     this.max = 6;
                     this.page = 1;
                 }
 
-                if (window.innerWidth > 610 && window.innerWidth <= 748) {
+                if (window.innerWidth > 849) {
                     this.max = 8;
-                    this.page = 1;
-                }
-
-                if (window.innerWidth > 748 && window.innerWidth <= 886) {
-                    this.max = 10;
-                    this.page = 1;
-                }
-
-                if (window.innerWidth > 886 && window.innerWidth <= 1028) {
-                    this.max = 12;
-                    this.page = 1;
-                }
-
-                if (window.innerWidth > 1028 && window.innerWidth <= 1166) {
-                    this.max = 14;
-                    this.page = 1;
-                }
-
-                if (window.innerWidth > 1166) {
-                    this.max = 16;
                     this.page = 1;
                 }
             }, 250);
@@ -608,6 +593,11 @@ export default {
             display: block;
             background: transparent;
             border-radius: 4px;
+
+            @media (min-width: 768px) {
+                width: 6px;
+                height: 6px;
+            }
         }
 
         &::-webkit-scrollbar-thumb {
@@ -626,7 +616,7 @@ export default {
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            max-width: 105rem;
+            max-width: 99rem;
 
             .tags {
                 display: flex;
@@ -662,11 +652,11 @@ export default {
                         0 0 3.9rem #1b3a692b inset;
                     background: #b9c7da85;
                     overflow: hidden;
-                    padding: 1.5em 0.4em;
+                    padding: 1em 0.4em;
                     height: 100%;
                     align-items: center;
                     justify-content: center;
-                    border-radius: 0.3rem;
+                    border-radius: 0.8rem;
 
                     &.loading {
                         animation-duration: 1.2s;
@@ -686,9 +676,8 @@ export default {
                     }
 
                     > div {
-                        border: 1px solid #f1f4f8;
-                        border-radius: 1.4em;
-                        margin: 0.6em;
+                        border-radius: 1rem;
+                        margin: 1.6vw 2.5vw;
                         transition: border 0.15s ease;
                         display: flex;
                         flex-direction: column;
@@ -696,17 +685,28 @@ export default {
                         justify-content: space-between;
                         padding: 0;
                         position: relative;
-                        height: 15rem;
-                        width: 9rem;
                         overflow: hidden;
                         background: white;
+                        width: 100%;
 
-                        @media (min-width: 335px) {
-                            width: 11rem;
+                        @media (min-width: 400px) {
+                            width: 46%;
+                            margin: 1.1vw;
+                        }
+
+                        @media (min-width: 650px) {
+                            width: 31.2%;
+                            margin: 0.7vw;
+                        }
+
+                        @media (min-width: 850px) {
+                            width: 22%;
+                            margin: 0.6vw;
+                            max-width: 30rem;
                         }
 
                         &.selected-video {
-                            border: 1px solid $orange !important;
+                            box-shadow: 0 0 0.7rem $orange;
                             transition: border 0.15s ease;
 
                             .video-thumbnail {
@@ -749,16 +749,36 @@ export default {
                     }
 
                     .video-thumbnail {
-                        height: 6.1rem;
                         overflow: hidden;
                         position: relative;
                         cursor: pointer;
+                        height: 37vw;
+                        min-height: 37vw;
+                        max-height: 37vw;
+
+                        @media (min-width: 400px) {
+                            height: 19vw;
+                            min-height: 19vw;
+                            max-height: 19vw;
+                        }
+
+                        @media (min-width: 650px) {
+                            height: 13.6vw;
+                            min-height: 13.6vw;
+                            max-height: 13.6vw;
+                        }
+
+                        @media (min-width: 850px) {
+                            height: 9.9vw;
+                            min-height: initial;
+                            max-height: 11.5rem;
+                        }
 
                         svg {
                             position: absolute;
                             top: 0;
-                            left: 27%;
-                            width: 46%;
+                            left: 34%;
+                            width: 31%;
                             height: 100%;
 
                             #test {
@@ -797,13 +817,21 @@ export default {
                         flex: 1;
                         justify-content: space-between !important;
                         padding: 0.4em !important;
-                        height: 49%;
-                        max-height: 8.4em;
+                        height: 100%;
 
                         .video-name {
-                            font-size: 1.1rem;
-                            max-height: 35%;
+                            font-size: 1.4rem;
                             font-weight: 700;
+                            padding: 1rem;
+                            padding-top: 0.5rem;
+                            padding-bottom: 0.8rem;
+                            white-space: nowrap;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+
+                            @media (min-width: 950px) {
+                                font-size: 1.5rem;
+                            }
 
                             > div {
                                 max-width: 100%;
