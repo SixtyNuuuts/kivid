@@ -52,15 +52,17 @@ class HomeController extends AbstractController
                 ->subject("Demande de praticien")
                 ->htmlTemplate('home/contact_email.html.twig')
                 ->context([
+                    'patient' => "{$data->firstname} {$data->lastname}",
                     'contactTel' => $data->contactTel,
-                    'contactMessage' => $data->contactMessage,
+                    'contactEmail' => $data->email
+                    // 'contactMessage' => $data->contactMessage,
                 ])
                 ;
 
                 $mailer->send($email);
 
                 return $this->json(
-                    "Votre demande a été envoyée",
+                    "Votre demande a été envoyée, l'équipe KIVID vous contactera dans les plus brefs délais",
                     200,
                 );
             }

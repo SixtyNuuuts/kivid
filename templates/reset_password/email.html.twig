@@ -1,9 +1,20 @@
-<h1>Bonjour,</h1>
+{% extends 'email/emailBase.html.twig' %}
 
-<p>Pour réinitialiser votre mot de passe, veuillez visiter le lien suivant</p>
+{% block content %}
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td class="h1 pb25" style="color:#dcd4c1; font-family:'Muli', Arial,sans-serif; font-size:34px; line-height:36px; text-align:center; padding-bottom:25px;">
+                Réinitialisation du mot de passe
+            </td>
+        </tr>
+        <tr>
+            <td class="text-center pb25" style="color:#0c2956; font-family:'Muli', Arial,sans-serif; font-size:16px; line-height:26px; text-align:center; padding-bottom:25px;">
+                Pour réinitialiser votre mot de passe, veuillez visiter le lien suivant : <br><br>
 
-<a href="{{ url('app_reset_password', {token: resetToken.token}) }}">{{ url('app_reset_password', {token: resetToken.token}) }}</a>
+                <a href="{{ url('app_reset_password', {token: resetToken.token}) }}" style="line-height: 1.2;">{{ url('app_reset_password', {token: resetToken.token}) }}</a><br><br>
 
-<p>Ce lien expirera dans {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.</p>
-
-<p>Cordialement</p>
+                Ce lien expirera dans {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.
+            </td>
+        </tr>
+    </table>
+{% endblock %}

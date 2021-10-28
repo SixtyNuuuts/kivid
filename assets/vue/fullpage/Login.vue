@@ -10,7 +10,7 @@
             <form
                 class="login-form"
                 @submit="checkForm"
-                action="/login"
+                action="/connexion"
                 method="post"
             >
                 <vs-input
@@ -106,9 +106,9 @@ export default {
         },
         register() {
             if ("doctor" === this.userType) {
-                document.location.href = `/register/praticien`;
+                document.location.href = `/inscription/praticien`;
             } else {
-                document.location.href = `/register`;
+                document.location.href = `/inscription`;
             }
         },
         forgotPassword() {

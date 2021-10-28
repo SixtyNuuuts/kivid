@@ -171,7 +171,7 @@
                     :error="errorTel"
                 />
 
-                <div class="message-block">
+                <!-- <div class="message-block">
                     <textarea
                         v-model="contactMessage"
                         id="contact-message"
@@ -181,7 +181,7 @@
                     >
                     </textarea>
                     <label for="contact-message">Message</label>
-                </div>
+                </div> -->
             </div>
             <div
                 class="btn-container"
@@ -235,7 +235,7 @@ export default {
                 email: null,
             },
             contactTel: null,
-            contactMessage: "",
+            // contactMessage: "",
         };
     },
     computed: {
@@ -329,12 +329,12 @@ export default {
                     lastname: this.patient.lastname,
                     email: this.patient.email,
                     contactTel: this.contactTel,
-                    contactMessage: this.contactMessage,
+                    // contactMessage: this.contactMessage,
                 })
                 .then((response) => {
                     f.openSuccessNotification("Message envoyé", response.data);
 
-                    this.contactMessage = "";
+                    // this.contactMessage = "";
                     this.modalContact = false;
                     this.btnLoadingValidContact = false;
                 })

@@ -27,7 +27,7 @@ class UserEditController extends AbstractController
     }
 
     /**
-     * @Route("/settings/user/edit", name="app_settings_user_edit", methods={"GET", "POST"})
+     * @Route("/parametres", name="app_settings_user_edit", methods={"GET", "POST"})
      * @isGranted("IS_AUTHENTICATED_FULLY")
      */
     public function settingsUserEdit(
@@ -57,7 +57,7 @@ class UserEditController extends AbstractController
                      ->setGender($data->gender)
                 ;
 
-                if ($userType === 'patient') {
+                if ($userType === 'patient' && $data->birthdate) {
                     $user->setBirthdate(new \DateTimeImmutable($data->birthdate));
                 }
 

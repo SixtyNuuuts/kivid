@@ -171,7 +171,7 @@
                                     hasVisiblePassword = !hasVisiblePassword
                                 "
                                 :progress="getSecurePassProgress"
-                                autocomplete="off"
+                                autocomplete="new-password"
                             >
                                 <template #icon>
                                     <i
@@ -206,7 +206,7 @@
                                         newPass.plainPassword &&
                                         newPass.passwordConfirm,
                                 }"
-                                autocomplete="off"
+                                autocomplete="new-password"
                             >
                                 <template #icon>
                                     <i
@@ -508,7 +508,7 @@ export default {
             this.btnLoadingEdit = true;
 
             this.axios
-                .post(`/settings/user/edit`, {
+                .post(`/parametres`, {
                     _token: this.csrfTokenEdit,
                     email: this.currentUser.email,
                     plainPassword:
@@ -624,8 +624,8 @@ export default {
                     stripeCustomerId: this.stripeSubscription
                         ? this.stripeSubscription.customer
                         : null,
-                    successUrl: "subscription/success",
-                    cancelUrl: "subscription/cancel",
+                    successUrl: "abonnement/success",
+                    cancelUrl: "abonnement/cancel",
                 })
                 .then((response) => {
                     window.location.href = response.data;
@@ -657,10 +657,10 @@ export default {
                 });
         },
         myProfil() {
-            document.location.href = "/settings/user/edit";
+            document.location.href = "/parametres";
         },
         mySubscription() {
-            document.location.href = "/subscription";
+            document.location.href = "/abonnement";
         },
         getMimeType(file, fallback = null) {
             const byteArray = new Uint8Array(file).subarray(0, 4);
@@ -779,8 +779,8 @@ export default {
                 progress += 20;
             }
 
-            // more than 5 digits
-            if (this.newPass.plainPassword.length >= 6) {
+            // more than 9 digits
+            if (this.newPass.plainPassword.length >= 9) {
                 progress += 20;
             }
 
@@ -1344,6 +1344,21 @@ export default {
         i {
             font-size: 1.5rem;
             color: $white;
+        }
+
+        @media (min-width: 350px) {
+            top: -3.4vw;
+            right: -3.4vw;
+        }
+
+        @media (min-width: 410px) {
+            top: -2.4vw;
+            right: -2.4vw;
+        }
+
+        @media (min-width: 500px) {
+            top: -1vw;
+            right: -1vw;
         }
 
         @media (min-width: 680px) {
