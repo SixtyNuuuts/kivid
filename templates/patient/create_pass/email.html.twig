@@ -3,36 +3,46 @@
 {% block content %}
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
         <tr>
-            <td class="h1 pb25" style="color:#dcd4c1; font-family:'Muli', Arial,sans-serif; font-size:30px; line-height:38px; text-align:center; padding-bottom:25px;">
-                Bonjour ! <br>
-                <span style="display: block; font-size: 24px; line-height: 32px; margin-top: 4.9 px;">
-                    Vous avez été ajouté comme patient <br>
-                    par {{ doctor.firstname }} {{ doctor.lastname }}
-                </span>
+            <td class="h1 pb25" style="color:#dcd4c1; font-family:'Muli', Arial,sans-serif; font-size:34px; line-height:36px; text-align:center; padding-bottom:5px;">
+                Bonjour !
             </td>
         </tr>
         <tr>
-            <td class="text-center pb25" style="color:#0c2956; font-family:'Muli', Arial,sans-serif; font-size:16px; line-height:26px; text-align:center; padding-bottom:25px;">
-                Si vous êtes en accord avec cette demande, vous pouvez nous rejoindre <br>
-                et créer votre mot de passe en cliquant sur le bouton suivant : <br>
-                <!-- Button -->
-                <tr>
-                    <td align="center">
-                        <table class="center" border="0" cellspacing="0" cellpadding="0" style="text-align:center;">
-                            <tr>
-                                <td class="pink-button text-button" style="background:#fb8b68; color:#c1cddc; font-family:'Muli', Arial,sans-serif; font-size:14px; line-height:18px; padding:12px 30px; text-align:center; border-radius:8px 8px 8px 8px; font-weight:bold; box-shadow: 0 0.4rem 1.4rem 0 hsl(14deg 95% 70% / 50%);">
-                                    <a href="{{ url('app_create_pass', {token: passToken.token}) }}" target="_blank" class="link-white" style="color:#ffffff; text-decoration:none;">
-                                        <span class="link-white" style="color:#ffffff; text-decoration:none;">Rejoindre Kivid</span>
-                                    </a>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-                <!-- END Button -->
-
-                Ce lien expirera dans {{ passToken.expirationMessageKey|trans(passToken.expirationMessageData, 'ResetPasswordBundle') }}.
+            <td class="h1 pb25" style="color:#dcd4c1; font-family:'Muli', Arial,sans-serif; font-size: 24px; line-height: 32px; text-align:center; padding-bottom:20px;">
+                Vous avez été ajouté comme patient
+                <br>
+                par
+                {{ doctor.firstname }}
+                {{ doctor.lastname }}
+            </td>
+        </tr>
+        <tr>
+            <td class="text-center pb25" style="color:#0c2956; font-family:'Muli', Arial,sans-serif; font-size:16px; line-height:26px; text-align:center; padding-bottom:20px;">
+                Si vous êtes en accord avec cette demande, vous pouvez nous rejoindre
+                <br>
+                et créer votre mot de passe en cliquant sur le bouton suivant :
+                <br>
+            </td>
+        </tr>
+        <tr>
+            <td align="center">
+                <table class="center" border="0" cellspacing="0" cellpadding="0" style="text-align:center;">
+                    <tr>
+                        <td class="pink-button text-button" style="background:#fb8b68; color:#c1cddc; font-family:'Muli', Arial,sans-serif; font-size:14px; line-height:18px; padding:12px 30px; text-align:center; border-radius:8px 8px 8px 8px; font-weight:bold; box-shadow: 0 0.4rem 1.4rem 0 hsl(14deg 95% 70% / 50%);">
+                            <a href="{{ url('app_create_pass', {token: passToken.token}) }}" target="_blank" class="link-white" style="color:#ffffff; text-decoration:none;">
+                                <span class="link-white" style="color:#ffffff; text-decoration:none;">Rejoindre Kivid</span>
+                            </a>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td class="text-center pb25" style="color:#0c2956; font-family:'Muli', Arial,sans-serif; font-size:16px; line-height:26px; text-align:center; padding-top:20px;">
+                Ce lien expirera dans
+                {{ passToken.expirationMessageKey|trans(passToken.expirationMessageData, 'ResetPasswordBundle') }}.
             </td>
         </tr>
     </table>
 {% endblock %}
+

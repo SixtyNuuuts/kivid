@@ -334,6 +334,14 @@ export default {
     color: #c1b79d;
     border: 0.1rem solid #e7dfcd;
 
+    &:hover {
+        background: transparent;
+        color: #bbb196;
+        border: 0.1rem solid #bbb196;
+        box-shadow: none;
+        transform: none;
+    }
+
     i {
         font-size: 1.1rem;
         position: relative;

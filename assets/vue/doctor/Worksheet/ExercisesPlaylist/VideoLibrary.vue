@@ -1,10 +1,13 @@
 <template>
     <div class="video-library">
-        <button class="btn-close-library" @click="closeVideoLibrary">
-            <i class="kiv-x icon-21"></i>
-        </button>
         <div class="content">
             <section id="video-library" class="kiv-block">
+                <button
+                    class="vs-dialog__close btn-close-library-sm"
+                    @click="closeVideoLibrary"
+                >
+                    <i class="vs-icon-close vs-icon-hover-x"></i>
+                </button>
                 <h2>Vidéothèque</h2>
                 <div class="primary-actions">
                     <div class="search">
@@ -345,12 +348,12 @@ export default {
             clearTimeout(this.timeout);
 
             this.timeout = setTimeout(() => {
-                if (window.innerWidth < 399) {
+                if (window.innerWidth < 449) {
                     this.max = 2;
                     this.page = 1;
                 }
 
-                if (window.innerWidth >= 399 && window.innerWidth <= 649) {
+                if (window.innerWidth >= 449 && window.innerWidth <= 649) {
                     this.max = 4;
                     this.page = 1;
                 }
@@ -360,8 +363,18 @@ export default {
                     this.page = 1;
                 }
 
-                if (window.innerWidth > 849) {
+                if (window.innerWidth > 849 && window.innerWidth <= 1618) {
                     this.max = 8;
+                    this.page = 1;
+                }
+
+                if (window.innerWidth > 1618 && window.innerWidth <= 1659) {
+                    this.max = 10;
+                    this.page = 1;
+                }
+
+                if (window.innerWidth > 1659) {
+                    this.max = 12;
                     this.page = 1;
                 }
             }, 250);
@@ -404,6 +417,10 @@ export default {
     left: 0;
     right: 0;
     bottom: 0;
+
+    .btn-close-library-sm {
+        border-radius: 50%;
+    }
 
     &::after {
         content: "";
@@ -513,71 +530,6 @@ export default {
         }
     }
 
-    .btn-close-library {
-        position: absolute;
-        z-index: 20;
-        top: -4.4vw;
-        right: -4.4vw;
-        background: transparent;
-        border: none;
-        padding: 2rem;
-        display: block;
-        transition: all 0.25;
-
-        &.dark {
-            i {
-                color: $black;
-            }
-        }
-
-        i {
-            font-size: 1.5rem;
-            color: $white;
-        }
-
-        @media (min-width: 350px) {
-            top: -3.4vw;
-            right: -3.4vw;
-        }
-
-        @media (min-width: 410px) {
-            top: -2.4vw;
-            right: -2.4vw;
-        }
-
-        @media (min-width: 500px) {
-            top: -1vw;
-            right: -1vw;
-        }
-
-        @media (min-width: 680px) {
-            top: 0;
-            right: 0;
-
-            i {
-                font-size: 1.5rem;
-            }
-        }
-
-        @media (min-width: 900px) {
-            top: 1rem;
-            right: 1rem;
-
-            i {
-                font-size: 1.5rem;
-            }
-        }
-
-        @media (min-width: 1200px) {
-            top: 1.5rem;
-            right: 2rem;
-
-            i {
-                font-size: 2.5rem;
-            }
-        }
-    }
-
     .content {
         height: 100%;
         width: 100%;
@@ -617,6 +569,14 @@ export default {
             flex-direction: column;
             justify-content: space-between;
             max-width: 99rem;
+
+            @media (min-width: 1619px) {
+                max-width: 122rem;
+            }
+
+            @media (min-width: 1660px) {
+                max-width: 139rem;
+            }
 
             .tags {
                 display: flex;
@@ -689,7 +649,7 @@ export default {
                         background: white;
                         width: 100%;
 
-                        @media (min-width: 400px) {
+                        @media (min-width: 450px) {
                             width: 46%;
                             margin: 1.1vw;
                         }
@@ -703,6 +663,17 @@ export default {
                             width: 22%;
                             margin: 0.6vw;
                             max-width: 30rem;
+                        }
+
+                        @media (min-width: 1619px) {
+                            width: 18%;
+                            margin: 0.6vw;
+                        }
+
+                        @media (min-width: 1660px) {
+                            width: 15%;
+                            margin: 1.1rem;
+                            max-width: 22rem;
                         }
 
                         &.selected-video {
@@ -756,7 +727,7 @@ export default {
                         min-height: 37vw;
                         max-height: 37vw;
 
-                        @media (min-width: 400px) {
+                        @media (min-width: 450px) {
                             height: 19vw;
                             min-height: 19vw;
                             max-height: 19vw;
