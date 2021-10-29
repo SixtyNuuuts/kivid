@@ -29,6 +29,10 @@ body {
                 animation: fuzzyBallsScale 10s linear alternate infinite;
             }
         }
+
+        .kiv-block h2::before {
+            background: $yellow;
+        }
     }
 
     &.fuzzy-balls {

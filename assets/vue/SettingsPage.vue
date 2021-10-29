@@ -413,11 +413,14 @@
             </transition>
         </main>
         <div class="cropper-modal" v-if="modalAvatar">
-            <button class="btn-close-modal" @click="closeModalAvatar">
-                <i class="kiv-x icon-21"></i>
-            </button>
             <div class="content">
                 <section id="cropper" class="kiv-block">
+                    <button
+                        class="vs-dialog__close btn-close-modal"
+                        @click="closeModalAvatar"
+                    >
+                        <i class="vs-icon-close vs-icon-hover-x"></i>
+                    </button>
                     <h2>Modifier ma photo</h2>
 
                     <div class="avatar-cropper">
@@ -1316,6 +1319,10 @@ export default {
     right: 0;
     bottom: 0;
 
+    .btn-close-modal {
+        border-radius: 50%;
+    }
+
     &::after {
         content: "";
         position: absolute;
@@ -1328,65 +1335,6 @@ export default {
         background: rgba(34, 46, 84, 0.8);
         height: 100vh;
         width: 100%;
-    }
-
-    .btn-close-modal {
-        position: absolute;
-        z-index: 20;
-        top: -4.4vw;
-        right: -4.4vw;
-        background: transparent;
-        border: none;
-        padding: 2rem;
-        display: block;
-        transition: all 0.25;
-
-        i {
-            font-size: 1.5rem;
-            color: $white;
-        }
-
-        @media (min-width: 350px) {
-            top: -3.4vw;
-            right: -3.4vw;
-        }
-
-        @media (min-width: 410px) {
-            top: -2.4vw;
-            right: -2.4vw;
-        }
-
-        @media (min-width: 500px) {
-            top: -1vw;
-            right: -1vw;
-        }
-
-        @media (min-width: 680px) {
-            top: 0;
-            right: 0;
-
-            i {
-                font-size: 1.5rem;
-            }
-        }
-
-        @media (min-width: 900px) {
-            top: 1rem;
-            right: 1rem;
-
-            i {
-                font-size: 1.5rem;
-            }
-        }
-
-        @media (min-width: 1200px) {
-            top: 1.5rem;
-            right: 2rem;
-
-            i {
-                font-size: 2.5rem;
-            }
-        }
     }
 
     .content {
