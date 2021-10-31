@@ -345,7 +345,7 @@ export default {
     i {
         font-size: 1.1rem;
         position: relative;
-        top: -0.21rem;
+        top: -0.15rem;
         margin-left: 0.65rem;
     }
 
