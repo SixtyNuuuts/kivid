@@ -3,7 +3,9 @@
 {% block layout %}
     {% include 'layout/partial/_navbar.html.twig' %}
     {% block body %}{% endblock %}
-    {% include 'layout/partial/_footer.html.twig' %}
+	{% if app.request.get('_route') != 'app_home' %}
+		{% include 'layout/partial/_footer.html.twig' %}
+	{% endif %}
 {% endblock %}
 
 {% block stylesheets %}
