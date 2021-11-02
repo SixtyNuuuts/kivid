@@ -86,6 +86,8 @@ class DoctorController extends AbstractController
 
                 $patient->setAddRequestDoctor(true);
 
+                $patient->setDoctor($doctor);
+
                 $this->em->remove($notification);
 
                 $this->notificationService->createAcceptDoctorNotification($patient, $doctor);

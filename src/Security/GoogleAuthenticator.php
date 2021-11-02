@@ -46,15 +46,11 @@ class GoogleAuthenticator extends AbstractSocialAuthenticator
                 $user->setLastname($googleUser->getLastname());
             }
             if (!$user->getAvatarUrl()) {
-                // requete à l'url de l'image car sans ça prob d'affichage de l'avatar.
-                HttpClient::create()->request('GET', $googleUser->getAvatar());
                 $user->setAvatarUrl($googleUser->getAvatar());
             }
         }
 
         if (!$user) {
-            // requete à l'url de l'image car sans ça prob d'affichage de l'avatar.
-            HttpClient::create()->request('GET', $googleUser->getAvatar());
             $user = 'doctor' === $userType ? new Doctor() : new Patient();
             $user->setGoogleId($googleUser->getId())
                  ->setEmail($googleUser->getEmail())

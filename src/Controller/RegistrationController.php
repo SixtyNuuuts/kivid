@@ -65,7 +65,7 @@ class RegistrationController extends AbstractController
                     $em->flush();
                 } catch (UniqueConstraintViolationException $e) {
                     return $this->json(
-                        "Cet email est déjà utilisé par un patient.",
+                        "Cet email est déjà utilisé par un patient",
                         500
                     );
                 }
