@@ -60,7 +60,7 @@
                     alt="Icone Thoracique"
                     class="icon-thoracique"
                 />
-                <span class="text">{{ getPartOfBodySelected.name }}</span>
+                <span class="text wsnw">{{ getPartOfBodySelected.name }}</span>
             </div>
             <input
                 v-show="!getPartOfBodySelected"
@@ -145,7 +145,7 @@
                                     alt="Icone Thoracique"
                                     class="icon-thoracique"
                                 />
-                                <span class="text">{{ part.name }}</span>
+                                <span class="text wsnw">{{ part.name }}</span>
                             </div>
                         </li>
                     </ul>

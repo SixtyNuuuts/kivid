@@ -104,6 +104,20 @@
                     </template>
                 </vs-input>
 
+                <div>
+                    <vs-checkbox
+                        v-model="acceptCG"
+                        :class="{ active: acceptCG }"
+                    >
+                        <span
+                            >j'ai lu et j'accepte les
+                            <a @click="modalCG = true"
+                                >conditions générales</a
+                            ></span
+                        >
+                    </vs-checkbox>
+                </div>
+
                 <div
                     class="btn-container"
                     :class="{ disabled: btnLoadingRegister }"
@@ -115,7 +129,8 @@
                             validationMessage.password ||
                             !registerDetails.email ||
                             !registerDetails.plainPassword ||
-                            !passwordConfirm
+                            !passwordConfirm ||
+                            !acceptCG
                         "
                         :loading="btnLoadingRegister"
                         class="w-100"
@@ -168,14 +183,27 @@
                 ></vs-button>
             </div>
         </section>
+        <vs-dialog width="450px" v-model="modalCG">
+            <h2>Conditions Générales</h2>
+            <CG />
+            <div class="btn-container">
+                <vs-button class="w-100" @click="validAcceptCG()"
+                    >J'ai lu et j'accepte</vs-button
+                >
+            </div>
+        </vs-dialog>
     </div>
 </template>
 
 <script>
 import f from "../services/function";
 import Vue from "vue";
+import CG from "./register/cg.vue";
 
 export default {
+    components: {
+        CG,
+    },
     data() {
         return {
             registerDetails: {
@@ -192,9 +220,15 @@ export default {
             hasVisiblePasswordConfirm: false,
             csrfTokenRegister: null,
             btnLoadingRegister: false,
+            modalCG: false,
+            acceptCG: false,
         };
     },
     methods: {
+        validAcceptCG() {
+            this.acceptCG = true;
+            this.modalCG = false;
+        },
         validRegistration() {
             this.btnLoadingRegister = true;
 
@@ -360,6 +394,46 @@ body.praticien {
         i {
             font-size: 1rem;
         }
+    }
+}
+
+.vs-dialog .vs-dialog__content h2 {
+    margin-bottom: 1rem;
+}
+
+#register {
+    .vs-checkbox-label {
+        font-size: 1.3rem;
+        color: #b5ac94;
+        font-size: 1.2rem;
+    }
+
+    .vs-checkbox-content.active {
+        .vs-checkbox-label {
+            color: #222e54;
+        }
+    }
+
+    .vs-checkbox-con {
+        width: 19px;
+        top: -0.1rem;
+        height: 19px;
+    }
+
+    .vs-icon-check span .line2 {
+        height: 9px;
+        bottom: 2px;
+    }
+
+    .vs-icon-check span .line1 {
+        height: 1px;
+        bottom: 1px;
+    }
+
+    a {
+        font-weight: 700;
+        text-decoration: underline;
+        cursor: pointer;
     }
 }
 </style>

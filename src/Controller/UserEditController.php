@@ -84,7 +84,7 @@ class UserEditController extends AbstractController
 
                     if ($patientWithThisEmail || $doctorWithThisEmail) {
                         return $this->json(
-                            'Cet email est déjà utilisé par un membre, veuillez en entrer un autre.',
+                            'Cet email est déjà utilisé par un membre, veuillez en entrer un autre',
                             500,
                         );
                     }
