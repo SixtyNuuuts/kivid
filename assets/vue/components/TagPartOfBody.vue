@@ -54,7 +54,7 @@
             alt="Icone Thoracique"
             class="icon-thoracique"
         />
-        <span class="text">{{ partOfBody.name }}</span>
+        <span class="text wsnw">{{ partOfBody.name }}</span>
         <i class="kiv-completed icon-22"></i>
     </vs-button>
 </template>

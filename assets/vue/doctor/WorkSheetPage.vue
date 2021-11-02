@@ -443,7 +443,7 @@ export default {
                                             a été prescrite à <strong>
                                             ${this.getUserName(
                                                 this.patient
-                                            )}</strong>.`
+                                            )}</strong>`
                                         );
                                         this.btnLoadingValidCreateWorksheet = false;
                                         setTimeout(() => {
@@ -469,7 +469,7 @@ export default {
                                         this.worksheet.title
                                     }</strong> 
                                     a été prescrite à <strong>
-                                    ${this.getUserName(this.patient)}</strong>.`
+                                    ${this.getUserName(this.patient)}</strong>`
                                 );
                                 this.btnLoadingValidCreateWorksheet = false;
                                 setTimeout(() => {

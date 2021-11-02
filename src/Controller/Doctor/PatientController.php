@@ -103,7 +103,7 @@ class PatientController extends AbstractController
                     $this->em->flush();
                 } catch (UniqueConstraintViolationException $e) {
                     return $this->json(
-                        'Nous n\'avons pas pu créer le patient, car son email est déjà utilisé par un membre.',
+                        'Nous n\'avons pas pu créer le patient, car son email est déjà utilisé par un membre',
                         500,
                     );
                 }
@@ -180,7 +180,7 @@ class PatientController extends AbstractController
 
                     return $this->json(
                         "<strong>{$this->userService->getUserName($patient)}</strong> 
-                        a bien été retiré de votre liste.",
+                        a bien été retiré de votre liste",
                         200,
                     );
                 }

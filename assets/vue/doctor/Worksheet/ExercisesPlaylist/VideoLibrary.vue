@@ -162,14 +162,14 @@
                                         :key="i"
                                         class="nf-tag tag"
                                     >
-                                        <span class="text">{{ tag }}</span>
+                                        <span class="text wsnw">{{ tag }}</span>
                                     </span>
                                 </span>
                                 <span
                                     v-if="selectedPoB"
                                     class="nf-tag part-of-body"
                                 >
-                                    <span class="text">
+                                    <span class="text wsnw">
                                         {{ selectedPoB.name }}
                                     </span>
                                 </span>
@@ -791,7 +791,7 @@ export default {
                         height: 100%;
 
                         .video-name {
-                            font-size: 1.4rem;
+                            font-size: 1.2rem;
                             font-weight: 700;
                             padding: 1rem;
                             padding-top: 0.5rem;
@@ -801,7 +801,7 @@ export default {
                             text-overflow: ellipsis;
 
                             @media (min-width: 950px) {
-                                font-size: 1.5rem;
+                                font-size: 1.3rem;
                             }
 
                             > div {

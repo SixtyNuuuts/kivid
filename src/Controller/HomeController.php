@@ -38,6 +38,15 @@ class HomeController extends AbstractController
     }
 
     /**
+     * @Route("/cgv", name="app_cgv")
+     */
+    public function cgv(): Response
+    {
+        return $this->render('home/cgv.html.twig');
+    }
+
+
+    /**
      * @Route("/contact", name="app_contact", methods={"POST"})
      */
     public function contact(Request $request, MailerInterface $mailer): JsonResponse

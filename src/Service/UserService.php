@@ -84,7 +84,7 @@ class UserService
             "message" => "
                 <strong>{$this->getUserName($patient)}</strong> 
                 a été créé et ajouté à vos patients, 
-                Nous lui avons envoyé un email pour qu'il valide son inscription.
+                Nous lui avons envoyé un email pour qu'il valide son inscription
             ",
             "patient" => $patient
         ], 'json', ['groups' => 'patient_read']);
