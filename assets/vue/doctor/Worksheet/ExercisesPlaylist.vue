@@ -854,6 +854,7 @@ export default {
 
                 span {
                     font-weight: 800;
+                    margin-left: 0.3rem;
                 }
 
                 .series-reps {
@@ -1037,36 +1038,39 @@ export default {
             }
 
             .details {
-                .kiv-help {
-                    margin-left: 0.6rem;
-                    position: relative;
-                    top: 0.1rem;
+                .tempo {
+                    display: flex;
+                    .kiv-help {
+                        margin-left: 0.6rem;
+                        position: relative;
+                        top: 0;
 
-                    .icon-help {
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        width: 1.5rem;
-                        height: 1.5rem;
-                        min-width: 1.5rem;
-                        min-height: 1.5rem;
-                        max-height: 1.5rem;
-                        border-radius: 1.5rem;
-                        border: 1px solid #e1dacd;
+                        .icon-help {
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            width: 1.5rem;
+                            height: 1.5rem;
+                            min-width: 1.5rem;
+                            min-height: 1.5rem;
+                            max-height: 1.5rem;
+                            border-radius: 1.5rem;
+                            border: 1px solid #e1dacd;
 
-                        &:hover {
-                            border: 1px solid #d8d1c0;
+                            &:hover {
+                                border: 1px solid #d8d1c0;
+
+                                i {
+                                    color: #d8d1c0;
+                                }
+                            }
 
                             i {
-                                color: #d8d1c0;
+                                font-size: 0.7rem;
+                                color: #e1dacd;
+                                transition: all;
+                                margin-right: 0;
                             }
-                        }
-
-                        i {
-                            font-size: 0.7rem;
-                            color: #e1dacd;
-                            transition: all;
-                            margin-right: 0;
                         }
                     }
                 }

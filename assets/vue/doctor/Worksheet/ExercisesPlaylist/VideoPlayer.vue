@@ -401,6 +401,7 @@ export default {
                 span {
                     // margin-right: 0.4rem;
                     font-weight: 700;
+                    margin-left: 0.3rem;
                 }
 
                 .tempo {
@@ -409,7 +410,7 @@ export default {
                     .kiv-help {
                         margin-left: 0.6rem;
                         position: relative;
-                        top: 0.12rem;
+                        top: 0.02rem;
 
                         .icon-help {
                             display: flex;
