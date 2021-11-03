@@ -705,7 +705,7 @@ export default {
                     .kiv-help {
                         margin-left: 0.6rem;
                         position: relative;
-                        top: 0.1rem;
+                        top: 0;
 
                         .icon-help {
                             display: flex;
