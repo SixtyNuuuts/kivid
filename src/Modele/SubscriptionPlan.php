@@ -8,7 +8,7 @@ class SubscriptionPlan
     private $name;
     private $price;
 
-    public function __construct(string $planId, string $name, int $price)
+    public function __construct(string $planId, string $name, float $price)
     {
         $this->planId = $planId;
         $this->name = $name;

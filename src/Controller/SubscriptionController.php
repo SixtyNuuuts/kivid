@@ -78,7 +78,7 @@ class SubscriptionController extends AbstractController
 
     /**
      * @Route("/subscription/checkout",
-     * name="app_subscription_checkout", priority=1, methods={"POST"})
+     * name="app_subscription_checkout", methods={"POST"})
      */
     public function subscriptionCheckout(
         Request $request
@@ -108,7 +108,7 @@ class SubscriptionController extends AbstractController
 
     /**
      * @Route("/subscription/customer-portal-session",
-     * name="app_subscription_customer_portal_session", priority=1, methods={"POST"})
+     * name="app_subscription_customer_portal_session", methods={"POST"})
      */
     public function subscriptionCustomerPortalSession(
         Request $request

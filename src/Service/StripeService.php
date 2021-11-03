@@ -19,20 +19,17 @@ class StripeService
     private $stripe;
     private $stripeWebhookSecretKey;
     private $subscriptionRepository;
-    private $subscriptionService;
     private $em;
 
     public function __construct(
         string $stripeSecretKey,
         string $stripeWebhookSecretKey,
         SubscriptionRepository $subscriptionRepository,
-        SubscriptionService $subscriptionService,
         EntityManagerInterface $entityManager
     ) {
         $this->stripe = new StripeClient($stripeSecretKey);
         $this->stripeWebhookSecretKey = $stripeWebhookSecretKey;
         $this->subscriptionRepository = $subscriptionRepository;
-        $this->subscriptionService = $subscriptionService;
         $this->em = $entityManager;
     }
 
@@ -115,10 +112,16 @@ class StripeService
                 // Store the status in your database and check when a user accesses your service.
                 // This approach helps you avoid hitting rate limits.
 
-                // $this->subscriptionService->createSubscription(
-                //     $user,
-                //     $stripeSubscription
-                // );
+                $subscription = $this->subscriptionRepository->findOneBy([
+                    'stripeSubscriptionId' => $event->data->object->subscription
+                ]);
+
+                if ($subscription) {
+                    $subscription->setCurrentPeriodEnd(new \DateTime($event->data->object->lines->data->period->end));
+
+                    $this->em->flush();
+                }
+
                 break;
             case 'invoice.payment_failed':
                 // The payment failed or the customer does not have a valid payment method.
