@@ -1512,7 +1512,7 @@ export default {
                     .user-avatar {
                         display: none;
 
-                        @media (min-width: 400px) {
+                        @media (min-width: 430px) {
                             display: block;
                         }
                     }

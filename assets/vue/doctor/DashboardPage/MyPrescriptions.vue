@@ -885,7 +885,7 @@ export default {
                     // }
                     .session-nb {
                         font-weight: 700;
-                        color: #dfd9ca;
+                        color: #d3ccbc;
                         margin: 0;
                         font-size: 0.9rem;
                         text-transform: uppercase;

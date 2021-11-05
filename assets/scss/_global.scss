@@ -833,9 +833,11 @@ body.no-scrollbar::-webkit-scrollbar {
         color: $black;
         box-shadow: inset 0 0 20px 0 rgb(0, 0, 0, 0.04);
         margin-top: 1.5rem;
+        margin-left: 0;
 
         @media (min-width: 576px) {
             margin-top: 0;
+            margin-left: 0.5em;
         }
     }
 }
