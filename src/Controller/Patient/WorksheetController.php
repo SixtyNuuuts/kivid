@@ -19,6 +19,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
  * @Route("/patient")
@@ -53,6 +54,7 @@ class WorksheetController extends AbstractController
 
     /**
      * @Route("/{id}/fiche/{worksheetId}/{status}", name="app_patient_worksheet_read", methods={"GET"})
+     * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
     public function worksheetRead(
         Request $request,
@@ -108,6 +110,7 @@ class WorksheetController extends AbstractController
 
     /**
      * @Route("/{id}/get/worksheet/{worksheetId}", name="app_patient_get_worksheet", methods={"GET"})
+     * @isGranted("IS_OWNER_OR_OWNERDOC", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
     public function getWorksheet(Patient $patient, int $worksheetId): JsonResponse
     {
@@ -123,6 +126,7 @@ class WorksheetController extends AbstractController
 
     /**
      * @Route("/{id}/get/worksheets", name="app_patient_get_worksheets", methods={"GET"})
+     * @isGranted("IS_OWNER_OR_OWNERDOC", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
     public function getWorksheets(Patient $patient): JsonResponse
     {
@@ -138,6 +142,7 @@ class WorksheetController extends AbstractController
 
     /**
      * @Route("/{id}/get/exercises/{worksheetId}", name="app_patient_get_exercises", methods={"GET"})
+     * @isGranted("IS_OWNER_OR_OWNERDOC", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
     public function getExercises(Patient $patient, int $worksheetId): JsonResponse
     {
@@ -166,6 +171,7 @@ class WorksheetController extends AbstractController
 
     /**
      * @Route("/{id}/complete/exercise", name="app_patient_complete_exercise", methods={"POST"})
+     * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
     public function completeExercise(Request $request, Patient $patient): JsonResponse
     {
@@ -218,6 +224,7 @@ class WorksheetController extends AbstractController
 
     /**
      * @Route("/{id}/create/commentary", name="app_patient_create_commentary", methods={"POST"})
+     * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
     public function createCommentary(Request $request, Patient $patient): JsonResponse
     {

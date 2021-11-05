@@ -251,6 +251,8 @@ export default {
 
         this.loading = true;
 
+        const currentWorksheetParam = this.doctorView ? "/doctorview" : "";
+
         this.axios
             .get(
                 `/patient/${this.patient.id}/get/worksheet/${this.worksheetId}`
@@ -260,7 +262,7 @@ export default {
 
                 this.axios
                     .get(
-                        `/patient/${this.patient.id}/get/current-worksheet-session/${this.worksheetId}/doctorview`
+                        `/patient/${this.patient.id}/get/current-worksheet-session/${this.worksheetId}${currentWorksheetParam}`
                     )
                     .then((response) => {
                         this.currentWorksheetSession =
@@ -301,7 +303,8 @@ export default {
                                             !this.currentWorksheetSession
                                                 .isInProgress &&
                                             !this.currentWorksheetSession
-                                                .isCompleted
+                                                .isCompleted &&
+                                            !this.doctorView
                                         ) {
                                             this.axios
                                                 .post(

@@ -387,7 +387,7 @@ export default {
         this.loading = true;
 
         this.axios
-            .get(`/get/doctors`)
+            .get(`/patient/${this.$parent.patient.id}/get/doctors`)
             .then((response) => {
                 this.doctors = response.data;
                 this.loading = false;

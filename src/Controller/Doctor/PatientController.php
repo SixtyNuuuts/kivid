@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
  * @Route("/doctor")
@@ -39,6 +40,7 @@ class PatientController extends AbstractController
 
     /**
      * @Route("/{id}/get/patients", name="app_doctor_get_patients", methods={"GET"})
+     * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
     public function getPatients(Doctor $doctor): JsonResponse
     {
@@ -65,6 +67,7 @@ class PatientController extends AbstractController
 
     /**
      * @Route("/{id}/voir/patient/{patientId}", name="app_doctor_show_patient", methods={"GET"})
+     * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
     public function showPatient(
         int $patientId = null
@@ -82,6 +85,7 @@ class PatientController extends AbstractController
 
     /**
      * @Route("/{id}/create/patient", name="app_doctor_create_patient", methods={"POST"})
+     * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
     public function createPatient(Request $request, Doctor $doctor): JsonResponse
     {
@@ -119,6 +123,7 @@ class PatientController extends AbstractController
 
     /**
      * @Route("/{id}/add/patient", name="app_doctor_add_patient", methods={"POST"})
+     * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
     public function addPatient(Request $request, Doctor $doctor): JsonResponse
     {
@@ -162,6 +167,7 @@ class PatientController extends AbstractController
 
     /**
      * @Route("/{id}/remove/patient", name="app_doctor_remove_patient", methods={"POST"})
+     * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
     public function removePatient(Request $request, Doctor $doctor): JsonResponse
     {

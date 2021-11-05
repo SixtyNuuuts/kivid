@@ -1378,24 +1378,7 @@ body.no-scrollbar::-webkit-scrollbar {
     }
 }
 
-// HACK : Detecting autofilled fields in Javascript
-// input.is-autofilled @keyframes onAutoFillStart {
-//     from {
-//         /**/
-//     }
-//     to {
-//         /**/
-//     }
-// }
-// @keyframes onAutoFillCancel {
-//     from {
-//         /**/
-//     }
-//     to {
-//         /**/
-//     }
-// }
-
+// HACK WEBKIT : Detecting autofilled fields
 input:-webkit-autofill ~ label {
     font-size: 1.4rem !important;
     top: -0.8rem !important;
@@ -1405,11 +1388,6 @@ input:-webkit-autofill ~ label {
         0 0 0.3rem #fff, 0 0 0.3rem #fff, 0 0 0.3rem #fff, 0 0 0.3rem #fff, 0 0 0.3rem #fff, 0 0 0.3rem #fff,
         0 0 0.3rem #fff, 0 0 0.3rem #fff;
 }
-// input:not(:-webkit-autofill) {
-//     // Expose a hook for JS onAutoFillCancel
-//     // JavaScript can capture 'animationstart' events
-//     animation-name: onAutoFillCancel;
-// }
 
 .btn-go-to-top {
     display: none;

@@ -600,7 +600,7 @@ export default {
         this.loadingVideos = true;
 
         this.axios
-            .get(`/get/videos`)
+            .get(`/doctor/${this.doctor.id}/get/videos`)
             .then((response) => {
                 this.loadingVideos = false;
 
