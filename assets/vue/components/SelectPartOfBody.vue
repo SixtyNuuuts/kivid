@@ -324,7 +324,7 @@ export default {
         cursor: pointer;
         transition: all 0.25s;
         border: 0.1rem solid $gray-middle;
-        background: transparent;
+        background: $white;
 
         &:hover {
             background: $white;

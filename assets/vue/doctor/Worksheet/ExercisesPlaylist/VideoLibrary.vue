@@ -8,7 +8,22 @@
                 >
                     <i class="vs-icon-close vs-icon-hover-x"></i>
                 </button>
-                <h2>Vidéothèque</h2>
+                <h2>
+                    Vidéothèque
+                    <span v-if="!loadingVideos" class="count-videos">
+                        <transition name="fade">
+                            <i
+                                v-if="
+                                    search || selectedTags.length || selectedPoB
+                                "
+                                class="fas fa-filter"
+                            ></i></transition
+                        >{{ getTotalVideosFiltered }} vidéo<span
+                            v-if="getTotalVideosFiltered > 1"
+                            >s</span
+                        ></span
+                    >
+                </h2>
                 <div class="primary-actions">
                     <div class="search">
                         <vs-input
@@ -261,6 +276,9 @@ export default {
                 this.max
             );
         },
+        getTotalVideosFiltered() {
+            return this.getSearch(this.videos, this.search).length;
+        },
         getTagsFromAllVideos() {
             return f.getTagsFromAllVideos(this.videos);
         },
@@ -417,6 +435,25 @@ export default {
     left: 0;
     right: 0;
     bottom: 0;
+
+    h2 span.count-videos {
+        padding: 0.2rem 0.7rem;
+        background-color: #fb8b68;
+        border-radius: 0.5rem;
+        font-size: 1.3rem;
+        color: white;
+        font-weight: 600;
+        margin-left: 0.8rem;
+        position: relative;
+        top: -0.1rem;
+
+        i {
+            font-size: 0.9rem;
+            position: relative;
+            top: -0.1rem;
+            margin-right: 0.5rem;
+        }
+    }
 
     .btn-close-library-sm {
         border-radius: 50%;

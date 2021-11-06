@@ -15,7 +15,7 @@
                         @click="rederictToDashboard()"
                     ></i>
                     <div class="prescri-for-patient">
-                        <div class="label">prescription pour</div>
+                        <div class="label">prescription <span>pour</span></div>
                         <vs-avatar size="26" class="user-avatar" circle>
                             <img
                                 :src="
@@ -630,38 +630,43 @@ export default {
             margin-right: 1.8rem;
             cursor: pointer;
             position: relative;
-            top: 2.1rem;
+            top: 2.5rem;
         }
 
         .prescri-for-patient {
             background: #fff;
             display: flex;
             align-items: center;
-            padding: 0.55rem 0.9rem;
-            padding-top: 0.7rem;
+            padding: 0.9rem 1.7rem;
+            padding-top: 1.1rem;
             box-shadow: 0px 0.4rem 0.7rem rgba(148, 96, 77, 0.04);
             border-radius: 2.5rem;
             font-weight: 600;
             margin-bottom: 2.6rem;
             margin-left: 3.4rem;
             margin-top: -0.8rem;
-            min-width: 15rem;
+            min-width: 18.3rem;
             position: relative;
 
             .label {
                 position: absolute;
-                top: -1rem;
-                left: 4rem;
+                top: -1.2rem;
+                left: 4.7rem;
                 padding: 0.5rem 0.6rem;
                 padding-bottom: 0.3rem;
                 border-radius: 1.1rem;
                 background: #f5f5f5;
                 color: #9aa1b7;
                 text-transform: uppercase;
-                font-size: 0.8rem;
+                font-size: 0.9rem;
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                letter-spacing: 0.01rem;
+
+                span {
+                    margin-left: 0.5rem;
+                }
             }
 
             .user-avatar {
@@ -670,10 +675,26 @@ export default {
             }
 
             .user-name {
-                font-size: 1.4rem;
+                font-size: 1.5rem;
                 margin-left: 0.9rem;
                 margin-right: 0.5rem;
-                max-width: 63vw;
+                max-width: 51vw;
+
+                @media (min-width: 330px) {
+                    max-width: 56vw;
+                }
+
+                @media (min-width: 440px) {
+                    max-width: 66vw;
+                }
+
+                @media (min-width: 500px) {
+                    max-width: 70vw;
+                }
+
+                @media (min-width: 690px) {
+                    max-width: 77vw;
+                }
 
                 div {
                     white-space: nowrap;
@@ -724,7 +745,7 @@ export default {
 
                 .vs-input-content {
                     .vs-input {
-                        background: rgba(255, 255, 255, 0.25);
+                        background: $white;
                         padding-bottom: 1.5rem;
 
                         &:focus,

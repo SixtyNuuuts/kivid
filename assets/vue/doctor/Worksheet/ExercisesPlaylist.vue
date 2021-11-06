@@ -567,7 +567,7 @@ export default {
 
         .vs-input-content {
             .vs-input {
-                background: rgba(255, 255, 255, 0.25);
+                background: $white;
                 padding-bottom: 1.5rem;
 
                 &:focus,
@@ -813,8 +813,8 @@ export default {
                     display: flex;
                     justify-content: center;
                     align-items: center;
-                    border: 1px solid $gray-middle;
-                    color: $gray-middle;
+                    border: 1px solid #d6ccb9;
+                    color: #d6ccb9;
                     cursor: pointer;
                     transition: all 0.2s;
                     background: transparent;
@@ -916,7 +916,7 @@ export default {
                         color: #222e54;
                         border: 0.1rem solid $gray-middle;
                         border-radius: 0.5rem;
-                        background: rgba(255, 255, 255, 0.25);
+                        background: $white;
 
                         &:hover {
                             background: $white;
