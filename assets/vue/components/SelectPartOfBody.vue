@@ -173,7 +173,6 @@ export default {
     },
     data() {
         return {
-            partOfBodySelected: null,
             partsOfBody: [],
             filter: "",
             selectBox: false,
@@ -184,9 +183,6 @@ export default {
     },
     computed: {
         getPartOfBodySelected() {
-            if (this.partOfBodySelected != null) {
-                return this.partOfBodySelected;
-            }
             if (!this.partOfBody) {
                 return "";
             }
@@ -212,10 +208,7 @@ export default {
     methods: {
         toggleSelectBox() {
             this.selectBox = !this.selectBox;
-            if (
-                this.partOfBodySelected != null &&
-                this.partOfBodySelected.length
-            ) {
+            if (this.partOfBody != null) {
                 this.resetSelect();
             }
             if (this.selectBox) {
@@ -226,12 +219,10 @@ export default {
             this.selectBox = false;
         },
         selectPartOfBody(partofbody) {
-            this.partOfBodySelected = partofbody;
             this.$emit("partOfBodySelected", partofbody);
             this.hideSelectBox();
         },
         resetSelect() {
-            this.partOfBodySelected = "";
             this.$emit("partOfBodyReset", true);
 
             setTimeout(() => {

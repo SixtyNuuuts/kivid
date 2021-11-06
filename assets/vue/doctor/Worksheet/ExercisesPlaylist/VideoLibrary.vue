@@ -21,7 +21,14 @@
                         >{{ getTotalVideosFiltered }} vidéo<span
                             v-if="getTotalVideosFiltered > 1"
                             >s</span
-                        ></span
+                        >
+                        <span
+                            v-if="search || selectedTags.length || selectedPoB"
+                        >
+                            filtrée<span v-if="getTotalVideosFiltered > 1"
+                                >s</span
+                            >
+                        </span></span
                     >
                 </h2>
                 <div class="primary-actions">
@@ -56,7 +63,7 @@
                         <div v-else class="loading select-tags"></div>
                     </div>
                     <SelectPartOfBody
-                        :partOfBody="null"
+                        :partOfBody="selectedPoB"
                         @partOfBodySelected="filterByPartOfBody"
                         @partOfBodyReset="resetSelectedPoB"
                     />
@@ -245,7 +252,7 @@ export default {
         return {
             search: "",
             page: 1,
-            max: 6,
+            max: 12,
             playerVars: {
                 rel: 0,
                 showinfo: 0,
@@ -307,9 +314,6 @@ export default {
             this.btnLoadingValidVideosSelection = true;
             this.$emit("videos-selection", this.selectedVideos);
 
-            this.search = "";
-            this.selectedTags = [];
-            this.selectedVideos = [];
             this.closeVideoLibrary();
 
             setTimeout(() => {
@@ -317,6 +321,13 @@ export default {
             }, 1000);
         },
         closeVideoLibrary() {
+            setTimeout(() => {
+                this.search = "";
+                this.selectedTags = [];
+                this.selectedVideos = [];
+                this.selectedPoB = null;
+            }, 300);
+
             this.$emit("closeVideoLibrary", true);
         },
         getPage(data, page, maxItems) {
@@ -438,14 +449,16 @@ export default {
 
     h2 span.count-videos {
         padding: 0.2rem 0.7rem;
+        padding-bottom: 0.1rem;
         background-color: #fb8b68;
         border-radius: 0.5rem;
-        font-size: 1.3rem;
+        font-size: 1.2rem;
         color: white;
         font-weight: 600;
         margin-left: 0.8rem;
         position: relative;
-        top: -0.1rem;
+        top: -0.2rem;
+        white-space: nowrap;
 
         i {
             font-size: 0.9rem;

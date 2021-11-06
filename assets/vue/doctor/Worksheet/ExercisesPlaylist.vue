@@ -307,7 +307,7 @@
         </transition>
         <transition name="fade">
             <VideoLibrary
-                v-show="videoLibraryToggle"
+                v-if="videoLibraryToggle"
                 :doctor="doctor"
                 :loadingVideos="loadingVideos"
                 :videos="videos"

@@ -122,11 +122,11 @@ class StripeService
                     $stripeSubscriptionId
                 );
 
-                if ($subscription) {
+                // if ($subscription) {
                     $subscription->setCurrentPeriodEnd(new \DateTime($stripeSubscription->current_period_end));
 
                     $this->em->flush();
-                }
+                // }
 
                 break;
             case 'invoice.payment_failed':
