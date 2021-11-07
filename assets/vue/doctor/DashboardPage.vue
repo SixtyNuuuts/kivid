@@ -240,63 +240,6 @@ export default {
                 this.myPatientsContent = true;
             }
         },
-        // calculWorksheetTimingProgression(
-        //     currentSessionNum,
-        //     totalWorksheetSessions
-        // ) {
-        //     let totalProgressionPercent = 0;
-
-        //     const sessionPercentPart = 100 / totalWorksheetSessions;
-
-        //     if (!currentSessionNum) {
-        //         currentSessionNum = totalWorksheetSessions;
-        //     }
-
-        //     const t1 =
-        //         Math.round(sessionPercentPart * (currentSessionNum - 1) * 10) /
-        //         10;
-
-        //     totalProgressionPercent = t1;
-
-        //     return totalProgressionPercent;
-        // },
-        calculWorksheetTotalProgression(
-            worksheet,
-            totalCompletedWorksheetSessions,
-            totalWorksheetSessions
-        ) {
-            let totalProgressionPercent = 0;
-
-            // if (worksheet.exercises.length) {
-            // const exercisePercentPart = 100 / worksheet.exercises.length;
-
-            // const exercisesCompletedCount = worksheet.exercises.filter(
-            //     (e) => e.isCompleted
-            // ).length;
-
-            // const currentSessionProgressionPercent =
-            //     exercisePercentPart * exercisesCompletedCount;
-
-            const sessionPercentPart = 100 / totalWorksheetSessions;
-
-            const t1 =
-                Math.round(
-                    sessionPercentPart * totalCompletedWorksheetSessions * 10
-                ) / 10;
-
-            // const t2 =
-            //     Math.round(
-            //         ((sessionPercentPart *
-            //             currentSessionProgressionPercent) /
-            //             100) *
-            //             10
-            //     ) / 10;
-
-            totalProgressionPercent = t1;
-            // }
-
-            return totalProgressionPercent;
-        },
     },
     created() {
         Vue.prototype.$vs = this.$vs;
@@ -327,88 +270,12 @@ export default {
                     return {
                         ...worksheet,
                         worksheetTotalProgression: null,
-                        // worksheetTimingProgression: null,
-                        currentWorksheetSession: {},
+                        currentWorksheetSession: null,
                         totalWorksheetSessions: null,
                         totalCompletedWorksheetSessions: null,
                     };
                 });
-                if (this.getDoctorPrescriptions.length) {
-                    this.getDoctorPrescriptions.forEach((worksheet) => {
-                        this.axios
-                            .get(
-                                `/patient/${worksheet.patient.id}/get/current-worksheet-session/${worksheet.id}/doctorview`
-                            )
-                            .then((response) => {
-                                worksheet.currentWorksheetSession =
-                                    response.data.currentWorksheetSession;
-
-                                this.axios
-                                    .get(
-                                        `/patient/${worksheet.patient.id}/get/total-worksheet-sessions/${worksheet.id}`
-                                    )
-                                    .then((response) => {
-                                        worksheet.totalWorksheetSessions =
-                                            response.data;
-
-                                        this.loadingDoctorWorksheets = false;
-
-                                        this.axios
-                                            .get(
-                                                `/patient/${worksheet.patient.id}/get/total-completed-worksheet-sessions/${worksheet.id}`
-                                            )
-                                            .then((response) => {
-                                                worksheet.totalCompletedWorksheetSessions =
-                                                    response.data;
-
-                                                // worksheet.worksheetTimingProgression =
-                                                //     this.calculWorksheetTimingProgression(
-                                                //         worksheet
-                                                //             .currentWorksheetSession
-                                                //             .execOrder,
-                                                //         worksheet.totalWorksheetSessions
-                                                //     );
-
-                                                worksheet.worksheetTotalProgression =
-                                                    this.calculWorksheetTotalProgression(
-                                                        worksheet,
-                                                        worksheet.totalCompletedWorksheetSessions,
-                                                        worksheet.totalWorksheetSessions
-                                                    );
-                                            })
-                                            .catch((error) => {
-                                                const errorMess =
-                                                    "object" ===
-                                                    typeof error.response.data
-                                                        ? error.response.data
-                                                              .detail
-                                                        : error.response.data;
-
-                                                console.error(errorMess);
-                                            });
-                                    })
-                                    .catch((error) => {
-                                        const errorMess =
-                                            "object" ===
-                                            typeof error.response.data
-                                                ? error.response.data.detail
-                                                : error.response.data;
-
-                                        console.error(errorMess);
-                                    });
-                            })
-                            .catch((error) => {
-                                const errorMess =
-                                    "object" === typeof error.response.data
-                                        ? error.response.data.detail
-                                        : error.response.data;
-
-                                console.error(errorMess);
-                            });
-                    });
-                } else {
-                    this.loadingDoctorWorksheets = false;
-                }
+                this.loadingDoctorWorksheets = false;
             })
             .catch((error) => {
                 const errorMess =
