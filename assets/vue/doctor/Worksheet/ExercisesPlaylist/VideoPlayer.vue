@@ -224,19 +224,116 @@ export default {
             .video-frame {
                 width: 100%;
                 height: 50.5vw;
-                max-width: 98.4rem;
+                // max-width: 98.4rem;
                 max-height: 55.4rem;
                 transform: translateY(-11rem);
                 border-radius: 1rem;
                 overflow: hidden;
 
+                @media (min-width: 560px) and (min-height: 0px) {
+                    height: 28.2vw;
+                    max-width: 51vw;
+                    transform: translateY(-3.9rem);
+                }
+
+                @media (min-width: 560px) and (min-height: 300px) {
+                    height: 34.2vw;
+                    max-width: 61vw;
+                    transform: translateY(-4.2rem);
+                }
+
                 @media (min-width: 768px) {
-                    height: 43.8vw;
                     transform: translateY(-4.7rem);
                 }
 
-                @media (min-width: 992px) {
+                @media (min-width: 768px) and (min-height: 0px) {
+                    height: 29.4vw;
+                    max-width: 52vw;
+                }
+
+                @media (min-width: 768px) and (min-height: 385px) {
+                    height: 33.4vw;
+                    max-width: 60vw;
+                }
+
+                @media (min-width: 768px) and (min-height: 465px) {
+                    height: 36.4vw;
+                    max-width: 65vw;
+                }
+
+                @media (min-width: 768px) and (min-height: 550px) {
+                    height: 31.4vw;
+                    max-width: 56vw;
+                }
+
+                @media (min-width: 768px) and (min-height: 630px) {
+                    height: 36.4vw;
+                    max-width: 65vw;
+                }
+
+                @media (min-width: 768px) and (min-height: 700px) {
+                    height: 43.8vw;
+                    max-width: 98.4rem;
+                }
+
+                @media (min-width: 992px) and (min-height: 0px) {
+                    height: 19.1vw;
+                    max-width: 34vw;
+                }
+
+                @media (min-width: 992px) and (min-height: 385px) {
+                    height: 25.1vw;
+                    max-width: 45vw;
+                }
+
+                @media (min-width: 992px) and (min-height: 465px) {
+                    height: 30.1vw;
+                    max-width: 54vw;
+                }
+
+                @media (min-width: 992px) and (min-height: 550px) {
+                    height: 35.1vw;
+                    max-width: 63vw;
+                }
+
+                @media (min-width: 992px) and (min-height: 630px) {
+                    height: 40.1vw;
+                    max-width: 71vw;
+                }
+
+                @media (min-width: 992px) and (min-height: 700px) {
                     height: 45.1vw;
+                    max-width: 99rem;
+                }
+
+                @media (min-width: 1370px) and (min-height: 0px) {
+                    height: 12.3vw;
+                    max-width: 22vw;
+                }
+
+                @media (min-width: 1370px) and (min-height: 385px) {
+                    height: 16.1vw;
+                    max-width: 29vw;
+                }
+
+                @media (min-width: 1370px) and (min-height: 465px) {
+                    height: 21.1vw;
+                    max-width: 38vw;
+                }
+
+                @media (min-width: 1370px) and (min-height: 550px) {
+                    height: 26.1vw;
+                    max-width: 47vw;
+                }
+
+                @media (min-width: 1370px) and (min-height: 630px) {
+                    height: 31.1vw;
+                    max-width: 55vw;
+                }
+
+                @media (min-width: 1370px) and (min-height: 700px) {
+                    height: 45.1vw;
+                    max-width: 99rem;
                 }
             }
         }
@@ -262,7 +359,7 @@ export default {
             overflow: hidden;
             overflow-y: auto;
 
-            @media (min-width: 768px) {
+            @media (min-width: 560px) {
                 flex-direction: row;
             }
 
@@ -272,7 +369,7 @@ export default {
                 flex-direction: column;
                 align-items: center;
 
-                @media (min-width: 768px) {
+                @media (min-width: 560px) {
                     flex-direction: row;
                     max-width: 40%;
                     font-size: 2.2rem;
@@ -287,7 +384,7 @@ export default {
                     white-space: nowrap;
                     margin-right: 0;
 
-                    @media (min-width: 768px) {
+                    @media (min-width: 560px) {
                         margin-right: 1rem;
                     }
                 }
@@ -295,7 +392,7 @@ export default {
                 .tiret {
                     display: none;
 
-                    @media (min-width: 768px) {
+                    @media (min-width: 560px) {
                         display: inline-block;
                     }
                 }
@@ -305,7 +402,7 @@ export default {
                     margin-top: 0.4rem;
                     text-align: center;
 
-                    @media (min-width: 768px) {
+                    @media (min-width: 560px) {
                         margin-top: 0;
                         margin-left: 1rem;
                         white-space: nowrap;
@@ -318,7 +415,7 @@ export default {
             .btn-next {
                 position: initial;
 
-                @media (min-width: 768px) {
+                @media (min-width: 560px) {
                     position: absolute;
                     left: 50%;
                     top: 50%;
@@ -334,7 +431,7 @@ export default {
                 margin-top: 2.3rem;
                 margin-bottom: 2.85rem;
 
-                @media (min-width: 768px) {
+                @media (min-width: 560px) {
                     align-items: flex-end;
                     margin-top: 0;
                     margin-bottom: 0;
@@ -386,7 +483,7 @@ export default {
                 align-items: center;
                 margin-top: 0.8rem;
 
-                @media (min-width: 768px) {
+                @media (min-width: 560px) {
                     margin-top: 0.25rem;
                 }
 
