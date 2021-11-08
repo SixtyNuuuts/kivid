@@ -11,6 +11,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 class SubscriptionController extends AbstractController
 {
@@ -27,6 +28,7 @@ class SubscriptionController extends AbstractController
 
     /**
      * @Route("/abonnement/{status}", name="app_subscription", methods={"GET"})
+     * @isGranted("IS_AUTHENTICATED_FULLY")
      */
     public function subscription(
         Request $request,
@@ -79,6 +81,7 @@ class SubscriptionController extends AbstractController
     /**
      * @Route("/subscription/checkout",
      * name="app_subscription_checkout", methods={"POST"})
+     * @isGranted("IS_AUTHENTICATED_FULLY")
      */
     public function subscriptionCheckout(
         Request $request
@@ -109,6 +112,7 @@ class SubscriptionController extends AbstractController
     /**
      * @Route("/subscription/customer-portal-session",
      * name="app_subscription_customer_portal_session", methods={"POST"})
+     * @isGranted("IS_AUTHENTICATED_FULLY")
      */
     public function subscriptionCustomerPortalSession(
         Request $request
@@ -132,6 +136,7 @@ class SubscriptionController extends AbstractController
 
     /**
      * @Route("/subscription/webhook", name="app_subscription_webhook", methods={"POST"})
+     * @isGranted("IS_AUTHENTICATED_FULLY")
      */
     public function subscriptionWebhook(Request $request): JsonResponse
     {

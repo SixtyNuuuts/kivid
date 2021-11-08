@@ -307,7 +307,7 @@
         </transition>
         <transition name="fade">
             <VideoLibrary
-                v-show="videoLibraryToggle"
+                v-if="videoLibraryToggle"
                 :doctor="doctor"
                 :loadingVideos="loadingVideos"
                 :videos="videos"
@@ -567,7 +567,7 @@ export default {
 
         .vs-input-content {
             .vs-input {
-                background: rgba(255, 255, 255, 0.25);
+                background: $white;
                 padding-bottom: 1.5rem;
 
                 &:focus,
@@ -813,8 +813,8 @@ export default {
                     display: flex;
                     justify-content: center;
                     align-items: center;
-                    border: 1px solid $gray-middle;
-                    color: $gray-middle;
+                    border: 1px solid #d6ccb9;
+                    color: #d6ccb9;
                     cursor: pointer;
                     transition: all 0.2s;
                     background: transparent;
@@ -916,7 +916,7 @@ export default {
                         color: #222e54;
                         border: 0.1rem solid $gray-middle;
                         border-radius: 0.5rem;
-                        background: rgba(255, 255, 255, 0.25);
+                        background: $white;
 
                         &:hover {
                             background: $white;
@@ -1011,12 +1011,12 @@ export default {
                             display: flex;
                             align-items: center;
                             justify-content: center;
-                            width: 1.5rem;
-                            height: 1.5rem;
-                            min-width: 1.5rem;
-                            min-height: 1.5rem;
-                            max-height: 1.5rem;
-                            border-radius: 1.5rem;
+                            width: 1.8rem;
+                            height: 1.8rem;
+                            min-width: 1.8rem;
+                            min-height: 1.8rem;
+                            max-height: 1.8rem;
+                            border-radius: 50%;
                             border: 1px solid #efe9df;
 
                             &.active {
@@ -1028,7 +1028,7 @@ export default {
                             }
 
                             i {
-                                font-size: 0.7rem;
+                                font-size: 0.8rem;
                                 color: #efe9df;
                                 transition: all;
                             }
@@ -1043,19 +1043,19 @@ export default {
                     .kiv-help {
                         margin-left: 0.6rem;
                         position: relative;
-                        top: 0;
+                        top: -0.1rem;
 
                         .icon-help {
                             display: flex;
                             align-items: center;
                             justify-content: center;
-                            width: 1.5rem;
-                            height: 1.5rem;
-                            min-width: 1.5rem;
-                            min-height: 1.5rem;
-                            max-height: 1.5rem;
-                            border-radius: 1.5rem;
-                            border: 1px solid #e1dacd;
+                            width: 1.8rem;
+                            height: 1.8rem;
+                            min-width: 1.8rem;
+                            min-height: 1.8rem;
+                            max-height: 1.8rem;
+                            border-radius: 50%;
+                            border: 1px solid #d6cfbe;
 
                             &:hover {
                                 border: 1px solid #d8d1c0;
@@ -1066,8 +1066,8 @@ export default {
                             }
 
                             i {
-                                font-size: 0.7rem;
-                                color: #e1dacd;
+                                font-size: 0.8rem;
+                                color: #d6cfbe;
                                 transition: all;
                                 margin-right: 0;
                             }

@@ -7,6 +7,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
+/**
+ * @Route("/doctor")
+ */
 class VideoController extends AbstractController
 {
     private $videoRepository;
@@ -17,7 +20,8 @@ class VideoController extends AbstractController
     }
 
     /**
-     * @Route("/get/videos", name="app_get_videos", methods={"GET"})
+     * @Route("/{id}/get/videos", name="app_doctor_get_videos", methods={"GET"})
+     *
      */
     public function getVideos(): JsonResponse
     {

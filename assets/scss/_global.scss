@@ -833,9 +833,11 @@ body.no-scrollbar::-webkit-scrollbar {
         color: $black;
         box-shadow: inset 0 0 20px 0 rgb(0, 0, 0, 0.04);
         margin-top: 1.5rem;
+        margin-left: 0;
 
         @media (min-width: 576px) {
             margin-top: 0;
+            margin-left: 0.5em;
         }
     }
 }
@@ -1258,7 +1260,23 @@ body.no-scrollbar::-webkit-scrollbar {
     background: $white;
     border-radius: 1rem;
     padding: 4.3rem;
-    margin-top: 5rem;
+    margin-top: 9vh;
+
+    @media (min-height: 380px) {
+        margin-top: 4vh;
+    }
+
+    @media (min-height: 400px) {
+        margin-top: 5vh;
+    }
+
+    @media (min-height: 450px) {
+        margin-top: 1.9vh;
+    }
+
+    @media (min-height: 650px) {
+        margin-top: 5rem;
+    }
 
     .icon-request-subscription {
         width: 5rem;
@@ -1282,12 +1300,22 @@ body.no-scrollbar::-webkit-scrollbar {
     }
     .text-request-subscription {
         p {
-            margin-top: 4rem;
-            margin-bottom: 4.5rem;
             font-size: 2.3rem;
             font-weight: 700;
             max-width: 44rem;
             text-align: center;
+            margin-top: 5vh;
+            margin-bottom: 5vh;
+
+            @media (min-height: 450px) {
+                margin-top: 4vh;
+                margin-bottom: 4vh;
+            }
+
+            @media (min-height: 650px) {
+                margin-top: 4rem;
+                margin-bottom: 4.5rem;
+            }
         }
     }
 
@@ -1378,24 +1406,7 @@ body.no-scrollbar::-webkit-scrollbar {
     }
 }
 
-// HACK : Detecting autofilled fields in Javascript
-// input.is-autofilled @keyframes onAutoFillStart {
-//     from {
-//         /**/
-//     }
-//     to {
-//         /**/
-//     }
-// }
-// @keyframes onAutoFillCancel {
-//     from {
-//         /**/
-//     }
-//     to {
-//         /**/
-//     }
-// }
-
+// HACK WEBKIT : Detecting autofilled fields
 input:-webkit-autofill ~ label {
     font-size: 1.4rem !important;
     top: -0.8rem !important;
@@ -1405,11 +1416,6 @@ input:-webkit-autofill ~ label {
         0 0 0.3rem #fff, 0 0 0.3rem #fff, 0 0 0.3rem #fff, 0 0 0.3rem #fff, 0 0 0.3rem #fff, 0 0 0.3rem #fff,
         0 0 0.3rem #fff, 0 0 0.3rem #fff;
 }
-// input:not(:-webkit-autofill) {
-//     // Expose a hook for JS onAutoFillCancel
-//     // JavaScript can capture 'animationstart' events
-//     animation-name: onAutoFillCancel;
-// }
 
 .btn-go-to-top {
     display: none;

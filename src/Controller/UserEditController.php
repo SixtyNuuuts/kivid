@@ -7,7 +7,6 @@ use App\Repository\PatientRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -130,21 +129,5 @@ class UserEditController extends AbstractController
         }
 
         return $this->render("settings/profil.html.twig", ['currentUser' => $user]);
-    }
-
-    /**
-     * @Route("/{userType}/all", name="app_user_get_all", methods={"GET"})
-     */
-    public function getAll(string $userType): JsonResponse
-    {
-        $repository = $this->patientRepository;
-        $serializeGroup = 'patient_read';
-
-        if ('doctors' === $userType) {
-            $repository = $this->doctorRepository;
-            $serializeGroup = 'doctor_read';
-        }
-
-        return $this->json($repository->findAll(), 200, [], ['groups' => $serializeGroup]);
     }
 }

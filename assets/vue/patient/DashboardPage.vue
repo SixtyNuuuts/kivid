@@ -384,149 +384,95 @@ export default {
 
                 if (this.patientWorksheets.length) {
                     this.patientWorksheets.forEach((worksheet) => {
-                        if (!this.doctorView) {
-                            this.axios
-                                .get(
-                                    `/patient/${this.patient.id}/get/current-worksheet-session/${worksheet.id}/time-left-before-next`
-                                )
-                                .then((response) => {
-                                    worksheet.currentWorksheetSession =
-                                        response.data.currentWorksheetSession;
+                        this.axios
+                            .get(
+                                `/patient/${this.patient.id}/get/current-worksheet-session/${worksheet.id}/time-left-before-next`
+                            )
+                            .then((response) => {
+                                worksheet.currentWorksheetSession =
+                                    response.data.currentWorksheetSession;
 
-                                    if (response.data.currentWorksheetSession) {
-                                        worksheet.timeLeftBeforeNextSession =
-                                            this.getTimeLeftBeforeNextSession(
-                                                response.data
-                                                    .currentWorksheetSession
-                                                    .endAt
-                                            );
-                                    }
-
-                                    if (response.data.notifTimeLeft) {
-                                        const userNotifList =
-                                            document.getElementById(
-                                                "user-notif-list"
-                                            );
-                                        const notifBell =
-                                            document.getElementById(
-                                                "notif-bell"
-                                            );
-
-                                        notifBell.classList.add(
-                                            "has-notifications"
+                                if (response.data.currentWorksheetSession) {
+                                    worksheet.timeLeftBeforeNextSession =
+                                        this.getTimeLeftBeforeNextSession(
+                                            response.data
+                                                .currentWorksheetSession.endAt
                                         );
+                                }
 
-                                        let li = document.createElement("li");
-                                        li.classList.add("prio");
-                                        li.classList.add("active");
-                                        li.addEventListener(
-                                            "mouseover",
-                                            () => {
-                                                li.classList.remove("active");
-                                            },
-                                            false
+                                if (response.data.notifTimeLeft) {
+                                    const userNotifList =
+                                        document.getElementById(
+                                            "user-notif-list"
                                         );
+                                    const notifBell =
+                                        document.getElementById("notif-bell");
 
-                                        let divIcon =
-                                            document.createElement("div");
-                                        divIcon.classList.add("notif-icon");
+                                    notifBell.classList.add(
+                                        "has-notifications"
+                                    );
 
-                                        let img = document.createElement("img");
-                                        img.src =
-                                            "/img/icons/colored/clock.svg";
-                                        img.alt =
-                                            "Icone d'une montre / horloge";
-                                        img.classList.add("icon-clock");
+                                    let li = document.createElement("li");
+                                    li.classList.add("prio");
+                                    li.classList.add("active");
+                                    li.addEventListener(
+                                        "mouseover",
+                                        () => {
+                                            li.classList.remove("active");
+                                        },
+                                        false
+                                    );
 
-                                        let p = document.createElement("p");
-                                        let span =
-                                            document.createElement("span");
-                                        span.innerText = `Plus que quelques ${response.data.notifTimeLeft.time} pour réaliser vos exercices de "${response.data.notifTimeLeft.worksheet}", je m'y met maintenant !`;
+                                    let divIcon = document.createElement("div");
+                                    divIcon.classList.add("notif-icon");
 
-                                        p.appendChild(span);
+                                    let img = document.createElement("img");
+                                    img.src = "/img/icons/colored/clock.svg";
+                                    img.alt = "Icone d'une montre / horloge";
+                                    img.classList.add("icon-clock");
 
-                                        divIcon.appendChild(img);
+                                    let p = document.createElement("p");
+                                    let span = document.createElement("span");
+                                    span.innerText = `Plus que quelques ${response.data.notifTimeLeft.time} pour réaliser vos exercices de "${response.data.notifTimeLeft.worksheet}", je m'y met maintenant !`;
 
-                                        li.appendChild(divIcon);
+                                    p.appendChild(span);
 
-                                        li.appendChild(p);
+                                    divIcon.appendChild(img);
 
-                                        userNotifList.appendChild(li);
-                                    }
+                                    li.appendChild(divIcon);
 
-                                    this.axios
-                                        .get(
-                                            `/patient/${this.patient.id}/get/total-worksheet-sessions/${worksheet.id}`
-                                        )
-                                        .then((response) => {
-                                            worksheet.totalWorksheetSessions =
-                                                response.data;
-                                            this.loadingPatientWorksheets = false;
-                                        })
-                                        .catch((error) => {
-                                            const errorMess =
-                                                "object" ===
-                                                typeof error.response.data
-                                                    ? error.response.data.detail
-                                                    : error.response.data;
+                                    li.appendChild(p);
 
-                                            console.error(errorMess);
-                                        });
-                                })
-                                .catch((error) => {
-                                    // const errorMess =
-                                    //     "object" === typeof error.response.data
-                                    //         ? error.response.data.detail
-                                    //         : error.response.data;
+                                    userNotifList.appendChild(li);
+                                }
 
-                                    console.error(error);
-                                });
-                        } else {
-                            this.axios
-                                .get(
-                                    `/patient/${this.patient.id}/get/current-worksheet-session/${worksheet.id}/doctorview`
-                                )
-                                .then((response) => {
-                                    worksheet.currentWorksheetSession =
-                                        response.data.currentWorksheetSession;
+                                this.axios
+                                    .get(
+                                        `/patient/${this.patient.id}/get/total-worksheet-sessions/${worksheet.id}`
+                                    )
+                                    .then((response) => {
+                                        worksheet.totalWorksheetSessions =
+                                            response.data;
+                                        this.loadingPatientWorksheets = false;
+                                    })
+                                    .catch((error) => {
+                                        const errorMess =
+                                            "object" ===
+                                            typeof error.response.data
+                                                ? error.response.data.detail
+                                                : error.response.data;
 
-                                    if (worksheet.currentWorksheetSession) {
-                                        worksheet.timeLeftBeforeNextSession =
-                                            this.getTimeLeftBeforeNextSession(
-                                                response.data
-                                                    .currentWorksheetSession
-                                                    .endAt
-                                            );
-                                    }
+                                        console.error(errorMess);
+                                    });
+                            })
+                            .catch((error) => {
+                                const errorMess =
+                                    "object" === typeof error.response.data
+                                        ? error.response.data.detail
+                                        : error.response.data;
 
-                                    this.axios
-                                        .get(
-                                            `/patient/${this.patient.id}/get/total-worksheet-sessions/${worksheet.id}`
-                                        )
-                                        .then((response) => {
-                                            worksheet.totalWorksheetSessions =
-                                                response.data;
-                                            this.loadingPatientWorksheets = false;
-                                        })
-                                        .catch((error) => {
-                                            const errorMess =
-                                                "object" ===
-                                                typeof error.response.data
-                                                    ? error.response.data.detail
-                                                    : error.response.data;
-
-                                            console.error(errorMess);
-                                        });
-                                })
-                                .catch((error) => {
-                                    const errorMess =
-                                        "object" === typeof error.response.data
-                                            ? error.response.data.detail
-                                            : error.response.data;
-
-                                    console.error(errorMess);
-                                });
-                        }
+                                console.error(errorMess);
+                            });
                     });
                 } else {
                     this.loadingPatientWorksheets = false;

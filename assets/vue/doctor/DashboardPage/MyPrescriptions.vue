@@ -121,27 +121,33 @@
                                 />
                             </div>
                             <div class="worksheet-progress-line">
-                                <div class="progressbar-base">
+                                <div
+                                    v-if="
+                                        loadingsGetSessions.includes(
+                                            worksheet.id
+                                        )
+                                    "
+                                    class="loading-gray progressbar-base"
+                                ></div>
+                                <div v-else class="progressbar-base">
                                     <div
                                         class="progressbar-thumb"
                                         :style="{
                                             width: `${worksheet.worksheetTotalProgression}%`,
                                         }"
                                     ></div>
-                                    <!-- <div class="progressbar-steps">
-                                        <div>
-                                            <div class="point"></div>
-                                        </div>
-                                    </div> -->
                                 </div>
                                 <div class="count-sessions">
-                                    <!-- <i class="session-img">
-                                        <img
-                                            src="../../../img/icons/colored/basket.svg"
-                                            alt="Icone d'une basket"
-                                        />
-                                    </i> -->
+                                    <div
+                                        v-if="
+                                            loadingsGetSessions.includes(
+                                                worksheet.id
+                                            )
+                                        "
+                                        class="loading-gray session-nb"
+                                    ></div>
                                     <p
+                                        v-else
                                         class="session-nb"
                                         :class="{
                                             completed:
@@ -171,7 +177,22 @@
                                                 worksheet.totalWorksheetSessions
                                             }}
                                         </span>
-                                        <span v-else> Non démarrée </span>
+                                        <span
+                                            v-if="
+                                                0 ===
+                                                worksheet.totalWorksheetSessions
+                                            "
+                                        >
+                                            Non démarrée
+                                        </span>
+                                        <span
+                                            v-if="
+                                                null ===
+                                                worksheet.totalWorksheetSessions
+                                            "
+                                        >
+                                            NB Sessions
+                                        </span>
                                     </p>
                                 </div>
                             </div>
@@ -502,30 +523,6 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="loading loading-block">
-                            <div class="worksheet-header w-85">
-                                <div class="loading worksheet-title w-45"></div>
-                                <div class="loading part-of-body"></div>
-                            </div>
-                            <div class="loading worksheet-progress-line"></div>
-                            <div class="worksheet-content">
-                                <div class="worksheet-details">
-                                    <div
-                                        class="
-                                            loading
-                                            worksheet-exercises-count
-                                            w-45
-                                        "
-                                    ></div>
-                                    <div
-                                        class="loading worksheet-timing w-25"
-                                    ></div>
-                                    <div
-                                        class="loading worksheet-period w-15"
-                                    ></div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
                 <div class="pagination" v-if="doctorPrescriptions.length > max">
@@ -597,11 +594,102 @@ export default {
     },
     computed: {
         getDoctorPrescriptions() {
-            return this.getPage(
+            const docPrescriptions = this.getPage(
                 f.getSearch(this.doctorPrescriptions, this.search, "doctor"),
                 this.page,
                 this.max
             );
+
+            if (docPrescriptions.length) {
+                const debounceTimer = this.search ? 700 : 0;
+                clearTimeout(this.debounceGetSessionsInfos);
+                this.debounceGetSessionsInfos = setTimeout(() => {
+                    docPrescriptions.forEach((worksheet) => {
+                        if (
+                            null === worksheet.worksheetTotalProgression ||
+                            null === worksheet.currentWorksheetSession ||
+                            null === worksheet.totalWorksheetSessions ||
+                            null === worksheet.totalCompletedWorksheetSessions
+                        ) {
+                            this.loadingsGetSessions.push(worksheet.id);
+                            this.axios
+                                .get(
+                                    `/patient/${worksheet.patient.id}/get/current-worksheet-session/${worksheet.id}/doctorview`
+                                )
+                                .then((response) => {
+                                    worksheet.currentWorksheetSession =
+                                        null ===
+                                        response.data.currentWorksheetSession
+                                            ? false
+                                            : response.data
+                                                  .currentWorksheetSession;
+
+                                    this.axios
+                                        .get(
+                                            `/patient/${worksheet.patient.id}/get/total-worksheet-sessions/${worksheet.id}`
+                                        )
+                                        .then((response) => {
+                                            worksheet.totalWorksheetSessions =
+                                                response.data;
+
+                                            this.axios
+                                                .get(
+                                                    `/patient/${worksheet.patient.id}/get/total-completed-worksheet-sessions/${worksheet.id}`
+                                                )
+                                                .then((response) => {
+                                                    worksheet.totalCompletedWorksheetSessions =
+                                                        response.data;
+
+                                                    worksheet.worksheetTotalProgression =
+                                                        this.calculWorksheetTotalProgression(
+                                                            worksheet.totalCompletedWorksheetSessions,
+                                                            worksheet.totalWorksheetSessions
+                                                        );
+
+                                                    this.loadingsGetSessions.splice(
+                                                        this.loadingsGetSessions.indexOf(
+                                                            worksheet.id
+                                                        ),
+                                                        1
+                                                    );
+                                                })
+                                                .catch((error) => {
+                                                    const errorMess =
+                                                        "object" ===
+                                                        typeof error.response
+                                                            .data
+                                                            ? error.response
+                                                                  .data.detail
+                                                            : error.response
+                                                                  .data;
+
+                                                    console.error(errorMess);
+                                                });
+                                        })
+                                        .catch((error) => {
+                                            const errorMess =
+                                                "object" ===
+                                                typeof error.response.data
+                                                    ? error.response.data.detail
+                                                    : error.response.data;
+
+                                            console.error(errorMess);
+                                        });
+                                })
+                                .catch((error) => {
+                                    const errorMess =
+                                        "object" === typeof error.response.data
+                                            ? error.response.data.detail
+                                            : error.response.data;
+
+                                    console.error(errorMess);
+                                });
+                        }
+                    });
+                }, debounceTimer);
+            }
+
+            return docPrescriptions;
         },
     },
     data() {
@@ -612,9 +700,28 @@ export default {
             modalConfirmRemoveWorksheet: false,
             removeWorksheetDetails: {},
             btnLoadingValidRemoveWorksheet: false,
+            debounceGetSessionsInfos: null,
+            loadingsGetSessions: [],
         };
     },
     methods: {
+        calculWorksheetTotalProgression(
+            totalCompletedWorksheetSessions,
+            totalWorksheetSessions
+        ) {
+            let totalProgressionPercent = 0;
+
+            const sessionPercentPart = 100 / totalWorksheetSessions;
+
+            const t1 =
+                Math.round(
+                    sessionPercentPart * totalCompletedWorksheetSessions * 10
+                ) / 10;
+
+            totalProgressionPercent = t1;
+
+            return totalProgressionPercent;
+        },
         prescriProcess() {
             this.$emit("prescriProcess", true);
         },
@@ -873,6 +980,22 @@ export default {
                 .progressbar-base {
                     flex-grow: 1;
                     height: 0.6rem;
+
+                    &.loading-gray {
+                        animation-duration: 1.2s;
+                        animation-fill-mode: forwards;
+                        animation-iteration-count: infinite;
+                        animation-name: placeHolderShimmer;
+                        animation-timing-function: linear;
+                        background: linear-gradient(
+                            to right,
+                            #f2efe8 8%,
+                            #e1dcd0 38%,
+                            #f2efe8 54%
+                        );
+                        background-size: 1000px 640px;
+                        position: relative;
+                    }
                 }
 
                 .count-sessions {
@@ -880,12 +1003,9 @@ export default {
                     align-items: center;
                     margin-left: 0.8rem;
 
-                    // i {
-                    //     width: 1.9rem;
-                    // }
                     .session-nb {
                         font-weight: 700;
-                        color: #dfd9ca;
+                        color: #d3ccbc;
                         margin: 0;
                         font-size: 0.9rem;
                         text-transform: uppercase;
@@ -897,6 +1017,13 @@ export default {
                         &:not(.completed):hover {
                             color: $gray-dark;
                         }
+                    }
+
+                    .loading-gray.session-nb {
+                        height: 1rem;
+                        width: 6.5rem;
+                        border-radius: 0.5rem;
+                        border: 2px solid #faf8f4;
                     }
                 }
             }

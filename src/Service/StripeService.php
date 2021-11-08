@@ -112,15 +112,21 @@ class StripeService
                 // Store the status in your database and check when a user accesses your service.
                 // This approach helps you avoid hitting rate limits.
 
+                $stripeSubscriptionId = $event->data->object->subscription;
+
                 $subscription = $this->subscriptionRepository->findOneBy([
-                    'stripeSubscriptionId' => $event->data->object->subscription
+                    'stripeSubscriptionId' => $stripeSubscriptionId
                 ]);
 
-                if ($subscription) {
-                    $subscription->setCurrentPeriodEnd(new \DateTime($event->data->object->lines->data->period->end));
+                $stripeSubscription = $this->retrieveSubscription(
+                    $stripeSubscriptionId
+                );
+
+                // if ($subscription) {
+                    $subscription->setCurrentPeriodEnd(new \DateTime($stripeSubscription->current_period_end));
 
                     $this->em->flush();
-                }
+                // }
 
                 break;
             case 'invoice.payment_failed':

@@ -3,9 +3,9 @@
 <svg version="1.1" id="Calque_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 574 574" style="enable-background:new 0 0 574 574;" xml:space="preserve">
 <style type="text/css">
-	.st0{opacity:0.23;fill:url(#SVGID_1_);enable-background:new    ;}
+	.st0{opacity:7.000000e-02;fill:url(#SVGID_1_);enable-background:new    ;}
 </style>
-<radialGradient id="SVGID_1_" cx="-66.7338" cy="708.1337" r="1" gradientTransform="matrix(1.757368e-14 287 287 -1.757368e-14 -202947.3594 19439)" gradientUnits="userSpaceOnUse">
+<radialGradient id="SVGID_1_" cx="-57.1972" cy="-0.2108" r="1" gradientTransform="matrix(1.757368e-14 287 -287 1.757368e-14 227.0028 16703)" gradientUnits="userSpaceOnUse">
 	<stop  offset="0" style="stop-color:#FFFFFF"/>
 	<stop  offset="0.2642" style="stop-color:#FFFFFF;stop-opacity:0.72"/>
 	<stop  offset="0.4393" style="stop-color:#FFFFFF;stop-opacity:0.5607"/>
@@ -16,5 +16,5 @@
 	<stop  offset="0.9941" style="stop-color:#F0F2F4;stop-opacity:5.931497e-03"/>
 	<stop  offset="1" style="stop-color:#F0F4F7;stop-opacity:0"/>
 </radialGradient>
-<circle class="st0" cx="287" cy="286.4" r="287"/>
+<circle class="st0" cx="287.5" cy="287.4" r="287"/>
 </svg>

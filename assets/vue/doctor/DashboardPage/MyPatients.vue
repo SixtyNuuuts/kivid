@@ -144,21 +144,15 @@
                                             class="prescriptions"
                                         >
                                             <h4>
-                                                Prescription<span
+                                                <span>{{
+                                                    patient.worksheets.length
+                                                }}</span>
+                                                prescription<span
                                                     v-if="
                                                         patient.worksheets
                                                             .length > 1
                                                     "
                                                     >s</span
-                                                >
-                                                <span
-                                                    class="
-                                                        count-patient-prescri
-                                                    "
-                                                    >{{
-                                                        patient.worksheets
-                                                            .length
-                                                    }}</span
                                                 >
                                                 :
                                             </h4>
@@ -767,8 +761,8 @@ export default {
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                border: 1px solid #e6decd;
-                color: #e6decd;
+                border: 1px solid #d6cfbe;
+                color: #d6cfbe;
                 cursor: pointer;
                 transition: all 0.2s;
                 background: transparent;
@@ -933,7 +927,7 @@ export default {
                                         min-width: 1.2rem;
                                         min-height: 1.2rem;
                                         max-height: 1.2rem;
-                                        background-color: #e6decd;
+                                        background-color: #d6cfbe;
                                         border-radius: 50%;
                                         font-size: 0.7rem;
                                         display: inline-flex;

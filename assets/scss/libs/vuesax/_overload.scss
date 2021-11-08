@@ -954,6 +954,22 @@
     border-radius: initial;
 }
 
+//pagination
+
+.vs-pagination-content.buttonsDotted .vs-pagination__arrow {
+    width: 26px;
+    height: 20px;
+}
+
+.vs-pagination-content.buttonsDotted .vs-pagination__arrow i {
+    width: 10px;
+    height: 10px;
+}
+
+.vs-pagination-content.buttonsDotted .vs-pagination__active {
+    transform: translateY(3.6px);
+}
+
 /* VueSax Overload */
 // :root {
 //   --vs-primary: 25, 91, 255;

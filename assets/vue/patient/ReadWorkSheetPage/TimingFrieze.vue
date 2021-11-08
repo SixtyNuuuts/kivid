@@ -180,7 +180,10 @@ export default {
             );
         },
         getWorksheetSessionDoneDate() {
-            if (this.getCurrentWorksheetSession.doneAt) {
+            if (
+                this.getCurrentWorksheetSession &&
+                this.getCurrentWorksheetSession.doneAt
+            ) {
                 return moment(this.getCurrentWorksheetSession.donetAt).format(
                     "DD/MM/YYYY"
                 );
@@ -188,7 +191,10 @@ export default {
             return null;
         },
         getWorksheetSessionDoneHours() {
-            if (this.getCurrentWorksheetSession.doneAt) {
+            if (
+                this.getCurrentWorksheetSession &&
+                this.getCurrentWorksheetSession.doneAt
+            ) {
                 return moment(this.getCurrentWorksheetSession.donetAt).format(
                     "HH:mm:ss"
                 );

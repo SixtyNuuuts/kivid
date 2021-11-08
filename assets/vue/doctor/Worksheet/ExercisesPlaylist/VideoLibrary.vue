@@ -8,7 +8,29 @@
                 >
                     <i class="vs-icon-close vs-icon-hover-x"></i>
                 </button>
-                <h2>Vidéothèque</h2>
+                <h2>
+                    Vidéothèque
+                    <span v-if="!loadingVideos" class="count-videos">
+                        <transition name="fade">
+                            <i
+                                v-if="
+                                    search || selectedTags.length || selectedPoB
+                                "
+                                class="fas fa-filter"
+                            ></i></transition
+                        >{{ getTotalVideosFiltered }} vidéo<span
+                            v-if="getTotalVideosFiltered > 1"
+                            >s</span
+                        >
+                        <span
+                            v-if="search || selectedTags.length || selectedPoB"
+                        >
+                            filtrée<span v-if="getTotalVideosFiltered > 1"
+                                >s</span
+                            >
+                        </span></span
+                    >
+                </h2>
                 <div class="primary-actions">
                     <div class="search">
                         <vs-input
@@ -41,7 +63,7 @@
                         <div v-else class="loading select-tags"></div>
                     </div>
                     <SelectPartOfBody
-                        :partOfBody="null"
+                        :partOfBody="selectedPoB"
                         @partOfBodySelected="filterByPartOfBody"
                         @partOfBodyReset="resetSelectedPoB"
                     />
@@ -230,7 +252,7 @@ export default {
         return {
             search: "",
             page: 1,
-            max: 6,
+            max: 12,
             playerVars: {
                 rel: 0,
                 showinfo: 0,
@@ -261,6 +283,9 @@ export default {
                 this.max
             );
         },
+        getTotalVideosFiltered() {
+            return this.getSearch(this.videos, this.search).length;
+        },
         getTagsFromAllVideos() {
             return f.getTagsFromAllVideos(this.videos);
         },
@@ -289,9 +314,6 @@ export default {
             this.btnLoadingValidVideosSelection = true;
             this.$emit("videos-selection", this.selectedVideos);
 
-            this.search = "";
-            this.selectedTags = [];
-            this.selectedVideos = [];
             this.closeVideoLibrary();
 
             setTimeout(() => {
@@ -299,6 +321,13 @@ export default {
             }, 1000);
         },
         closeVideoLibrary() {
+            setTimeout(() => {
+                this.search = "";
+                this.selectedTags = [];
+                this.selectedVideos = [];
+                this.selectedPoB = null;
+            }, 300);
+
             this.$emit("closeVideoLibrary", true);
         },
         getPage(data, page, maxItems) {
@@ -312,17 +341,21 @@ export default {
 
             if (this.selectedTags.length) {
                 videosListFiltered = videosListFiltered.filter((v) => {
-                    let result = false;
+                    const results = [];
 
                     if (v.tags) {
-                        v.tags.forEach((tag) => {
-                            if (this.selectedTags.includes(tag.name)) {
-                                result = true;
-                            }
+                        this.selectedTags.forEach((tag) => {
+                            let result = false;
+                            v.tags.forEach((vtag) => {
+                                if (vtag.name === tag) {
+                                    result = true;
+                                }
+                            });
+                            results.push(result);
                         });
                     }
 
-                    return result;
+                    return !results.includes(false);
                 });
             }
 
@@ -349,17 +382,17 @@ export default {
 
             this.timeout = setTimeout(() => {
                 if (window.innerWidth < 449) {
-                    this.max = 2;
+                    this.max = 100;
                     this.page = 1;
                 }
 
                 if (window.innerWidth >= 449 && window.innerWidth <= 649) {
-                    this.max = 4;
+                    this.max = 8;
                     this.page = 1;
                 }
 
                 if (window.innerWidth > 649 && window.innerWidth <= 849) {
-                    this.max = 6;
+                    this.max = 9;
                     this.page = 1;
                 }
 
@@ -417,6 +450,27 @@ export default {
     left: 0;
     right: 0;
     bottom: 0;
+
+    h2 span.count-videos {
+        padding: 0.2rem 0.7rem;
+        padding-bottom: 0.1rem;
+        background-color: #fb8b68;
+        border-radius: 0.5rem;
+        font-size: 1.2rem;
+        color: white;
+        font-weight: 600;
+        margin-left: 0.8rem;
+        position: relative;
+        top: -0.2rem;
+        white-space: nowrap;
+
+        i {
+            font-size: 0.9rem;
+            position: relative;
+            top: -0.1rem;
+            margin-right: 0.5rem;
+        }
+    }
 
     .btn-close-library-sm {
         border-radius: 50%;
@@ -537,7 +591,16 @@ export default {
         overflow: hidden;
         display: flex;
         justify-content: center;
-        align-items: center;
+        align-items: flex-start;
+        overflow-y: auto;
+
+        @media (min-width: 850px) {
+            padding: 7vh;
+        }
+
+        @media (min-height: 840px) {
+            align-items: center;
+        }
 
         &::-webkit-scrollbar {
             width: 4px;
@@ -556,11 +619,6 @@ export default {
             background: #2e3858a1;
             border: 1px solid transparent;
             border-radius: 4px;
-        }
-
-        @media (max-height: 815px) {
-            align-items: flex-start;
-            overflow-y: auto;
         }
 
         #video-library {
@@ -617,6 +675,31 @@ export default {
                     align-items: center;
                     justify-content: center;
                     border-radius: 0.8rem;
+                    max-height: initial;
+
+                    @media (max-width: 450px) and (min-height: 0px) {
+                        max-height: 45vh;
+                        overflow: auto;
+                    }
+
+                    @media (max-width: 450px) and (min-height: 700px) {
+                        max-height: 53vh;
+                        overflow: auto;
+                    }
+
+                    &::-webkit-scrollbar {
+                        width: 8px;
+                        height: 8px;
+                        display: block;
+                        background: #bcc5d4;
+                        border-radius: 8px;
+                    }
+
+                    &::-webkit-scrollbar-thumb {
+                        background: #9ba4b0;
+                        border: 1px solid white;
+                        border-radius: 4px;
+                    }
 
                     &.loading {
                         animation-duration: 1.2s;

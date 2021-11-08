@@ -305,17 +305,35 @@ export default {
     overflow: hidden;
     overflow-y: auto;
 
+    &::-webkit-scrollbar {
+        width: 4px;
+        height: 4px;
+        display: block;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: #ede9e0;
+        border: none;
+    }
+
     @media (min-width: 768px) {
         justify-content: space-between;
         top: 50%;
         left: 50%;
         right: auto;
-        padding: 12vh 10vw;
-        border-radius: 1rem;
-        max-height: 60rem;
+        padding: 9vh 10vw;
+        border-radius: none;
         width: 80%;
         transform: translate(-50%, -50%);
-        overflow-y: hidden;
+
+        @media (min-height: 550px) {
+            max-height: 90vh;
+            border-radius: 1rem;
+        }
+
+        @media (min-height: 700px) {
+            max-height: 65rem;
+        }
     }
 
     h1 {
