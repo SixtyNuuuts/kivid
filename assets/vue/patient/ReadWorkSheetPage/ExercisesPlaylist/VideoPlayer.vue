@@ -622,42 +622,45 @@ export default {
         overflow: hidden;
 
         .score-top-elip {
-            width: 74rem;
+            width: 114rem;
             position: absolute;
-            top: -12rem;
             left: 50%;
             transform: translate(-50%, 0);
             animation: 0.5s ease 0s forwards elipDown;
             opacity: 0;
+            bottom: 64vh;
+            top: auto;
 
-            @media (min-width: 576px) {
-                width: 100rem;
-                top: -19rem;
+            @media (min-width: 630px) {
+                width: 157rem;
+                bottom: 61vh;
+            }
+
+            @media (min-width: 630px) and (max-height: 500px) {
+                bottom: 44vh;
             }
 
             @media (min-width: 800px) {
                 width: 160rem;
-                top: -42rem;
             }
 
             @media (min-width: 900px) and (min-height: 1100px) and (max-height: 1500px) {
+                bottom: 54vh;
                 width: 213rem;
-                top: -53rem;
             }
 
             @media (min-width: 1100px) {
                 width: 187rem;
-                top: -53rem;
+                bottom: 56vh;
             }
 
             @media (min-width: 1400px) {
                 width: 204rem;
-                top: -62rem;
+                bottom: 52vh;
             }
 
             @media (min-width: 1600px) {
                 width: 245rem;
-                top: -80rem;
             }
 
             img {
@@ -689,18 +692,15 @@ export default {
             max-width: 55rem;
             min-width: 35rem;
             position: absolute;
-            top: 20%;
+            top: 25vh;
             left: 50%;
             transform: translate(-48%, -50%) scale(0.3);
             opacity: 0;
             animation: 0.5s ease 0.3s forwards starsConfettis;
 
-            @media (min-width: 576px) {
-                top: 28%;
-            }
-
             img {
                 width: 100%;
+                max-height: 54vh;
             }
         }
 
@@ -720,26 +720,15 @@ export default {
             max-width: 27rem;
             min-width: 16.9rem;
             position: absolute;
-            top: 26.5%;
+            top: 34vh;
             left: 50%;
             transform: translate(-47.7%, -50%);
             opacity: 0;
             animation: 0.5s ease 0.3s forwards fanionBounce;
 
-            @media (min-width: 576px) {
-                top: 33.9%;
-            }
-
-            @media (min-width: 700px) {
-                top: 35.5%;
-            }
-
-            @media (min-width: 750px) {
-                top: 37%;
-            }
-
             img {
                 width: 100%;
+                max-height: 38vh;
             }
         }
 
@@ -768,7 +757,6 @@ export default {
             left: 50%;
             transform: translate(-50%, 0);
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
@@ -776,10 +764,26 @@ export default {
             white-space: nowrap;
             opacity: 0;
             animation: 0.5s ease 0.7s forwards fadeEnter;
+            flex-direction: column;
+            margin-bottom: 0;
+
+            @media (min-width: 630px) and (max-height: 500px) {
+                flex-direction: row;
+                margin-bottom: 21vh;
+            }
 
             .label {
                 font-size: 2.5rem;
-                margin-bottom: 3.5rem;
+                position: relative;
+                margin-bottom: 2.7vh;
+                margin-right: 0;
+                top: 0;
+
+                @media (min-width: 630px) and (max-height: 500px) {
+                    margin-bottom: 0;
+                    margin-right: 4rem;
+                    top: 0.2rem;
+                }
 
                 @media (min-width: 576px) {
                     font-size: 3rem;
@@ -788,15 +792,37 @@ export default {
             .score {
                 font-size: 4rem;
                 font-weight: 700;
-                margin-bottom: 4rem;
                 line-height: 1.1;
+                margin-bottom: 4.7vh;
+                margin-right: 0;
+
+                @media (min-width: 630px) and (max-height: 500px) {
+                    margin-bottom: 0;
+                    margin-right: 4rem;
+                }
 
                 @media (min-width: 576px) {
                     font-size: 4.7rem;
                 }
             }
             .btn-next {
-                margin-bottom: 9rem;
+                margin-bottom: 10vh;
+
+                @media (min-width: 630px) and (max-height: 500px) {
+                    margin-bottom: 0;
+                }
+
+                @media (min-height: 700px) {
+                    margin-bottom: 12vh;
+                }
+
+                @media (min-height: 800px) {
+                    margin-bottom: 19vh;
+                }
+
+                @media (min-width: 576px) and (min-height: 800px) {
+                    margin-bottom: 14vh;
+                }
             }
         }
     }

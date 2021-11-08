@@ -341,17 +341,21 @@ export default {
 
             if (this.selectedTags.length) {
                 videosListFiltered = videosListFiltered.filter((v) => {
-                    let result = false;
+                    const results = [];
 
                     if (v.tags) {
-                        v.tags.forEach((tag) => {
-                            if (this.selectedTags.includes(tag.name)) {
-                                result = true;
-                            }
+                        this.selectedTags.forEach((tag) => {
+                            let result = false;
+                            v.tags.forEach((vtag) => {
+                                if (vtag.name === tag) {
+                                    result = true;
+                                }
+                            });
+                            results.push(result);
                         });
                     }
 
-                    return result;
+                    return !results.includes(false);
                 });
             }
 
@@ -378,17 +382,17 @@ export default {
 
             this.timeout = setTimeout(() => {
                 if (window.innerWidth < 449) {
-                    this.max = 2;
+                    this.max = 100;
                     this.page = 1;
                 }
 
                 if (window.innerWidth >= 449 && window.innerWidth <= 649) {
-                    this.max = 4;
+                    this.max = 8;
                     this.page = 1;
                 }
 
                 if (window.innerWidth > 649 && window.innerWidth <= 849) {
-                    this.max = 6;
+                    this.max = 9;
                     this.page = 1;
                 }
 
@@ -587,7 +591,16 @@ export default {
         overflow: hidden;
         display: flex;
         justify-content: center;
-        align-items: center;
+        align-items: flex-start;
+        overflow-y: auto;
+
+        @media (min-width: 850px) {
+            padding: 7vh;
+        }
+
+        @media (min-height: 840px) {
+            align-items: center;
+        }
 
         &::-webkit-scrollbar {
             width: 4px;
@@ -606,11 +619,6 @@ export default {
             background: #2e3858a1;
             border: 1px solid transparent;
             border-radius: 4px;
-        }
-
-        @media (max-height: 815px) {
-            align-items: flex-start;
-            overflow-y: auto;
         }
 
         #video-library {
@@ -667,6 +675,31 @@ export default {
                     align-items: center;
                     justify-content: center;
                     border-radius: 0.8rem;
+                    max-height: initial;
+
+                    @media (max-width: 450px) and (min-height: 0px) {
+                        max-height: 45vh;
+                        overflow: auto;
+                    }
+
+                    @media (max-width: 450px) and (min-height: 700px) {
+                        max-height: 53vh;
+                        overflow: auto;
+                    }
+
+                    &::-webkit-scrollbar {
+                        width: 8px;
+                        height: 8px;
+                        display: block;
+                        background: #bcc5d4;
+                        border-radius: 8px;
+                    }
+
+                    &::-webkit-scrollbar-thumb {
+                        background: #9ba4b0;
+                        border: 1px solid white;
+                        border-radius: 4px;
+                    }
 
                     &.loading {
                         animation-duration: 1.2s;

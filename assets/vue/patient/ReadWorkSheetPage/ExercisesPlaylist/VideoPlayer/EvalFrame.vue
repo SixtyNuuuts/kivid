@@ -321,17 +321,18 @@ export default {
         top: 50%;
         left: 50%;
         right: auto;
-        padding: 12vh 10vw;
-        border-radius: 1rem;
+        padding: 9vh 10vw;
+        border-radius: none;
         width: 80%;
         transform: translate(-50%, -50%);
 
         @media (min-height: 550px) {
             max-height: 90vh;
+            border-radius: 1rem;
         }
 
         @media (min-height: 700px) {
-            max-height: 60rem;
+            max-height: 65rem;
         }
     }
 

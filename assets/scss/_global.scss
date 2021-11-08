@@ -1260,7 +1260,23 @@ body.no-scrollbar::-webkit-scrollbar {
     background: $white;
     border-radius: 1rem;
     padding: 4.3rem;
-    margin-top: 5rem;
+    margin-top: 9vh;
+
+    @media (min-height: 380px) {
+        margin-top: 4vh;
+    }
+
+    @media (min-height: 400px) {
+        margin-top: 5vh;
+    }
+
+    @media (min-height: 450px) {
+        margin-top: 1.9vh;
+    }
+
+    @media (min-height: 650px) {
+        margin-top: 5rem;
+    }
 
     .icon-request-subscription {
         width: 5rem;
@@ -1284,12 +1300,22 @@ body.no-scrollbar::-webkit-scrollbar {
     }
     .text-request-subscription {
         p {
-            margin-top: 4rem;
-            margin-bottom: 4.5rem;
             font-size: 2.3rem;
             font-weight: 700;
             max-width: 44rem;
             text-align: center;
+            margin-top: 5vh;
+            margin-bottom: 5vh;
+
+            @media (min-height: 450px) {
+                margin-top: 4vh;
+                margin-bottom: 4vh;
+            }
+
+            @media (min-height: 650px) {
+                margin-top: 4rem;
+                margin-bottom: 4.5rem;
+            }
         }
     }
 
