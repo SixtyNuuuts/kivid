@@ -136,7 +136,6 @@ class SubscriptionController extends AbstractController
 
     /**
      * @Route("/subscription/webhook", name="app_subscription_webhook", methods={"POST"})
-     * @isGranted("IS_AUTHENTICATED_FULLY")
      */
     public function subscriptionWebhook(Request $request): JsonResponse
     {
