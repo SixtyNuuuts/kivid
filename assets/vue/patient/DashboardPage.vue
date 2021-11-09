@@ -415,10 +415,18 @@ export default {
                                     let li = document.createElement("li");
                                     li.classList.add("prio");
                                     li.classList.add("active");
+                                    li.classList.add("clickable");
                                     li.addEventListener(
                                         "mouseover",
                                         () => {
                                             li.classList.remove("active");
+                                        },
+                                        false
+                                    );
+                                    li.addEventListener(
+                                        "click",
+                                        () => {
+                                            document.location.href = `/patient/${this.patient.id}/fiche/${response.data.notifTimeLeft.worksheetId}`;
                                         },
                                         false
                                     );
