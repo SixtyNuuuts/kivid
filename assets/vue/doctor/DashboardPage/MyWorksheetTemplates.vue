@@ -1262,19 +1262,19 @@ export default {
                     }
 
                     @media (min-width: 576px) {
-                        max-width: 65vw;
+                        max-width: 60vw;
                     }
 
                     @media (min-width: 992px) {
-                        max-width: 36vw;
+                        max-width: 53vw;
                     }
 
                     @media (min-width: 1100px) {
-                        max-width: 45vw;
+                        max-width: 35vw;
                     }
 
                     @media (min-width: 1370px) {
-                        max-width: 50vw;
+                        max-width: 43vw;
                     }
 
                     .worksheet-title {
@@ -1356,7 +1356,7 @@ export default {
                     transform: translateX(50%);
 
                     @media (max-width: 379px) {
-                        top: 0.9rem;
+                        top: 1.2rem;
                     }
 
                     @media (min-width: 550px) {
@@ -1462,7 +1462,7 @@ export default {
                         width: 106%;
                         align-items: center;
                         position: absolute;
-                        top: 1rem;
+                        top: 1.1rem;
                         bottom: auto;
                         right: -1.2rem;
                         padding: 0 1.6rem;

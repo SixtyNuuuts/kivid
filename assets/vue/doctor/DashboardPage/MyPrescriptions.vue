@@ -606,10 +606,14 @@ export default {
                 this.debounceGetSessionsInfos = setTimeout(() => {
                     docPrescriptions.forEach((worksheet) => {
                         if (
-                            null === worksheet.worksheetTotalProgression ||
-                            null === worksheet.currentWorksheetSession ||
-                            null === worksheet.totalWorksheetSessions ||
-                            null === worksheet.totalCompletedWorksheetSessions
+                            this.doctor.patients.find(
+                                (p) => p.id === worksheet.patient.id
+                            ) &&
+                            (null === worksheet.worksheetTotalProgression ||
+                                null === worksheet.currentWorksheetSession ||
+                                null === worksheet.totalWorksheetSessions ||
+                                null ===
+                                    worksheet.totalCompletedWorksheetSessions)
                         ) {
                             this.loadingsGetSessions.push(worksheet.id);
                             this.axios
@@ -830,13 +834,11 @@ export default {
             display: flex;
             flex-direction: column;
             align-items: center;
-
-            @media (max-width: 500px) {
-                padding-top: 4.2rem;
-            }
+            padding-top: 4.2rem;
 
             @media (min-width: 500px) {
                 align-items: flex-start;
+                padding-top: 1.5rem;
             }
 
             .worksheet-header {
@@ -851,19 +853,19 @@ export default {
                     max-width: 70vw;
 
                     @media (min-width: 500px) {
-                        max-width: 62vw;
+                        max-width: 58vw;
                     }
 
                     @media (min-width: 576px) {
-                        max-width: 65vw;
+                        max-width: 60vw;
                     }
 
                     @media (min-width: 992px) {
-                        max-width: 36vw;
+                        max-width: 70vw;
                     }
 
                     @media (min-width: 1100px) {
-                        max-width: 45vw;
+                        max-width: 41.7vw;
                     }
 
                     @media (min-width: 1370px) {
@@ -934,7 +936,7 @@ export default {
                     transform: translateX(50%);
 
                     @media (max-width: 379px) {
-                        top: 0.9rem;
+                        top: 1.2rem;
                     }
 
                     @media (min-width: 500px) {
@@ -1104,7 +1106,7 @@ export default {
                         width: 103.4%;
                         align-items: center;
                         position: absolute;
-                        top: 1rem;
+                        top: 1.1rem;
                         bottom: auto;
                         right: -0.8rem;
                         padding: 0 1.6rem;

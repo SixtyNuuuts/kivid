@@ -42,6 +42,7 @@ class StripeService
         $config = [
             'success_url' => $successUrl . '?session_id={CHECKOUT_SESSION_ID}',
             'cancel_url' => $cancelUrl,
+            'allow_promotion_codes' => true,
             'payment_method_types' => ['card'],
             'mode' => 'subscription',
             'line_items' => [
