@@ -122,14 +122,14 @@ class StripeService
                     $stripeSubscriptionId
                 );
 
-                // if ($subscription) {
+                if ($subscription) {
                     $newPeriodEnd = new \DateTime();
-                    // $newPeriodEnd->setTimestamp($stripeSubscription->current_period_end);
-                    $newPeriodEnd->setTimestamp(1636427764);
+                    $newPeriodEnd->setTimestamp($stripeSubscription->current_period_end);
                     $subscription->setCurrentPeriodEnd($newPeriodEnd);
 
                     $this->em->flush();
-                // }
+                }
+
                 break;
             case 'invoice.payment_failed':
                 // The payment failed or the customer does not have a valid payment method.
@@ -140,6 +140,6 @@ class StripeService
             default:
         }
 
-        return new JsonResponse(['status' => 'failed'], 500);
+        return new JsonResponse(['status' => 'success'], 200);
     }
 }
