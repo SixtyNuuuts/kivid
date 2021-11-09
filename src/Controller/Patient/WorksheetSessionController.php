@@ -81,6 +81,7 @@ class WorksheetSessionController extends AbstractController
                     $notifTimeLeft = [
                         'time' => 'heures',
                         'worksheet' => $currentWorksheetSession->getWorksheet()->getTitle(),
+                        'worksheetId' => $currentWorksheetSession->getWorksheet()->getId(),
                     ];
                 }
             }
@@ -103,7 +104,8 @@ class WorksheetSessionController extends AbstractController
                     );
                     $notifTimeLeft = [
                         'time' => 'minutes',
-                        'worksheet' => $currentWorksheetSession->getWorksheet()->getTitle()
+                        'worksheet' => $currentWorksheetSession->getWorksheet()->getTitle(),
+                        'worksheetId' => $currentWorksheetSession->getWorksheet()->getId(),
                     ];
                 }
             }
