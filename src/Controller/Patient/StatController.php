@@ -14,6 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
  * @Route("/patient")
@@ -45,6 +46,7 @@ class StatController extends AbstractController
 
     /**
      * @Route("/{id}/create/exercise-stat/{statCriterion}", name="app_patient_create_exercise_stat", methods={"POST"})
+     * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
     public function createExerciseStat(Request $request, Patient $patient, string $statCriterion): JsonResponse
     {

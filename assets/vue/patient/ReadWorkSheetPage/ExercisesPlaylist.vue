@@ -711,13 +711,13 @@ export default {
                             display: flex;
                             align-items: center;
                             justify-content: center;
-                            width: 1.5rem;
-                            height: 1.5rem;
-                            min-width: 1.5rem;
-                            min-height: 1.5rem;
-                            max-height: 1.5rem;
-                            border-radius: 1.5rem;
-                            border: 1px solid #e1dacd;
+                            width: 1.8rem;
+                            height: 1.8rem;
+                            min-width: 1.8rem;
+                            min-height: 1.8rem;
+                            max-height: 1.8rem;
+                            border-radius: 50%;
+                            border: 1px solid #d6cfbe;
 
                             &:hover {
                                 border: 1px solid #d8d1c0;
@@ -728,8 +728,8 @@ export default {
                             }
 
                             i {
-                                font-size: 0.7rem;
-                                color: #e1dacd;
+                                font-size: 0.8rem;
+                                color: #d6cfbe;
                                 transition: all;
                                 margin-right: 0;
                             }

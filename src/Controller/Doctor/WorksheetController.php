@@ -18,6 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
  * @Route("/doctor")
@@ -56,6 +57,7 @@ class WorksheetController extends AbstractController
 
     /**
      * @Route("/{id}/get/worksheet/{worksheetId}", name="app_doctor_get_worksheet", methods={"GET"})
+     * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
     public function getWorksheet(Doctor $doctor, int $worksheetId): JsonResponse
     {
@@ -71,6 +73,7 @@ class WorksheetController extends AbstractController
 
     /**
      * @Route("/{id}/get/worksheets", name="app_doctor_get_worksheets", methods={"GET"})
+     * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
     public function getWorksheets(Doctor $doctor): JsonResponse
     {
@@ -86,6 +89,7 @@ class WorksheetController extends AbstractController
 
     /**
      * @Route("/{id}/get/exercises/{worksheetId}", name="app_doctor_get_exercises", methods={"GET"})
+     * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
     public function getExercises(Doctor $doctor, int $worksheetId): JsonResponse
     {
@@ -120,6 +124,7 @@ class WorksheetController extends AbstractController
     /**
      * @Route("/{id}/voir/{worksheetId}/{patientId}",
      * name="app_doctor_show_commentaries", methods={"GET"})
+     * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
     public function showCommentaries(
         Doctor $doctor,
@@ -145,6 +150,7 @@ class WorksheetController extends AbstractController
     /**
      * @Route("/{id}/fiche/{action}/{worksheetId}/{patientId}",
      * name="app_doctor_worksheet_action", methods={"GET"})
+     * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
 
     public function worksheetAction(
@@ -165,6 +171,7 @@ class WorksheetController extends AbstractController
 
     /**
      * @Route("/{id}/create/worksheet", name="app_doctor_create_worksheet", methods={"POST"})
+     * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
     public function createWorksheet(Request $request, Doctor $doctor): JsonResponse
     {
@@ -213,6 +220,7 @@ class WorksheetController extends AbstractController
 
     /**
      * @Route("/{id}/edit/worksheet", name="app_doctor_edit_worksheet", methods={"POST"})
+     * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
     public function editWorksheet(Request $request, Doctor $doctor): JsonResponse
     {
@@ -273,6 +281,7 @@ class WorksheetController extends AbstractController
     /**
      * @Route("/{id}/remove/exercise", name="app_doctor_remove_exercise",
      * methods={"POST"})
+     * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
     public function removeExercise(Request $request, Doctor $doctor): JsonResponse
     {
@@ -310,6 +319,7 @@ class WorksheetController extends AbstractController
 
     /**
      * @Route("/{id}/remove/worksheet", name="app_doctor_remove_worksheet", methods={"POST"})
+     * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
     public function removeWorksheet(Request $request, Doctor $doctor): JsonResponse
     {
@@ -341,6 +351,7 @@ class WorksheetController extends AbstractController
     /**
      * @Route("/{id}/check/worksheet-sessions-exist/{worksheetId}",
      * name="app_doctor_check_worksheet_sessions_exist", methods={"GET"})
+     * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
     public function checkIfWorksheetSessionsExist(Doctor $doctor, int $worksheetId): JsonResponse
     {

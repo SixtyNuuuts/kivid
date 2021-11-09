@@ -6,6 +6,7 @@ use App\Repository\PartOfBodyRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 class PartOfBodyController extends AbstractController
 {
@@ -19,6 +20,7 @@ class PartOfBodyController extends AbstractController
 
     /**
      * @Route("/get/parts-of-body", name="app_get_parts_of_body", methods={"GET"})
+     * @isGranted("IS_AUTHENTICATED_FULLY")
      */
     public function getPartsOfBody(): JsonResponse
     {

@@ -15,7 +15,7 @@ security:
                 users:
                     kivid-admin@mail.com:
                         {
-                            password: "$2y$13$.Sz3REq5YRTGxEcBEvSE0uriYe9e3iChRpPuhGXXxydbwx9M8UKjC",
+                            password: "$2y$13$Luq7iXbqzqklF/P9OuiFTuYMd80CFOsEK/kd5jnrJZmWeqyTe/dZ2",
                             roles: ["ROLE_ADMIN"],
                         }
         patient:
@@ -58,5 +58,5 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }
-        - { path: ^/patient, roles: [ROLE_PATIENT, ROLE_ADMIN, ROLE_DOCTOR] }
+        - { path: ^/patient, roles: [ROLE_PATIENT, ROLE_DOCTOR, ROLE_ADMIN] }
         - { path: ^/doctor, roles: [ROLE_DOCTOR, ROLE_ADMIN] }

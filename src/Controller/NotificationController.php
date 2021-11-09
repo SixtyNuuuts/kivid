@@ -12,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 class NotificationController extends AbstractController
 {
@@ -35,6 +36,7 @@ class NotificationController extends AbstractController
 
     /**
      * @Route("/{userType}/{id}/read/notifications", name="app_user_read_notifications", methods={"POST"})
+     * @isGranted("IS_AUTHENTICATED_FULLY")
      */
     public function readNotifications(
         Request $request,
@@ -75,6 +77,7 @@ class NotificationController extends AbstractController
 
     /**
      * @Route("{userType}/{id}/get/notifications", name="app_user_get_notifications", methods={"GET"})
+     * @isGranted("IS_AUTHENTICATED_FULLY")
      */
     public function getNotifications(
         string $userType,
@@ -99,6 +102,7 @@ class NotificationController extends AbstractController
     /**
      * @Route("/patient/{id}/get/patient-dashboard-notifications",
      * name="app_get_patient_dashboard_notifications", methods={"GET"})
+     * @isGranted("IS_AUTHENTICATED_FULLY")
      */
     public function getPatientDashboardNotifications(
         Patient $patient

@@ -468,19 +468,116 @@ export default {
             .video-frame {
                 width: 100%;
                 height: 50.5vw;
-                max-width: 98.4rem;
+                // max-width: 98.4rem;
                 max-height: 55.4rem;
                 transform: translateY(-11rem);
                 border-radius: 1rem;
                 overflow: hidden;
 
+                @media (min-width: 560px) and (min-height: 0px) {
+                    height: 28.2vw;
+                    max-width: 51vw;
+                    transform: translateY(-3.9rem);
+                }
+
+                @media (min-width: 560px) and (min-height: 300px) {
+                    height: 34.2vw;
+                    max-width: 61vw;
+                    transform: translateY(-4.2rem);
+                }
+
                 @media (min-width: 768px) {
-                    height: 43.8vw;
                     transform: translateY(-4.7rem);
                 }
 
-                @media (min-width: 992px) {
+                @media (min-width: 768px) and (min-height: 0px) {
+                    height: 29.4vw;
+                    max-width: 52vw;
+                }
+
+                @media (min-width: 768px) and (min-height: 385px) {
+                    height: 33.4vw;
+                    max-width: 60vw;
+                }
+
+                @media (min-width: 768px) and (min-height: 465px) {
+                    height: 36.4vw;
+                    max-width: 65vw;
+                }
+
+                @media (min-width: 768px) and (min-height: 550px) {
+                    height: 31.4vw;
+                    max-width: 56vw;
+                }
+
+                @media (min-width: 768px) and (min-height: 630px) {
+                    height: 36.4vw;
+                    max-width: 65vw;
+                }
+
+                @media (min-width: 768px) and (min-height: 700px) {
+                    height: 43.8vw;
+                    max-width: 98.4rem;
+                }
+
+                @media (min-width: 992px) and (min-height: 0px) {
+                    height: 19.1vw;
+                    max-width: 34vw;
+                }
+
+                @media (min-width: 992px) and (min-height: 385px) {
+                    height: 25.1vw;
+                    max-width: 45vw;
+                }
+
+                @media (min-width: 992px) and (min-height: 465px) {
+                    height: 30.1vw;
+                    max-width: 54vw;
+                }
+
+                @media (min-width: 992px) and (min-height: 550px) {
+                    height: 35.1vw;
+                    max-width: 63vw;
+                }
+
+                @media (min-width: 992px) and (min-height: 630px) {
+                    height: 40.1vw;
+                    max-width: 71vw;
+                }
+
+                @media (min-width: 992px) and (min-height: 700px) {
                     height: 45.1vw;
+                    max-width: 99rem;
+                }
+
+                @media (min-width: 1370px) and (min-height: 0px) {
+                    height: 12.3vw;
+                    max-width: 22vw;
+                }
+
+                @media (min-width: 1370px) and (min-height: 385px) {
+                    height: 16.1vw;
+                    max-width: 29vw;
+                }
+
+                @media (min-width: 1370px) and (min-height: 465px) {
+                    height: 21.1vw;
+                    max-width: 38vw;
+                }
+
+                @media (min-width: 1370px) and (min-height: 550px) {
+                    height: 26.1vw;
+                    max-width: 47vw;
+                }
+
+                @media (min-width: 1370px) and (min-height: 630px) {
+                    height: 31.1vw;
+                    max-width: 55vw;
+                }
+
+                @media (min-width: 1370px) and (min-height: 700px) {
+                    height: 45.1vw;
+                    max-width: 99rem;
                 }
 
                 &.not-sub-frame {
@@ -525,42 +622,45 @@ export default {
         overflow: hidden;
 
         .score-top-elip {
-            width: 74rem;
+            width: 114rem;
             position: absolute;
-            top: -12rem;
             left: 50%;
             transform: translate(-50%, 0);
             animation: 0.5s ease 0s forwards elipDown;
             opacity: 0;
+            bottom: 64vh;
+            top: auto;
 
-            @media (min-width: 576px) {
-                width: 100rem;
-                top: -19rem;
+            @media (min-width: 630px) {
+                width: 157rem;
+                bottom: 61vh;
+            }
+
+            @media (min-width: 630px) and (max-height: 500px) {
+                bottom: 44vh;
             }
 
             @media (min-width: 800px) {
                 width: 160rem;
-                top: -42rem;
             }
 
             @media (min-width: 900px) and (min-height: 1100px) and (max-height: 1500px) {
+                bottom: 54vh;
                 width: 213rem;
-                top: -53rem;
             }
 
             @media (min-width: 1100px) {
                 width: 187rem;
-                top: -53rem;
+                bottom: 56vh;
             }
 
             @media (min-width: 1400px) {
                 width: 204rem;
-                top: -62rem;
+                bottom: 52vh;
             }
 
             @media (min-width: 1600px) {
                 width: 245rem;
-                top: -80rem;
             }
 
             img {
@@ -592,18 +692,15 @@ export default {
             max-width: 55rem;
             min-width: 35rem;
             position: absolute;
-            top: 20%;
+            top: 25vh;
             left: 50%;
             transform: translate(-48%, -50%) scale(0.3);
             opacity: 0;
             animation: 0.5s ease 0.3s forwards starsConfettis;
 
-            @media (min-width: 576px) {
-                top: 28%;
-            }
-
             img {
                 width: 100%;
+                max-height: 54vh;
             }
         }
 
@@ -623,26 +720,15 @@ export default {
             max-width: 27rem;
             min-width: 16.9rem;
             position: absolute;
-            top: 26.5%;
+            top: 34vh;
             left: 50%;
             transform: translate(-47.7%, -50%);
             opacity: 0;
             animation: 0.5s ease 0.3s forwards fanionBounce;
 
-            @media (min-width: 576px) {
-                top: 33.9%;
-            }
-
-            @media (min-width: 700px) {
-                top: 35.5%;
-            }
-
-            @media (min-width: 750px) {
-                top: 37%;
-            }
-
             img {
                 width: 100%;
+                max-height: 38vh;
             }
         }
 
@@ -671,7 +757,6 @@ export default {
             left: 50%;
             transform: translate(-50%, 0);
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
@@ -679,10 +764,26 @@ export default {
             white-space: nowrap;
             opacity: 0;
             animation: 0.5s ease 0.7s forwards fadeEnter;
+            flex-direction: column;
+            margin-bottom: 0;
+
+            @media (min-width: 630px) and (max-height: 500px) {
+                flex-direction: row;
+                margin-bottom: 21vh;
+            }
 
             .label {
                 font-size: 2.5rem;
-                margin-bottom: 3.5rem;
+                position: relative;
+                margin-bottom: 2.7vh;
+                margin-right: 0;
+                top: 0;
+
+                @media (min-width: 630px) and (max-height: 500px) {
+                    margin-bottom: 0;
+                    margin-right: 4rem;
+                    top: 0.2rem;
+                }
 
                 @media (min-width: 576px) {
                     font-size: 3rem;
@@ -691,15 +792,37 @@ export default {
             .score {
                 font-size: 4rem;
                 font-weight: 700;
-                margin-bottom: 4rem;
                 line-height: 1.1;
+                margin-bottom: 4.7vh;
+                margin-right: 0;
+
+                @media (min-width: 630px) and (max-height: 500px) {
+                    margin-bottom: 0;
+                    margin-right: 4rem;
+                }
 
                 @media (min-width: 576px) {
                     font-size: 4.7rem;
                 }
             }
             .btn-next {
-                margin-bottom: 9rem;
+                margin-bottom: 10vh;
+
+                @media (min-width: 630px) and (max-height: 500px) {
+                    margin-bottom: 0;
+                }
+
+                @media (min-height: 700px) {
+                    margin-bottom: 12vh;
+                }
+
+                @media (min-height: 800px) {
+                    margin-bottom: 19vh;
+                }
+
+                @media (min-width: 576px) and (min-height: 800px) {
+                    margin-bottom: 14vh;
+                }
             }
         }
     }
@@ -724,7 +847,7 @@ export default {
             overflow: hidden;
             overflow-y: auto;
 
-            @media (min-width: 768px) {
+            @media (min-width: 560px) {
                 flex-direction: row;
             }
 
@@ -734,7 +857,7 @@ export default {
                 flex-direction: column;
                 align-items: center;
 
-                @media (min-width: 768px) {
+                @media (min-width: 560px) {
                     flex-direction: row;
                     max-width: 40%;
                     font-size: 2.2rem;
@@ -749,7 +872,7 @@ export default {
                     white-space: nowrap;
                     margin-right: 0;
 
-                    @media (min-width: 768px) {
+                    @media (min-width: 560px) {
                         margin-right: 1rem;
                     }
                 }
@@ -757,7 +880,7 @@ export default {
                 .tiret {
                     display: none;
 
-                    @media (min-width: 768px) {
+                    @media (min-width: 560px) {
                         display: inline-block;
                     }
                 }
@@ -767,7 +890,7 @@ export default {
                     margin-top: 0.4rem;
                     text-align: center;
 
-                    @media (min-width: 768px) {
+                    @media (min-width: 560px) {
                         margin-top: 0;
                         margin-left: 1rem;
                         white-space: nowrap;
@@ -780,7 +903,7 @@ export default {
             .btn-next {
                 position: initial;
 
-                @media (min-width: 768px) {
+                @media (min-width: 560px) {
                     position: absolute;
                     left: 50%;
                     top: 50%;
@@ -796,7 +919,7 @@ export default {
                 margin-top: 2.3rem;
                 margin-bottom: 2.85rem;
 
-                @media (min-width: 768px) {
+                @media (min-width: 560px) {
                     align-items: flex-end;
                     margin-top: 0;
                     margin-bottom: 0;
@@ -848,7 +971,7 @@ export default {
                 align-items: center;
                 margin-top: 0.8rem;
 
-                @media (min-width: 768px) {
+                @media (min-width: 560px) {
                     margin-top: 0.25rem;
                 }
 
@@ -872,19 +995,19 @@ export default {
                     .kiv-help {
                         margin-left: 0.6rem;
                         position: relative;
-                        top: 0.12rem;
+                        top: -0.1rem;
 
                         .icon-help {
                             display: flex;
                             align-items: center;
                             justify-content: center;
-                            width: 1.5rem;
-                            height: 1.5rem;
-                            min-width: 1.5rem;
-                            min-height: 1.5rem;
-                            max-height: 1.5rem;
-                            border-radius: 1.5rem;
-                            border: 1px solid #e1dacd;
+                            width: 1.8rem;
+                            height: 1.8rem;
+                            min-width: 1.8rem;
+                            min-height: 1.8rem;
+                            max-height: 1.8rem;
+                            border-radius: 50%;
+                            border: 1px solid #d6cfbe;
 
                             &:hover {
                                 border: 1px solid #d8d1c0;
@@ -895,8 +1018,8 @@ export default {
                             }
 
                             i {
-                                font-size: 0.7rem;
-                                color: #e1dacd;
+                                font-size: 0.8rem;
+                                color: #d6cfbe;
                                 transition: all;
                                 margin-right: 0;
                             }

@@ -58,8 +58,15 @@
                                 <li
                                     v-for="(notif, i) in getNavbarNotifications"
                                     :key="i"
-                                    :class="{ active: !notif.isViewed }"
+                                    :class="{
+                                        active: !notif.isViewed,
+                                        clickable:
+                                            notif.content[
+                                                notif.content.length - 1
+                                            ].type === 'worksheetidlink',
+                                    }"
                                     @mouseover="notif.isViewed = true"
+                                    @click="ifClickableRedirectTo(notif)"
                                 >
                                     <div class="notif-icon">
                                         <img
@@ -206,10 +213,10 @@
                                     <i class="kiv-settings icon-16"></i>
                                     Paramètres
                                 </li>
-                                <li @click="help()">
+                                <!-- <li @click="help()">
                                     <i class="kiv-help icon-15"></i>
                                     Aide
-                                </li>
+                                </li> -->
                                 <hr />
                                 <li @click="logout()">
                                     <i class="kiv-logout icon-13"></i>
@@ -381,6 +388,30 @@ export default {
 
             if ("doctor" === this.currentUserType) {
                 document.location.href = this.doctorDashboardPath;
+            }
+        },
+        ifClickableRedirectTo(notif) {
+            if (
+                ("prescription" === notif.type ||
+                    "timing-worksheet" === notif.type) &&
+                notif.content[notif.content.length - 1].type ===
+                    "worksheetidlink"
+            ) {
+                document.location.href = `/patient/${
+                    this.currentUser.id
+                }/fiche/${notif.content[notif.content.length - 1].content}`;
+            }
+            if (
+                "worksheet-completed" === notif.type &&
+                notif.content[notif.content.length - 1].type ===
+                    "worksheetidlink"
+            ) {
+                document.location.href = `/patient/${
+                    this.currentUser.id
+                }/fiche/${notif.content[notif.content.length - 1].content}`;
+                document.location.href = `/doctor/${this.currentUser.id}/voir/${
+                    notif.content[notif.content.length - 1].content
+                }`;
             }
         },
         myProfil() {
@@ -614,6 +645,10 @@ export default {
                                 padding: 1rem 1.7rem;
                                 transition: all 0.2s;
                                 order: 2;
+
+                                &.clickable {
+                                    cursor: pointer;
+                                }
 
                                 &.prio {
                                     order: 1;

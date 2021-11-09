@@ -174,13 +174,37 @@
             </div>
 
             <div class="btn-container social-register">
-                <vs-button class="w-100" @click="registerOauth('facebook')">
-                    S'inscrire avec <i class="fab fa-facebook-f"></i
-                ></vs-button>
+                <transition name="fade">
+                    <div v-if="acceptCG">
+                        <vs-button
+                            class="w-100"
+                            @click="registerOauth('facebook')"
+                        >
+                            S'inscrire avec <i class="fab fa-facebook-f"></i
+                        ></vs-button>
 
-                <vs-button class="w-100" @click="registerOauth('google')"
-                    >S'inscrire avec <i class="fab fa-google"></i
-                ></vs-button>
+                        <vs-button
+                            class="w-100"
+                            @click="registerOauth('google')"
+                            >S'inscrire avec <i class="fab fa-google"></i
+                        ></vs-button>
+                    </div>
+                    <div v-else>
+                        <vs-tooltip>
+                            <vs-button class="w-100 desactive">
+                                S'inscrire avec <i class="fab fa-facebook-f"></i
+                            ></vs-button>
+
+                            <vs-button class="w-100 desactive"
+                                >S'inscrire avec <i class="fab fa-google"></i
+                            ></vs-button>
+                            <template #tooltip>
+                                Vous devez lire et accepter les conditions
+                                générales
+                            </template>
+                        </vs-tooltip>
+                    </div>
+                </transition>
             </div>
         </section>
         <vs-dialog width="450px" v-model="modalCG">
@@ -351,6 +375,7 @@ export default {
             document.body.classList.add("praticien");
         }
 
+        this.acceptCG = false;
         // if (this.error) {
         //     f.openErrorNotificationStay("Erreur", this.error);
         // }

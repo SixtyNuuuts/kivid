@@ -70,6 +70,10 @@ class NotificationService
                     'type' => 'text',
                     'content' => " vous a prescrit une fiche \"{$worksheet->getTitle()}\"",
                 ],
+                [
+                    'type' => 'worksheetidlink',
+                    'content' => "{$worksheet->getId()}",
+                ],
             ],
             $patient
         );
@@ -90,6 +94,10 @@ class NotificationService
                 [
                     'type' => 'text',
                     'content' => " a terminé la dernière session de sa fiche \"{$worksheet->getTitle()}\"",
+                ],
+                [
+                    'type' => 'worksheetidlink',
+                    'content' => "{$worksheet->getId()}/{$patient->getId()}",
                 ],
             ],
             $doctor
@@ -197,6 +205,10 @@ class NotificationService
                     'type' => 'text',
                     'content' => "Plus que quelques {$type} pour réaliser vos exercices 
                     de \"{$worksheet->getTitle()}\", je m'y met maintenant !",
+                ],
+                [
+                    'type' => 'worksheetidlink',
+                    'content' => "{$worksheet->getId()}",
                 ],
             ],
             $patient,

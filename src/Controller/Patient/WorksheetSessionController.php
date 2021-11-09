@@ -13,6 +13,7 @@ use App\Repository\WorksheetSessionRepository;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
  * @Route("/patient")
@@ -39,6 +40,7 @@ class WorksheetSessionController extends AbstractController
     /**
      * @Route("/{id}/get/current-worksheet-session/{worksheetId}/{param}",
      * name="app_patient_get_current_worksheet_session", methods={"GET"})
+     * @isGranted("IS_OWNER_OR_OWNERDOC", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
     public function getCurrentWorksheetSession(
         Patient $patient,
@@ -109,7 +111,7 @@ class WorksheetSessionController extends AbstractController
             $this->em->flush();
         }
 
-        if (!$currentWorksheetSession && $param != 'doctorview') {
+        if (!$currentWorksheetSession && $param != 'doctorview' && $param != 'time-left-before-next') {
             $firstGenerateWorksheetSession =
                 $this->worksheetSessionService->generateWorksheetSessionsAndGetFirst($worksheet);
 
@@ -136,6 +138,7 @@ class WorksheetSessionController extends AbstractController
     /**
      * @Route("/{id}/get/total-worksheet-sessions/{worksheetId}",
      * name="app_patient_get_total_worksheet_sessions", methods={"GET"})
+     * @isGranted("IS_OWNER_OR_OWNERDOC", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
     public function getTotalWorksheetSessions(Patient $patient, int $worksheetId): JsonResponse
     {
@@ -154,6 +157,7 @@ class WorksheetSessionController extends AbstractController
     /**
      * @Route("/{id}/get/total-completed-worksheet-sessions/{worksheetId}",
      * name="app_patient_get_total_completed_worksheet_sessions", methods={"GET"})
+     * @isGranted("IS_OWNER_OR_OWNERDOC", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
     public function getTotalCompletedWorksheetSessions(Patient $patient, int $worksheetId): JsonResponse
     {
@@ -171,6 +175,7 @@ class WorksheetSessionController extends AbstractController
 
     /**
      * @Route("/{id}/start/worksheet-session", name="app_patient_start_worksheet_session", methods={"POST"})
+     * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
     public function startWorksheetSession(Request $request, Patient $patient): JsonResponse
     {
@@ -204,6 +209,7 @@ class WorksheetSessionController extends AbstractController
 
     /**
      * @Route("/{id}/complete/worksheet-session", name="app_patient_complete_worksheet_session", methods={"POST"})
+     * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
     public function completeWorksheetSession(
         Request $request,

@@ -19,20 +19,17 @@ class StripeService
     private $stripe;
     private $stripeWebhookSecretKey;
     private $subscriptionRepository;
-    private $subscriptionService;
     private $em;
 
     public function __construct(
         string $stripeSecretKey,
         string $stripeWebhookSecretKey,
         SubscriptionRepository $subscriptionRepository,
-        SubscriptionService $subscriptionService,
         EntityManagerInterface $entityManager
     ) {
         $this->stripe = new StripeClient($stripeSecretKey);
         $this->stripeWebhookSecretKey = $stripeWebhookSecretKey;
         $this->subscriptionRepository = $subscriptionRepository;
-        $this->subscriptionService = $subscriptionService;
         $this->em = $entityManager;
     }
 
@@ -45,6 +42,7 @@ class StripeService
         $config = [
             'success_url' => $successUrl . '?session_id={CHECKOUT_SESSION_ID}',
             'cancel_url' => $cancelUrl,
+            'allow_promotion_codes' => true,
             'payment_method_types' => ['card'],
             'mode' => 'subscription',
             'line_items' => [
@@ -115,10 +113,24 @@ class StripeService
                 // Store the status in your database and check when a user accesses your service.
                 // This approach helps you avoid hitting rate limits.
 
-                // $this->subscriptionService->createSubscription(
-                //     $user,
-                //     $stripeSubscription
-                // );
+                $stripeSubscriptionId = $event->data->object->subscription;
+
+                $subscription = $this->subscriptionRepository->findOneBy([
+                    'stripeSubscriptionId' => $stripeSubscriptionId
+                ]);
+
+                $stripeSubscription = $this->retrieveSubscription(
+                    $stripeSubscriptionId
+                );
+
+                if ($subscription) {
+                    $newPeriodEnd = new \DateTime();
+                    $newPeriodEnd->setTimestamp($stripeSubscription->current_period_end);
+                    $subscription->setCurrentPeriodEnd($newPeriodEnd);
+
+                    $this->em->flush();
+                }
+
                 break;
             case 'invoice.payment_failed':
                 // The payment failed or the customer does not have a valid payment method.

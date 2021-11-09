@@ -833,9 +833,11 @@ body.no-scrollbar::-webkit-scrollbar {
         color: $black;
         box-shadow: inset 0 0 20px 0 rgb(0, 0, 0, 0.04);
         margin-top: 1.5rem;
+        margin-left: 0;
 
         @media (min-width: 576px) {
             margin-top: 0;
+            margin-left: 0.5em;
         }
     }
 }
@@ -911,7 +913,7 @@ body.no-scrollbar::-webkit-scrollbar {
 
         p {
             margin: 0;
-            margin-bottom: 1.5rem;
+            // margin-bottom: 1.5rem;
             color: $black;
         }
 
@@ -980,12 +982,14 @@ body.no-scrollbar::-webkit-scrollbar {
         }
     }
 
-    @media (min-width: 600px) {
+    @media (min-width: 630px) {
         flex-direction: row;
 
         > div:first-child {
             p {
-                margin-bottom: 1rem;
+                // margin-bottom: 1rem;
+                position: relative;
+                top: -0.1rem;
             }
 
             .primary-links {
@@ -1174,6 +1178,20 @@ body.no-scrollbar::-webkit-scrollbar {
             justify-content: space-between;
             align-items: center;
 
+            > div {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                width: 100%;
+
+                .vs-tooltip-content {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    width: 100%;
+                }
+            }
+
             .vs-button {
                 width: 48%;
                 font-size: 1rem;
@@ -1190,6 +1208,17 @@ body.no-scrollbar::-webkit-scrollbar {
                     color: #dd4b39;
                     background: #fff7f4;
                     box-shadow: none;
+                }
+
+                &.desactive {
+                    .vs-button__content {
+                        opacity: 0.5;
+                    }
+                    cursor: default;
+
+                    &:hover {
+                        transform: none;
+                    }
                 }
 
                 @media (min-width: 576px) {
@@ -1258,7 +1287,23 @@ body.no-scrollbar::-webkit-scrollbar {
     background: $white;
     border-radius: 1rem;
     padding: 4.3rem;
-    margin-top: 5rem;
+    margin-top: 9vh;
+
+    @media (min-height: 380px) {
+        margin-top: 4vh;
+    }
+
+    @media (min-height: 400px) {
+        margin-top: 5vh;
+    }
+
+    @media (min-height: 450px) {
+        margin-top: 1.9vh;
+    }
+
+    @media (min-height: 650px) {
+        margin-top: 5rem;
+    }
 
     .icon-request-subscription {
         width: 5rem;
@@ -1282,12 +1327,22 @@ body.no-scrollbar::-webkit-scrollbar {
     }
     .text-request-subscription {
         p {
-            margin-top: 4rem;
-            margin-bottom: 4.5rem;
             font-size: 2.3rem;
             font-weight: 700;
             max-width: 44rem;
             text-align: center;
+            margin-top: 5vh;
+            margin-bottom: 5vh;
+
+            @media (min-height: 450px) {
+                margin-top: 4vh;
+                margin-bottom: 4vh;
+            }
+
+            @media (min-height: 650px) {
+                margin-top: 4rem;
+                margin-bottom: 4.5rem;
+            }
         }
     }
 
@@ -1378,8 +1433,8 @@ body.no-scrollbar::-webkit-scrollbar {
     }
 }
 
-// HACK : Detecting autofilled fields in Javascript
-input.is-autofilled ~ label {
+// HACK WEBKIT : Detecting autofilled fields
+input:-webkit-autofill ~ label {
     font-size: 1.4rem !important;
     top: -0.8rem !important;
     left: 1.3rem !important;
@@ -1387,37 +1442,6 @@ input.is-autofilled ~ label {
         0 0 0.3rem #fff, 0 0 0.3rem #fff, 0 0 0.3rem #fff, 0 0 0.3rem #fff, 0 0 0.3rem #fff, 0 0 0.3rem #fff,
         0 0 0.3rem #fff, 0 0 0.3rem #fff, 0 0 0.3rem #fff, 0 0 0.3rem #fff, 0 0 0.3rem #fff, 0 0 0.3rem #fff,
         0 0 0.3rem #fff, 0 0 0.3rem #fff;
-}
-
-@keyframes onAutoFillStart {
-    from {
-        /**/
-    }
-    to {
-        /**/
-    }
-}
-@keyframes onAutoFillCancel {
-    from {
-        /**/
-    }
-    to {
-        /**/
-    }
-}
-
-input:-webkit-autofill {
-    // Expose a hook for JavaScript when autofill is shown
-    // JavaScript can capture 'animationstart' events
-    animation-name: onAutoFillStart;
-
-    // Make the background color become yellow really slowly
-    // transition: background-color 50000s ease-in-out 0s;
-}
-input:not(:-webkit-autofill) {
-    // Expose a hook for JS onAutoFillCancel
-    // JavaScript can capture 'animationstart' events
-    animation-name: onAutoFillCancel;
 }
 
 .btn-go-to-top {
