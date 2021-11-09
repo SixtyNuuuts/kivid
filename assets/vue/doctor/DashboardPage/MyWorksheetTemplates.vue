@@ -1303,6 +1303,7 @@ export default {
                             margin-left: 1rem;
                             box-shadow: 0rem 0.2rem 0.9rem 0rem
                                 rgba(231, 223, 205, 0.6);
+                            z-index: 111;
 
                             i {
                                 font-size: 1.6rem;

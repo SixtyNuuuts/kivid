@@ -14,10 +14,10 @@
       "js": [
         "/build/runtime.d0ec15ab.js",
         "/build/429.ecc3ba87.js",
-        "/build/navbar.0a41e81e.js"
+        "/build/navbar.05bf7f5b.js"
       ],
       "css": [
-        "/build/navbar.c0933ec5.css"
+        "/build/navbar.d0b02903.css"
       ]
     },
     "settings-page": {
@@ -89,7 +89,7 @@
         "/build/doctor-dashboard-page.80dd6bbb.js"
       ],
       "css": [
-        "/build/doctor-dashboard-page.d7190e6e.css"
+        "/build/doctor-dashboard-page.48e9d271.css"
       ]
     },
     "doctor-worksheet-page": {
