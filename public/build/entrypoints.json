@@ -7,14 +7,14 @@
       ],
       "css": [
         "/build/108.fc93ce1c.css",
-        "/build/app.8da93a21.css"
+        "/build/app.4c6c9f70.css"
       ]
     },
     "navbar": {
       "js": [
         "/build/runtime.d0ec15ab.js",
         "/build/429.ecc3ba87.js",
-        "/build/navbar.8eed05f3.js"
+        "/build/navbar.0a41e81e.js"
       ],
       "css": [
         "/build/navbar.c0933ec5.css"
@@ -43,7 +43,7 @@
       "js": [
         "/build/runtime.d0ec15ab.js",
         "/build/429.ecc3ba87.js",
-        "/build/register.5c6a859f.js"
+        "/build/register.d0bda201.js"
       ],
       "css": [
         "/build/register.1edfe0b3.css"

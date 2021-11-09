@@ -206,10 +206,10 @@
                                     <i class="kiv-settings icon-16"></i>
                                     Paramètres
                                 </li>
-                                <li @click="help()">
+                                <!-- <li @click="help()">
                                     <i class="kiv-help icon-15"></i>
                                     Aide
-                                </li>
+                                </li> -->
                                 <hr />
                                 <li @click="logout()">
                                     <i class="kiv-logout icon-13"></i>

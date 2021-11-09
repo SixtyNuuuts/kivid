@@ -309,7 +309,11 @@
 
         @media (min-width: 2100px) {
             max-width: 44.5rem;
-            margin-top: 26rem;
+            margin-top: 10.9vw;
+        }
+
+        @media (min-width: 2500px) {
+            margin-top: 12.1vw;
         }
 
         h2 {
