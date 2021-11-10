@@ -100,7 +100,8 @@ class SubscriptionController extends AbstractController
                 [],
                 UrlGenerator::ABSOLUTE_URL
             ) . $data->cancelUrl,
-            $data->stripeSubPlanId
+            $data->stripeSubPlanId,
+            $data->userId
         );
 
         return $this->json(
