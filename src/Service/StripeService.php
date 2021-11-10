@@ -145,10 +145,10 @@ class StripeService
                 if (!$subscription) {
                     $newSubscription = new Subscription();
 
-                    // $patient = $this->patientRepository->findOneBy([
-                    //     'id' => $event->data->object->lines->data->metadata->user_id
-                    // ]);
-                    // $newSubscription->setPatient($patient);
+                    $patient = $this->patientRepository->findOneBy([
+                        'id' => 14
+                    ]);
+                    $newSubscription->setPatient($patient);
 
                     $newSubscription->setStripeSubscriptionId($stripeSubscriptionId);
                     $newSubscription->setStripeCustomerId($event->data->object->customer);
