@@ -142,25 +142,25 @@ class StripeService
                     $this->em->flush();
                 }
                 if (!$subscription) {
-                    $subscription = new Subscription();
+                    $newSubscription = new Subscription();
 
                     $patient = $this->patientRepository->findOneBy([
                         'id' => $event->data->object->lines->data->metadata->user_id
                     ]);
-                    $subscription->setPatient($patient);
+                    $newSubscription->setPatient($patient);
 
-                    $subscription->setStripeSubscriptionId($stripeSubscriptionId);
-                    $subscription->setStripeCustomerId($event->data->object->customer);
+                    $newSubscription->setStripeSubscriptionId($stripeSubscriptionId);
+                    $newSubscription->setStripeCustomerId($event->data->object->customer);
 
                     $currentPeriodStart = new \DateTime();
                     $currentPeriodStart->setTimestamp($stripeSubscription->current_period_start);
-                    $subscription->setCurrentPeriodStart($currentPeriodStart);
+                    $newSubscription->setCurrentPeriodStart($currentPeriodStart);
 
                     $currentPeriodEnd = new \DateTime();
                     $currentPeriodEnd->setTimestamp($stripeSubscription->current_period_end + 20800);
-                    $subscription->setCurrentPeriodEnd($currentPeriodEnd);
+                    $newSubscription->setCurrentPeriodEnd($currentPeriodEnd);
 
-                    $this->em->persist($subscription);
+                    $this->em->persist($newSubscription);
                     $this->em->flush();
                 }
 
