@@ -125,7 +125,8 @@ class StripeService
 
                 if ($subscription) {
                     $newPeriodEnd = new \DateTime();
-                    $newPeriodEnd->setTimestamp($stripeSubscription->current_period_end);
+                    // $newPeriodEnd->setTimestamp($stripeSubscription->current_period_end + 86400);
+                    $newPeriodEnd->setTimestamp($stripeSubscription->current_period_end + 10800);
                     $subscription->setCurrentPeriodEnd($newPeriodEnd);
 
                     $this->em->flush();
