@@ -175,6 +175,6 @@ class StripeService
             default:
         }
 
-        return new JsonResponse(['status' => 'success', 'a' => $event->data->object->lines->data[0], 'b' => $event->data->object->customer], 200);
+        return new JsonResponse(['status' => 'success', 'a' => $event->data->object->lines->data[0]->metadata->user_id, 'b' => $event->data->object->customer], 200);
     }
 }
