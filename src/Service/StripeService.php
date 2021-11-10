@@ -149,19 +149,19 @@ class StripeService
                     ]);
                     $subscription->setPatient($patient);
 
-                    $subscription->setStripeSubscriptionId($stripeSubscriptionId);
-                    $subscription->setStripeCustomerId($event->data->object->customer);
+                    // $subscription->setStripeSubscriptionId($stripeSubscriptionId);
+                    // $subscription->setStripeCustomerId($event->data->object->customer);
 
-                    $currentPeriodStart = new \DateTime();
-                    $currentPeriodStart->setTimestamp($stripeSubscription->current_period_start);
-                    $subscription->setCurrentPeriodStart($currentPeriodStart);
+                    // $currentPeriodStart = new \DateTime();
+                    // $currentPeriodStart->setTimestamp($stripeSubscription->current_period_start);
+                    // $subscription->setCurrentPeriodStart($currentPeriodStart);
 
-                    $currentPeriodEnd = new \DateTime();
-                    $currentPeriodEnd->setTimestamp($stripeSubscription->current_period_end + 20800);
-                    $subscription->setCurrentPeriodEnd($currentPeriodEnd);
+                    // $currentPeriodEnd = new \DateTime();
+                    // $currentPeriodEnd->setTimestamp($stripeSubscription->current_period_end + 20800);
+                    // $subscription->setCurrentPeriodEnd($currentPeriodEnd);
 
-                    $this->em->persist($subscription);
-                    $this->em->flush();
+                    // $this->em->persist($subscription);
+                    // $this->em->flush();
                 }
 
                 break;
