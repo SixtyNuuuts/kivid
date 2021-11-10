@@ -4,6 +4,7 @@ namespace App\Service;
 
 use Stripe\StripeClient;
 use App\Entity\Subscription;
+use App\Repository\PatientRepository;
 use App\Service\SubscriptionService;
 use Stripe\Webhook as StripeWebhook;
 use Doctrine\ORM\EntityManagerInterface;
@@ -19,17 +20,20 @@ class StripeService
     private $stripe;
     private $stripeWebhookSecretKey;
     private $subscriptionRepository;
+    private $patientRepository;
     private $em;
 
     public function __construct(
         string $stripeSecretKey,
         string $stripeWebhookSecretKey,
         SubscriptionRepository $subscriptionRepository,
+        PatientRepository $patientRepository,
         EntityManagerInterface $entityManager
     ) {
         $this->stripe = new StripeClient($stripeSecretKey);
         $this->stripeWebhookSecretKey = $stripeWebhookSecretKey;
         $this->subscriptionRepository = $subscriptionRepository;
+        $this->patientRepository = $patientRepository;
         $this->em = $entityManager;
     }
 
@@ -47,6 +51,11 @@ class StripeService
             'payment_method_types' => ['card'],
             'mode' => 'subscription',
             'client_reference_id' => $userId,
+            'subscription_data' => [
+                'metadata' => [
+                    'user_id' => $userId,
+                ],
+            ],
             'line_items' => [
                 [
                     'price' => $subPlanId,
@@ -127,10 +136,31 @@ class StripeService
 
                 if ($subscription) {
                     $newPeriodEnd = new \DateTime();
-                    // $newPeriodEnd->setTimestamp($stripeSubscription->current_period_end + 86400);
-                    $newPeriodEnd->setTimestamp($stripeSubscription->current_period_end + 10800);
+                    $newPeriodEnd->setTimestamp($stripeSubscription->current_period_end + 20800);
                     $subscription->setCurrentPeriodEnd($newPeriodEnd);
 
+                    $this->em->flush();
+                }
+                if (!$subscription) {
+                    $subscription = new Subscription();
+
+                    $patient = $this->patientRepository->findOneBy([
+                        'id' => $event->data->object->lines->data->metadata->user_id
+                    ]);
+                    $subscription->setPatient($patient);
+
+                    $subscription->setStripeSubscriptionId($stripeSubscriptionId);
+                    $subscription->setStripeCustomerId($event->data->object->customer);
+
+                    $currentPeriodStart = new \DateTime();
+                    $currentPeriodStart->setTimestamp($stripeSubscription->current_period_start);
+                    $subscription->setCurrentPeriodStart($currentPeriodStart);
+
+                    $currentPeriodEnd = new \DateTime();
+                    $currentPeriodEnd->setTimestamp($stripeSubscription->current_period_end + 20800);
+                    $subscription->setCurrentPeriodEnd($currentPeriodEnd);
+
+                    $this->em->persist($subscription);
                     $this->em->flush();
                 }
 
