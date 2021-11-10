@@ -37,7 +37,8 @@ class StripeService
         string $customerId = null,
         string $successUrl,
         string $cancelUrl,
-        string $subPlanId
+        string $subPlanId,
+        string $userId
     ): StripeCheckoutSession {
         $config = [
             'success_url' => $successUrl . '?session_id={CHECKOUT_SESSION_ID}',
@@ -45,6 +46,7 @@ class StripeService
             'allow_promotion_codes' => true,
             'payment_method_types' => ['card'],
             'mode' => 'subscription',
+            'client_reference_id' => $userId,
             'line_items' => [
                 [
                     'price' => $subPlanId,

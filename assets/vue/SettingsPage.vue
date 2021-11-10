@@ -629,6 +629,7 @@ export default {
                         : null,
                     successUrl: "abonnement/success",
                     cancelUrl: "abonnement/cancel",
+                    userId: `${this.currentUser.id}`,
                 })
                 .then((response) => {
                     window.location.href = response.data;
