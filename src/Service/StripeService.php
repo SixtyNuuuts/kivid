@@ -141,7 +141,7 @@ class StripeService
 
                     $this->em->flush();
                 }
-                
+
                 if (!$subscription) {
                     $newSubscription = new Subscription();
 

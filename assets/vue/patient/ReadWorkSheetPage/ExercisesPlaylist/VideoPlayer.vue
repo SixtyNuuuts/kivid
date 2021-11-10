@@ -475,8 +475,8 @@ export default {
                 overflow: hidden;
 
                 @media (min-width: 560px) and (min-height: 0px) {
-                    height: 28.2vw;
-                    max-width: 51vw;
+                    height: 28.5vw;
+                    max-width: 50.9vw;
                     transform: translateY(-3.9rem);
                 }
 
@@ -491,12 +491,17 @@ export default {
                 }
 
                 @media (min-width: 768px) and (min-height: 0px) {
-                    height: 29.4vw;
-                    max-width: 52vw;
+                    height: 19.4vw;
+                    max-width: 35vw;
+                }
+
+                @media (min-width: 768px) and (min-height: 270px) {
+                    height: 27.6vw;
+                    max-width: 49vw;
                 }
 
                 @media (min-width: 768px) and (min-height: 385px) {
-                    height: 33.4vw;
+                    height: 33.5vw;
                     max-width: 60vw;
                 }
 
@@ -521,26 +526,31 @@ export default {
                 }
 
                 @media (min-width: 992px) and (min-height: 0px) {
-                    height: 19.1vw;
-                    max-width: 34vw;
+                    height: 13.7vw;
+                    max-width: 24.2vw;
                 }
 
-                @media (min-width: 992px) and (min-height: 385px) {
+                @media (min-width: 992px) and (min-height: 380px) {
+                    height: 19.2vw;
+                    max-width: 34.2vw;
+                }
+
+                @media (min-width: 992px) and (min-height: 470px) {
                     height: 25.1vw;
                     max-width: 45vw;
                 }
 
-                @media (min-width: 992px) and (min-height: 465px) {
+                @media (min-width: 992px) and (min-height: 530px) {
                     height: 30.1vw;
-                    max-width: 54vw;
+                    max-width: 53.3vw;
                 }
 
-                @media (min-width: 992px) and (min-height: 550px) {
-                    height: 35.1vw;
+                @media (min-width: 992px) and (min-height: 580px) {
+                    height: 35.2vw;
                     max-width: 63vw;
                 }
 
-                @media (min-width: 992px) and (min-height: 630px) {
+                @media (min-width: 992px) and (min-height: 660px) {
                     height: 40.1vw;
                     max-width: 71vw;
                 }
@@ -551,33 +561,33 @@ export default {
                 }
 
                 @media (min-width: 1370px) and (min-height: 0px) {
-                    height: 12.3vw;
-                    max-width: 22vw;
+                    height: 12.2vw;
+                    max-width: 21.9vw;
                 }
 
                 @media (min-width: 1370px) and (min-height: 385px) {
-                    height: 16.1vw;
+                    height: 16.3vw;
                     max-width: 29vw;
                 }
 
                 @media (min-width: 1370px) and (min-height: 465px) {
-                    height: 21.1vw;
-                    max-width: 38vw;
+                    height: 21.2vw;
+                    max-width: 37.9vw;
                 }
 
-                @media (min-width: 1370px) and (min-height: 550px) {
-                    height: 26.1vw;
-                    max-width: 47vw;
+                @media (min-width: 1370px) and (min-height: 580px) {
+                    height: 26.4vw;
+                    max-width: 47.1vw;
                 }
 
-                @media (min-width: 1370px) and (min-height: 630px) {
+                @media (min-width: 1370px) and (min-height: 660px) {
                     height: 31.1vw;
-                    max-width: 55vw;
+                    max-width: 55.4vw;
                 }
 
                 @media (min-width: 1370px) and (min-height: 700px) {
-                    height: 45.1vw;
-                    max-width: 99rem;
+                    height: 32vw;
+                    max-width: 56.7vw;
                 }
 
                 &.not-sub-frame {

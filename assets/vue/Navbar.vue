@@ -645,6 +645,7 @@ export default {
                                 padding: 1rem 1.7rem;
                                 transition: all 0.2s;
                                 order: 2;
+                                user-select: none;
 
                                 &.clickable {
                                     cursor: pointer;
