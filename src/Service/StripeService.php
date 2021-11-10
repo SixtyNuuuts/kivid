@@ -47,9 +47,6 @@ class StripeService
             'payment_method_types' => ['card'],
             'mode' => 'subscription',
             'client_reference_id' => $userId,
-            'subscription_data' => [
-                'user_id' => $userId,
-            ],
             'line_items' => [
                 [
                     'price' => $subPlanId,
