@@ -158,7 +158,7 @@
             </div>
         </header>
         <main>
-            <section id="exercises-playlist">
+            <section id="exercises-playlist" class="no-mt">
                 <ExercisesPlaylist
                     :doctor="doctor"
                     :loading="loading"
@@ -781,10 +781,42 @@ export default {
                 }
 
                 .title {
-                    max-width: 60vw;
+                    max-width: 47vw;
+
+                    @media (min-width: 330px) {
+                        max-width: 52vw;
+                    }
+
+                    @media (min-width: 350px) {
+                        max-width: 54vw;
+                    }
+
+                    @media (min-width: 385px) {
+                        max-width: 57vw;
+                    }
+
+                    @media (min-width: 400px) {
+                        max-width: 61vw;
+                    }
+
+                    @media (min-width: 430px) {
+                        max-width: 62vw;
+                    }
+
+                    @media (min-width: 500px) {
+                        max-width: 68vw;
+                    }
+
+                    @media (min-width: 615px) {
+                        max-width: 69vw;
+                    }
 
                     @media (min-width: 768px) {
-                        max-width: 81vw;
+                        max-width: 74vw;
+                    }
+
+                    @media (min-width: 905px) {
+                        max-width: 76vw;
                     }
                 }
             }
@@ -978,6 +1010,10 @@ export default {
         #exercises-playlist {
             width: 100%;
             margin-top: 4.5rem;
+
+            &.no-mt {
+                margin-top: 0;
+            }
 
             @media (min-width: 768px) {
                 margin-top: 2.5rem;

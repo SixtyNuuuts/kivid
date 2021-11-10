@@ -1225,12 +1225,10 @@ export default {
             flex-direction: column;
             align-items: center;
             position: relative;
-
-            @media (max-width: 550px) {
-                padding-top: 4.2rem;
-            }
+            padding-top: 4.2rem;
 
             @media (min-width: 550px) {
+                padding-top: 1.7rem;
                 align-items: flex-start;
             }
 
@@ -1253,16 +1251,16 @@ export default {
                 }
 
                 .user-title {
-                    max-width: 70vw;
+                    max-width: 47vw;
                     margin-right: 1rem;
                     cursor: pointer;
 
                     @media (min-width: 550px) {
-                        max-width: 62vw;
+                        max-width: 43vw;
                     }
 
                     @media (min-width: 576px) {
-                        max-width: 60vw;
+                        max-width: 46vw;
                     }
 
                     @media (min-width: 992px) {
@@ -1270,7 +1268,7 @@ export default {
                     }
 
                     @media (min-width: 1100px) {
-                        max-width: 35vw;
+                        max-width: 32vw;
                     }
 
                     @media (min-width: 1370px) {

@@ -70,6 +70,7 @@ class NotificationService
                     'type' => 'text',
                     'content' => " vous a prescrit une fiche \"{$worksheet->getTitle()}\"",
                 ],
+                // important : laisser toujours le worksheetidlink en dernier dans le []
                 [
                     'type' => 'worksheetidlink',
                     'content' => "{$worksheet->getId()}",
@@ -95,6 +96,7 @@ class NotificationService
                     'type' => 'text',
                     'content' => " a terminé la dernière session de sa fiche \"{$worksheet->getTitle()}\"",
                 ],
+                // important : laisser toujours le worksheetidlink en dernier dans le []
                 [
                     'type' => 'worksheetidlink',
                     'content' => "{$worksheet->getId()}/{$patient->getId()}",
@@ -206,6 +208,7 @@ class NotificationService
                     'content' => "Plus que quelques {$type} pour réaliser vos exercices 
                     de \"{$worksheet->getTitle()}\", je m'y met maintenant !",
                 ],
+                // important : laisser toujours le worksheetidlink en dernier dans le []
                 [
                     'type' => 'worksheetidlink',
                     'content' => "{$worksheet->getId()}",
