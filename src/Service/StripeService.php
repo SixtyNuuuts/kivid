@@ -130,6 +130,9 @@ class StripeService
                     'stripeSubscriptionId' => $stripeSubscriptionId
                 ]);
 
+                $this->em->remove($subscription);
+                $this->em->flush();
+
                 $stripeSubscription = $this->retrieveSubscription(
                     $stripeSubscriptionId
                 );
