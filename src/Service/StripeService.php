@@ -146,7 +146,7 @@ class StripeService
                     $newSubscription = new Subscription();
 
                     $patient = $this->patientRepository->findOneBy([
-                        'id' => 14
+                        'id' => (int)$event->data->object->lines->data->metadata->user_id
                     ]);
                     $newSubscription->setPatient($patient);
 
