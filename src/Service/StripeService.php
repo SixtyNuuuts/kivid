@@ -149,8 +149,8 @@ class StripeService
                     ]);
                     $subscription->setPatient($patient);
 
-                    // $subscription->setStripeSubscriptionId($stripeSubscriptionId);
-                    // $subscription->setStripeCustomerId($event->data->object->customer);
+                    $subscription->setStripeSubscriptionId($stripeSubscriptionId);
+                    $subscription->setStripeCustomerId($event->data->object->customer);
 
                     // $currentPeriodStart = new \DateTime();
                     // $currentPeriodStart->setTimestamp($stripeSubscription->current_period_start);
