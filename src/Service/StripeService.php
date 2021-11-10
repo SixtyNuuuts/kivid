@@ -141,6 +141,7 @@ class StripeService
 
                     $this->em->flush();
                 }
+                
                 if (!$subscription) {
                     $newSubscription = new Subscription();
 
@@ -160,7 +161,7 @@ class StripeService
                     $currentPeriodEnd->setTimestamp($stripeSubscription->current_period_end + 20800);
                     $newSubscription->setCurrentPeriodEnd($currentPeriodEnd);
 
-                    $this->em->persist($newSubscription);
+                    // $this->em->persist($newSubscription);
                     $this->em->flush();
                 }
 
