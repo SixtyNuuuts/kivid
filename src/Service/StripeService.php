@@ -160,8 +160,8 @@ class StripeService
                     $currentPeriodEnd->setTimestamp($stripeSubscription->current_period_end + 20800);
                     $subscription->setCurrentPeriodEnd($currentPeriodEnd);
 
-                    // $this->em->persist($subscription);
-                    // $this->em->flush();
+                    $this->em->persist($subscription);
+                    $this->em->flush();
                 }
 
                 break;
