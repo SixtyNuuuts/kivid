@@ -142,28 +142,28 @@ class StripeService
                     $this->em->flush();
                 }
                 
-                // if (!$subscription) {
-                //     $newSubscription = new Subscription();
+                if (!$subscription) {
+                    $newSubscription = new Subscription();
 
-                //     $patient = $this->patientRepository->findOneBy([
-                //         'id' => (int)$event->data->object->lines->data->metadata->user_id
-                //     ]);
-                //     $newSubscription->setPatient($patient);
+                    $patient = $this->patientRepository->findOneBy([
+                        'id' => $event->data->object->lines->data[0]->metadata->user_id
+                    ]);
+                    $newSubscription->setPatient($patient);
 
-                //     $newSubscription->setStripeSubscriptionId($stripeSubscriptionId);
-                //     $newSubscription->setStripeCustomerId($event->data->object->customer);
+                    $newSubscription->setStripeSubscriptionId($stripeSubscriptionId);
+                    $newSubscription->setStripeCustomerId($event->data->object->customer);
 
-                //     $currentPeriodStart = new \DateTime();
-                //     $currentPeriodStart->setTimestamp($stripeSubscription->current_period_start);
-                //     $newSubscription->setCurrentPeriodStart($currentPeriodStart);
+                    $currentPeriodStart = new \DateTime();
+                    $currentPeriodStart->setTimestamp($stripeSubscription->current_period_start);
+                    $newSubscription->setCurrentPeriodStart($currentPeriodStart);
 
-                //     $currentPeriodEnd = new \DateTime();
-                //     $currentPeriodEnd->setTimestamp($stripeSubscription->current_period_end + 20800);
-                //     $newSubscription->setCurrentPeriodEnd($currentPeriodEnd);
+                    $currentPeriodEnd = new \DateTime();
+                    $currentPeriodEnd->setTimestamp($stripeSubscription->current_period_end + 20800);
+                    $newSubscription->setCurrentPeriodEnd($currentPeriodEnd);
 
-                //     $this->em->persist($newSubscription);
-                //     $this->em->flush();
-                // }
+                    $this->em->persist($newSubscription);
+                    $this->em->flush();
+                }
 
                 break;
             case 'invoice.payment_failed':
@@ -175,6 +175,6 @@ class StripeService
             default:
         }
 
-        return new JsonResponse(['status' => 'success', 'a' => $event->data->object->lines->data[0]->metadata->user_id, 'b' => $event->data->object->customer], 200);
+        return new JsonResponse(['status' => 'success'], 200);
     }
 }
