@@ -17,16 +17,16 @@ class SubscriptionService
         EntityManagerInterface $entityManager
     ) {
         $this->em = $entityManager;
-        $this->plans[] = new SubscriptionPlan(
-            'price_1JtvNNCvuRcL0li5gWxMmZKZ',
-            'TEST Abonnement Jour KIVID',
-            0.1 * 100
-        );
         // $this->plans[] = new SubscriptionPlan(
-        //     'price_1JtYbeCvuRcL0li5Q75UKmqK',
-        //     'Abonnement Mensuel KIVID',
-        //     24.99 * 100
+        //     'price_1JtvNNCvuRcL0li5gWxMmZKZ',
+        //     'TEST Abonnement Jour KIVID',
+        //     0.1 * 100
         // );
+        $this->plans[] = new SubscriptionPlan(
+            'price_1JtYbeCvuRcL0li5Q75UKmqK',
+            'Abonnement Mensuel KIVID',
+            24.99 * 100
+        );
     }
 
     public function getPlans(): array
