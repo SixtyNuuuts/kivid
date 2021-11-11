@@ -86,7 +86,7 @@ class Exercise
     private $exerciseStats;
 
     /**
-     * @ORM\OneToMany(targetEntity=Commentary::class, mappedBy="exercise")
+     * @ORM\OneToMany(targetEntity=Commentary::class, mappedBy="exercise", orphanRemoval=true)
      * @Groups({"worksheet_read"})
      */
     private $commentaries;

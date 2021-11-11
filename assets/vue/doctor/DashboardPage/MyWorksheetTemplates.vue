@@ -990,17 +990,23 @@ export default {
             if (this.selectedTags.length) {
                 worksheetTemplatesFiltered = worksheetTemplatesFiltered.filter(
                     (w) => {
-                        let result = false;
+                        const results = [];
 
                         if (w.exercisesTags) {
-                            w.exercisesTags.forEach((tag) => {
-                                if (this.selectedTags.includes(tag)) {
-                                    result = true;
-                                }
+                            this.selectedTags.forEach((tag) => {
+                                let result = false;
+
+                                w.exercisesTags.forEach((wtag) => {
+                                    if (wtag === tag) {
+                                        result = true;
+                                    }
+                                });
+
+                                results.push(result);
                             });
                         }
 
-                        return result;
+                        return !results.includes(false);
                     }
                 );
             }

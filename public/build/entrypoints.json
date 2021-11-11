@@ -7,7 +7,7 @@
       ],
       "css": [
         "/build/108.fc93ce1c.css",
-        "/build/app.8a105b9f.css"
+        "/build/app.65de749e.css"
       ]
     },
     "navbar": {
@@ -86,10 +86,10 @@
         "/build/247.3f1777ea.js",
         "/build/912.4cd1479e.js",
         "/build/900.5c240a39.js",
-        "/build/doctor-dashboard-page.80dd6bbb.js"
+        "/build/doctor-dashboard-page.b193501d.js"
       ],
       "css": [
-        "/build/doctor-dashboard-page.8b8488a2.css"
+        "/build/doctor-dashboard-page.c6880036.css"
       ]
     },
     "doctor-worksheet-page": {
@@ -99,10 +99,10 @@
         "/build/912.4cd1479e.js",
         "/build/770.ec01566d.js",
         "/build/900.5c240a39.js",
-        "/build/doctor-worksheet-page.a2de0ed8.js"
+        "/build/doctor-worksheet-page.cbc268f2.js"
       ],
       "css": [
-        "/build/doctor-worksheet-page.5e22b76e.css"
+        "/build/doctor-worksheet-page.058ce48e.css"
       ]
     },
     "patient-dashboard-page": {

@@ -568,6 +568,12 @@ export default {
                         this.doctorPatients.indexOf(this.removePatientDetails),
                         1
                     );
+                    this.$parent.doctor.patients.splice(
+                        this.$parent.doctor.patients.indexOf(
+                            this.removePatientDetails
+                        ),
+                        1
+                    );
                     if (this.allPatients.length) {
                         const patient = this.allPatients.find(
                             (p) => p.id === this.removePatientDetails.id
@@ -591,6 +597,7 @@ export default {
         },
         addPatient(patient) {
             this.doctorPatients.push(patient);
+            this.$parent.doctor.patients.push(patient);
         },
         getAge(birthdate) {
             return f.generateAgeFromDateOfBirth(birthdate);

@@ -382,7 +382,7 @@ export default {
 
             this.timeout = setTimeout(() => {
                 if (window.innerWidth < 449) {
-                    this.max = 100;
+                    this.max = 1000;
                     this.page = 1;
                 }
 

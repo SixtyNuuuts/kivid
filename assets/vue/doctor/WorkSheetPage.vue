@@ -158,7 +158,10 @@
             </div>
         </header>
         <main>
-            <section id="exercises-playlist" class="no-mt">
+            <section
+                id="exercises-playlist"
+                :class="{ 'no-mt': 'voir' === action }"
+            >
                 <ExercisesPlaylist
                     :doctor="doctor"
                     :loading="loading"
@@ -884,6 +887,7 @@ export default {
                         .worksheet-timing-perday,
                         .worksheet-timing-perweek {
                             opacity: 0.2 !important;
+                            user-select: none !important;
 
                             .vs-input {
                                 pointer-events: none;

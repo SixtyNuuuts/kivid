@@ -666,13 +666,21 @@
 
                                     &.fa-trash {
                                         font-size: 0.95rem;
-                                        top: -0.1rem;
+                                        top: 0rem;
                                         left: 0.05rem;
+
+                                        @media (min-width: 400px) {
+                                            top: -0.1rem;
+                                        }
                                     }
 
                                     &.fa-pen {
                                         font-size: 1rem;
-                                        top: -0.1rem;
+                                        top: 0rem;
+
+                                        @media (min-width: 400px) {
+                                            top: -0.1rem;
+                                        }
                                     }
                                 }
 

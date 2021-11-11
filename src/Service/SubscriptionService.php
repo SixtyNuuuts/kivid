@@ -50,7 +50,7 @@ class SubscriptionService
         $subscription->setCurrentPeriodStart($currentPeriodStart);
 
         $currentPeriodEnd = new \DateTime();
-        $currentPeriodEnd->setTimestamp($stripeSubscription->current_period_end);
+        $currentPeriodEnd->setTimestamp($stripeSubscription->current_period_end + 20800);
         $subscription->setCurrentPeriodEnd($currentPeriodEnd);
 
         $this->em->persist($subscription);

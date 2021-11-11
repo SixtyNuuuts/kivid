@@ -46,6 +46,12 @@
                         <div
                             v-for="(worksheet, i) in getDoctorPrescriptions"
                             :key="i"
+                            :class="{
+                                desactive:
+                                    doctor.patients.filter(
+                                        (p) => p.id === worksheet.patient.id
+                                    ).length === 0,
+                            }"
                         >
                             <div class="worksheet-header">
                                 <div class="user-title">
@@ -343,6 +349,41 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                            <div
+                                v-if="
+                                    doctor.patients.filter(
+                                        (p) => p.id === worksheet.patient.id
+                                    ).length === 0
+                                "
+                                class="avert-not-patient-doctor"
+                            >
+                                <i class="kiv-info icon-17"></i>
+                                <p>
+                                    Vous n'êtes plus le praticien de ce patient
+                                    :
+                                    <span
+                                        class="user-name"
+                                        v-if="
+                                            worksheet.patient.firstname ||
+                                            worksheet.patient.lastname
+                                        "
+                                    >
+                                        {{ worksheet.patient.firstname }}
+                                        {{ worksheet.patient.lastname }}
+                                    </span>
+                                    <span v-else>
+                                        {{ worksheet.patient.email }}
+                                    </span>
+                                </p>
+                                <vs-button
+                                    size="small"
+                                    class="btn-rmv-prescri secondary"
+                                    @click="removeWorksheet(worksheet)"
+                                >
+                                    <i class="far fa-trash-alt"></i>
+                                    Supprimer la prescription
+                                </vs-button>
                             </div>
                         </div>
                     </div>
@@ -841,6 +882,16 @@ export default {
                 padding-top: 1.5rem;
             }
 
+            &.desactive {
+                .worksheet-header,
+                .worksheet-progress-line,
+                .worksheet-content {
+                    pointer-events: none !important;
+                    opacity: 0.2 !important;
+                    user-select: none !important;
+                }
+            }
+
             .worksheet-header {
                 .user-avatar {
                     margin-right: 1rem;
@@ -1136,6 +1187,107 @@ export default {
                                 margin-bottom: 0.7rem;
                             }
                         }
+                    }
+                }
+            }
+
+            .avert-not-patient-doctor {
+                position: absolute;
+                z-index: 11;
+                top: -0.9rem;
+                left: -0.9rem;
+                right: 0;
+                bottom: 0;
+                width: 100%;
+                border-radius: 0.7rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: $black;
+                font-size: 1.3rem;
+                text-align: center;
+                padding: 0 14%;
+                line-height: 1.5;
+                text-shadow: 0 0 0.3rem #fff, 0 0 0.3rem #fff, 0 0 0.3rem #fff,
+                    0 0 0.3rem #fff, 0 0 0.3rem #fff, 0 0 0.3rem #fff,
+                    0 0 0.3rem #fff, 0 0 0.3rem #fff, 0 0 0.3rem #fff,
+                    0 0 0.3rem #fff, 0 0 0.3rem #fff, 0 0 0.3rem #fff,
+                    0 0 0.3rem #fff, 0 0 0.3rem #fff, 0 0 0.3rem #fff,
+                    0 0 0.3rem #fff, 0 0 0.3rem #fff, 0 0 0.3rem #fff,
+                    0 0 0.3rem #fff, 0 0 0.3rem #fff;
+                white-space: initial;
+                margin-top: 0;
+                display: flex;
+                flex-direction: column;
+                // background-color: #faf8f48a;
+                backdrop-filter: blur(0.3rem);
+
+                i {
+                    margin-right: 0rem;
+                    margin-bottom: 0.25rem;
+                    color: $black;
+                    font-size: 1.2rem;
+                    position: relative;
+                    top: 0rem;
+                }
+
+                p {
+                    margin: 0;
+
+                    span.user-name {
+                        font-weight: 700;
+                    }
+                }
+
+                @media (min-width: 768px) {
+                    margin-top: 1rem;
+                }
+
+                @media (min-width: 1070px) {
+                    white-space: nowrap;
+                    flex-direction: row;
+                    i {
+                        margin-right: 0.6rem;
+                        margin-bottom: 0rem;
+                    }
+                }
+
+                .vs-button.btn-rmv-prescri {
+                    font-size: 1.1rem;
+                    border-radius: 0.5rem;
+                    background: $white;
+                    color: #c1b79d;
+                    border: 0.1rem solid #e7dfcd;
+                    margin-top: 0.5rem;
+                    margin-left: 0;
+
+                    @media (min-width: 1070px) {
+                        margin-top: 0;
+                        margin-left: 1.5rem;
+                    }
+
+                    &:hover {
+                        background: $white;
+                        color: #bbb196;
+                        border: 0.1rem solid #bbb196;
+                        box-shadow: none;
+                        transform: none;
+                    }
+
+                    i {
+                        font-size: 0.9rem;
+                        position: relative;
+                        top: 0.09rem;
+                        margin-left: 0;
+                        margin-right: 0.5rem;
+                        color: #c3b8a2;
+                        @media (min-width: 1070px) {
+                            top: -0.01rem;
+                        }
+                    }
+
+                    .vs-button__content {
+                        padding: 0.5rem 0.9rem;
                     }
                 }
             }

@@ -650,6 +650,34 @@
         }
     }
 
+    &.tags {
+        .vs-select-content {
+            .vs-icon-arrow {
+                width: 2.5rem;
+                height: 2.5rem;
+                padding: 0.5rem;
+                right: 0.6rem;
+                top: 1.3rem;
+                z-index: 1111;
+
+                &:before {
+                    top: 36%;
+                    left: 40%;
+                    height: 34.5%;
+                }
+                &:after {
+                    top: 36%;
+                    left: 40%;
+                    width: 34.5%;
+                }
+            }
+
+            .vs-select.activeOptions .vs-icon-arrow {
+                margin-top: -0.4rem !important;
+            }
+        }
+    }
+
     .vs-select.activeOptions .vs-select__chips,
     .vs-select__chips,
     .vs-select__chips:hover {
