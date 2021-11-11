@@ -80,6 +80,7 @@
                                 placeholder="Mots-Clés"
                                 v-model="selectedTags"
                                 @change="page = 1"
+                                @input="selectTag()"
                             >
                                 <vs-option
                                     v-for="(tag, i) in getTagsFromAll"
@@ -904,6 +905,16 @@ export default {
         },
     },
     methods: {
+        selectTag() {
+            if (!this.inputChips) {
+                this.inputChips = document.querySelector(
+                    ".vs-select__chips__input"
+                );
+            }
+
+            this.inputChips.focus();
+            this.inputChips.blur();
+        },
         prescriProcessWorksheetChoice(worksheet) {
             this.$emit("prescriProcessWorksheetChoice", worksheet);
         },

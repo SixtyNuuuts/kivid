@@ -47,6 +47,7 @@
                             placeholder="Mots-Clés"
                             v-model="selectedTags"
                             @change="page = 1"
+                            @input="selectTag()"
                         >
                             <vs-option
                                 v-for="(tag, i) in getTagsFromAllVideos"
@@ -267,6 +268,7 @@ export default {
             modalViewVideo: false,
             selectedViewVideo: false,
             btnLoadingValidVideosSelection: false,
+            inputChips: null,
         };
     },
     computed: {
@@ -291,6 +293,16 @@ export default {
         },
     },
     methods: {
+        selectTag() {
+            if (!this.inputChips) {
+                this.inputChips = document.querySelector(
+                    ".vs-select__chips__input"
+                );
+            }
+
+            this.inputChips.focus();
+            this.inputChips.blur();
+        },
         filterByPartOfBody(partOfBody) {
             this.selectedPoB = partOfBody;
             this.page = 1;
