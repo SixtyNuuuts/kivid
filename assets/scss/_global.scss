@@ -1111,6 +1111,23 @@ body.no-scrollbar::-webkit-scrollbar {
     }
 }
 
+p.alert {
+    color: $orange;
+    font-size: 1.48rem;
+    max-width: 30rem;
+    line-height: 1.4;
+    text-align: center;
+    margin: 2.3rem auto;
+    margin-bottom: -0.8rem;
+
+    i {
+        font-size: 1.3rem;
+        position: relative;
+        top: -0.2rem;
+        margin-right: 0.2rem;
+    }
+}
+
 .modal-confirm-buttons {
     display: flex;
     justify-content: center;
@@ -1349,9 +1366,6 @@ body.no-scrollbar::-webkit-scrollbar {
                 margin-bottom: 4.5rem;
             }
         }
-    }
-
-    .btn-request-subscription {
     }
 
     &.dark {

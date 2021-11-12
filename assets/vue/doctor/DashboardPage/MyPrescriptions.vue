@@ -596,6 +596,14 @@
                     </span>
                 </p>
             </div>
+            <p class="alert">
+                <i class="fas fa-exclamation-triangle"></i>
+                Attention : cela supprimera également le
+                <strong>
+                    suivi et statistiques de cette fiche,
+                    coté&nbsp;patient</strong
+                >, action&nbsp;irrémédiable.
+            </p>
 
             <div class="modal-confirm-buttons">
                 <vs-button
