@@ -598,7 +598,7 @@
             </div>
             <p class="alert">
                 <i class="fas fa-exclamation-triangle"></i>
-                Attention :cela supprimera également le
+                Attention : cela supprimera également le
                 <strong>
                     suivi et statistiques du patient pour cette fiche</strong
                 >, action&nbsp;irrémédiable.
