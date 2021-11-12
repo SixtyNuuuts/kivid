@@ -600,8 +600,7 @@
                 <i class="fas fa-exclamation-triangle"></i>
                 Attention : cela supprimera également le
                 <strong>
-                    suivi et statistiques de cette fiche,
-                    coté&nbsp;patient</strong
+                    suivi et statistiques du patient pour cette fiche</strong
                 >, action&nbsp;irrémédiable.
             </p>
 

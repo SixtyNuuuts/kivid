@@ -777,7 +777,12 @@ export default {
             flex-direction: column;
             margin-bottom: 0;
 
-            @media (min-width: 630px) and (max-height: 500px) {
+            @media (min-width: 630px) and (min-height: 0px) and (max-height: 200px) {
+                flex-direction: row;
+                margin-bottom: 14vh;
+            }
+
+            @media (min-width: 630px) and (min-height: 200px) and (max-height: 500px) {
                 flex-direction: row;
                 margin-bottom: 21vh;
             }

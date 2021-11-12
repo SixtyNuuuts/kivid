@@ -653,27 +653,27 @@
     &.tags {
         .vs-select-content {
             .vs-icon-arrow {
-                width: 2.5rem;
-                height: 2.5rem;
+                width: 2rem;
+                height: 2rem;
                 padding: 0.5rem;
                 right: 0.6rem;
-                top: 1.3rem;
+                top: 1.6rem;
                 z-index: 1111;
 
                 &:before {
                     top: 36%;
                     left: 40%;
-                    height: 34.5%;
+                    height: 40%;
                 }
                 &:after {
                     top: 36%;
                     left: 40%;
-                    width: 34.5%;
+                    width: 40%;
                 }
             }
 
             .vs-select.activeOptions .vs-icon-arrow {
-                margin-top: -0.4rem !important;
+                margin-top: -0.5rem !important;
             }
         }
     }
