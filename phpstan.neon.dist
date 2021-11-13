@@ -1,5 +1,3 @@
-includes:
-    - vendor/phpstan/phpstan-symfony/extension.neon
 parameters:
     level: 5 # max you can currently choose from 9 levels (0 is the loosest and 8 is the strictest).
     # Often I use the level 5 because the level 6 checks that every method returns type.

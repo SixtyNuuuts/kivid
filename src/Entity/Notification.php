@@ -69,6 +69,13 @@ class Notification
         return $this->id;
     }
 
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
     public function getType(): ?string
     {
         return $this->type;

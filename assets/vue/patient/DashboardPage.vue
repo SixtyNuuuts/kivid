@@ -400,7 +400,10 @@ export default {
                                         );
                                 }
 
-                                if (response.data.notifTimeLeft) {
+                                if (
+                                    response.data.notifTimeLeft &&
+                                    !this.doctorView
+                                ) {
                                     const userNotifList =
                                         document.getElementById(
                                             "user-notif-list"

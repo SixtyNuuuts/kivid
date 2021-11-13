@@ -55,8 +55,9 @@
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.4",
         "fakerphp/faker": "^1.14",
-        "phpstan/phpstan": "^0.12.90",
-        "phpstan/phpstan-symfony": "^0.12.37",
+        "phpstan/extension-installer": "^1.1",
+        "phpstan/phpstan-doctrine": "^1.0",
+        "phpstan/phpstan-symfony": "^1.0",
         "phpunit/phpunit": "^9.5",
         "squizlabs/php_codesniffer": "*",
         "symfony/browser-kit": "^5.3",

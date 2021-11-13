@@ -58,6 +58,13 @@ class ExerciseStat
         return $this->id;
     }
 
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
     public function getDoneAt(): ?\DateTime
     {
         return $this->doneAt;

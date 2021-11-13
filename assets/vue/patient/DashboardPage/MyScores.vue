@@ -414,7 +414,7 @@ export default {
             .then((response) => {
                 this.score = response.data.score ? response.data.score : 0;
 
-                if (response.data.notifScoreRank) {
+                if (response.data.notifScoreRank && !this.doctorView) {
                     const userNotifList =
                         document.getElementById("user-notif-list");
                     const notifBell = document.getElementById("notif-bell");
