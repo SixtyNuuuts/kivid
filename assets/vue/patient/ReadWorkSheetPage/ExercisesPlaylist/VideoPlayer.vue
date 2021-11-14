@@ -127,7 +127,10 @@
                             {{ getExercise.video.name }}
                         </div>
                     </div>
-                    <div class="exercise-series-reps-options">
+                    <div
+                        class="exercise-series-reps-options"
+                        :class="{ 'n-m-b': !btnValidVideoCompleted }"
+                    >
                         <div class="series-reps">
                             <div class="series">
                                 <i class="kiv-series icon-18"></i
@@ -165,7 +168,10 @@
                             </div>
                         </div>
                     </div>
-                    <div class="btn-next">
+                    <div
+                        class="btn-next"
+                        :class="{ 'btn-hide': !btnValidVideoCompleted }"
+                    >
                         <vs-button
                             :disabled="!btnValidVideoCompleted"
                             @click="validVideoCompleted"
@@ -918,6 +924,12 @@ export default {
             .btn-next {
                 position: initial;
 
+                &.btn-hide {
+                    @media (max-width: 559px) and (max-height: 750px) {
+                        display: none;
+                    }
+                }
+
                 @media (min-width: 560px) {
                     position: absolute;
                     left: 50%;
@@ -933,6 +945,12 @@ export default {
                 align-items: center;
                 margin-top: 2.3rem;
                 margin-bottom: 2.85rem;
+
+                &.n-m-b {
+                    @media (max-width: 559px) and (max-height: 750px) {
+                        margin-bottom: 0;
+                    }
+                }
 
                 @media (min-width: 560px) {
                     align-items: flex-end;
