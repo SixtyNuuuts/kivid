@@ -336,38 +336,38 @@ export default {
                                                     this.loading = false;
                                                 })
                                                 .catch((error) => {
-                                                    const errorMess =
-                                                        "object" ===
-                                                        typeof error.response
-                                                            .data
-                                                            ? error.response
-                                                                  .data.detail
-                                                            : error.response
-                                                                  .data;
+                                                    // const errorMess =
+                                                    //     "object" ===
+                                                    //     typeof error.response
+                                                    //         .data
+                                                    //         ? error.response
+                                                    //               .data.detail
+                                                    //         : error.response
+                                                    //               .data;
 
-                                                    console.error(errorMess);
+                                                    console.error(error);
                                                 });
                                         } else {
                                             this.loading = false;
                                         }
                                     })
                                     .catch((error) => {
-                                        const errorMess =
-                                            "object" ===
-                                            typeof error.response.data
-                                                ? error.response.data.detail
-                                                : error.response.data;
+                                        // const errorMess =
+                                        //     "object" ===
+                                        //     typeof error.response.data
+                                        //         ? error.response.data.detail
+                                        //         : error.response.data;
 
-                                        console.error(errorMess);
+                                        console.error(error);
                                     });
                             })
                             .catch((error) => {
-                                const errorMess =
-                                    "object" === typeof error.response.data
-                                        ? error.response.data.detail
-                                        : error.response.data;
+                                // const errorMess =
+                                //     "object" === typeof error.response.data
+                                //         ? error.response.data.detail
+                                //         : error.response.data;
 
-                                console.error(errorMess);
+                                console.error(error);
                             });
                     })
                     .catch((error) => {
