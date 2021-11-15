@@ -166,13 +166,23 @@ export default {
                 id: null,
             };
 
-            const commentaryExist = exerciseCommentaries.find(
-                (c) =>
-                    c.worksheetSession.id === this.getCurrentWorksheetSession.id
-            );
+            if (
+                exerciseCommentaries.length &&
+                this.getCurrentWorksheetSession
+            ) {
+                commentary = exerciseCommentaries.find(
+                    (c) =>
+                        c.worksheetSession.id ===
+                        this.getCurrentWorksheetSession.id
+                );
+            }
 
-            if (commentaryExist) {
-                commentary = commentaryExist;
+            if (
+                exerciseCommentaries.length &&
+                !this.getCurrentWorksheetSession
+            ) {
+                commentary =
+                    exerciseCommentaries[exerciseCommentaries.length - 1];
             }
 
             return commentary;
@@ -336,38 +346,38 @@ export default {
                                                     this.loading = false;
                                                 })
                                                 .catch((error) => {
-                                                    // const errorMess =
-                                                    //     "object" ===
-                                                    //     typeof error.response
-                                                    //         .data
-                                                    //         ? error.response
-                                                    //               .data.detail
-                                                    //         : error.response
-                                                    //               .data;
+                                                    const errorMess =
+                                                        "object" ===
+                                                        typeof error.response
+                                                            .data
+                                                            ? error.response
+                                                                  .data.detail
+                                                            : error.response
+                                                                  .data;
 
-                                                    console.error(error);
+                                                    console.error(errorMess);
                                                 });
                                         } else {
                                             this.loading = false;
                                         }
                                     })
                                     .catch((error) => {
-                                        // const errorMess =
-                                        //     "object" ===
-                                        //     typeof error.response.data
-                                        //         ? error.response.data.detail
-                                        //         : error.response.data;
+                                        const errorMess =
+                                            "object" ===
+                                            typeof error.response.data
+                                                ? error.response.data.detail
+                                                : error.response.data;
 
-                                        console.error(error);
+                                        console.error(errorMess);
                                     });
                             })
                             .catch((error) => {
-                                // const errorMess =
-                                //     "object" === typeof error.response.data
-                                //         ? error.response.data.detail
-                                //         : error.response.data;
+                                const errorMess =
+                                    "object" === typeof error.response.data
+                                        ? error.response.data.detail
+                                        : error.response.data;
 
-                                console.error(error);
+                                console.error(errorMess);
                             });
                     })
                     .catch((error) => {
