@@ -46,4 +46,13 @@ class PatientRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
+
+    public function countAllPatients(): int
+    {
+        return $this->createQueryBuilder('p')
+            ->select('count(p.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+        ;
+    }
 }

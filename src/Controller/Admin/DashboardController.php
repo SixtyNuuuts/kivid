@@ -6,6 +6,8 @@ use App\Entity\Tag;
 use App\Entity\Video;
 use App\Entity\Option;
 use App\Entity\PartOfBody;
+use App\Repository\DoctorRepository;
+use App\Repository\PatientRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -17,12 +19,26 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
  */
 class DashboardController extends AbstractDashboardController
 {
+    private $patientRepository;
+    private $doctorRepository;
+
+    public function __construct(
+        PatientRepository $patientRepository,
+        DoctorRepository $doctorRepository
+    ) {
+        $this->patientRepository = $patientRepository;
+        $this->doctorRepository = $doctorRepository;
+    }
+
     /**
      * @Route("/dashboard", name="app_admin_dashboard")
      */
     public function index(): Response
     {
-        return $this->render('admin/dashboard.html.twig');
+        return $this->render('admin/dashboard.html.twig', [
+            'countAllPatients' => $this->patientRepository->countAllPatients(),
+            'countAllDoctors' => $this->doctorRepository->countAllDoctors(),
+        ]);
     }
 
     public function configureDashboard(): Dashboard
