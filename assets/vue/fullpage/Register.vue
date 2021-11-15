@@ -152,7 +152,7 @@
 
             <div class="btn-container" v-if="userType === 'patient'">
                 <vs-button
-                    class="w-100 secondary btn-register-switch"
+                    class="w-100 btn-register-switch praticien"
                     @click="switchUserType('doctor')"
                 >
                     S'inscrire en tant que professionnel
@@ -161,7 +161,7 @@
             </div>
             <div class="btn-container" v-if="userType === 'doctor'">
                 <vs-button
-                    class="w-100 secondary btn-register-switch"
+                    class="w-100 btn-register-switch"
                     @click="switchUserType('patient')"
                 >
                     S'inscrire en tant que particulier
@@ -389,16 +389,21 @@ export default {
 .vs-button.btn-register-switch {
     font-size: 1.2rem;
     border-radius: 0.5rem;
-    background: transparent;
-    color: #c1b79d;
-    border: 0.1rem solid #e7dfcd;
+    box-shadow: none !important;
+    background: $gray-light;
+    color: $gray-dark;
 
-    &:hover {
-        background: transparent;
-        color: #bbb196;
-        border: 0.1rem solid #bbb196;
-        box-shadow: none;
-        transform: none;
+    &.praticien {
+        box-shadow: 0rem 0rem 0.8rem 0rem rgb(251, 139, 104, 0.5) !important;
+        background: $orange;
+        color: $white;
+
+        &:hover {
+            background: $orange;
+            color: $white;
+            transform: none;
+            box-shadow: 0rem 0.4rem 1.4rem 0rem rgb(251, 139, 104, 0.5) !important;
+        }
     }
 
     i {
