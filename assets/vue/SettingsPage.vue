@@ -299,7 +299,7 @@
                                         v-if="!stripeSubscription"
                                         class="sub-details"
                                     >
-                                        <div class="sub-name">
+                                        <div class="sub-name small">
                                             Pour accéder complètement à mes
                                             prescriptions :
                                         </div>
@@ -1172,7 +1172,7 @@ export default {
             .sub-frame {
                 border: 2px solid #e0dfde;
                 border-radius: 0.5rem;
-                max-width: 64.3rem;
+                max-width: 68.5rem;
 
                 &.active {
                     border: 2px solid #ffc3b1;
@@ -1224,10 +1224,16 @@ export default {
                             align-items: center;
 
                             .sub-name {
-                                font-size: 2rem;
+                                font-size: 2.6rem;
+                                line-height: 1.1;
+                                margin-bottom: 1.3rem;
                                 font-weight: 700;
                                 color: #fb8b68;
                                 text-align: center;
+
+                                &.small {
+                                    font-size: 2rem;
+                                }
                             }
 
                             .sub-price {
@@ -1243,10 +1249,11 @@ export default {
 
                         p {
                             color: #a8a396;
-                            max-width: 33rem;
+                            max-width: 27rem;
                             text-align: center;
                             margin: 1.8rem 0;
                             line-height: 1.2;
+                            font-size: 1.2rem;
 
                             &:nth-child(2) {
                                 margin-top: 1rem;

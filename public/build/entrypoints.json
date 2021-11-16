@@ -7,7 +7,7 @@
       ],
       "css": [
         "/build/108.fc93ce1c.css",
-        "/build/app.7321d6b1.css"
+        "/build/app.3cdbd514.css"
       ]
     },
     "navbar": {
@@ -26,10 +26,10 @@
         "/build/429.ecc3ba87.js",
         "/build/247.3f1777ea.js",
         "/build/735.b06ed777.js",
-        "/build/settings-page.13883c3b.js"
+        "/build/settings-page.1527d92e.js"
       ],
       "css": [
-        "/build/settings-page.3035474b.css"
+        "/build/settings-page.f42ed3e1.css"
       ]
     },
     "login": {
