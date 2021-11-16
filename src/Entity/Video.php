@@ -68,7 +68,7 @@ class Video
     private $youtubeId;
 
     /**
-     * @ORM\OneToMany(targetEntity=Exercise::class, mappedBy="video")
+     * @ORM\OneToMany(targetEntity=Exercise::class, mappedBy="video", orphanRemoval=true)
      */
     private $exercises;
 
