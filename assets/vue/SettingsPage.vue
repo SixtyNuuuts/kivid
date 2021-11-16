@@ -1224,7 +1224,7 @@ export default {
                             align-items: center;
 
                             .sub-name {
-                                font-size: 2.6rem;
+                                font-size: 2.5rem;
                                 line-height: 1.1;
                                 margin-bottom: 1.3rem;
                                 font-weight: 700;
@@ -1266,7 +1266,7 @@ export default {
 
                             i {
                                 color: $orange;
-                                font-size: 0.9rem;
+                                font-size: 1rem;
                             }
                         }
 
