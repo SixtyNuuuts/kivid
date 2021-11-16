@@ -164,7 +164,10 @@
                                         <span
                                             v-if="
                                                 worksheet.totalWorksheetSessions >
-                                                0
+                                                    0 &&
+                                                worksheet.currentWorksheetSession &&
+                                                worksheet.totalCompletedWorksheetSessions !=
+                                                    worksheet.totalWorksheetSessions
                                             "
                                         >
                                             Session n°<span
@@ -198,6 +201,19 @@
                                             "
                                         >
                                             NB Sessions
+                                        </span>
+                                        <span
+                                            v-if="
+                                                (worksheet.totalWorksheetSessions >
+                                                    0 &&
+                                                    !worksheet.currentWorksheetSession) ||
+                                                (worksheet.totalWorksheetSessions >
+                                                    0 &&
+                                                    worksheet.totalCompletedWorksheetSessions ===
+                                                        worksheet.totalWorksheetSessions)
+                                            "
+                                        >
+                                            Traitement terminé
                                         </span>
                                     </p>
                                 </div>
