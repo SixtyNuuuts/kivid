@@ -306,7 +306,7 @@ export default {
                     gender:
                         this.createPatientDetails.gender &&
                         this.createPatientDetails.gender != "0"
-                            ? "1" === this.createPatientDetails.gender
+                            ? "1" == this.createPatientDetails.gender
                                 ? "male"
                                 : "female"
                             : "",

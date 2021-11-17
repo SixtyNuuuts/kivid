@@ -523,7 +523,7 @@ export default {
                     gender:
                         this.currentUser.gender &&
                         this.currentUser.gender != "0"
-                            ? "1" === this.currentUser.gender
+                            ? "1" == this.currentUser.gender
                                 ? "male"
                                 : "female"
                             : "",
