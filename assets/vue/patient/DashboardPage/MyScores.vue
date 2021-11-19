@@ -347,7 +347,11 @@ export default {
                 ];
             });
 
-            const variationSlice = 1;
+            let variationSlice = 5;
+
+            if (stats.length < 6) {
+                variationSlice = 1;
+            }
 
             let result = 0;
 
