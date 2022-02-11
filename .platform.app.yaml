@@ -30,15 +30,15 @@ mounts:
     "/var": { source: local, source_path: var }
     "/public/uploads": { source: local, source_path: uploads }
 
-#crons:
-#    snapshot:
-#        # Take a snapshot automatically every night at 3 am (UTC).
-#        spec: "0 3 * * *"
-#        cmd: |
-#            if [ "$SYMFONY_BRANCH" = master ]; then
-#                croncape symfony env:snapshot:create --no-wait
-#            fi
-#
+crons:
+    snapshot:
+        # Take a snapshot automatically every night at 3 am (UTC).
+        spec: "0 3 * * *"
+        cmd: |
+            if [ "$SYMFONY_BRANCH" = master ]; then
+                croncape symfony env:snapshot:create --no-wait
+            fi
+
 hooks:
     build: |
         set -x -e
@@ -58,5 +58,7 @@ variables:
 dependencies:
     php:
         composer/composer: "^2"
+
+
 
 
