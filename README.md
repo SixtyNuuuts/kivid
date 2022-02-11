@@ -52,3 +52,4 @@ Vous pouvez maintenant accéder à l'application : ``https://localhost:8000``
 - 3 ``php vendor/bin/phpstan analyse --memory-limit=1G`` pour une analyse statique du code.
 
 - 4 ``symfony console lint:twig templates`` pour vérifier les erreurs de syntaxe dans les fichiers Twig.
+
