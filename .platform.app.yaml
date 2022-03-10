@@ -17,18 +17,12 @@ relationships:
 build:
     flavor: none
 
-#web:
-#    locations:
-#        "/":
-#            root: "public"
-#            expires: 1h
-#            passthru: "/index.php"
-
-web: # maintenance mode / à supprimer lors de la suppression et réactiver les lignes commentées ci-dessus
+web:
     locations:
-        '/':
-            root: 'maintenance'
-            passthru: '/index.php'
+        "/":
+            root: "public"
+            expires: 1h
+            passthru: "/index.php"
 
 disk: 256
 
