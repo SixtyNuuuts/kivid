@@ -23,9 +23,9 @@ class SubscriptionService
         //     0.1 * 100
         // );
         $this->plans[] = new SubscriptionPlan(
-            'price_1JtYbeCvuRcL0li5Q75UKmqK',
+            'price_1KfmuyCvuRcL0li5ogCMRBLw',
             'Abonnement Mensuel KIVID',
-            24.99 * 100
+            9.90 * 100
         );
     }
 
