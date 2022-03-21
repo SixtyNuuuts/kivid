@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Repository\DoctorRepository;
 use Symfony\Component\Mime\Address;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
@@ -45,6 +46,13 @@ class HomeController extends AbstractController
         return $this->render('home/cgv.html.twig');
     }
 
+    /**
+     * @Route("/get/doctors", name="app_get_doctors", methods={"GET"})
+     */
+    public function getDoctors(DoctorRepository $doctorRepository): JsonResponse
+    {
+        return $this->json($doctorRepository->findAll(), 200, [], ['groups' => 'doctor_read']);
+    }
 
     /**
      * @Route("/contact", name="app_contact", methods={"POST"})

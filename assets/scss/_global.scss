@@ -63,6 +63,12 @@ body {
 
             animation: fuzzyBallsScale 10s linear alternate infinite;
         }
+
+        &.disable-scrollbar {
+            &::-webkit-scrollbar {
+                display: none;
+            }
+        }
     }
 
     @keyframes fuzzyBallsScale {

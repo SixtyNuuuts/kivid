@@ -1,20 +1,20 @@
 <template>
-    <section id="user-type-choice">
-        <h1>Dites-nous en plus à&nbsp;propos&nbsp;de&nbsp;vous</h1>
+    <section id="user-has-doctor-choice">
+        <h1>Avez-vous&nbsp;un&nbsp;praticien ?</h1>
         <div class="btn-container">
             <vs-button
                 class="w-100"
-                @click="validUserTypeChoice('patient')"
-                :class="{ secondary: $parent.userType == 'doctor' }"
+                @click="validUserHasDoctorChoice(false)"
+                :class="{ secondary: $parent.userHasDoctor == true }"
             >
-                Je suis un particulier
+                Non, je n'en ai pas
             </vs-button>
             <vs-button
                 class="w-100"
-                @click="validUserTypeChoice('doctor')"
-                :class="{ secondary: $parent.userType == 'patient' }"
+                @click="validUserHasDoctorChoice(true)"
+                :class="{ secondary: $parent.userHasDoctor == false }"
             >
-                Je suis un professionnel
+                Oui, j'ai un praticien
             </vs-button>
         </div>
     </section>
@@ -23,8 +23,8 @@
 <script>
 export default {
     methods: {
-        validUserTypeChoice(userType) {
-            this.$emit("userTypeChoice", userType);
+        validUserHasDoctorChoice(userHasDoctor) {
+            this.$emit("userHasDoctorChoice", userHasDoctor);
         },
     },
 };
@@ -33,7 +33,7 @@ export default {
 <style lang="scss">
 // @import "../../scss/variables";
 
-#user-type-choice {
+#user-has-doctor-choice {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -42,7 +42,7 @@ export default {
     max-height: 25rem;
 
     h1 {
-        font-size: 2rem;
+        font-size: 2.1rem;
         text-align: center;
 
         @media (max-width: 400px) {

@@ -14,8 +14,7 @@
     "navbar": {
       "js": [
         "/build/runtime.js",
-        "/build/vendors-node_modules_axios_index_js-node_modules_vue-axios_dist_vue-axios_esm_min_js-node_mod-8da19f.js",
-        "/build/vendors-node_modules_core-js_modules_es_array_concat_js-node_modules_core-js_modules_es_array-2e6bc6.js",
+        "/build/vendors-node_modules_axios_index_js-node_modules_core-js_modules_es_array_concat_js-node_modu-38d47d.js",
         "/build/assets_vue_services_function_js-node_modules_moment_locale_sync_recursive_.js",
         "/build/navbar.js"
       ],
@@ -26,8 +25,7 @@
     "settings-page": {
       "js": [
         "/build/runtime.js",
-        "/build/vendors-node_modules_axios_index_js-node_modules_vue-axios_dist_vue-axios_esm_min_js-node_mod-8da19f.js",
-        "/build/vendors-node_modules_core-js_modules_es_array_concat_js-node_modules_core-js_modules_es_array-2e6bc6.js",
+        "/build/vendors-node_modules_axios_index_js-node_modules_core-js_modules_es_array_concat_js-node_modu-38d47d.js",
         "/build/vendors-node_modules_core-js_internals_inherit-if-required_js-node_modules_core-js_modules_we-9f7dbb.js",
         "/build/vendors-node_modules_core-js_modules_es_typed-array_copy-within_js-node_modules_core-js_modul-1feda0.js",
         "/build/assets_vue_services_function_js-node_modules_moment_locale_sync_recursive_.js",
@@ -40,8 +38,7 @@
     "login": {
       "js": [
         "/build/runtime.js",
-        "/build/vendors-node_modules_axios_index_js-node_modules_vue-axios_dist_vue-axios_esm_min_js-node_mod-8da19f.js",
-        "/build/vendors-node_modules_core-js_modules_es_array_concat_js-node_modules_core-js_modules_es_array-2e6bc6.js",
+        "/build/vendors-node_modules_axios_index_js-node_modules_core-js_modules_es_array_concat_js-node_modu-38d47d.js",
         "/build/assets_vue_services_function_js-node_modules_moment_locale_sync_recursive_.js",
         "/build/login.js"
       ]
@@ -49,7 +46,9 @@
     "register": {
       "js": [
         "/build/runtime.js",
-        "/build/vendors-node_modules_axios_index_js-node_modules_vue-axios_dist_vue-axios_esm_min_js-node_mod-8da19f.js",
+        "/build/vendors-node_modules_axios_index_js-node_modules_core-js_modules_es_array_concat_js-node_modu-38d47d.js",
+        "/build/vendors-node_modules_vue-click-outside_index_js-node_modules_vue-phone-number-input_dist_vue--694fde.js",
+        "/build/assets_vue_services_function_js-node_modules_moment_locale_sync_recursive_.js",
         "/build/register.js"
       ],
       "css": [
@@ -59,8 +58,7 @@
     "reset-pass": {
       "js": [
         "/build/runtime.js",
-        "/build/vendors-node_modules_axios_index_js-node_modules_vue-axios_dist_vue-axios_esm_min_js-node_mod-8da19f.js",
-        "/build/vendors-node_modules_core-js_modules_es_array_concat_js-node_modules_core-js_modules_es_array-2e6bc6.js",
+        "/build/vendors-node_modules_axios_index_js-node_modules_core-js_modules_es_array_concat_js-node_modu-38d47d.js",
         "/build/assets_vue_services_function_js-node_modules_moment_locale_sync_recursive_.js",
         "/build/reset-pass.js"
       ],
@@ -71,8 +69,7 @@
     "reset-pass-request": {
       "js": [
         "/build/runtime.js",
-        "/build/vendors-node_modules_axios_index_js-node_modules_vue-axios_dist_vue-axios_esm_min_js-node_mod-8da19f.js",
-        "/build/vendors-node_modules_core-js_modules_es_array_concat_js-node_modules_core-js_modules_es_array-2e6bc6.js",
+        "/build/vendors-node_modules_axios_index_js-node_modules_core-js_modules_es_array_concat_js-node_modu-38d47d.js",
         "/build/assets_vue_services_function_js-node_modules_moment_locale_sync_recursive_.js",
         "/build/reset-pass-request.js"
       ],
@@ -83,8 +80,7 @@
     "patient-create-pass": {
       "js": [
         "/build/runtime.js",
-        "/build/vendors-node_modules_axios_index_js-node_modules_vue-axios_dist_vue-axios_esm_min_js-node_mod-8da19f.js",
-        "/build/vendors-node_modules_core-js_modules_es_array_concat_js-node_modules_core-js_modules_es_array-2e6bc6.js",
+        "/build/vendors-node_modules_axios_index_js-node_modules_core-js_modules_es_array_concat_js-node_modu-38d47d.js",
         "/build/assets_vue_services_function_js-node_modules_moment_locale_sync_recursive_.js",
         "/build/patient-create-pass.js"
       ],
@@ -95,8 +91,7 @@
     "doctor-dashboard-page": {
       "js": [
         "/build/runtime.js",
-        "/build/vendors-node_modules_axios_index_js-node_modules_vue-axios_dist_vue-axios_esm_min_js-node_mod-8da19f.js",
-        "/build/vendors-node_modules_core-js_modules_es_array_concat_js-node_modules_core-js_modules_es_array-2e6bc6.js",
+        "/build/vendors-node_modules_axios_index_js-node_modules_core-js_modules_es_array_concat_js-node_modu-38d47d.js",
         "/build/vendors-node_modules_core-js_internals_inherit-if-required_js-node_modules_core-js_modules_we-9f7dbb.js",
         "/build/vendors-node_modules_core-js_modules_es_array_find_js-node_modules_core-js_modules_es_array_s-f64eb6.js",
         "/build/assets_vue_services_function_js-node_modules_moment_locale_sync_recursive_.js",
@@ -110,8 +105,7 @@
     "doctor-worksheet-page": {
       "js": [
         "/build/runtime.js",
-        "/build/vendors-node_modules_axios_index_js-node_modules_vue-axios_dist_vue-axios_esm_min_js-node_mod-8da19f.js",
-        "/build/vendors-node_modules_core-js_modules_es_array_concat_js-node_modules_core-js_modules_es_array-2e6bc6.js",
+        "/build/vendors-node_modules_axios_index_js-node_modules_core-js_modules_es_array_concat_js-node_modu-38d47d.js",
         "/build/vendors-node_modules_core-js_modules_es_array_find_js-node_modules_core-js_modules_es_array_s-f64eb6.js",
         "/build/vendors-node_modules_vue-youtube_dist_vue-youtube_js.js",
         "/build/assets_vue_services_function_js-node_modules_moment_locale_sync_recursive_.js",
@@ -124,9 +118,9 @@
     "patient-dashboard-page": {
       "js": [
         "/build/runtime.js",
-        "/build/vendors-node_modules_axios_index_js-node_modules_vue-axios_dist_vue-axios_esm_min_js-node_mod-8da19f.js",
-        "/build/vendors-node_modules_core-js_modules_es_array_concat_js-node_modules_core-js_modules_es_array-2e6bc6.js",
-        "/build/vendors-node_modules_chartist-plugin-tooltips_dist_chartist-plugin-tooltip_js-node_modules_co-f61cc6.js",
+        "/build/vendors-node_modules_axios_index_js-node_modules_core-js_modules_es_array_concat_js-node_modu-38d47d.js",
+        "/build/vendors-node_modules_vue-click-outside_index_js-node_modules_vue-phone-number-input_dist_vue--694fde.js",
+        "/build/vendors-node_modules_chartist-plugin-tooltips_dist_chartist-plugin-tooltip_js-node_modules_co-38b6a2.js",
         "/build/assets_vue_services_function_js-node_modules_moment_locale_sync_recursive_.js",
         "/build/assets_vue_components_BtnChartWorksheetPartOfBody_vue-assets_vue_components_TagPartOfBody_vue-72399a.js",
         "/build/patient-dashboard-page.js"
@@ -138,8 +132,7 @@
     "patient-read-worksheet-page": {
       "js": [
         "/build/runtime.js",
-        "/build/vendors-node_modules_axios_index_js-node_modules_vue-axios_dist_vue-axios_esm_min_js-node_mod-8da19f.js",
-        "/build/vendors-node_modules_core-js_modules_es_array_concat_js-node_modules_core-js_modules_es_array-2e6bc6.js",
+        "/build/vendors-node_modules_axios_index_js-node_modules_core-js_modules_es_array_concat_js-node_modu-38d47d.js",
         "/build/vendors-node_modules_core-js_internals_inherit-if-required_js-node_modules_core-js_modules_we-9f7dbb.js",
         "/build/vendors-node_modules_vue-youtube_dist_vue-youtube_js.js",
         "/build/vendors-node_modules_core-js_modules_es_array_find_js-node_modules_core-js_modules_es_number_-840a13.js",
