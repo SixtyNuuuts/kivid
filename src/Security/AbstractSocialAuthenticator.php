@@ -61,9 +61,10 @@ abstract class AbstractSocialAuthenticator extends OAuth2Authenticator
         $client = $this->clientRegistry->getClient($this->serviceName);
         $accessToken = $this->fetchAccessToken($client);
         $userType = json_decode($this->base64UrlDecode($request->get('state')))->userType;
+        $data = json_decode($this->base64UrlDecode($request->get('state')))->data;
 
         return new SelfValidatingPassport(
-            new UserBadge($accessToken, function () use ($accessToken, $client, $userType) {
+            new UserBadge($accessToken, function () use ($accessToken, $client, $userType, $data) {
                 $resourceOwner = $client->fetchUserFromToken($accessToken);
 
                 $user = $this->getCurrentUser();
@@ -72,7 +73,7 @@ abstract class AbstractSocialAuthenticator extends OAuth2Authenticator
                     throw new UserAuthenticatedException($user, $resourceOwner);
                 }
 
-                $user = $this->getUserFromResourceOwner($resourceOwner, $userType);
+                $user = $this->getUserFromResourceOwner($resourceOwner, $userType, $data);
 
                 if ($user instanceof Patient) {
                     $user->setLastLoginAt(new \DateTime());
@@ -123,7 +124,7 @@ abstract class AbstractSocialAuthenticator extends OAuth2Authenticator
         return $this->redirectFromRole($user);
     }
 
-    protected function getUserFromResourceOwner(ResourceOwnerInterface $resourceOwner, string $userType): ?User
+    protected function getUserFromResourceOwner(ResourceOwnerInterface $resourceOwner, string $userType, object $data): ?User
     {
         return null;
     }

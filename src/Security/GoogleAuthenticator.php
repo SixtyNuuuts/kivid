@@ -16,7 +16,7 @@ class GoogleAuthenticator extends AbstractSocialAuthenticator
 {
     protected $serviceName = 'google';
 
-    public function getUserFromResourceOwner(ResourceOwnerInterface $googleUser, string $userType): ?User
+    public function getUserFromResourceOwner(ResourceOwnerInterface $googleUser, string $userType, object $data): ?User
     {
         if (!($googleUser instanceof GoogleUser)) {
             throw new \RuntimeException('Expecting GoogleUser as the first parameter');
@@ -59,6 +59,15 @@ class GoogleAuthenticator extends AbstractSocialAuthenticator
                  ->setAvatarUrl($googleUser->getAvatar())
                  ->setIsVerified(true);
             ;
+
+            if ('patient' === $userType && $data->doctorId !== 0) {
+                $patientDoctor = $doctorRepository->findOneBy(['id' => $data->doctorId]);
+                $user->setDoctor($patientDoctor);
+            }
+
+            if ('doctor' === $userType && $data->doctorNumRppsAmeli !== 'nc') {
+                $user->setNumRppsAmeli($data->doctorNumRppsAmeli);
+            }
 
             $this->em->persist($user);
         }

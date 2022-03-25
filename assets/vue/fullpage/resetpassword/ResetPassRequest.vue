@@ -80,7 +80,7 @@ export default {
             this.axios
                 .post(`/reset-password`, {
                     _token: this.csrfTokenResetPassRequest,
-                    email: this.email,
+                    email: this.email.toLowerCase(),
                 })
                 .then((response) => {
                     f.openSuccessNotificationStay(

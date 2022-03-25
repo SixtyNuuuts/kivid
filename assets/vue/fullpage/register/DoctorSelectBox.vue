@@ -87,6 +87,15 @@
                 </div>
             </transition>
         </div>
+        <div
+            class="empty-error-mess"
+            v-if="
+                $parent.emptyMessage.doctorSelect &&
+                !$parent.registerDetails.doctorSelect
+            "
+        >
+            {{ $parent.emptyMessage.doctorSelect }}
+        </div>
     </div>
 </template>
 
@@ -96,7 +105,7 @@ import ClickOutside from "vue-click-outside";
 
 export default {
     props: {
-        // csrfTokenSelectDoctor: String,
+        doctorSelected: [Object, null],
     },
     directives: {
         ClickOutside,
@@ -104,7 +113,6 @@ export default {
     data() {
         return {
             doctors: [],
-            doctorSelected: null,
             filter: "",
             selectBox: false,
             selectInput: null,
@@ -117,31 +125,6 @@ export default {
         },
     },
     methods: {
-        // valideDoctorChoice() {
-        //     this.axios
-        //         .post(`/patient/${this.patient.id}/select/doctor`, {
-        //             _token: this.csrfTokenSelectDoctor,
-        //             doctorId: this.doctorSelected.id,
-        //         })
-        //         .then((response) => {
-        //             f.openSuccessNotification(
-        //                 "Choix du praticien enregistré",
-        //                 response.data
-        //             );
-
-        //             this.patient.addRequestDoctor = true;
-
-        //             this.patient.doctor = this.doctorSelected;
-        //         })
-        //         .catch((error) => {
-        //             const errorMess =
-        //                 "object" === typeof error.response.data
-        //                     ? error.response.data.detail
-        //                     : error.response.data;
-
-        //             f.openErrorNotification("Erreur", errorMess);
-        //         });
-        // },
         toggleSelectBox() {
             this.selectBox = !this.selectBox;
             if (this.doctorSelected) {
@@ -155,11 +138,11 @@ export default {
             this.selectBox = false;
         },
         selectDoctor(doctor) {
-            this.doctorSelected = doctor;
+            this.$emit("setDoctorSelected", doctor);
             this.hideSelectBox();
         },
         resetSelect() {
-            this.doctorSelected = null;
+            this.$emit("setDoctorSelected", null);
 
             setTimeout(() => {
                 this.selectInput = document.getElementById(
@@ -220,7 +203,7 @@ export default {
     transition: all 0.25s;
     min-height: 5.9rem;
     border-radius: 0.5rem;
-    margin-bottom: 0.88rem;
+    margin-bottom: 0.7rem;
 
     &:hover {
         input {

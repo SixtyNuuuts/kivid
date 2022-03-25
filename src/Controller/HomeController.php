@@ -71,8 +71,8 @@ class HomeController extends AbstractController
                 ->context([
                     'patient' => "{$data->firstname} {$data->lastname}",
                     'contactTel' => $data->contactTel,
-                    'contactEmail' => $data->email
-                    // 'contactMessage' => $data->contactMessage,
+                    'contactEmail' => $data->email,
+                    'contactChoice' => $data->contactChoice,
                 ])
                 ;
 

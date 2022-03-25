@@ -64,6 +64,7 @@ class UserEditController extends AbstractController
                     $user->setEntityName($data->entityName)
                          ->setStreet($data->street)
                          ->setCity($data->city)
+                         ->setNumRppsAmeli($data->numRppsAmeli)
                     ;
                 }
 

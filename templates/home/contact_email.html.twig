@@ -11,13 +11,15 @@
         <tr>
             <td
                 class="text-center pb25" style="color:#0c2956; font-family:'Muli', Arial,sans-serif; font-size:16px; line-height:26px; text-align:center;">
-                {# {{ contactMessage }} #}
+                
+                Souhaite être contacté par :  {{ contactChoice }}
+
                 {% if contactEmail %}
                     <br>Email :
                     {{ contactEmail }}
                 {% endif %}
                 {% if contactTel %}
-                    <br>Tel :
+                    <br>Téléphone :
                     {{ contactTel }}
                 {% endif %}
             </td>

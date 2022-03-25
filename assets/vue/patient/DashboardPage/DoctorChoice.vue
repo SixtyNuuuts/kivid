@@ -327,14 +327,12 @@ export default {
                     _token: this.csrfTokenContact,
                     firstname: this.patient.firstname,
                     lastname: this.patient.lastname,
-                    email: this.patient.email,
+                    email: this.patient.email.toLowerCase(),
                     contactTel: this.contactTel,
-                    // contactMessage: this.contactMessage,
                 })
                 .then((response) => {
                     f.openSuccessNotification("Message envoyé", response.data);
 
-                    // this.contactMessage = "";
                     this.modalContact = false;
                     this.btnLoadingValidContact = false;
                 })

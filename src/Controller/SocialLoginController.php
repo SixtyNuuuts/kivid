@@ -30,16 +30,22 @@ class SocialLoginController extends AbstractController
     }
 
     /**
-     * @Route("/connect/{userType}/{service}", name="app_oauth_connect")
+     * @Route("/connect/{userType}/{service}/{doctorId}/{doctorNumRppsAmeli}", name="app_oauth_connect")
      */
-    public function connect(string $userType, string $service): RedirectResponse
+    public function connect(string $userType, string $service, int $doctorId = 0, string $doctorNumRppsAmeli = 'nc'): RedirectResponse
     {
         $this->ensureUserTypeAccepted($userType);
         $this->ensureServiceAccepted($service);
 
         return $this->clientRegistry->getClient($service)->redirect(
             self::SCOPES[$service],
-            ['state' => $this->stateStringGeneration($userType)]
+            ['state' => $this->stateStringGeneration(
+                $userType,
+                [
+                    'doctorId' => $doctorId,
+                    'doctorNumRppsAmeli' => $doctorNumRppsAmeli,
+                ]
+            )]
         );
     }
 
@@ -65,15 +71,19 @@ class SocialLoginController extends AbstractController
         }
     }
 
-    private function base64UrlEncode($inputStr): string
+    private function base64UrlEncode(string $inputStr): string
     {
         return strtr(base64_encode($inputStr), '+/=', '-_,');
     }
 
-    private function stateStringGeneration($userType): string
+    private function stateStringGeneration(string $userType, array $data): string
     {
         $randomState = bin2hex(random_bytes(32 / 2));
-        $stateArray = ['userType' => $userType, 'randomState' => $randomState];
+        $stateArray = [
+            'userType' => $userType,
+            'data' => $data,
+            'randomState' => $randomState
+        ];
         $stateString = $this->base64UrlEncode(json_encode($stateArray));
 
         return $stateString;

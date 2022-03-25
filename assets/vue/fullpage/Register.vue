@@ -61,6 +61,7 @@
                 :userType="userType"
                 :userHasDoctor="userHasDoctor"
                 :csrfTokenRegister="csrfTokenRegister"
+                :csrfTokenContact="csrfTokenContact"
             />
         </transition>
     </div>
@@ -76,6 +77,7 @@ export default {
     data() {
         return {
             csrfTokenRegister: null,
+            csrfTokenContact: null,
             activeStep: 1,
             previousStep: 1,
             userType: null,
@@ -117,6 +119,7 @@ export default {
         const data = JSON.parse(document.getElementById("vueData").innerHTML);
 
         this.csrfTokenRegister = data.csrfTokenRegister;
+        this.csrfTokenContact = data.csrfTokenContact;
     },
 };
 </script>
@@ -130,6 +133,13 @@ export default {
     .vs-button.btn-prev {
         opacity: 0;
         animation: 0.5s ease 0.2s forwards fadeEnter;
+        color: $orange;
+        box-shadow: 0rem 0.4rem 1.4rem 0rem rgba(251, 139, 104, 0.3);
+        background: #fffdfc00;
+
+        &:hover {
+            box-shadow: 0rem 0.4rem 1.4rem 0rem rgba(251, 139, 104, 0.8);
+        }
     }
 
     #register-steps {

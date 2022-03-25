@@ -10,7 +10,13 @@
             <div class="register-form">
                 <DoctorSelectBox
                     v-if="userType === 'patient' && userHasDoctor"
-                    @doctorSelected="setDoctorSelected"
+                    :doctorSelected="registerDetails.doctorSelect"
+                    @setDoctorSelected="setDoctorSelected"
+                    :class="{
+                        error:
+                            emptyMessage.doctorSelect &&
+                            !registerDetails.doctorSelect,
+                    }"
                 />
 
                 <vs-input
@@ -18,7 +24,19 @@
                     label-placeholder="Nom"
                     autocomplete="family-name"
                     icon-after
+                    :class="{
+                        error:
+                            emptyMessage.lastname && !registerDetails.lastname,
+                    }"
                 >
+                    <template
+                        v-if="
+                            emptyMessage.lastname && !registerDetails.lastname
+                        "
+                        #message-danger
+                    >
+                        {{ emptyMessage.lastname }}
+                    </template>
                 </vs-input>
 
                 <vs-input
@@ -26,7 +44,20 @@
                     label-placeholder="Prénom"
                     autocomplete="given-name"
                     icon-after
+                    :class="{
+                        error:
+                            emptyMessage.firstname &&
+                            !registerDetails.firstname,
+                    }"
                 >
+                    <template
+                        v-if="
+                            emptyMessage.firstname && !registerDetails.firstname
+                        "
+                        #message-danger
+                    >
+                        {{ emptyMessage.firstname }}
+                    </template>
                 </vs-input>
 
                 <vs-input
@@ -38,7 +69,10 @@
                     type="email"
                     icon-after
                     :class="{
-                        error: validationMessage.email && registerDetails.email,
+                        error:
+                            (validationMessage.email &&
+                                registerDetails.email) ||
+                            (emptyMessage.email && !registerDetails.email),
                     }"
                 >
                     <template
@@ -49,10 +83,23 @@
                     </template>
 
                     <template
-                        v-if="validationMessage.email && registerDetails.email"
+                        v-if="
+                            (validationMessage.email &&
+                                registerDetails.email) ||
+                            (emptyMessage.email && !registerDetails.email)
+                        "
                         #message-danger
                     >
-                        {{ validationMessage.email }}
+                        <span
+                            v-if="
+                                validationMessage.email && registerDetails.email
+                            "
+                            >{{ validationMessage.email }}</span
+                        >
+                        <span
+                            v-if="emptyMessage.email && !registerDetails.email"
+                            >{{ emptyMessage.email }}</span
+                        >
                     </template>
                 </vs-input>
 
@@ -90,10 +137,26 @@
                     @click-icon="hasVisiblePassword = !hasVisiblePassword"
                     :progress="getSecurePassProgress"
                     autocomplete="new-password"
+                    :class="{
+                        empty: !registerDetails.plainPassword,
+                        error:
+                            emptyMessage.plainPassword &&
+                            !registerDetails.plainPassword,
+                    }"
                 >
                     <template #icon>
                         <i v-if="!hasVisiblePassword" class="fas fa-eye"></i>
                         <i v-else class="fas fa-eye-slash"></i>
+                    </template>
+
+                    <template
+                        v-if="
+                            emptyMessage.plainPassword &&
+                            !registerDetails.plainPassword
+                        "
+                        #message-danger
+                    >
+                        {{ emptyMessage.plainPassword }}
                     </template>
 
                     <template
@@ -117,9 +180,11 @@
                     "
                     :class="{
                         error:
-                            validationMessage.password &&
-                            registerDetails.plainPassword &&
-                            passwordConfirm,
+                            (validationMessage.password &&
+                                registerDetails.plainPassword &&
+                                passwordConfirm) ||
+                            (emptyMessage.passwordConfirm && !passwordConfirm),
+                        empty: !passwordConfirm,
                     }"
                     autocomplete="new-password"
                 >
@@ -133,29 +198,76 @@
 
                     <template
                         v-if="
-                            validationMessage.password &&
-                            registerDetails.plainPassword &&
-                            passwordConfirm
+                            (validationMessage.password &&
+                                registerDetails.plainPassword &&
+                                passwordConfirm) ||
+                            (emptyMessage.passwordConfirm && !passwordConfirm)
                         "
                         #message-danger
                     >
-                        {{ validationMessage.password }}
+                        <span
+                            v-if="
+                                validationMessage.password &&
+                                registerDetails.plainPassword &&
+                                passwordConfirm
+                            "
+                            >{{ validationMessage.password }}</span
+                        >
+                        <span
+                            v-if="
+                                emptyMessage.passwordConfirm && !passwordConfirm
+                            "
+                            >{{ emptyMessage.passwordConfirm }}</span
+                        >
                     </template>
                 </vs-input>
 
                 <vs-input
                     v-if="userType === 'doctor'"
-                    v-model="registerDetails.rppsAmeli"
-                    label-placeholder="Numéro RPPS ou Améli"
+                    v-model="registerDetails.numRppsAmeli"
+                    label-placeholder="Numéro RPPS ou Ameli"
                     icon-after
+                    :class="{
+                        error:
+                            emptyMessage.numRppsAmeli &&
+                            !registerDetails.numRppsAmeli,
+                    }"
                 >
+                    <template
+                        v-if="
+                            emptyMessage.numRppsAmeli &&
+                            !registerDetails.numRppsAmeli
+                        "
+                        #message-danger
+                    >
+                        {{ emptyMessage.numRppsAmeli }}
+                    </template>
                 </vs-input>
 
                 <div
                     id="contact-choice"
                     v-if="userType === 'patient' && !userHasDoctor"
                 >
-                    <p>Je souhaite que l'on me contacte par</p>
+                    <p class="contact-info">
+                        <img
+                            src="../../../img/icons/information.svg"
+                            alt="icon information"
+                        />
+                        Un de nos praticiens va prendre contact avec vous
+                        pour&nbsp;élaborer le traitement approprié
+                    </p>
+                    <p
+                        :class="{
+                            desactive:
+                                (!registerDetails.email ||
+                                    validationMessage.email != null) &&
+                                (!contactTel ||
+                                    (contactTel && contactTel.length < 5) ||
+                                    errorTel),
+                        }"
+                    >
+                        Je souhaite que l'on me contacte par
+                    </p>
                     <div>
                         <vs-radio
                             :disabled="
@@ -198,7 +310,12 @@
                     </div>
                 </div>
 
-                <div style="display: flex; justify-content: center">
+                <div
+                    id="accept-CG-block"
+                    :class="{
+                        error: emptyMessage.acceptCG && !acceptCG,
+                    }"
+                >
                     <vs-checkbox
                         v-model="acceptCG"
                         :class="{ active: acceptCG }"
@@ -210,6 +327,12 @@
                             ></span
                         >
                     </vs-checkbox>
+                    <div
+                        class="empty-error-mess pt-0"
+                        v-if="emptyMessage.acceptCG && !acceptCG"
+                    >
+                        {{ emptyMessage.acceptCG }}
+                    </div>
                 </div>
 
                 <div
@@ -217,15 +340,6 @@
                     :class="{ disabled: btnLoadingRegister }"
                 >
                     <vs-button
-                        :disabled="
-                            btnLoadingRegister ||
-                            validationMessage.email ||
-                            validationMessage.password ||
-                            !registerDetails.email ||
-                            !registerDetails.plainPassword ||
-                            !passwordConfirm ||
-                            !acceptCG
-                        "
                         :loading="btnLoadingRegister"
                         class="w-100"
                         type="submit"
@@ -261,7 +375,7 @@
                 "
             >
                 <transition name="fade">
-                    <div v-if="acceptCG">
+                    <div>
                         <vs-button
                             class="w-100"
                             @click="registerOauth('facebook')"
@@ -274,21 +388,6 @@
                             @click="registerOauth('google')"
                             >S'inscrire avec <i class="fab fa-google"></i
                         ></vs-button>
-                    </div>
-                    <div v-else>
-                        <vs-tooltip>
-                            <vs-button class="w-100 desactive">
-                                S'inscrire avec <i class="fab fa-facebook-f"></i
-                            ></vs-button>
-
-                            <vs-button class="w-100 desactive"
-                                >S'inscrire avec <i class="fab fa-google"></i
-                            ></vs-button>
-                            <template #tooltip>
-                                Vous devez lire et accepter les conditions
-                                générales
-                            </template>
-                        </vs-tooltip>
                     </div>
                 </transition>
             </div>
@@ -322,6 +421,7 @@ export default {
         userType: String,
         userHasDoctor: Boolean,
         csrfTokenRegister: String,
+        csrfTokenContact: String,
     },
     data() {
         return {
@@ -331,11 +431,21 @@ export default {
                 firstname: "",
                 email: "",
                 plainPassword: "",
-                rppsAmeli: "",
+                numRppsAmeli: "",
             },
             validationMessage: {
                 email: null,
                 password: null,
+            },
+            emptyMessage: {
+                doctorSelect: null,
+                lastname: null,
+                firstname: null,
+                email: null,
+                plainPassword: null,
+                passwordConfirm: null,
+                numRppsAmeli: null,
+                acceptCG: null,
             },
             contactTel: null,
             contactChoice: null,
@@ -353,46 +463,95 @@ export default {
             this.modalCG = false;
         },
         validRegistration() {
-            this.btnLoadingRegister = true;
+            if (
+                this.checkIfFieldsAreNotEmpty() &&
+                !this.validationMessage.password &&
+                !this.validationMessage.email
+            ) {
+                this.btnLoadingRegister = true;
 
-            // this.axios
-            //     .post(`/inscription`, {
-            //         _token: this.csrfTokenRegister,
-            //         lastname: this.registerDetails.lastname,
-            //         firstname: this.registerDetails.firstname,
-            //         email: this.registerDetails.email,
-            //         plainPassword: this.registerDetails.plainPassword,
-            //         rppsAmeli: this.registerDetails.rppsAmeli,
-            //         userType: this.userType,
-            //     })
-            //     .then((response) => {
-            //         f.openSuccessNotificationStay(
-            //             "Inscription validée",
-            //             response.data
-            //         );
+                this.axios
+                    .post(`/inscription`, {
+                        _token: this.csrfTokenRegister,
+                        doctorSelectId: this.registerDetails.doctorSelect
+                            ? this.registerDetails.doctorSelect.id
+                            : null,
+                        lastname: this.registerDetails.lastname,
+                        firstname: this.registerDetails.firstname,
+                        email: this.registerDetails.email.toLowerCase(),
+                        plainPassword: this.registerDetails.plainPassword,
+                        numRppsAmeli: this.registerDetails.numRppsAmeli
+                            ? this.registerDetails.numRppsAmeli
+                            : null,
+                        userType: this.userType,
+                    })
+                    .then((response) => {
+                        f.openSuccessNotificationStay(
+                            "Inscription validée",
+                            response.data
+                        );
 
-            //         this.registerDetails = {
-            //             lastname: "",
-            //             firstname: "",
-            //             email: "",
-            //             plainPassword: "",
-            //         };
+                        if (
+                            this.contactChoice &&
+                            (this.contactTel || this.registerDetails.email)
+                        ) {
+                            this.axios
+                                .post(`/contact`, {
+                                    _token: this.csrfTokenContact,
+                                    lastname: this.registerDetails.lastname,
+                                    firstname: this.registerDetails.firstname,
+                                    email: this.registerDetails.email.toLowerCase(),
+                                    contactTel: this.contactTel,
+                                    contactChoice:
+                                        this.contactChoice == 1
+                                            ? "email"
+                                            : this.contactChoice == 2
+                                            ? "téléphone"
+                                            : "",
+                                })
+                                .then((response) => {
+                                    f.openSuccessNotification(
+                                        "Prise de contact",
+                                        response.data
+                                    );
+                                    this.btnLoadingRegister = false;
 
-            //         this.btnLoadingRegister = false;
+                                    this.resetData();
 
-            //         setTimeout(() => {
-            //             document.location.href = `/connexion`;
-            //         }, 2000);
-            //     })
-            //     .catch((error) => {
-            //         const errorMess =
-            //             "object" === typeof error.response.data
-            //                 ? error.response.data.detail
-            //                 : error.response.data;
+                                    setTimeout(() => {
+                                        document.location.href = `/connexion`;
+                                    }, 2000);
+                                })
+                                .catch((error) => {
+                                    const errorMess =
+                                        "object" === typeof error.response.data
+                                            ? error.response.data.detail
+                                            : error.response.data;
 
-            //         f.openErrorNotificationStay("Erreur", errorMess);
-            //         this.btnLoadingRegister = false;
-            //     });
+                                    f.openErrorNotification(
+                                        "Erreur",
+                                        errorMess
+                                    );
+                                });
+                        } else {
+                            this.btnLoadingRegister = false;
+
+                            this.resetData();
+
+                            setTimeout(() => {
+                                document.location.href = `/connexion`;
+                            }, 2000);
+                        }
+                    })
+                    .catch((error) => {
+                        const errorMess =
+                            "object" === typeof error.response.data
+                                ? error.response.data.detail
+                                : error.response.data;
+                        f.openErrorNotificationStay("Erreur", errorMess);
+                        this.btnLoadingRegister = false;
+                    });
+            }
         },
         validationEmail() {
             this.validationMessage.email = null;
@@ -418,11 +577,123 @@ export default {
                     "Les mots de passe ne correspondent pas.";
             }
         },
-        registerOauth(social) {
-            // document.location.href = `/oauth/connect/${this.userType}/${social}`;
+        resetData() {
+            this.registerDetails = {
+                doctorSelect: null,
+                lastname: "",
+                firstname: "",
+                email: "",
+                plainPassword: "",
+                numRppsAmeli: "",
+            };
+
+            this.validationMessage = {
+                email: null,
+                password: null,
+            };
+
+            this.emptyMessage = {
+                doctorSelect: null,
+                lastname: null,
+                firstname: null,
+                email: null,
+                plainPassword: null,
+                passwordConfirm: null,
+                numRppsAmeli: null,
+                acceptCG: null,
+            };
+
+            this.passwordConfirm = "";
+            this.acceptCG = false;
+            this.contactTel = null;
+            this.contactChoice = null;
         },
-        setDoctorSelected() {
-            this.registerDetails.doctorSelect = { test: "d" };
+        registerOauth(social) {
+            if (
+                this.checkIfFieldsAreNotEmpty(true) &&
+                !this.validationMessage.password &&
+                !this.validationMessage.email
+            ) {
+                const doctorId =
+                    this.registerDetails.doctorSelect && this.userHasDoctor
+                        ? this.registerDetails.doctorSelect.id
+                        : 0;
+
+                const doctorNumRppsAmeli = this.registerDetails.numRppsAmeli
+                    ? this.registerDetails.numRppsAmeli
+                    : "nc";
+
+                document.location.href = `/oauth/connect/${this.userType}/${social}/${doctorId}/${doctorNumRppsAmeli}`;
+            }
+        },
+        setDoctorSelected(doctorSelected) {
+            this.registerDetails.doctorSelect = doctorSelected;
+        },
+        checkIfFieldsAreNotEmpty(oauth = false) {
+            if (
+                (!oauth && !this.registerDetails.lastname) ||
+                (!oauth && !this.registerDetails.firstname) ||
+                (!oauth && !this.registerDetails.email) ||
+                (!oauth &&
+                    (!this.registerDetails.plainPassword ||
+                        !this.passwordConfirm)) ||
+                (this.userType === "patient" &&
+                    this.userHasDoctor &&
+                    !this.registerDetails.doctorSelect) ||
+                (this.userType === "doctor" &&
+                    !this.registerDetails.numRppsAmeli) ||
+                !this.acceptCG
+            ) {
+                if (!oauth && !this.registerDetails.lastname) {
+                    this.emptyMessage.lastname =
+                        "Vous devez renseigner votre nom";
+                }
+
+                if (!oauth && !this.registerDetails.firstname) {
+                    this.emptyMessage.firstname =
+                        "Vous devez renseigner votre prénom";
+                }
+
+                if (!oauth && !this.registerDetails.email) {
+                    this.emptyMessage.email = "Vous devez renseigner un email";
+                }
+
+                if (!oauth && !this.registerDetails.plainPassword) {
+                    this.emptyMessage.plainPassword =
+                        "Vous devez renseigner un mot de passe";
+                }
+
+                if (!oauth && !this.passwordConfirm) {
+                    this.emptyMessage.passwordConfirm =
+                        "Vous devez confirmer votre mot de passe";
+                }
+
+                if (
+                    this.userType === "patient" &&
+                    this.userHasDoctor &&
+                    !this.registerDetails.doctorSelect
+                ) {
+                    this.emptyMessage.doctorSelect =
+                        "Vous devez sélectionner votre praticien";
+                }
+
+                if (
+                    this.userType === "doctor" &&
+                    !this.registerDetails.numRppsAmeli
+                ) {
+                    this.emptyMessage.numRppsAmeli =
+                        "Vous devez renseigner votre numéro RPPS ou Ameli";
+                }
+
+                if (!this.acceptCG) {
+                    this.emptyMessage.acceptCG =
+                        "Vous devez accepter les conditions générales";
+                }
+
+                return false;
+            }
+
+            return true;
         },
     },
     computed: {
@@ -493,10 +764,32 @@ export default {
 }
 
 #register-form {
+    .select-filter {
+        &.error {
+            input {
+                border: 0.1rem solid #ff564b;
+            }
+        }
+    }
+    .empty-error-mess {
+        height: 0;
+        opacity: 0;
+        overflow: hidden;
+        color: #ff564b;
+        padding-top: 0.7rem;
+        font-size: 1.3rem;
+        padding-bottom: 0.4rem;
+        animation: 0.25s ease 0s forwards heightEnter;
+
+        &.pt-0 {
+            padding-top: 0;
+        }
+    }
+
     .vs-checkbox-label {
         font-size: 1.3rem;
         color: #b5ac94;
-        font-size: 1.3rem;
+        font-size: 1.31rem;
     }
 
     .vs-checkbox-content.active {
@@ -628,28 +921,72 @@ export default {
         display: flex;
         flex-direction: column;
         align-items: center;
-        font-size: 1.5rem;
+        font-size: 1.4rem;
         font-weight: 600;
         margin-top: 1.8rem;
         margin-bottom: 1.8rem;
-        border: 1px solid #e7dfcd;
         padding: 2.5rem;
-        border-radius: 0.5rem;
         white-space: nowrap;
+        position: relative;
+        padding-top: 6.5rem;
+        border-radius: 0.5rem;
+
+        &::after {
+            content: "";
+            border: 1px solid #e7dfcd;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            border-radius: 0.5rem;
+        }
+
+        .contact-info {
+            white-space: initial;
+            background: #f8f5f0;
+            color: #bbb4a1;
+            font-weight: 400;
+            font-size: 1.2rem;
+            line-height: 1.3;
+            padding: 0.7rem;
+            position: absolute;
+            top: -0.01rem;
+            left: 0;
+            border-radius: 0.5rem 0.5rem 0rem 0rem;
+            width: 100.3%;
+            text-align: center;
+
+            img {
+                width: 1.15rem;
+                margin-right: 0.15rem;
+                position: relative;
+                top: 0.1rem;
+            }
+        }
 
         > p {
             margin-top: 0;
             margin-bottom: 6px;
             font-weight: 700;
+
+            &.desactive {
+                color: #b6ada1;
+            }
         }
 
         > div {
             display: flex;
             flex-direction: column;
+            position: relative;
+            z-index: 5;
 
             .contact-help {
                 font-style: italic;
-                font-size: 1.4rem;
+                font-size: 1.3rem;
             }
 
             .vs-radio {
@@ -675,9 +1012,29 @@ export default {
                 }
 
                 &.disabled {
-                    color: #8f8a7b;
+                    color: #d4cbb8;
                     font-weight: 400;
+                    opacity: 1 !important;
+
+                    .vs-radio {
+                        opacity: 0.3;
+                    }
                 }
+            }
+        }
+    }
+
+    #accept-CG-block {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        &.error {
+            .vs-checkbox-label {
+                color: #ff564b;
+            }
+            .vs-checkbox-mask:before {
+                border: 2px solid #ff564b;
             }
         }
     }

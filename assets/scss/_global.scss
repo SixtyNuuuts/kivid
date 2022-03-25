@@ -64,10 +64,30 @@ body {
             animation: fuzzyBallsScale 10s linear alternate infinite;
         }
 
-        &.disable-scrollbar {
+        &::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+            display: block;
+            background: transparent;
+        }
+
+        @media (max-width: 585px) {
             &::-webkit-scrollbar {
-                display: none;
+                width: 8px;
+                height: 8px;
+                display: block;
+                background: transparent;
             }
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: #dad3c3;
+            border: 2px solid $white;
+            border-radius: 4px;
+        }
+
+        &.disable-scrollbar {
+            overflow-y: overlay;
         }
     }
 
@@ -458,6 +478,19 @@ body.no-scrollbar::-webkit-scrollbar {
     }
     100% {
         opacity: 1;
+    }
+}
+
+@keyframes heightEnter {
+    0% {
+        height: 0;
+        opacity: 0;
+        overflow: hidden;
+    }
+    100% {
+        height: 2.6rem;
+        opacity: 1;
+        overflow: initial;
     }
 }
 

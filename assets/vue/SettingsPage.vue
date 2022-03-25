@@ -99,6 +99,14 @@
                                 label="Date de naissance"
                             />
                             <vs-input
+                                v-if="'doctor' === userType"
+                                class="num-rpps-ameli"
+                                v-model="currentUser.numRppsAmeli"
+                                label-placeholder="Numéro RPPS ou Ameli"
+                                type="text"
+                            >
+                            </vs-input>
+                            <vs-input
                                 :danger="validationMessage.email != null"
                                 v-model="currentUser.email"
                                 @keyup="validationEmail"
@@ -513,7 +521,7 @@ export default {
             this.axios
                 .post(`/parametres`, {
                     _token: this.csrfTokenEdit,
-                    email: this.currentUser.email,
+                    email: this.currentUser.email.toLowerCase(),
                     plainPassword:
                         this.newPass.plainPassword !== ""
                             ? this.newPass.plainPassword
@@ -529,6 +537,9 @@ export default {
                             : "",
                     birthdate: this.currentUser.birthdate
                         ? this.currentUser.birthdate
+                        : null,
+                    numRppsAmeli: this.currentUser.numRppsAmeli
+                        ? this.currentUser.numRppsAmeli
                         : null,
                     entityName: this.currentUser.entityName
                         ? this.currentUser.entityName
@@ -552,6 +563,16 @@ export default {
                         document.getElementById(
                             "u-name"
                         ).innerText = `${this.currentUser.firstname} ${this.currentUser.lastname}`;
+                    }
+
+                    if (
+                        !this.currentUser.firstname &&
+                        !this.currentUser.lastname &&
+                        this.currentUser.email
+                    ) {
+                        document.getElementById(
+                            "u-name"
+                        ).innerText = `${this.currentUser.email.toLowerCase()}`;
                     }
 
                     if (response.data.resendEmail) {
@@ -820,6 +841,10 @@ export default {
             this.currentUser.gender = "";
         }
 
+        if (this.currentUser.numRppsAmeli === null) {
+            this.currentUser.numRppsAmeli = "";
+        }
+
         if (this.currentUser.entityName === null) {
             this.currentUser.entityName = "";
         }
@@ -1040,7 +1065,8 @@ export default {
                         flex-direction: row;
                     }
 
-                    .birthdate {
+                    .birthdate,
+                    .num-rpps-ameli {
                         margin-right: 0;
                         max-width: initial;
                         width: 100%;
@@ -1049,7 +1075,19 @@ export default {
                             margin-right: 1.7rem;
                             max-width: 18rem;
                         }
+                    }
 
+                    .num-rpps-ameli {
+                        .vs-input__label {
+                            max-width: 88%;
+                        }
+
+                        @media (min-width: 768px) {
+                            max-width: 20rem;
+                        }
+                    }
+
+                    .birthdate {
                         input {
                             padding: 1.35rem 1.7rem;
                         }

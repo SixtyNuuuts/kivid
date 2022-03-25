@@ -1,13 +1,12 @@
 <template>
     <div class="container">
-        <DoctorChoice
+        <!-- <DoctorChoice
             v-if="!patient.doctor && !doctorView"
             :patient="patient"
             :csrfTokenSelectDoctor="csrfTokenSelectDoctor"
             :csrfTokenContact="csrfTokenContact"
-        />
+        /> -->
         <section
-            v-else
             id="dashboard"
             class="db-patient"
             :class="{ 'doctor-view': doctorView }"
@@ -132,9 +131,10 @@
                                     </vs-avatar>
                                     <vs-avatar
                                         v-if="
-                                            false ===
+                                            (false ===
                                                 patient.addRequestDoctor &&
-                                            !loadingDoctor
+                                                !loadingDoctor) ||
+                                            !patient.doctor
                                         "
                                         class="avatar waiting"
                                         circle
@@ -197,6 +197,9 @@
                                         "
                                     >
                                         <p>En attente de validation</p>
+                                    </div>
+                                    <div v-if="!patient.doctor">
+                                        <p>En attente</p>
                                     </div>
                                 </div>
                             </div>
@@ -274,7 +277,6 @@ export default {
             csrfTokenSelectDoctor: null,
             csrfTokenAcceptDoctor: null,
             csrfTokenDeclineDoctor: null,
-            csrfTokenContact: null,
             myDBNotificationsContent: true,
             myScoresContent: true,
             myDoctorContent: true,
@@ -364,7 +366,6 @@ export default {
         this.csrfTokenAcceptDoctor = data.csrfTokenAcceptDoctor;
         this.csrfTokenDeclineDoctor = data.csrfTokenDeclineDoctor;
         this.csrfTokenSelectDoctor = data.csrfTokenSelectDoctor;
-        this.csrfTokenContact = data.csrfTokenContact;
 
         this.loadingPatientWorksheets = true;
 

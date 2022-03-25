@@ -137,8 +137,8 @@
     font-size: 2rem;
     font-weight: 700;
     position: absolute;
-    left: 2.5rem;
-    top: 2.5rem;
+    left: 2rem;
+    top: 2rem;
 
     &:hover {
         background: $sanguine;
@@ -496,6 +496,14 @@
         padding-top: 0.7rem;
         font-size: 1.3rem;
         padding-left: 0;
+    }
+}
+
+.vs-input-parent.empty {
+    .vs-input-content {
+        .vs-input__icon {
+            color: #bbb4a1;
+        }
     }
 }
 
@@ -990,14 +998,8 @@
     }
 }
 
-////pagination
-.vs-pagination__button,
-.vs-pagination__active,
-.vs-pagination__arrow {
-    border-radius: 0.8rem;
-    font-size: 1.2rem;
-    width: 30px;
-    height: 30px;
+.vs-notification-parent {
+    transition: all 0.3s ease;
 }
 
 // tooltip
@@ -1012,7 +1014,15 @@
     border-radius: initial;
 }
 
-//pagination
+////pagination
+.vs-pagination__button,
+.vs-pagination__active,
+.vs-pagination__arrow {
+    border-radius: 0.8rem;
+    font-size: 1.2rem;
+    width: 30px;
+    height: 30px;
+}
 
 .vs-pagination-content.buttonsDotted .vs-pagination__arrow {
     width: 26px;

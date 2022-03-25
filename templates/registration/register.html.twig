@@ -20,7 +20,7 @@
 
 {% block vueData %}
 		{
-			"userType": {{ userType|serialize('json')|raw }},
-			"csrfTokenRegister": {{ csrf_token('registration')|serialize('json')|raw }}
+			"csrfTokenRegister": {{ csrf_token('registration')|serialize('json')|raw }},
+			"csrfTokenContact": {{ csrf_token('contact')|serialize('json')|raw }}
 		}
 {% endblock %}
