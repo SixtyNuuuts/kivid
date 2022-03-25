@@ -2,10 +2,12 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Doctor;
 use App\Entity\Tag;
 use App\Entity\Video;
 use App\Entity\Option;
 use App\Entity\PartOfBody;
+use App\Entity\Patient;
 use App\Repository\DoctorRepository;
 use App\Repository\PatientRepository;
 use Symfony\Component\HttpFoundation\Response;
@@ -52,6 +54,8 @@ class DashboardController extends AbstractDashboardController
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linktoDashboard('Accueil', 'fa fa-home');
+        yield MenuItem::linkToCrud('Patients', 'fas fa-user', Patient::class);
+        yield MenuItem::linkToCrud('Praticiens', 'fas fa-user-nurse', Doctor::class);
         yield MenuItem::linkToCrud('Tags', 'fas fa-tags', Tag::class);
         yield MenuItem::linkToCrud('Options', 'fas fa-list-ul', Option::class);
         yield MenuItem::linkToCrud('Parties du corps', 'fas fa-child', PartOfBody::class);
