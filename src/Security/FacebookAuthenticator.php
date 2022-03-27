@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Entity\Doctor;
 use App\Entity\Patient;
 use App\Repository\DoctorRepository;
+use App\Service\NotificationService;
 use App\Repository\PatientRepository;
 use League\OAuth2\Client\Provider\FacebookUser;
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
@@ -14,7 +15,7 @@ class FacebookAuthenticator extends AbstractSocialAuthenticator
 {
     protected $serviceName = 'facebook';
 
-    public function getUserFromResourceOwner(ResourceOwnerInterface $facebookUser, string $userType, object $data): ?User
+    public function getUserFromResourceOwner(ResourceOwnerInterface $facebookUser, NotificationService $notificationService, string $userType, object $data): ?User
     {
         if (!($facebookUser instanceof FacebookUser)) {
             throw new \RuntimeException('Expecting FacebookClient as the first parameter');
@@ -56,7 +57,12 @@ class FacebookAuthenticator extends AbstractSocialAuthenticator
 
             if ('patient' === $userType && $data->doctorId !== 0) {
                 $patientDoctor = $doctorRepository->findOneBy(['id' => $data->doctorId]);
+                
+                $user->setAddRequestDoctor(true);
+                
                 $user->setDoctor($patientDoctor);
+
+                $notificationService->createSelectDoctorNotification($user, $patientDoctor);
             }
 
             if ('doctor' === $userType && $data->doctorNumRppsAmeli !== 'nc') {

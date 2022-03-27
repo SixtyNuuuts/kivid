@@ -8,17 +8,6 @@
             </h2>
 
             <div class="register-form">
-                <DoctorSelectBox
-                    v-if="userType === 'patient' && userHasDoctor"
-                    :doctorSelected="registerDetails.doctorSelect"
-                    @setDoctorSelected="setDoctorSelected"
-                    :class="{
-                        error:
-                            emptyMessage.doctorSelect &&
-                            !registerDetails.doctorSelect,
-                    }"
-                />
-
                 <vs-input
                     v-model="registerDetails.lastname"
                     label-placeholder="Nom"
@@ -102,6 +91,17 @@
                         >
                     </template>
                 </vs-input>
+
+                <DoctorSelectBox
+                    v-if="userType === 'patient' && userHasDoctor"
+                    :doctorSelected="registerDetails.doctorSelect"
+                    @setDoctorSelected="setDoctorSelected"
+                    :class="{
+                        error:
+                            emptyMessage.doctorSelect &&
+                            !registerDetails.doctorSelect,
+                    }"
+                />
 
                 <VuePhoneNumberInput
                     v-if="userType === 'patient' && !userHasDoctor"
@@ -493,7 +493,9 @@ export default {
 
                         if (
                             this.contactChoice &&
-                            (this.contactTel || this.registerDetails.email)
+                            (this.contactTel || this.registerDetails.email) &&
+                            this.userType === "patient" &&
+                            !this.userHasDoctor
                         ) {
                             this.axios
                                 .post(`/contact`, {

@@ -6,17 +6,17 @@ use App\Entity\User;
 use App\Entity\Doctor;
 use App\Entity\Patient;
 use App\Repository\DoctorRepository;
+use App\Service\NotificationService;
 use App\Repository\PatientRepository;
-use App\Security\Exception\NotVerifiedEmailException;
 use League\OAuth2\Client\Provider\GoogleUser;
+use App\Security\Exception\NotVerifiedEmailException;
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
-use Symfony\Component\HttpClient\HttpClient;
 
 class GoogleAuthenticator extends AbstractSocialAuthenticator
 {
     protected $serviceName = 'google';
 
-    public function getUserFromResourceOwner(ResourceOwnerInterface $googleUser, string $userType, object $data): ?User
+    public function getUserFromResourceOwner(ResourceOwnerInterface $googleUser, NotificationService $notificationService, string $userType, object $data): ?User
     {
         if (!($googleUser instanceof GoogleUser)) {
             throw new \RuntimeException('Expecting GoogleUser as the first parameter');
@@ -62,7 +62,12 @@ class GoogleAuthenticator extends AbstractSocialAuthenticator
 
             if ('patient' === $userType && $data->doctorId !== 0) {
                 $patientDoctor = $doctorRepository->findOneBy(['id' => $data->doctorId]);
+                
+                $user->setAddRequestDoctor(true);
+                
                 $user->setDoctor($patientDoctor);
+
+                $notificationService->createSelectDoctorNotification($user, $patientDoctor);
             }
 
             if ('doctor' === $userType && $data->doctorNumRppsAmeli !== 'nc') {
