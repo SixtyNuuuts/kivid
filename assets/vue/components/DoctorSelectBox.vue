@@ -87,25 +87,20 @@
                 </div>
             </transition>
         </div>
-        <div
-            class="empty-error-mess"
-            v-if="
-                $parent.emptyMessage.doctorSelect &&
-                !$parent.registerDetails.doctorSelect
-            "
-        >
-            {{ $parent.emptyMessage.doctorSelect }}
+        <div class="empty-error-mess" v-if="errorMessage && !doctorSelected">
+            {{ errorMessage }}
         </div>
     </div>
 </template>
 
 <script>
-import f from "../../services/function";
+import f from "../services/function";
 import ClickOutside from "vue-click-outside";
 
 export default {
     props: {
         doctorSelected: [Object, null],
+        errorMessage: [String, null],
     },
     directives: {
         ClickOutside,
@@ -195,7 +190,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import "../../../scss/variables";
+@import "../../scss/variables";
 
 .select-filter {
     width: 100%;

@@ -95,6 +95,7 @@
                 <DoctorSelectBox
                     v-if="userType === 'patient' && userHasDoctor"
                     :doctorSelected="registerDetails.doctorSelect"
+                    :errorMessage="getEmptyDoctorSelectErrorMessage"
                     @setDoctorSelected="setDoctorSelected"
                     :class="{
                         error:
@@ -408,7 +409,7 @@
 import f from "../../services/function";
 import Vue from "vue";
 import CG from "./CG.vue";
-import DoctorSelectBox from "./DoctorSelectBox.vue";
+import DoctorSelectBox from "../../components/DoctorSelectBox.vue";
 import VuePhoneNumberInput from "vue-phone-number-input";
 
 export default {
@@ -562,8 +563,7 @@ export default {
                 /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
             if (!re.test(String(this.registerDetails.email).toLowerCase())) {
-                this.contactChoice =
-                    this.contactChoice == 1 ? null : this.contactChoice;
+                this.contactChoice = this.contactTel ? 2 : null;
 
                 this.validationMessage.email =
                     "Merci d'entrer un email valide.";
@@ -746,13 +746,16 @@ export default {
                 if (this.contactTel.replace(/ /g, "").length == 10) {
                     this.contactChoice = 2;
                 } else {
-                    this.contactChoice = null;
+                    this.contactChoice = this.registerDetails.email ? 1 : null;
                 }
             } else {
-                this.contactChoice = null;
+                this.contactChoice = this.registerDetails.email ? 1 : null;
             }
 
             return error;
+        },
+        getEmptyDoctorSelectErrorMessage() {
+            return this.emptyMessage.doctorSelect;
         },
     },
 };

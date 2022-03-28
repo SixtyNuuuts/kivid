@@ -69,8 +69,8 @@
 
 <script>
 import Vue from "vue";
-import UserTypeChoice from "./register/steps/UserTypeChoice.vue";
-import UserHasDoctorChoice from "./register/steps/UserHasDoctorChoice.vue";
+import UserTypeChoice from "./register/UserTypeChoice.vue";
+import UserHasDoctorChoice from "./register/UserHasDoctorChoice.vue";
 import RegisterForm from "./register/RegisterForm.vue";
 
 export default {
