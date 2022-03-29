@@ -86,10 +86,14 @@
                     </div>
                 </div>
             </transition>
+            <div
+                class="empty-error-mess"
+                v-if="errorMessage && !doctorSelected"
+            >
+                {{ errorMessage }}
+            </div>
         </div>
-        <div class="empty-error-mess" v-if="errorMessage && !doctorSelected">
-            {{ errorMessage }}
-        </div>
+        <div v-else class="loading-text">Chargement...</div>
     </div>
 </template>
 
@@ -307,7 +311,7 @@ export default {
 
     .select-box {
         position: absolute;
-        top: 5rem;
+        top: 5.1rem;
         left: 0;
         width: 100%;
         z-index: 777;
@@ -374,6 +378,12 @@ export default {
             min-width: 3.5rem;
         }
 
+        .name {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
         .text {
             flex: 1;
             overflow: hidden;
@@ -410,6 +420,18 @@ export default {
         }
     }
 
+    &.big {
+        .doctor {
+            font-size: 1.5rem;
+            border-radius: 0.8rem;
+
+            .name {
+                position: relative;
+                top: 0.2rem;
+            }
+        }
+    }
+
     .not-found {
         font-size: 1.35rem;
         margin: 0;
@@ -424,6 +446,17 @@ export default {
             position: relative;
             top: 0;
         }
+    }
+
+    .loading-text {
+        height: 5.7rem;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        font-size: 1.6rem;
+        margin-left: 1.6rem;
+        color: #ccc;
+        letter-spacing: 0.08rem;
     }
 }
 </style>
