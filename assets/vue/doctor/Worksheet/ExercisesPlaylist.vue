@@ -145,7 +145,10 @@
                         <div v-if="'voir' !== action" class="options">
                             <div
                                 class="option"
-                                :class="{ active: exercise.optionActive }"
+                                :class="{
+                                    active: exercise.optionActive,
+                                    hidden: !exercise.video.options.length,
+                                }"
                             >
                                 <span>Option</span>
                                 <vs-switch
@@ -408,8 +411,8 @@ export default {
                 const exercise = {
                     id: null,
                     position: is + i,
-                    numberOfRepetitions: 1,
-                    numberOfSeries: 1,
+                    numberOfRepetitions: 10,
+                    numberOfSeries: 3,
                     option: "",
                     tempo: "",
                     hold: "",
@@ -894,6 +897,10 @@ export default {
                     color: $gray-dark;
                     font-weight: 600;
                     transition: all 0.25s;
+
+                    &.option.hidden {
+                        display: none;
+                    }
 
                     &:first-child {
                         margin-top: 2.2rem;

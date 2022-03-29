@@ -127,10 +127,7 @@
                             {{ getExercise.video.name }}
                         </div>
                     </div>
-                    <div
-                        class="exercise-series-reps-options"
-                        :class="{ 'n-m-b': !btnValidVideoCompleted }"
-                    >
+                    <div class="exercise-series-reps-options">
                         <div class="series-reps">
                             <div class="series">
                                 <i class="kiv-series icon-18"></i
@@ -168,14 +165,8 @@
                             </div>
                         </div>
                     </div>
-                    <div
-                        class="btn-next"
-                        :class="{ 'btn-hide': !btnValidVideoCompleted }"
-                    >
-                        <vs-button
-                            :disabled="!btnValidVideoCompleted"
-                            @click="validVideoCompleted"
-                        >
+                    <div class="btn-next">
+                        <vs-button @click="validVideoCompleted">
                             Suivant
                         </vs-button>
                     </div>
@@ -216,7 +207,6 @@ export default {
             difficultyEvalFrame: false,
             sensitivityEvalFrame: false,
             scoreFrame: false,
-            btnValidVideoCompleted: false,
             ponderation: [],
             loadingBtnEvalNext: false,
             exerciseScorePoints: null,
@@ -247,14 +237,11 @@ export default {
     },
     methods: {
         videoEnded() {
-            this.btnValidVideoCompleted = true;
-
             this.$refs.youtube.player.playVideo();
             this.$refs.youtube.player.stopVideo();
         },
         validVideoCompleted() {
             this.videoFrame = false;
-            this.btnValidVideoCompleted = false;
             this.technicalEvalFrame = true;
         },
         validTechnicalValue(value) {
@@ -924,12 +911,6 @@ export default {
             .btn-next {
                 position: initial;
 
-                &.btn-hide {
-                    @media (max-width: 559px) and (max-height: 750px) {
-                        display: none;
-                    }
-                }
-
                 @media (min-width: 560px) {
                     position: absolute;
                     left: 50%;
@@ -944,13 +925,7 @@ export default {
                 justify-content: center;
                 align-items: center;
                 margin-top: 2.3rem;
-                margin-bottom: 2.85rem;
-
-                &.n-m-b {
-                    @media (max-width: 559px) and (max-height: 750px) {
-                        margin-bottom: 0;
-                    }
-                }
+                margin-bottom: 1.85rem;
 
                 @media (min-width: 560px) {
                     align-items: flex-end;

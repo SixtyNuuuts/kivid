@@ -439,7 +439,7 @@ export default {
                 justify-content: center;
                 align-items: center;
                 margin-top: 2.3rem;
-                margin-bottom: 2.85rem;
+                margin-bottom: 1.85rem;
 
                 @media (min-width: 560px) {
                     align-items: flex-end;
