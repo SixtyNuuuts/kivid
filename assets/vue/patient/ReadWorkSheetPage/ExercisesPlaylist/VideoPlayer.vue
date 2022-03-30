@@ -462,7 +462,7 @@ export default {
                 width: 100%;
                 height: 50.5vw;
                 // max-width: 98.4rem;
-                max-height: 55.4rem;
+                // max-height: 55.4rem;
                 transform: translateY(-11rem);
                 border-radius: 1rem;
                 overflow: hidden;

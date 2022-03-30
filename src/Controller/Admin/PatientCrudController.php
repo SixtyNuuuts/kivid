@@ -10,6 +10,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 
 class PatientCrudController extends AbstractCrudController
 {
@@ -20,21 +21,33 @@ class PatientCrudController extends AbstractCrudController
         return Patient::class;
     }
 
+    public function configureFilters(Filters $filters): Filters
+    {
+        return $filters
+            ->add('createdAt', 'Créé le')
+            ->add('lastname')
+            ->add('firstname')
+            ->add('email')
+            ->add('birthdate')
+            ->add('gender')
+            ->add('isVerified')
+        ;
+    }
+
     public function configureFields(string $pageName): iterable
     {
         return [
-            DateField::new('created_at', 'Créé le')->onlyOnIndex(),
+            DateField::new('createdAt', 'Créé le')->onlyOnIndex()->setSortable(true),
             TextField::new('lastname', 'Nom'),
             TextField::new('firstname', 'Prénom'),
             TextField::new('email', 'Email'),
             DateField::new('birthdate', 'Date de naissance'),
-            // ImageField::new('avatar_url', 'Avatar')
-            //             ->setTemplatePath('admin/custom_field/image.html.twig')->onlyOnIndex(),
-            BooleanField::new('is_verified', 'Verif Email'),
-            TextField::new('gender', 'Civilité'),
+            TextField::new('gender', 'Civilité')->onlyOnIndex(),
+            TextField::new('gender', 'Civilité (renseigner : "male" ou "female")')->onlyOnForms(),
+            BooleanField::new('isVerified', 'Verif Email')->setSortable(true),
             AssociationField::new('doctor', 'Praticien'),
             AssociationField::new('subscriptions', 'Abonnement(s)')->onlyOnIndex(),
-            AssociationField::new('worksheets', 'Fiche(s)'),
+            AssociationField::new('worksheets', 'Fiche(s)')->onlyOnIndex(),
         ];
     }
 }

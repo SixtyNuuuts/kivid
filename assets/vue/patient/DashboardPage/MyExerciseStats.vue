@@ -366,11 +366,8 @@
                     :event-handlers="eventHandlers"
                 >
                     <div class="axisY-labels difficulty">
-                        <div><p>Vraiment trop difficile</p></div>
-                        <div><p>Trop difficile</p></div>
-                        <div><p>Ok</p></div>
-                        <div><p>Trop facile</p></div>
-                        <div><p>Beaucoup trop facile</p></div>
+                        <div><p>Difficile</p></div>
+                        <div><p>Facile</p></div>
                     </div>
                 </chartist>
                 <div
@@ -1187,23 +1184,7 @@ export default {
             }
 
             &.difficulty {
-                height: 327px;
-
-                div {
-                    height: 20%;
-
-                    &:first-child {
-                        p {
-                            transform: translateY(-10%);
-                        }
-                    }
-
-                    &:last-child {
-                        p {
-                            transform: translateY(-85%);
-                        }
-                    }
-                }
+                height: 279.5px;
             }
         }
     }

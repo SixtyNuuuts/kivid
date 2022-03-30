@@ -273,7 +273,10 @@
                                 @click="closeModalChangeDoctor"
                                 >Annuler</vs-button
                             >
-                            <vs-button @click="valideChangeDoctor"
+                            <vs-button
+                                :disabled="loadingChangeDoctor"
+                                :loading="loadingChangeDoctor"
+                                @click="valideChangeDoctor"
                                 >Valider</vs-button
                             >
                         </div>
@@ -321,6 +324,7 @@ export default {
             patientWorksheets: [],
             modalChangeDoctor: false,
             doctorSelected: null,
+            loadingChangeDoctor: false,
         };
     },
     methods: {
@@ -402,6 +406,8 @@ export default {
             this.doctorSelected = doctorSelected;
         },
         valideChangeDoctor() {
+            this.loadingChangeDoctor = true;
+
             this.axios
                 .post(`/patient/${this.patient.id}/select/doctor`, {
                     _token: this.csrfTokenSelectDoctor,
@@ -418,12 +424,16 @@ export default {
                     this.patient.doctor = this.doctorSelected;
 
                     this.modalChangeDoctor = false;
+
+                    this.loadingChangeDoctor = false;
                 })
                 .catch((error) => {
                     const errorMess =
                         "object" === typeof error.response.data
                             ? error.response.data.detail
                             : error.response.data;
+
+                    this.loadingChangeDoctor = false;
 
                     f.openErrorNotification("Erreur", errorMess);
                 });
