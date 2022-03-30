@@ -141,6 +141,18 @@
                             </span>
                         </h3>
                         <div
+                            class="sensitivity-smiley"
+                            v-if="
+                                getSensitivitySmiley &&
+                                !loadingPatientWorksheets
+                            "
+                        >
+                            <img
+                                :src="getSensitivitySmiley.src"
+                                :alt="getSensitivitySmiley.alt"
+                            />
+                        </div>
+                        <div
                             v-if="
                                 getSensitivityVariation &&
                                 !loadingPatientWorksheets &&
@@ -275,6 +287,7 @@ export default {
                 animation: "rs 700 1000",
                 legend: false,
             },
+            sensitivityLastStatsAverageForSmiley: null,
         };
     },
     computed: {
@@ -333,6 +346,104 @@ export default {
         getTechnicalVariation() {
             return this.calculVariation("technical");
         },
+        getSensitivitySmiley() {
+            const sensitivitySmileys = {
+                0: {
+                    src: require("../../../img/icons/smiley/46.svg"),
+                    alt: "Smiley qui va très mal",
+                },
+                1.25: {
+                    src: require("../../../img/icons/smiley/47.svg"),
+                    alt: "Smiley qui va mal",
+                },
+                2.5: {
+                    src: require("../../../img/icons/smiley/48.svg"),
+                    alt: "Smiley qui va pas bien",
+                },
+                3.75: {
+                    src: require("../../../img/icons/smiley/49.svg"),
+                    alt: "Smiley qui va bof",
+                },
+                5: {
+                    src: require("../../../img/icons/smiley/50.svg"),
+                    alt: "Smiley perplexe",
+                },
+                6.25: {
+                    src: require("../../../img/icons/smiley/51.svg"),
+                    alt: "Smiley qui va bien",
+                },
+                7.5: {
+                    src: require("../../../img/icons/smiley/52.svg"),
+                    alt: "Smiley qui va très bien",
+                },
+                8.75: {
+                    src: require("../../../img/icons/smiley/53.svg"),
+                    alt: "Smiley très content",
+                },
+                10: {
+                    src: require("../../../img/icons/smiley/54.svg"),
+                    alt: "Smiley aux anges",
+                },
+            };
+
+            let smiley = null;
+
+            if (this.sensitivityLastStatsAverageForSmiley) {
+                if (
+                    this.sensitivityLastStatsAverageForSmiley >= 0 &&
+                    this.sensitivityLastStatsAverageForSmiley < 1.25
+                ) {
+                    smiley = sensitivitySmileys["0"];
+                }
+                if (
+                    this.sensitivityLastStatsAverageForSmiley >= 1.25 &&
+                    this.sensitivityLastStatsAverageForSmiley < 2.5
+                ) {
+                    smiley = sensitivitySmileys["1.25"];
+                }
+                if (
+                    this.sensitivityLastStatsAverageForSmiley >= 2.5 &&
+                    this.sensitivityLastStatsAverageForSmiley < 3.75
+                ) {
+                    smiley = sensitivitySmileys["2.5"];
+                }
+                if (
+                    this.sensitivityLastStatsAverageForSmiley >= 3.75 &&
+                    this.sensitivityLastStatsAverageForSmiley < 5
+                ) {
+                    smiley = sensitivitySmileys["3.75"];
+                }
+                if (
+                    this.sensitivityLastStatsAverageForSmiley >= 5 &&
+                    this.sensitivityLastStatsAverageForSmiley < 6.25
+                ) {
+                    smiley = sensitivitySmileys["5"];
+                }
+                if (
+                    this.sensitivityLastStatsAverageForSmiley >= 6.25 &&
+                    this.sensitivityLastStatsAverageForSmiley < 7.5
+                ) {
+                    smiley = sensitivitySmileys["6.25"];
+                }
+                if (
+                    this.sensitivityLastStatsAverageForSmiley >= 7.5 &&
+                    this.sensitivityLastStatsAverageForSmiley < 8.75
+                ) {
+                    smiley = sensitivitySmileys["7.5"];
+                }
+                if (
+                    this.sensitivityLastStatsAverageForSmiley >= 8.75 &&
+                    this.sensitivityLastStatsAverageForSmiley < 10
+                ) {
+                    smiley = sensitivitySmileys["8.75"];
+                }
+                if (this.sensitivityLastStatsAverageForSmiley >= 10) {
+                    smiley = sensitivitySmileys["10"];
+                }
+            }
+
+            return smiley;
+        },
     },
     methods: {
         calculVariation(criterion) {
@@ -366,6 +477,11 @@ export default {
 
                 if (!lastStats.length) {
                     return null;
+                }
+
+                if ("sensitivity" === criterion) {
+                    this.sensitivityLastStatsAverageForSmiley =
+                        lastStatsAverage;
                 }
 
                 const oldStats = stats
@@ -815,8 +931,12 @@ export default {
 
                 .stat-variation {
                     position: relative;
-                    top: -0.1rem;
+                    top: -0.3rem;
                     font-size: 1.6rem;
+
+                    @media (min-width: 768px) {
+                        top: -0.1rem;
+                    }
 
                     span {
                         position: relative;
@@ -872,6 +992,19 @@ export default {
                 h3::before,
                 .loading-block-h3::before {
                     background: $yellow;
+                }
+
+                .sensitivity-smiley {
+                    width: 2.3rem;
+                    margin-right: 0.7rem;
+                    margin-left: -0.4rem;
+                    height: 2rem;
+                    position: relative;
+                    top: -0.3rem;
+
+                    @media (min-width: 768px) {
+                        top: -0.1rem;
+                    }
                 }
             }
 
