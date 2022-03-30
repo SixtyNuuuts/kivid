@@ -43,19 +43,19 @@
                         <div class="progressbar-steps">
                             <div>
                                 <div class="point"></div>
-                                <span>10 000 pts</span>
+                                <span>2 000 pts</span>
                             </div>
                             <div>
                                 <div class="point"></div>
-                                <span>20 000 pts</span>
+                                <span>4 000 pts</span>
                             </div>
                             <div>
                                 <div class="point"></div>
-                                <span>30 000 pts</span>
+                                <span>6 000 pts</span>
                             </div>
                             <div>
                                 <div class="point"></div>
-                                <span>40 000 pts</span>
+                                <span>8 000 pts</span>
                             </div>
                         </div>
                         <div
@@ -264,7 +264,7 @@ export default {
         return {
             loading: false,
             score: 0,
-            scoreMax: 50000,
+            scoreMax: 10000,
             options: {
                 color: "#FF6332",
                 "empty-color": "#ffc6b5",
@@ -294,27 +294,27 @@ export default {
             return 1;
         },
         getRank() {
-            if (this.score >= 0 && this.score < 10000) {
+            if (this.score >= 0 && this.score < 2000) {
                 return "nouveau";
             }
 
-            if (this.score >= 10000 && this.score < 20000) {
+            if (this.score >= 2000 && this.score < 4000) {
                 return "debutant";
             }
 
-            if (this.score >= 20000 && this.score < 30000) {
+            if (this.score >= 4000 && this.score < 6000) {
                 return "amateur";
             }
 
-            if (this.score >= 30000 && this.score < 40000) {
+            if (this.score >= 6000 && this.score < 8000) {
                 return "intermediaire";
             }
 
-            if (this.score >= 40000 && this.score < 50000) {
+            if (this.score >= 8000 && this.score < 10000) {
                 return "confirme";
             }
 
-            if (this.score >= 50000) {
+            if (this.score >= 10000) {
                 return "expert";
             }
         },
