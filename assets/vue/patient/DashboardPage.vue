@@ -157,10 +157,21 @@
                                             !loadingDoctor
                                         "
                                     >
-                                        <p class="name">
-                                            {{ getUserName(patient.doctor) }}
-                                        </p>
-                                        <p
+                                        <div class="name">
+                                            <span>{{
+                                                getUserName(patient.doctor)
+                                            }}</span>
+                                            <vs-button
+                                                size="mini"
+                                                class="btn-change-doctor"
+                                                @click="openModalChangeDoctor"
+                                                ><i class="fas fa-sync-alt"></i>
+                                                <span
+                                                    >Changer de Praticien</span
+                                                >
+                                            </vs-button>
+                                        </div>
+                                        <div
                                             class="entity-city"
                                             v-if="
                                                 patient.doctor.entityName ||
@@ -181,14 +192,7 @@
                                             ><span v-if="patient.doctor.city">{{
                                                 patient.doctor.city
                                             }}</span>
-                                        </p>
-                                        <vs-button
-                                            size="mini"
-                                            class="btn-change-doctor"
-                                            @click="openModalChangeDoctor"
-                                            ><i class="fas fa-sync-alt"></i>
-                                            <span>Changer de Praticien</span>
-                                        </vs-button>
+                                        </div>
                                     </div>
                                     <div
                                         v-if="
