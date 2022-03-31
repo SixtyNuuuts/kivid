@@ -111,26 +111,20 @@
                         ><span v-if="doctorView">Sa</span> sensibilité
                     </h4>
                     <div class="stat-result">
-                        <div
-                            class="sensitivity-smiley"
-                            v-if="
-                                getSensitivitySmiley &&
-                                !loadingPatientWorksheets
-                            "
-                        >
-                            <img
-                                :src="getSensitivitySmiley.src"
-                                :alt="getSensitivitySmiley.alt"
-                            />
-                        </div>
-                        <h3
-                            :class="{
-                                'sensitivity-with-smiley': getSensitivitySmiley,
-                            }"
-                            v-if="!loadingPatientWorksheets"
-                        >
+                        <h3 v-if="!loadingPatientWorksheets">
+                            <div
+                                class="sensitivity-smiley"
+                                v-if="
+                                    getSensitivitySmiley &&
+                                    !loadingPatientWorksheets
+                                "
+                            >
+                                <img
+                                    :src="getSensitivitySmiley.src"
+                                    :alt="getSensitivitySmiley.alt"
+                                />
+                            </div>
                             <span
-                                class="variation-text"
                                 v-if="
                                     getSensitivityVariation &&
                                     'up' === getSensitivityVariation.variation
@@ -139,7 +133,6 @@
                                 En amélioration
                             </span>
                             <span
-                                class="variation-text"
                                 v-if="
                                     getSensitivityVariation &&
                                     'down' === getSensitivityVariation.variation
@@ -200,7 +193,6 @@
                     <div class="stat-result">
                         <h3 v-if="!loadingPatientWorksheets">
                             <span
-                                class="variation-text"
                                 v-if="
                                     getTechnicalVariation &&
                                     'up' === getTechnicalVariation.variation
@@ -209,7 +201,6 @@
                                 En amélioration
                             </span>
                             <span
-                                class="variation-text"
                                 v-if="
                                     getTechnicalVariation &&
                                     'down' === getTechnicalVariation.variation
@@ -941,17 +932,22 @@ export default {
                         }
                     }
 
-                    &.sensitivity-with-smiley::before {
-                        left: -5.15rem;
-                    }
+                    span {
+                        display: block;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
 
-                    @media (min-width: 768px) and (max-width: 992px) {
-                        margin-right: 0;
-                    }
+                        @media (min-width: 768px) and (max-width: 820px) {
+                            max-width: 16vw;
+                        }
 
-                    .variation-text {
-                        @media (min-width: 768px) and (max-width: 992px) {
-                            display: none;
+                        @media (min-width: 820px) and (max-width: 890px) {
+                            max-width: 17vw;
+                        }
+
+                        @media (min-width: 890px) and (max-width: 992px) {
+                            max-width: 18vw;
                         }
                     }
                 }
@@ -1021,11 +1017,40 @@ export default {
                     background: $yellow;
                 }
 
+                h3 {
+                    display: flex;
+
+                    span {
+                        @media (min-width: 768px) and (max-width: 820px) {
+                            max-width: 12vw;
+                        }
+
+                        @media (min-width: 820px) and (max-width: 890px) {
+                            max-width: 13vw;
+                        }
+
+                        @media (min-width: 890px) and (max-width: 992px) {
+                            max-width: 14vw;
+                        }
+
+                        @media (min-width: 1200px) and (max-width: 1250px) {
+                            max-width: 8.3vw;
+                        }
+
+                        @media (min-width: 1250px) and (max-width: 1310px) {
+                            max-width: 9vw;
+                        }
+
+                        @media (min-width: 1310px) and (max-width: 1420px) {
+                            max-width: 9.7vw;
+                        }
+                    }
+                }
+
                 .sensitivity-smiley {
-                    width: 2.3rem;
-                    margin-right: 0.7rem;
-                    margin-left: -0.4rem;
-                    height: 2rem;
+                    width: 2.2rem;
+                    height: 2.1rem;
+                    margin-right: 1rem;
                     position: relative;
                     top: -0.3rem;
 
