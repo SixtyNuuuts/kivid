@@ -136,7 +136,15 @@
                             </div>
                         </div>
                         <div class="commentary">
-                            <p v-if="exercise.commentary && !doctorView">
+                            <p
+                                v-if="
+                                    ((getCurrentWorksheetSession &&
+                                        exercise.commentary) ||
+                                        (!getCurrentWorksheetSession &&
+                                            exercise.commentary.id)) &&
+                                    !doctorView
+                                "
+                            >
                                 Commentaire
                             </p>
                             <transition name="fade" mode="out-in">
@@ -186,7 +194,13 @@
                                     "
                                     key="2"
                                 >
-                                    <div class="commentary-edit-read">
+                                    <div
+                                        class="commentary-edit-read"
+                                        :class="{
+                                            'full-border-radius':
+                                                !getCurrentWorksheetSession,
+                                        }"
+                                    >
                                         <span
                                             v-if="exercise.commentary.content"
                                             >{{
@@ -832,7 +846,7 @@ export default {
 
                     .vs-button {
                         transform: none;
-                        border-radius: 0 0.5rem 0.5rem 0;
+                        border-radius: 0 0.8rem 0.8rem 0;
 
                         &.disactived {
                             background-color: #e5ddcb;
@@ -850,13 +864,17 @@ export default {
                 .commentary-edit {
                     .commentary-edit-read {
                         flex: 1;
-                        border-radius: 0.5rem 0 0 0.5rem;
+                        border-radius: 0.8rem 0 0 0.8rem;
                         border: 1px solid #ebe4d5;
                         overflow-y: auto;
                         padding: 1.6rem 1.7rem;
                         line-height: 1.3;
                         font-weight: 700;
                         font-style: italic;
+
+                        &.full-border-radius {
+                            border-radius: 0.8rem;
+                        }
 
                         .light {
                             font-weight: 400;
@@ -866,7 +884,7 @@ export default {
 
                     .vs-button {
                         transform: none;
-                        border-radius: 0 0.5rem 0.5rem 0;
+                        border-radius: 0 0.8rem 0.8rem 0;
                         background-color: #ebe4d5;
                         box-shadow: none;
 
