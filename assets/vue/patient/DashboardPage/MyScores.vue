@@ -130,6 +130,7 @@
                             v-if="!loadingPatientWorksheets"
                         >
                             <span
+                                class="variation-text"
                                 v-if="
                                     getSensitivityVariation &&
                                     'up' === getSensitivityVariation.variation
@@ -138,6 +139,7 @@
                                 En amélioration
                             </span>
                             <span
+                                class="variation-text"
                                 v-if="
                                     getSensitivityVariation &&
                                     'down' === getSensitivityVariation.variation
@@ -198,6 +200,7 @@
                     <div class="stat-result">
                         <h3 v-if="!loadingPatientWorksheets">
                             <span
+                                class="variation-text"
                                 v-if="
                                     getTechnicalVariation &&
                                     'up' === getTechnicalVariation.variation
@@ -206,6 +209,7 @@
                                 En amélioration
                             </span>
                             <span
+                                class="variation-text"
                                 v-if="
                                     getTechnicalVariation &&
                                     'down' === getTechnicalVariation.variation
@@ -929,22 +933,36 @@ export default {
                         height: 1.2rem;
                         position: absolute;
                         left: -2.6rem;
-                        top: 0.4rem;
+                        top: 0.2rem;
                         border-radius: 50%;
+
+                        @media (min-width: 768px) {
+                            top: 0.4rem;
+                        }
                     }
 
                     &.sensitivity-with-smiley::before {
                         left: -5.15rem;
                     }
+
+                    @media (min-width: 768px) and (max-width: 992px) {
+                        margin-right: 0;
+                    }
+
+                    .variation-text {
+                        @media (min-width: 768px) and (max-width: 992px) {
+                            display: none;
+                        }
+                    }
                 }
 
                 .stat-variation {
                     position: relative;
-                    top: -0.3rem;
+                    top: -0.4rem;
                     font-size: 1.6rem;
 
                     @media (min-width: 768px) {
-                        top: -0.1rem;
+                        top: -0.05rem;
                     }
 
                     span {

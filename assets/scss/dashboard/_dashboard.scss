@@ -173,11 +173,12 @@
                         top: -0.4rem;
 
                         &:hover {
-                            // background: #ecebeb;
+                            box-shadow: 0rem 0.1rem 0.7rem 0rem rgba(34, 46, 84, 0.24) !important;
                             transform: none;
 
                             i {
                                 margin-right: 0.4rem;
+                                top: -0.05rem;
                             }
 
                             span {
