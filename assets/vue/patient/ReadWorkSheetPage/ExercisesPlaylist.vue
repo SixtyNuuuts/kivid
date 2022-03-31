@@ -145,6 +145,7 @@
                                     v-if="
                                         exercise.commentary &&
                                         !doctorView &&
+                                        getCurrentWorksheetSession &&
                                         (!exercise.commentary.id ||
                                             (exercise.commentary.id &&
                                                 isCommentaryBeingEdited(
@@ -201,6 +202,7 @@
                                         >
                                     </div>
                                     <vs-button
+                                        v-if="getCurrentWorksheetSession"
                                         @click="
                                             editCommentary(
                                                 exercise.commentary.id
@@ -386,15 +388,8 @@ export default {
                                 ),
                                 1
                             );
-                            console.log(
-                                "this.commentariesBeingEdited.splice",
-                                this.commentariesBeingEdited
-                            );
                         } else {
                             exercise.commentary.id = response.data.commentaryId;
-                            console.log(
-                                "exercise.commentary.id = response.data.commentaryId"
-                            );
                         }
 
                         this.loadingSetCommentary = false;
