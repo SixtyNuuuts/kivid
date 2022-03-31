@@ -111,7 +111,24 @@
                         ><span v-if="doctorView">Sa</span> sensibilité
                     </h4>
                     <div class="stat-result">
-                        <h3 v-if="!loadingPatientWorksheets">
+                        <div
+                            class="sensitivity-smiley"
+                            v-if="
+                                getSensitivitySmiley &&
+                                !loadingPatientWorksheets
+                            "
+                        >
+                            <img
+                                :src="getSensitivitySmiley.src"
+                                :alt="getSensitivitySmiley.alt"
+                            />
+                        </div>
+                        <h3
+                            :class="{
+                                'sensitivity-with-smiley': getSensitivitySmiley,
+                            }"
+                            v-if="!loadingPatientWorksheets"
+                        >
                             <span
                                 v-if="
                                     getSensitivityVariation &&
@@ -140,18 +157,6 @@
                                 Bientôt !
                             </span>
                         </h3>
-                        <div
-                            class="sensitivity-smiley"
-                            v-if="
-                                getSensitivitySmiley &&
-                                !loadingPatientWorksheets
-                            "
-                        >
-                            <img
-                                :src="getSensitivitySmiley.src"
-                                :alt="getSensitivitySmiley.alt"
-                            />
-                        </div>
                         <div
                             v-if="
                                 getSensitivityVariation &&
@@ -481,7 +486,7 @@ export default {
 
                 if ("sensitivity" === criterion) {
                     this.sensitivityLastStatsAverageForSmiley =
-                        lastStatsAverage;
+                        this.statsAverage(stats);
                 }
 
                 const oldStats = stats
@@ -492,9 +497,10 @@ export default {
 
                 const oldStatsAverage = this.statsAverage(oldStats);
 
-                result =
-                    Math.round((lastStatsAverage - oldStatsAverage) * 10 * 10) /
-                    10;
+                result = Math.round(
+                    ((lastStatsAverage - oldStatsAverage) / oldStatsAverage) *
+                        100
+                );
             } else {
                 return null;
             }
@@ -516,10 +522,9 @@ export default {
             return (
                 Math.round(
                     (stats.reduce((r, s) => {
-                        r = parseInt(r + s.rating);
-
+                        r += s.rating;
                         return r;
-                    }, []) /
+                    }, 0) /
                         stats.length) *
                         10
                 ) / 10
@@ -924,8 +929,12 @@ export default {
                         height: 1.2rem;
                         position: absolute;
                         left: -2.6rem;
-                        top: 0.3rem;
+                        top: 0.4rem;
                         border-radius: 50%;
+                    }
+
+                    &.sensitivity-with-smiley::before {
+                        left: -5.15rem;
                     }
                 }
 
