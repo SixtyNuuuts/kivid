@@ -1042,7 +1042,7 @@ export default {
                         }
 
                         @media (min-width: 1310px) and (max-width: 1420px) {
-                            max-width: 9.7vw;
+                            max-width: 9.3vw;
                         }
                     }
                 }

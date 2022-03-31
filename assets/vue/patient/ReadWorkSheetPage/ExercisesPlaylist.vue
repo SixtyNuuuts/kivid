@@ -139,19 +139,80 @@
                             <p v-if="exercise.commentary && !doctorView">
                                 Commentaire
                             </p>
-                            <vs-input
-                                v-if="exercise.commentary && !doctorView"
-                                placeholder="Tapez votre commentaire"
-                                :disabled="
-                                    !exercise.isCompleted ||
-                                    !getCurrentWorksheetSession
-                                "
-                                v-model="exercise.commentary.content"
-                                @keyup="
-                                    setCommentaryWithDebounce(exercise, $event)
-                                "
-                                @blur="setCommentary(exercise, $event)"
-                            />
+                            <transition name="fade" mode="out-in">
+                                <div
+                                    class="commentary-create"
+                                    v-if="
+                                        exercise.commentary &&
+                                        !doctorView &&
+                                        (!exercise.commentary.id ||
+                                            (exercise.commentary.id &&
+                                                isCommentaryBeingEdited(
+                                                    exercise.commentary.id
+                                                )))
+                                    "
+                                    key="1"
+                                >
+                                    <vs-input
+                                        class="commentary"
+                                        placeholder="Tapez votre commentaire"
+                                        v-model="exercise.commentary.content"
+                                    />
+                                    <vs-button
+                                        :class="{
+                                            disactived:
+                                                exercise.commentary.content ==
+                                                '',
+                                        }"
+                                        @click="setCommentary(exercise)"
+                                        class="btn-send-commentary"
+                                        floating
+                                        :disabled="loadingSetCommentary"
+                                        :loading="loadingSetCommentary"
+                                    >
+                                        <i class="fas fa-paper-plane"></i>
+                                    </vs-button>
+                                </div>
+                                <div
+                                    class="commentary-edit"
+                                    v-if="
+                                        exercise.commentary &&
+                                        !doctorView &&
+                                        exercise.commentary.id &&
+                                        !isCommentaryBeingEdited(
+                                            exercise.commentary.id
+                                        )
+                                    "
+                                    key="2"
+                                >
+                                    <div class="commentary-edit-read">
+                                        <span
+                                            v-if="exercise.commentary.content"
+                                            >{{
+                                                exercise.commentary.content
+                                            }}</span
+                                        >
+                                        <span
+                                            v-if="
+                                                !exercise.commentary.content.trim()
+                                            "
+                                            class="light"
+                                            >Vide</span
+                                        >
+                                    </div>
+                                    <vs-button
+                                        @click="
+                                            editCommentary(
+                                                exercise.commentary.id
+                                            )
+                                        "
+                                        class="btn-edit-commentary"
+                                        floating
+                                    >
+                                        <i class="fas fa-pen"></i>
+                                    </vs-button>
+                                </div>
+                            </transition>
                             <p
                                 v-if="
                                     exercise.commentaries.length > 0 &&
@@ -262,6 +323,8 @@ export default {
             },
             loadingBtnStartSession: false,
             timeoutSetCommentary: null,
+            commentariesBeingEdited: [],
+            loadingSetCommentary: false,
         };
     },
     computed: {
@@ -300,12 +363,10 @@ export default {
             this.videoPlayerToggle = false;
             document.body.classList.remove("no-scrollbar");
         },
-        setCommentary(exercise, e) {
-            if (
-                exercise.commentary.content.trim() != "" ||
-                (exercise.commentary.content.trim() === "" &&
-                    (e.key === "Backspace" || e.key === "Delete"))
-            ) {
+        setCommentary(exercise) {
+            if (exercise.commentary.content) {
+                this.loadingSetCommentary = true;
+
                 this.axios
                     .post(`/patient/${this.patient.id}/create/commentary`, {
                         _token: this.csrfTokenCreateCommentary,
@@ -318,16 +379,43 @@ export default {
                     .then((response) => {
                         // console.log(response.data);
 
-                        exercise.commentary.id = response.data.commentaryId;
+                        if (exercise.commentary.id) {
+                            this.commentariesBeingEdited.splice(
+                                this.commentariesBeingEdited.indexOf(
+                                    exercise.commentary.id
+                                ),
+                                1
+                            );
+                            console.log(
+                                "this.commentariesBeingEdited.splice",
+                                this.commentariesBeingEdited
+                            );
+                        } else {
+                            exercise.commentary.id = response.data.commentaryId;
+                            console.log(
+                                "exercise.commentary.id = response.data.commentaryId"
+                            );
+                        }
+
+                        this.loadingSetCommentary = false;
                     })
                     .catch((error) => {
                         const errorMess =
                             "object" === typeof error.response.data
                                 ? error.response.data.detail
                                 : error.response.data;
+
+                        this.loadingSetCommentary = false;
+
                         console.error(errorMess);
                     });
             }
+        },
+        editCommentary(commentaryId) {
+            this.commentariesBeingEdited.push(commentaryId);
+        },
+        isCommentaryBeingEdited(commentaryId) {
+            return this.commentariesBeingEdited.find((k) => k === commentaryId);
         },
         setCommentaryWithDebounce(exercise, e) {
             clearTimeout(this.timeoutSetCommentary);
@@ -741,6 +829,64 @@ export default {
                 p {
                     margin-top: 2.5rem;
                     margin-bottom: 1rem;
+                }
+
+                .commentary-create,
+                .commentary-edit {
+                    display: flex;
+
+                    .vs-button {
+                        transform: none;
+                        border-radius: 0 0.5rem 0.5rem 0;
+
+                        &.disactived {
+                            background-color: #e5ddcb;
+                            box-shadow: none;
+                        }
+
+                        .vs-button__content {
+                            i {
+                                margin-right: 0;
+                            }
+                        }
+                    }
+                }
+
+                .commentary-edit {
+                    .commentary-edit-read {
+                        flex: 1;
+                        border-radius: 0.5rem 0 0 0.5rem;
+                        border: 1px solid #ebe4d5;
+                        overflow-y: auto;
+                        padding: 1.6rem 1.7rem;
+                        line-height: 1.3;
+                        font-weight: 700;
+                        font-style: italic;
+
+                        .light {
+                            font-weight: 400;
+                            color: $gray-dark;
+                        }
+                    }
+
+                    .vs-button {
+                        transform: none;
+                        border-radius: 0 0.5rem 0.5rem 0;
+                        background-color: #ebe4d5;
+                        box-shadow: none;
+
+                        &:hover {
+                            background-color: $orange;
+
+                            i {
+                                color: $white;
+                            }
+                        }
+
+                        i {
+                            color: $gray-dark;
+                        }
+                    }
                 }
 
                 .commentary-doc-read {
