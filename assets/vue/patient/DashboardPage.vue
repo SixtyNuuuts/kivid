@@ -274,7 +274,9 @@
                                 >Annuler</vs-button
                             >
                             <vs-button
-                                :disabled="loadingChangeDoctor"
+                                :disabled="
+                                    loadingChangeDoctor || !doctorSelected
+                                "
                                 :loading="loadingChangeDoctor"
                                 @click="valideChangeDoctor"
                                 >Valider</vs-button

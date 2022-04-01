@@ -159,7 +159,7 @@
                     }
 
                     .btn-change-doctor.vs-button {
-                        box-shadow: 0rem 0.1rem 0.3rem 0rem rgba(34, 46, 84, 0.14) !important;
+                        box-shadow: 0rem 0.1rem 0.2rem 0rem rgba(34, 46, 84, 0.14) !important;
                         border-radius: 0.6rem;
                         background: #f5f5f5;
                         color: $black;
@@ -173,7 +173,7 @@
                         top: -0.4rem;
 
                         &:hover {
-                            box-shadow: 0rem 0.1rem 0.7rem 0rem rgba(34, 46, 84, 0.24) !important;
+                            box-shadow: 0rem 0.1rem 0.7rem 0rem rgba(34, 46, 84, 0.2) !important;
                             transform: none;
 
                             i {
@@ -187,8 +187,7 @@
                             }
 
                             .vs-button__content {
-                                padding: 0.6rem 1rem;
-                                padding-top: 0.65rem;
+                                padding: 0.55rem 1rem;
                             }
                         }
 
@@ -206,6 +205,8 @@
                             width: 0;
                             overflow: hidden;
                             transition: all 0.25s;
+                            position: relative;
+                            top: 0.05rem;
                         }
 
                         .vs-button__content {

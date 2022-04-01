@@ -37,47 +37,47 @@ class ScoreController extends AbstractController
     ): JsonResponse {
         $score = $this->scoreRepository->sumPatientPoints($patient);
 
-        if ($score >= 2000 && $score < 4000) {
-            $notifScoreExist = $notificationRepository->findOneBy(["type" => "score-rank", "typeId" => 2000, "patient" => $patient]);
+        if ($score >= 1000 && $score < 2000) {
+            $notifScoreExist = $notificationRepository->findOneBy(["type" => "score-rank", "typeId" => 1000, "patient" => $patient]);
 
             if (!$notifScoreExist) {
-                $notificationService->createScoreRankNotification("Débutant", $patient, 2000);
+                $notificationService->createScoreRankNotification("Débutant", $patient, 1000);
                 $notifScoreRank = 'Débutant';
             }
         }
 
-        if ($score >= 4000 && $score < 6000) {
-            $notifScoreExist = $notificationRepository->findOneBy(["type" => "score-rank", "typeId" => 4000, "patient" => $patient]);
+        if ($score >= 2000 && $score < 3000) {
+            $notifScoreExist = $notificationRepository->findOneBy(["type" => "score-rank", "typeId" => 2000, "patient" => $patient]);
 
             if (!$notifScoreExist) {
-                $notificationService->createScoreRankNotification("Amateur", $patient, 4000);
+                $notificationService->createScoreRankNotification("Amateur", $patient, 2000);
                 $notifScoreRank = 'Amateur';
             }
         }
 
-        if ($score >= 6000 && $score < 8000) {
-            $notifScoreExist = $notificationRepository->findOneBy(["type" => "score-rank", "typeId" => 6000, "patient" => $patient]);
+        if ($score >= 3000 && $score < 4000) {
+            $notifScoreExist = $notificationRepository->findOneBy(["type" => "score-rank", "typeId" => 3000, "patient" => $patient]);
 
             if (!$notifScoreExist) {
-                $notificationService->createScoreRankNotification("Intermédiaire", $patient, 6000);
+                $notificationService->createScoreRankNotification("Intermédiaire", $patient, 3000);
                 $notifScoreRank = 'Intermédiaire';
             }
         }
 
-        if ($score >= 8000 && $score < 10000) {
-            $notifScoreExist = $notificationRepository->findOneBy(["type" => "score-rank", "typeId" => 8000, "patient" => $patient]);
+        if ($score >= 4000 && $score < 5000) {
+            $notifScoreExist = $notificationRepository->findOneBy(["type" => "score-rank", "typeId" => 4000, "patient" => $patient]);
 
             if (!$notifScoreExist) {
-                $notificationService->createScoreRankNotification("Confirmé", $patient, 8000);
+                $notificationService->createScoreRankNotification("Confirmé", $patient, 4000);
                 $notifScoreRank = 'Confirmé';
             }
         }
 
-        if ($score >= 10000) {
-            $notifScoreExist = $notificationRepository->findOneBy(["type" => "score-rank", "typeId" => 10000, "patient" => $patient]);
+        if ($score >= 5000) {
+            $notifScoreExist = $notificationRepository->findOneBy(["type" => "score-rank", "typeId" => 5000, "patient" => $patient]);
 
             if (!$notifScoreExist) {
-                $notificationService->createScoreRankNotification("Expert", $patient, 10000);
+                $notificationService->createScoreRankNotification("Expert", $patient, 5000);
                 $notifScoreRank = 'Expert';
             }
         }

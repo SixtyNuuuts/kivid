@@ -241,6 +241,7 @@ export default {
             this.$refs.youtube.player.stopVideo();
         },
         validVideoCompleted() {
+            this.$refs.youtube.player.stopVideo();
             this.videoFrame = false;
             this.technicalEvalFrame = true;
         },
