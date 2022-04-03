@@ -79,6 +79,7 @@
                                     !worksheet.currentWorksheetSession
                                         .isInProgress) ||
                                 (!worksheet.currentWorksheetSession &&
+                                    worksheet.countOldWorksheetSessions === 0 &&
                                     worksheet.exerciseStats.length === 0)
                             "
                         >
@@ -174,9 +175,10 @@
                                 >
                                 <br />
                             </p>
-                            <!-- <p
+                            <p
                                 v-if="
                                     !worksheet.currentWorksheetSession &&
+                                    worksheet.countOldWorksheetSessions > 0 &&
                                     worksheet.exerciseStats.length === 0
                                 "
                             >
@@ -188,7 +190,7 @@
                                     >Traitement non réalisé et expiré.</span
                                 >
                                 <br />
-                            </p> -->
+                            </p>
                             <vs-button
                                 v-if="!doctorView"
                                 :disabled="redirectInProgress === worksheet.id"

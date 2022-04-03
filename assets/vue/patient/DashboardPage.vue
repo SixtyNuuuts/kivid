@@ -484,6 +484,9 @@ export default {
                                 worksheet.currentWorksheetSession =
                                     response.data.currentWorksheetSession;
 
+                                worksheet.countOldWorksheetSessions =
+                                    response.data.countOldWorksheetSessions;
+
                                 if (response.data.currentWorksheetSession) {
                                     worksheet.timeLeftBeforeNextSession =
                                         this.getTimeLeftBeforeNextSession(

@@ -66,6 +66,8 @@ class WorksheetSessionController extends AbstractController
         }
 
         $currentWorksheetSession = $this->worksheetSessionRepository->findCurrentWorksheetSession($worksheet);
+        
+        $countOldWorksheetSessions = $this->worksheetSessionRepository->counOldWorksheetSessions($worksheet);
 
         if ($currentWorksheetSession && $param === 'time-left-before-next') {
             $now = new \DateTime();
@@ -140,7 +142,11 @@ class WorksheetSessionController extends AbstractController
         $notifTimeLeft = $notifTimeLeft ?? null;
 
         return $this->json(
-            ['currentWorksheetSession' => $currentWorksheetSession, 'notifTimeLeft' => $notifTimeLeft],
+            [
+                'currentWorksheetSession' => $currentWorksheetSession,
+                'notifTimeLeft' => $notifTimeLeft,
+                'countOldWorksheetSessions' => $countOldWorksheetSessions,
+            ],
             200,
             [],
             ['groups' => 'session_read']

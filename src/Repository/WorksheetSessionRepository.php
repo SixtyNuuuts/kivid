@@ -35,6 +35,21 @@ class WorksheetSessionRepository extends ServiceEntityRepository
         ;
     }
 
+    public function counOldWorksheetSessions(Worksheet $worksheet): int
+    {
+        $now = new \DateTime();
+
+        return $this->createQueryBuilder('ws')
+            ->select('count(ws.id)')
+            ->where('ws.endAt < :now')
+            ->andWhere('ws.worksheet = :worksheet')
+            ->setParameter('now', $now)
+            ->setParameter('worksheet', $worksheet)
+            ->getQuery()
+            ->getSingleScalarResult();
+        ;
+    }
+
     public function countWorksheetSessions(Worksheet $worksheet): int
     {
         return $this->createQueryBuilder('ws')
