@@ -4,7 +4,7 @@
             Comment était votre technique de réalisation ?
         </h1>
         <h1 v-if="'difficulty' === type">
-            Comment avez-vous trouvé l’exercice ?
+            Comment avez-vous trouvé la session ?
         </h1>
         <h1 v-if="'sensitivity' === type">Comment vous sentez-vous ?</h1>
         <div v-if="'technical' === type" class="eval-question-count">
