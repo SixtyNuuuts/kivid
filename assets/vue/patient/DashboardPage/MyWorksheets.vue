@@ -110,7 +110,7 @@
                                     worksheet.currentWorksheetSession
                                         .isCompleted) ||
                                 (!worksheet.currentWorksheetSession &&
-                                    worksheet.exerciseStats.length > 0)
+                                    worksheet.countOldWorksheetSessions > 0)
                             "
                             class="worksheet-content session-completed"
                         >
