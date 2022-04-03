@@ -73,10 +73,13 @@
                         <div
                             class="worksheet-progress-line"
                             v-if="
-                                worksheet.currentWorksheetSession &&
-                                !worksheet.currentWorksheetSession
-                                    .isCompleted &&
-                                !worksheet.currentWorksheetSession.isInProgress
+                                (worksheet.currentWorksheetSession &&
+                                    !worksheet.currentWorksheetSession
+                                        .isCompleted &&
+                                    !worksheet.currentWorksheetSession
+                                        .isInProgress) ||
+                                (!worksheet.currentWorksheetSession &&
+                                    worksheet.exerciseStats.length === 0)
                             "
                         >
                             <div class="progressbar-base">
@@ -105,7 +108,8 @@
                                 (worksheet.currentWorksheetSession &&
                                     worksheet.currentWorksheetSession
                                         .isCompleted) ||
-                                !worksheet.currentWorksheetSession
+                                (!worksheet.currentWorksheetSession &&
+                                    worksheet.exerciseStats.length > 0)
                             "
                             class="worksheet-content session-completed"
                         >
@@ -170,7 +174,7 @@
                                 >
                                 <br />
                             </p>
-                            <p
+                            <!-- <p
                                 v-if="
                                     !worksheet.currentWorksheetSession &&
                                     worksheet.exerciseStats.length === 0
@@ -184,7 +188,7 @@
                                     >Traitement non réalisé et expiré.</span
                                 >
                                 <br />
-                            </p>
+                            </p> -->
                             <vs-button
                                 v-if="!doctorView"
                                 :disabled="redirectInProgress === worksheet.id"
