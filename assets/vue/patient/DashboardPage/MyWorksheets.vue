@@ -61,25 +61,11 @@
                                 <div class="progressbar-steps">
                                     <div>
                                         <div class="point"></div>
-                                        <span v-if="!doctorView"
+                                        <!-- <span v-if="!doctorView"
                                             >Vous avez fini la fiche !</span
                                         >
-                                        <span
-                                            v-if="
-                                                doctorView &&
-                                                worksheet.currentWorksheetSession
-                                            "
-                                            >En cours</span
-                                        >
-                                        <span
-                                            v-if="
-                                                doctorView &&
-                                                !worksheet.currentWorksheetSession &&
-                                                worksheet.exerciseStats
-                                                    .length === 0
-                                            "
-                                            >Non démarrée</span
-                                        >
+                                        <span v-if="doctorView">En cours</span> -->
+                                        <span>En cours</span>
                                     </div>
                                 </div>
                             </div>
@@ -87,13 +73,10 @@
                         <div
                             class="worksheet-progress-line"
                             v-if="
-                                (worksheet.currentWorksheetSession &&
-                                    !worksheet.currentWorksheetSession
-                                        .isCompleted &&
-                                    !worksheet.currentWorksheetSession
-                                        .isInProgress) ||
-                                (!worksheet.currentWorksheetSession &&
-                                    worksheet.exerciseStats.length === 0)
+                                worksheet.currentWorksheetSession &&
+                                !worksheet.currentWorksheetSession
+                                    .isCompleted &&
+                                !worksheet.currentWorksheetSession.isInProgress
                             "
                         >
                             <div class="progressbar-base">
@@ -106,25 +89,13 @@
                                 <div class="progressbar-steps">
                                     <div>
                                         <div class="point"></div>
-                                        <span v-if="!doctorView"
+                                        <!-- <span v-if="!doctorView"
                                             >Vous avez fini la fiche !</span
                                         >
-                                        <span
-                                            v-if="
-                                                doctorView &&
-                                                worksheet.currentWorksheetSession
-                                            "
-                                            >En cours</span
-                                        >
-                                        <span
-                                            v-if="
-                                                doctorView &&
-                                                !worksheet.currentWorksheetSession &&
-                                                worksheet.exerciseStats
-                                                    .length === 0
-                                            "
+                                        <span v-if="doctorView"
                                             >Non démarrée</span
-                                        >
+                                        > -->
+                                        <span>Non démarrée</span>
                                     </div>
                                 </div>
                             </div>
@@ -134,8 +105,7 @@
                                 (worksheet.currentWorksheetSession &&
                                     worksheet.currentWorksheetSession
                                         .isCompleted) ||
-                                (!worksheet.currentWorksheetSession &&
-                                    worksheet.exerciseStats.length > 0)
+                                !worksheet.currentWorksheetSession
                             "
                             class="worksheet-content session-completed"
                         >
@@ -185,9 +155,10 @@
                                 v-if="
                                     (!worksheet.currentWorksheetSession &&
                                         worksheet.exerciseStats.length > 0) ||
-                                    worksheet.totalWorksheetSessions ==
-                                        worksheet.currentWorksheetSession
-                                            .execOrder
+                                    (worksheet.currentWorksheetSession &&
+                                        worksheet.totalWorksheetSessions ==
+                                            worksheet.currentWorksheetSession
+                                                .execOrder)
                                 "
                             >
                                 <span v-if="!doctorView"
@@ -196,6 +167,21 @@
                                 >
                                 <span v-if="doctorView"
                                     >Traitement terminé.</span
+                                >
+                                <br />
+                            </p>
+                            <p
+                                v-if="
+                                    !worksheet.currentWorksheetSession &&
+                                    worksheet.exerciseStats.length === 0
+                                "
+                            >
+                                <span v-if="!doctorView"
+                                    >Vous n'avez pas réalisé votre traitement,
+                                    il a expiré.</span
+                                >
+                                <span v-if="doctorView"
+                                    >Traitement non réalisé et expiré.</span
                                 >
                                 <br />
                             </p>

@@ -67,6 +67,7 @@
                     class="exercise"
                     :class="{
                         disabled:
+                            getCurrentWorksheetSession &&
                             exercise !== getCurrentExercise &&
                             !exercise.isCompleted,
                     }"
@@ -74,6 +75,7 @@
                     <div class="thumbnail-wrapper">
                         <div
                             v-if="
+                                getCurrentWorksheetSession &&
                                 exercise === getCurrentExercise &&
                                 !exercise.isCompleted &&
                                 !doctorView
@@ -89,7 +91,12 @@
                             </vs-button>
                         </div>
                         <div
-                            v-if="exercise.isCompleted && !doctorView"
+                            v-if="
+                                (getCurrentWorksheetSession &&
+                                    exercise.isCompleted &&
+                                    !doctorView) ||
+                                (!getCurrentWorksheetSession && !doctorView)
+                            "
                             class="btn-playlist"
                         >
                             <vs-button @click="openVideoPlayer(exercise)">
