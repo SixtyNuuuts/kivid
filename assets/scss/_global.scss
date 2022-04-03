@@ -95,12 +95,15 @@ body {
         0% {
             background-size: 10rem, 90rem, 40rem;
         }
+
         40% {
             background-size: 70rem, 135rem, 100rem;
         }
+
         80% {
             background-size: 30rem, 80rem, 30rem;
         }
+
         100% {
             background-size: 70rem, 30rem, 10rem;
         }
@@ -108,11 +111,13 @@ body {
 
     .btn-prescription-action {
         white-space: nowrap;
+
         &.active {
             .vs-button {
                 animation: mymove 2s infinite;
             }
         }
+
         &.selected {
             .vs-button {
                 background: $orange !important;
@@ -476,6 +481,7 @@ body.no-scrollbar::-webkit-scrollbar {
     0% {
         opacity: 0;
     }
+
     100% {
         opacity: 1;
     }
@@ -487,6 +493,7 @@ body.no-scrollbar::-webkit-scrollbar {
         opacity: 0;
         overflow: hidden;
     }
+
     100% {
         height: 2.6rem;
         opacity: 1;
@@ -498,6 +505,7 @@ body.no-scrollbar::-webkit-scrollbar {
     0% {
         background-position: -468px 0;
     }
+
     100% {
         background-position: 468px 0;
     }
@@ -507,15 +515,19 @@ body.no-scrollbar::-webkit-scrollbar {
     from {
         transform: translateY(0);
     }
+
     25% {
         transform: translateY(-1rem);
     }
+
     50% {
         transform: translateY(0);
     }
+
     75% {
         transform: translateY(-1rem);
     }
+
     to {
         transform: translateY(0);
     }
@@ -525,12 +537,15 @@ body.no-scrollbar::-webkit-scrollbar {
     0% {
         transform: scale(0.8);
     }
+
     40% {
         transform: scale(1.08);
     }
+
     80% {
         transform: scale(0.98);
     }
+
     100% {
         transform: scale(1);
     }
@@ -540,15 +555,27 @@ body.no-scrollbar::-webkit-scrollbar {
     0% {
         transform: scale(1);
     }
+
     40% {
         transform: scale(1.05);
     }
+
     80% {
         transform: scale(0.96);
     }
+
     100% {
         transform: scale(1);
     }
+}
+
+.switch-exercise-transition-leave {
+    transition: all .25s;
+    opacity: 0;
+}
+
+.switch-exercise-transition-enter {
+    opacity: 1;
 }
 
 .fade-enter-active,
@@ -762,7 +789,7 @@ body.no-scrollbar::-webkit-scrollbar {
             color: #c2bba9;
         }
 
-        .vs-input-content .vs-input:focus ~ .vs-input__label--placeholder,
+        .vs-input-content .vs-input:focus~.vs-input__label--placeholder,
         .vs-input-content .vs-input__label--hidden.vs-input__label--placeholder {
             display: none;
         }
@@ -777,6 +804,7 @@ body.no-scrollbar::-webkit-scrollbar {
             overflow: hidden;
             text-overflow: ellipsis;
             max-width: 85%;
+
             @media (min-width: 760px) {
                 max-width: 92%;
             }
@@ -796,6 +824,7 @@ body.no-scrollbar::-webkit-scrollbar {
 
     @media (min-width: 576px) {
         flex-direction: row;
+
         .search {
             margin-right: 1.7rem;
         }
@@ -905,6 +934,7 @@ body.no-scrollbar::-webkit-scrollbar {
         align-items: center;
         width: 100%;
         justify-content: center;
+
         span {
             position: relative;
             top: 0.1rem;
@@ -927,9 +957,11 @@ body.no-scrollbar::-webkit-scrollbar {
     0% {
         opacity: 0;
     }
+
     50% {
         opacity: 0.5;
     }
+
     100% {
         opacity: 1;
     }
@@ -949,7 +981,7 @@ body.no-scrollbar::-webkit-scrollbar {
     opacity: 1;
     transition: all 0.2s;
 
-    > div:first-child {
+    >div:first-child {
         display: flex;
         flex-direction: column;
         flex-grow: 2;
@@ -1020,6 +1052,7 @@ body.no-scrollbar::-webkit-scrollbar {
             &:last-child {
                 padding-right: 0;
             }
+
             &:first-child {
                 padding-left: 0;
             }
@@ -1029,7 +1062,7 @@ body.no-scrollbar::-webkit-scrollbar {
     @media (min-width: 630px) {
         flex-direction: row;
 
-        > div:first-child {
+        >div:first-child {
             p {
                 // margin-bottom: 1rem;
                 position: relative;
@@ -1052,8 +1085,9 @@ body.no-scrollbar::-webkit-scrollbar {
 }
 
 :root.black {
-    .footer > div:first-child p,
-    .footer > div:first-child .primary-links a {
+
+    .footer>div:first-child p,
+    .footer>div:first-child .primary-links a {
         color: $white;
     }
 
@@ -1173,7 +1207,7 @@ p.alert {
     align-items: center;
     margin-top: 3rem;
 
-    > .vs-button {
+    >.vs-button {
         margin: 0 1rem;
 
         .vs-button__content {
@@ -1239,7 +1273,7 @@ p.alert {
             justify-content: space-between;
             align-items: center;
 
-            > div {
+            >div {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
@@ -1275,6 +1309,7 @@ p.alert {
                     .vs-button__content {
                         opacity: 0.5;
                     }
+
                     cursor: default;
 
                     &:hover {
@@ -1386,6 +1421,7 @@ p.alert {
             font-size: 2.4rem;
         }
     }
+
     .text-request-subscription {
         p {
             font-size: 2.3rem;
@@ -1492,7 +1528,7 @@ p.alert {
 }
 
 // HACK WEBKIT : Detecting autofilled fields
-input:-webkit-autofill ~ label {
+input:-webkit-autofill~label {
     font-size: 1.4rem !important;
     top: -0.8rem !important;
     left: 1.3rem !important;

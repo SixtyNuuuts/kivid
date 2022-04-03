@@ -2,8 +2,12 @@
 
 namespace App\Controller\Patient;
 
+use App\Entity\Score;
 use App\Entity\Patient;
+use App\Entity\Worksheet;
+use App\Repository\ScoreRepository;
 use App\Service\NotificationService;
+use App\Repository\ExerciseRepository;
 use App\Repository\WorksheetRepository;
 use App\Service\WorksheetSessionService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -12,8 +16,8 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Repository\WorksheetSessionRepository;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
  * @Route("/patient")
@@ -21,19 +25,25 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 class WorksheetSessionController extends AbstractController
 {
     private $worksheetRepository;
+    private $exerciseRepository;
     private $worksheetSessionRepository;
     private $worksheetSessionService;
+    private $scoreRepository;
     private $em;
 
     public function __construct(
         WorksheetRepository $worksheetRepository,
+        ExerciseRepository $exerciseRepository,
         WorksheetSessionRepository $worksheetSessionRepository,
         WorksheetSessionService $worksheetSessionService,
+        ScoreRepository $scoreRepository,
         EntityManagerInterface $em
     ) {
         $this->worksheetRepository = $worksheetRepository;
+        $this->exerciseRepository = $exerciseRepository;
         $this->worksheetSessionRepository = $worksheetSessionRepository;
         $this->worksheetSessionService = $worksheetSessionService;
+        $this->scoreRepository = $scoreRepository;
         $this->em = $em;
     }
 
@@ -223,6 +233,10 @@ class WorksheetSessionController extends AbstractController
 
             if ($this->isCsrfTokenValid('complete_worksheet_session' . $patient->getId(), $data->_token)) {
                 $worksheetSession = $this->worksheetSessionRepository->findOneBy(['id' => $data->worksheetSessionId]);
+                $worksheet = $this->worksheetRepository->findOneBy(['id' => $data->worksheetId]);
+                $exercise = $this->exerciseRepository->findOneBy(['id' => $data->exerciseId]);
+                
+                $exercise->setIsCompleted(true);
 
                 $worksheetSession->setIsInProgress(false);
 
@@ -242,11 +256,39 @@ class WorksheetSessionController extends AbstractController
                     );
                 }
 
+                $uniqScoreLabel = "session_completed_{$data->worksheetSessionId}";
+
+                $score = $this->scoreRepository->findOneBy(['label' => $uniqScoreLabel]);
+
+                if (!$score) {
+                    $score = new Score();
+
+                    $points = 0;
+
+                    foreach ($worksheet->getExercises() as $exercise) {
+                        $points += $exercise->getNumberOfRepetitions()
+                                 * $exercise->getNumberOfSeries()
+                        ;
+                    }
+    
+                    $score->setPatient($patient)
+                          ->setLabel($uniqScoreLabel)
+                          ->setPoints($points * $data->ponderationForScore)
+                    ;
+
+                    $this->em->persist($score);
+                }
+
                 $this->em->flush();
 
                 return $this->json(
-                    'Session terminée',
-                    200
+                    [
+                        'message' => 'Session terminé',
+                        'score' => $score,
+                    ],
+                    200,
+                    [],
+                    ['groups' => 'score_read']
                 );
             }
         }

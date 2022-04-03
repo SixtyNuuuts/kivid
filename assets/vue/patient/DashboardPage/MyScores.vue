@@ -458,11 +458,11 @@ export default {
                 ];
             });
 
-            let variationSlice = 5;
+            let variationSlice = 1;
 
-            if (stats.length < 6) {
-                variationSlice = 1;
-            }
+            // if (stats.length < 6) {
+            //     variationSlice = 1;
+            // }
 
             let result = 0;
 
@@ -480,8 +480,10 @@ export default {
                 }
 
                 if ("sensitivity" === criterion) {
+                    // this.sensitivityLastStatsAverageForSmiley =
+                    //     this.statsAverage(stats);
                     this.sensitivityLastStatsAverageForSmiley =
-                        this.statsAverage(stats);
+                        lastStatsAverage;
                 }
 
                 const oldStats = stats

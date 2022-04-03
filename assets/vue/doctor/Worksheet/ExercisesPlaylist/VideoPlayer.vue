@@ -120,7 +120,6 @@ export default {
             this.$refs.youtube.player.stopVideo();
         },
         nextExercise() {
-            this.$refs.youtube.player.stopVideo();
             if (this.getExercise === this.getTheLastExercise) {
                 this.closeVideoPlayer();
             } else {

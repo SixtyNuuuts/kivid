@@ -80,9 +80,20 @@
                             "
                             class="btn-playlist"
                         >
-                            <vs-button @click="openVideoPlayer">
+                            <vs-button
+                                @click="openVideoPlayer(null)"
+                                class="current-exe"
+                            >
                                 <span v-if="0 === i">Démarrer</span>
                                 <span v-else>Reprendre</span>
+                            </vs-button>
+                        </div>
+                        <div
+                            v-if="exercise.isCompleted && !doctorView"
+                            class="btn-playlist"
+                        >
+                            <vs-button @click="openVideoPlayer(exercise)">
+                                <span>Revoir</span>
                             </vs-button>
                         </div>
                         <div
@@ -296,7 +307,8 @@
                     csrfTokenCompleteWorksheetSession
                 "
                 :csrfTokenCompleteExercise="csrfTokenCompleteExercise"
-                :csrfTokenCreateExerciseStat="csrfTokenCreateExerciseStat"
+                :csrfTokenCreateSessionStat="csrfTokenCreateSessionStat"
+                @resetExerciseForRePlaying="resetExerciseForRePlaying"
                 @closeVideoPlayer="closeVideoPlayer"
                 @stripeCheckout="stripeCheckout()"
             />
@@ -322,7 +334,7 @@ export default {
         csrfTokenStartWorksheetSession: String,
         csrfTokenCompleteWorksheetSession: String,
         csrfTokenCompleteExercise: String,
-        csrfTokenCreateExerciseStat: String,
+        csrfTokenCreateSessionStat: String,
         csrfTokenCreateCommentary: String,
     },
     data() {
@@ -341,6 +353,7 @@ export default {
             timeoutSetCommentary: null,
             commentariesBeingEdited: [],
             loadingSetCommentary: false,
+            exerciseForRePlaying: null,
         };
     },
     computed: {
@@ -361,6 +374,11 @@ export default {
                     (e) => e.isCompleted === false
                 );
             }
+
+            if (this.exerciseForRePlaying) {
+                currentExercise = this.exerciseForRePlaying;
+            }
+
             return currentExercise;
         },
         getCurrentWorksheetSession() {
@@ -371,13 +389,18 @@ export default {
         },
     },
     methods: {
-        openVideoPlayer() {
+        openVideoPlayer(exercise) {
+            this.exerciseForRePlaying = exercise;
             this.videoPlayerToggle = true;
             document.body.classList.add("no-scrollbar");
         },
         closeVideoPlayer() {
+            this.exerciseForRePlaying = null;
             this.videoPlayerToggle = false;
             document.body.classList.remove("no-scrollbar");
+        },
+        resetExerciseForRePlaying() {
+            this.exerciseForRePlaying = null;
         },
         setCommentary(exercise) {
             if (exercise.commentary.content) {
@@ -561,6 +584,11 @@ export default {
 
                 .vs-button {
                     box-shadow: 0px 0rem 1.5rem rgba(173, 100, 74, 0.88);
+
+                    &.current-exe {
+                        background-color: #faf8f4;
+                        color: $orange;
+                    }
                 }
 
                 &:hover ~ .thumbnail {
