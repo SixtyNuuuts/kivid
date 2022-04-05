@@ -168,7 +168,12 @@ export default {
 
             if (
                 exerciseCommentaries.length &&
-                this.getCurrentWorksheetSession
+                this.getCurrentWorksheetSession &&
+                exerciseCommentaries.find(
+                    (c) =>
+                        c.worksheetSession.id ===
+                        this.getCurrentWorksheetSession.id
+                )
             ) {
                 commentary = exerciseCommentaries.find(
                     (c) =>
