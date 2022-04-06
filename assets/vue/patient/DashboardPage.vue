@@ -167,8 +167,8 @@
                                                 @click="openModalChangeDoctor"
                                                 ><i class="fas fa-sync-alt"></i>
                                                 <span
-                                                    >Changer de praticien</span
-                                                >
+                                                    >Changer de praticien
+                                                </span>
                                             </vs-button>
                                         </div>
                                         <div
