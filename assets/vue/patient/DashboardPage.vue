@@ -167,7 +167,7 @@
                                                 @click="openModalChangeDoctor"
                                                 ><i class="fas fa-sync-alt"></i>
                                                 <span
-                                                    >Changer de Praticien</span
+                                                    >Changer de praticien</span
                                                 >
                                             </vs-button>
                                         </div>
@@ -261,7 +261,7 @@
                         >
                             <i class="vs-icon-close vs-icon-hover-x"></i>
                         </button>
-                        <h2>Changer de Praticien</h2>
+                        <h2>Changer de praticien</h2>
                         <DoctorSelectBox
                             class="big"
                             :doctorSelected="doctorSelected"
