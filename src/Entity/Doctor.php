@@ -60,6 +60,12 @@ class Doctor extends User
      */
     private $worksheets;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"doctor_read", "user_read"})
+     */
+    private $numRppsAmeli;
+
     public function __construct()
     {
         parent::__construct(['ROLE_DOCTOR']);
@@ -233,6 +239,18 @@ class Doctor extends User
                 $worksheet->setDoctor(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getNumRppsAmeli(): ?string
+    {
+        return $this->numRppsAmeli;
+    }
+
+    public function setNumRppsAmeli(?string $numRppsAmeli): self
+    {
+        $this->numRppsAmeli = $numRppsAmeli;
 
         return $this;
     }

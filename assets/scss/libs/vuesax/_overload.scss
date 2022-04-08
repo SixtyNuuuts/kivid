@@ -31,6 +31,10 @@
         width: 100%;
     }
 
+    &.w-50 {
+        width: 50%;
+    }
+
     i {
         font-size: 1.8rem;
         position: relative;
@@ -125,6 +129,42 @@
         box-shadow: none;
         background: $gray-middle;
         color: $gray-dark;
+    }
+}
+
+.vs-button.btn-prev {
+    width: 3.2rem;
+    height: 3.2rem;
+    white-space: nowrap;
+    background: $orange;
+    border-radius: 50%;
+    font-size: 2rem;
+    font-weight: 700;
+    position: absolute;
+    left: 2rem;
+    top: 2rem;
+
+    &:hover {
+        background: $sanguine;
+    }
+
+    @media (min-width: 450px) {
+        left: 3.5rem;
+        top: 3.5rem;
+    }
+
+    @media (min-width: 1250px) {
+        left: 5rem;
+        top: 5rem;
+    }
+
+    i {
+        font-size: 1.5rem;
+        margin-right: 0.25rem;
+    }
+
+    .vs-button__content {
+        padding: 0;
     }
 }
 
@@ -460,6 +500,33 @@
         padding-top: 0.7rem;
         font-size: 1.3rem;
         padding-left: 0;
+    }
+}
+
+.commentary.vs-input-parent {
+    flex: 1;
+
+    .vs-input-content .vs-input {
+        border-radius: 0.8rem 0 0 0.8rem;
+    }
+
+    .vs-input-content .vs-input__label {
+        white-space: nowrap;
+
+        @media (min-width: 992px) and (max-width: 1150px) {
+            display: inline-block;
+            max-width: 12vw;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+}
+
+.vs-input-parent.empty {
+    .vs-input-content {
+        .vs-input__icon {
+            color: #bbb4a1;
+        }
     }
 }
 
@@ -855,7 +922,8 @@
     .vs-dialog__content {
         padding: 2rem 2rem;
 
-        > h2 {
+        > h2,
+        > div h2 {
             position: relative;
             top: -0.4rem;
             margin-bottom: 3rem;
@@ -873,12 +941,6 @@
                 top: 0;
                 border-radius: 0.2rem;
             }
-
-            // @media (min-width: 768px) {
-            //     &::before {
-            //         top: 0.1rem;
-            //     }
-            // }
         }
     }
 
@@ -960,14 +1022,8 @@
     }
 }
 
-////pagination
-.vs-pagination__button,
-.vs-pagination__active,
-.vs-pagination__arrow {
-    border-radius: 0.8rem;
-    font-size: 1.2rem;
-    width: 30px;
-    height: 30px;
+.vs-notification-parent {
+    transition: all 0.3s ease;
 }
 
 // tooltip
@@ -982,7 +1038,15 @@
     border-radius: initial;
 }
 
-//pagination
+////pagination
+.vs-pagination__button,
+.vs-pagination__active,
+.vs-pagination__arrow {
+    border-radius: 0.8rem;
+    font-size: 1.2rem;
+    width: 30px;
+    height: 30px;
+}
 
 .vs-pagination-content.buttonsDotted .vs-pagination__arrow {
     width: 26px;

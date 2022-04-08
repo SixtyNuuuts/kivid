@@ -2,11 +2,9 @@
 
 namespace App\Controller\Patient;
 
-use App\Entity\Score;
 use App\Entity\Patient;
 use App\Entity\Commentary;
 use App\Service\StripeService;
-use App\Repository\ScoreRepository;
 use App\Service\SubscriptionService;
 use App\Repository\ExerciseRepository;
 use App\Repository\WorksheetRepository;
@@ -31,7 +29,6 @@ class WorksheetController extends AbstractController
     private $worksheetRepository;
     private $worksheetSessionRepository;
     private $subscriptionRepository;
-    private $scoreRepository;
     private $em;
 
     public function __construct(
@@ -40,7 +37,6 @@ class WorksheetController extends AbstractController
         WorksheetRepository $worksheetRepository,
         WorksheetSessionRepository $worksheetSessionRepository,
         SubscriptionRepository $subscriptionRepository,
-        ScoreRepository $scoreRepository,
         EntityManagerInterface $em
     ) {
         $this->exerciseRepository = $exerciseRepository;
@@ -48,7 +44,6 @@ class WorksheetController extends AbstractController
         $this->worksheetRepository = $worksheetRepository;
         $this->worksheetSessionRepository = $worksheetSessionRepository;
         $this->subscriptionRepository = $subscriptionRepository;
-        $this->scoreRepository = $scoreRepository;
         $this->em = $em;
     }
 
@@ -183,31 +178,11 @@ class WorksheetController extends AbstractController
 
                 $exercise->setIsCompleted(true);
 
-                $uniqScoreLabel = "exercise_completed_{$data->exerciseId}_{$data->worksheetSessionId}";
-
-                $score = $this->scoreRepository->findOneBy(['label' => $uniqScoreLabel]);
-
-                if (!$score) {
-                    $score = new Score();
-                    $points = $exercise->getNumberOfRepetitions()
-                            * $exercise->getNumberOfSeries()
-                            * $data->ponderationForScore
-                    ;
-
-                    $score->setPatient($patient)
-                          ->setLabel($uniqScoreLabel)
-                          ->setPoints($points)
-                    ;
-
-                    $this->em->persist($score);
-                }
-
                 $this->em->flush();
 
                 return $this->json(
                     [
                         'message' => 'Exercice terminé',
-                        'score' => $score,
                     ],
                     200,
                     [],

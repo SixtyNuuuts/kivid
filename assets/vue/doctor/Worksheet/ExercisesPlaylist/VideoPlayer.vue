@@ -225,7 +225,7 @@ export default {
                 width: 100%;
                 height: 50.5vw;
                 // max-width: 98.4rem;
-                max-height: 55.4rem;
+                // max-height: 55.4rem;
                 transform: translateY(-11rem);
                 border-radius: 1rem;
                 overflow: hidden;
@@ -439,7 +439,7 @@ export default {
                 justify-content: center;
                 align-items: center;
                 margin-top: 2.3rem;
-                margin-bottom: 2.85rem;
+                margin-bottom: 1.85rem;
 
                 @media (min-width: 560px) {
                     align-items: flex-end;

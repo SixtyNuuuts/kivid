@@ -4,7 +4,7 @@
             Comment était votre technique de réalisation ?
         </h1>
         <h1 v-if="'difficulty' === type">
-            Comment avez-vous trouvé l’exercice ?
+            Comment avez-vous trouvé la session ?
         </h1>
         <h1 v-if="'sensitivity' === type">Comment vous sentez-vous ?</h1>
         <div v-if="'technical' === type" class="eval-question-count">
@@ -28,69 +28,16 @@
         </div>
         <div
             v-if="'difficulty' === type"
-            class="difficulty-eval-rating eval-rating desktop"
+            class="difficulty-eval-rating eval-rating"
         >
             <vue-slider
                 v-model="difficultyValue"
                 :tooltip="'none'"
-                :interval="25"
-                :marks="true"
-                :hide-label="true"
             ></vue-slider>
             <div class="legend">
-                <div @click="difficultyValue = 0">
-                    Beaucoup<br />
-                    trop facile
-                </div>
-                <div @click="difficultyValue = 25">Trop facile</div>
-                <div @click="difficultyValue = 50">Ok</div>
-                <div @click="difficultyValue = 75">Trop difficile</div>
-                <div @click="difficultyValue = 100">
-                    Vraiment<br />
-                    Trop difficile
-                </div>
+                <div @click="difficultyValue = 0">Facile</div>
+                <div @click="difficultyValue = 100">Difficile</div>
             </div>
-        </div>
-        <div
-            v-if="'difficulty' === type"
-            class="difficulty-eval-rating eval-rating mobile"
-        >
-            <vs-button
-                class="secondary w-100"
-                @click="difficultyValue = 0"
-                :active="difficultyValue === 0"
-            >
-                Beaucoup trop facile
-            </vs-button>
-            <vs-button
-                class="secondary w-100"
-                @click="difficultyValue = 25"
-                :active="difficultyValue === 25"
-            >
-                Trop facile
-            </vs-button>
-            <vs-button
-                class="secondary w-100"
-                @click="difficultyValue = 50"
-                :active="difficultyValue === 50"
-            >
-                Ok
-            </vs-button>
-            <vs-button
-                class="secondary w-100"
-                @click="difficultyValue = 75"
-                :active="difficultyValue === 75"
-            >
-                Trop difficile
-            </vs-button>
-
-            <vs-button
-                class="secondary w-100"
-                @click="difficultyValue = 100"
-                :active="difficultyValue === 100"
-            >
-                Vraiment Trop difficile
-            </vs-button>
         </div>
         <div
             v-if="'sensitivity' === type"
@@ -362,7 +309,8 @@ export default {
         align-items: center;
         flex-direction: column;
 
-        &.technical-eval-rating {
+        &.technical-eval-rating,
+        &.difficulty-eval-rating {
             max-width: 72rem;
 
             @media (max-width: 768px) {
@@ -374,35 +322,6 @@ export default {
                     > div {
                         width: initial;
                     }
-                }
-            }
-        }
-
-        &.difficulty-eval-rating {
-            max-width: 85rem;
-            position: relative;
-            left: -0.1rem;
-
-            &.desktop {
-                display: none;
-            }
-
-            &.mobile {
-                display: flex;
-                margin: 4.6rem 0;
-
-                > button:not(:last-child) {
-                    margin-bottom: 2rem;
-                }
-            }
-
-            @media (min-width: 768px) {
-                &.desktop {
-                    display: flex;
-                }
-
-                &.mobile {
-                    display: none;
                 }
             }
         }

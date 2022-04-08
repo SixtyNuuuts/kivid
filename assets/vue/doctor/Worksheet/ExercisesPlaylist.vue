@@ -145,7 +145,10 @@
                         <div v-if="'voir' !== action" class="options">
                             <div
                                 class="option"
-                                :class="{ active: exercise.optionActive }"
+                                :class="{
+                                    active: exercise.optionActive,
+                                    hidden: !exercise.video.options.length,
+                                }"
                             >
                                 <span>Option</span>
                                 <vs-switch
@@ -164,12 +167,12 @@
                                         disabled: !exercise.optionActive,
                                     }"
                                 >
-                                    <vs-select
-                                        placeholder="Sélectionner"
+                                    <select
                                         v-model="exercise.option"
-                                        :class="{ filled: exercise.option }"
+                                        class="select-options"
                                     >
-                                        <vs-option
+                                        <option value=""></option>
+                                        <option
                                             v-for="(option, i) in exercise.video
                                                 .options"
                                             :key="i"
@@ -177,8 +180,15 @@
                                             :value="option.name"
                                         >
                                             {{ option.name }}
-                                        </vs-option>
-                                    </vs-select>
+                                        </option>
+                                    </select>
+                                    <div
+                                        class="placeholder"
+                                        :class="{ hidden: exercise.option }"
+                                    >
+                                        Sélectionner
+                                    </div>
+                                    <div class="white-background"></div>
                                 </div>
                             </div>
                             <div
@@ -408,8 +418,8 @@ export default {
                 const exercise = {
                     id: null,
                     position: is + i,
-                    numberOfRepetitions: 1,
-                    numberOfSeries: 1,
+                    numberOfRepetitions: 10,
+                    numberOfSeries: 3,
                     option: "",
                     tempo: "",
                     hold: "",
@@ -895,6 +905,10 @@ export default {
                     font-weight: 600;
                     transition: all 0.25s;
 
+                    &.option.hidden {
+                        display: none;
+                    }
+
                     &:first-child {
                         margin-top: 2.2rem;
                     }
@@ -947,6 +961,57 @@ export default {
 
                     .vs-select__options {
                         transform: translateY(2px);
+                    }
+
+                    .kiv-select {
+                        position: relative;
+
+                        select.select-options {
+                            padding: 0.53rem 1rem;
+                            color: #222e54;
+                            border: 0.1rem solid #e7dfcd;
+                            border-radius: 0.4rem;
+                            background: transparent;
+                            font-size: 1.3rem;
+                            min-width: 15rem;
+
+                            &:focus-visible,
+                            &:focus {
+                                border: 0.1rem solid #e7dfcd;
+                                outline: none;
+                            }
+                        }
+
+                        .placeholder {
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            right: 0;
+                            bottom: 0;
+                            height: 100%;
+                            width: 100%;
+                            font-size: 1.3rem;
+                            color: $gray-dark;
+                            z-index: -1;
+                            padding: 0.9rem 1.4rem;
+
+                            &.hidden {
+                                display: none;
+                            }
+                        }
+
+                        .white-background {
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            right: 0;
+                            bottom: 0;
+                            height: 100%;
+                            width: 100%;
+                            background-color: white;
+                            border-radius: 0.4rem;
+                            z-index: -2;
+                        }
                     }
 
                     .vs-input-parent .vs-input-content .vs-input {

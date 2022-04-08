@@ -770,9 +770,9 @@
 
 #footer {
     top: -35vw;
-    margin-bottom: -20rem;
+    margin-bottom: -200vw;
     padding: 5rem;
-    padding-bottom: 11.1rem;
+    padding-bottom: 4.4rem;
     position: relative;
 
     @media (min-width: 480px) {
@@ -781,12 +781,12 @@
 
     @media (min-width: 580px) {
         padding: 5.3rem;
-        padding-bottom: 11.1rem;
+        padding-bottom: 5rem;
     }
 
     @media (min-width: 760px) {
         padding: 6.8rem;
-        padding-bottom: 9.9rem;
+        padding-bottom: 3.9rem;
     }
 
     @media (min-width: 900px) {
@@ -795,7 +795,7 @@
 
     @media (min-width: 960px) {
         padding: 7.8rem;
-        padding-bottom: 10.1rem;
+        padding-bottom: 4.1rem;
     }
 
     .text {

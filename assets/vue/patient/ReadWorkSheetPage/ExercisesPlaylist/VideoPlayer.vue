@@ -1,26 +1,28 @@
 <template>
     <div class="video-player">
         <button
-            v-if="scoreFrame"
-            class="btn-close-player dark"
-            @click="closeVideoPlayerAndCompleteExercise"
-        >
-            <i class="kiv-x icon-21"></i>
-        </button>
-        <button
-            v-else
             class="btn-close-player"
             :class="{
                 hidden:
                     technicalEvalFrame ||
                     difficultyEvalFrame ||
                     sensitivityEvalFrame,
+                dark: scoreFrame,
             }"
             @click="closeVideoPlayer"
         >
             <i class="kiv-x icon-21"></i>
         </button>
-        <div class="content" v-if="!scoreFrame">
+        <div
+            class="content"
+            v-if="!scoreFrame"
+            :class="{
+                'switch-exercise-transition-leave':
+                    switchExerciseTransitionLeave,
+                'switch-exercise-transition-enter':
+                    switchExerciseTransitionEnter,
+            }"
+        >
             <transition-group name="slidevideoplayer" tag="div">
                 <div v-show="videoFrame" class="video-frame" key="video">
                     <youtube
@@ -99,15 +101,12 @@
                 </div>
                 <div class="score-text">
                     <div class="label">Félicitations !</div>
-                    <div v-if="exerciseScorePoints" class="score">
-                        {{ exerciseScorePoints }} points
+                    <div v-if="sessionScorePoints" class="score">
+                        {{ sessionScorePoints }} points
                     </div>
                     <div class="btn-next">
                         <vs-button @click="confirmScore">
-                            <span v-if="getExercise !== getTheLastExercise">
-                                Continuer
-                            </span>
-                            <span v-else>Terminer</span>
+                            <span>Terminer</span>
                         </vs-button>
                     </div>
                 </div>
@@ -115,7 +114,15 @@
         </transition>
         <transition name="fade">
             <div v-if="videoFrame" class="bottom-bar">
-                <div class="bottom-bar-content">
+                <div
+                    class="bottom-bar-content"
+                    :class="{
+                        'switch-exercise-transition-leave':
+                            switchExerciseTransitionLeave,
+                        'switch-exercise-transition-enter':
+                            switchExerciseTransitionEnter,
+                    }"
+                >
                     <div class="exercise-details">
                         <div class="exercise-count">
                             Exercice {{ getExercise.position + 1 }}/{{
@@ -127,10 +134,7 @@
                             {{ getExercise.video.name }}
                         </div>
                     </div>
-                    <div
-                        class="exercise-series-reps-options"
-                        :class="{ 'n-m-b': !btnValidVideoCompleted }"
-                    >
+                    <div class="exercise-series-reps-options">
                         <div class="series-reps">
                             <div class="series">
                                 <i class="kiv-series icon-18"></i
@@ -168,15 +172,42 @@
                             </div>
                         </div>
                     </div>
-                    <div
-                        class="btn-next"
-                        :class="{ 'btn-hide': !btnValidVideoCompleted }"
-                    >
+                    <div class="btn-next">
                         <vs-button
-                            :disabled="!btnValidVideoCompleted"
-                            @click="validVideoCompleted"
+                            v-if="
+                                getCurrentWorksheetSession &&
+                                !getCurrentWorksheetSession.isCompleted &&
+                                !getExercise.isCompleted
+                            "
+                            @click="setExerciseCompletedAndGoNext"
+                            :loading="loadingBtnNextExercise"
+                            :class="{
+                                disabled: loadingBtnNextExercise,
+                            }"
+                            :disabled="switchExeAnimationIsInProgress"
                         >
                             Suivant
+                        </vs-button>
+                        <vs-button
+                            v-if="
+                                getCurrentWorksheetSession &&
+                                !getCurrentWorksheetSession.isCompleted &&
+                                getExercise.isCompleted
+                            "
+                            @click="resetExerciseForRePlaying"
+                            :disabled="switchExeAnimationIsInProgress"
+                        >
+                            Reprendre
+                        </vs-button>
+                        <vs-button
+                            v-if="
+                                (getCurrentWorksheetSession &&
+                                    getCurrentWorksheetSession.isCompleted) ||
+                                !getCurrentWorksheetSession
+                            "
+                            @click="closeVideoPlayer"
+                        >
+                            Fermer
                         </vs-button>
                     </div>
                 </div>
@@ -198,7 +229,7 @@ export default {
         currentWorksheetSession: [Object, Boolean],
         csrfTokenCompleteWorksheetSession: String,
         csrfTokenCompleteExercise: String,
-        csrfTokenCreateExerciseStat: String,
+        csrfTokenCreateSessionStat: String,
     },
     components: {
         EvalFrame,
@@ -212,14 +243,17 @@ export default {
                 modestbranding: 1,
             },
             videoFrame: true,
+            switchExerciseTransitionLeave: false,
+            switchExerciseTransitionEnter: false,
+            switchExeAnimationIsInProgress: false,
             technicalEvalFrame: false,
             difficultyEvalFrame: false,
             sensitivityEvalFrame: false,
             scoreFrame: false,
-            btnValidVideoCompleted: false,
             ponderation: [],
             loadingBtnEvalNext: false,
-            exerciseScorePoints: null,
+            loadingBtnNextExercise: false,
+            sessionScorePoints: null,
         };
     },
     computed: {
@@ -247,15 +281,105 @@ export default {
     },
     methods: {
         videoEnded() {
-            this.btnValidVideoCompleted = true;
-
             this.$refs.youtube.player.playVideo();
             this.$refs.youtube.player.stopVideo();
         },
-        validVideoCompleted() {
+        resetExerciseForRePlaying() {
+            this.switchExerciseWithAnimation(true);
+        },
+        setExerciseCompletedAndGoNext() {
+            if (this.getExercise === this.getTheLastExercise) {
+                this.isTheLastExercise();
+            } else {
+                this.loadingBtnNextExercise = true;
+
+                this.axios
+                    .post(`/patient/${this.patient.id}/complete/exercise`, {
+                        _token: this.csrfTokenCompleteExercise,
+                        exerciseId: this.getExercise.id,
+                    })
+                    .then((response) => {
+                        console.log(response.data);
+                        this.switchExerciseWithAnimation(false);
+
+                        this.loadingBtnNextExercise = false;
+                    })
+                    .catch((error) => {
+                        const errorMess =
+                            "object" === typeof error.response.data
+                                ? error.response.data.detail
+                                : error.response.data;
+                        console.error(errorMess);
+                    });
+            }
+        },
+        closeVideoPlayer() {
+            this.$emit("closeVideoPlayer", true);
+        },
+        stripeCheckout() {
+            this.$emit("stripeCheckout", 0);
+        },
+        switchExerciseWithAnimation(replaying) {
+            if (!this.switchExeAnimationIsInProgress) {
+                this.switchExeAnimationIsInProgress = true;
+                this.switchExerciseTransitionLeave = true;
+
+                setTimeout(() => {
+                    if (!replaying) {
+                        this.getExercise.isCompleted = true;
+                    } else {
+                        this.$emit("resetExerciseForRePlaying", true);
+                    }
+                }, 150);
+
+                setTimeout(() => {
+                    this.switchExerciseTransitionEnter = true;
+                }, 250);
+
+                setTimeout(() => {
+                    this.switchExerciseTransitionLeave = false;
+                    this.switchExerciseTransitionEnter = false;
+                    this.switchExeAnimationIsInProgress = false;
+                }, 500);
+            }
+        },
+        isTheLastExercise() {
+            this.$refs.youtube.player.stopVideo();
             this.videoFrame = false;
-            this.btnValidVideoCompleted = false;
             this.technicalEvalFrame = true;
+        },
+        setSessionCompleted() {
+            this.axios
+                .post(
+                    `/patient/${this.patient.id}/complete/worksheet-session`,
+                    {
+                        _token: this.csrfTokenCompleteWorksheetSession,
+                        worksheetSessionId: this.getCurrentWorksheetSession.id,
+                        worksheetId: this.getWorksheet.id,
+                        exerciseId: this.getExercise.id,
+                        ponderationForScore: this.getPonderation,
+                    }
+                )
+                .then((response) => {
+                    this.getExercise.isCompleted = true;
+
+                    this.sessionScorePoints = response.data.score.points;
+
+                    this.getCurrentWorksheetSession.isInProgress = false;
+                    this.getCurrentWorksheetSession.isCompleted = true;
+                    this.getCurrentWorksheetSession.doneAt = new Date();
+
+                    this.loadingBtnEvalNext = false;
+
+                    this.scoreFrame = true;
+                })
+                .catch((error) => {
+                    const errorMess =
+                        "object" === typeof error.response.data
+                            ? error.response.data.detail
+                            : error.response.data;
+                    console.error(errorMess);
+                });
         },
         validTechnicalValue(value) {
             this.createExerciseStat("technical", value / 10);
@@ -266,27 +390,17 @@ export default {
         validSensitivityValue(value) {
             this.createExerciseStat("sensitivity", value / 10);
         },
-        confirmScore() {
-            this.scoreFrame = false;
-            if (this.getExercise === this.getTheLastExercise) {
-                this.closeVideoPlayer();
-            } else {
-                this.videoFrame = true;
-            }
-            this.getExercise.isCompleted = true;
-        },
         createExerciseStat(criterion, value) {
             this.loadingBtnEvalNext = true;
 
             this.axios
                 .post(
-                    `/patient/${this.patient.id}/create/exercise-stat/${criterion}`,
+                    `/patient/${this.patient.id}/create/session-stat/${criterion}`,
                     {
-                        _token: this.csrfTokenCreateExerciseStat,
-                        exerciseId: this.getExercise.id,
+                        _token: this.csrfTokenCreateSessionStat,
                         worksheetId: this.getWorksheet.id,
                         worksheetSessionId: this.getCurrentWorksheetSession.id,
-                        exerciseStatValue: value,
+                        sessionStatValue: value,
                     }
                 )
                 .then((response) => {
@@ -297,19 +411,19 @@ export default {
                     if ("technical" === criterion) {
                         this.technicalEvalFrame = false;
                         this.difficultyEvalFrame = true;
+                        this.loadingBtnEvalNext = false;
                     }
 
                     if ("difficulty" === criterion) {
                         this.difficultyEvalFrame = false;
                         this.sensitivityEvalFrame = true;
+                        this.loadingBtnEvalNext = false;
                     }
 
                     if ("sensitivity" === criterion) {
                         this.sensitivityEvalFrame = false;
-                        this.setExerciseCompleted(this.getExercise.id);
+                        this.setSessionCompleted();
                     }
-
-                    this.loadingBtnEvalNext = false;
                 })
                 .catch((error) => {
                     const errorMess =
@@ -320,66 +434,9 @@ export default {
                     console.error(errorMess);
                 });
         },
-        setExerciseCompleted(exerciseId) {
-            this.axios
-                .post(`/patient/${this.patient.id}/complete/exercise`, {
-                    _token: this.csrfTokenCompleteExercise,
-                    exerciseId: exerciseId,
-                    worksheetSessionId: this.getCurrentWorksheetSession.id,
-                    ponderationForScore: this.getPonderation,
-                })
-                .then((response) => {
-                    // console.log(response.data);
-
-                    this.exerciseScorePoints = response.data.score.points;
-
-                    this.scoreFrame = true;
-
-                    if (this.getExercise === this.getTheLastExercise) {
-                        this.axios
-                            .post(
-                                `/patient/${this.patient.id}/complete/worksheet-session`,
-                                {
-                                    _token: this
-                                        .csrfTokenCompleteWorksheetSession,
-                                    worksheetSessionId:
-                                        this.getCurrentWorksheetSession.id,
-                                }
-                            )
-                            .then((response) => {
-                                // console.log(response.data);
-
-                                this.getCurrentWorksheetSession.isInProgress = false;
-                                this.getCurrentWorksheetSession.isCompleted = true;
-                                this.getCurrentWorksheetSession.doneAt =
-                                    new Date();
-                            })
-                            .catch((error) => {
-                                const errorMess =
-                                    "object" === typeof error.response.data
-                                        ? error.response.data.detail
-                                        : error.response.data;
-                                console.error(errorMess);
-                            });
-                    }
-                })
-                .catch((error) => {
-                    const errorMess =
-                        "object" === typeof error.response.data
-                            ? error.response.data.detail
-                            : error.response.data;
-                    console.error(errorMess);
-                });
-        },
-        closeVideoPlayer() {
-            this.$emit("closeVideoPlayer", true);
-        },
-        closeVideoPlayerAndCompleteExercise() {
-            this.$emit("closeVideoPlayer", true);
-            this.getExercise.isCompleted = true;
-        },
-        stripeCheckout() {
-            this.$emit("stripeCheckout", 0);
+        confirmScore() {
+            this.scoreFrame = false;
+            this.closeVideoPlayer();
         },
     },
 };
@@ -475,7 +532,7 @@ export default {
                 width: 100%;
                 height: 50.5vw;
                 // max-width: 98.4rem;
-                max-height: 55.4rem;
+                // max-height: 55.4rem;
                 transform: translateY(-11rem);
                 border-radius: 1rem;
                 overflow: hidden;
@@ -924,12 +981,6 @@ export default {
             .btn-next {
                 position: initial;
 
-                &.btn-hide {
-                    @media (max-width: 559px) and (max-height: 750px) {
-                        display: none;
-                    }
-                }
-
                 @media (min-width: 560px) {
                     position: absolute;
                     left: 50%;
@@ -944,13 +995,7 @@ export default {
                 justify-content: center;
                 align-items: center;
                 margin-top: 2.3rem;
-                margin-bottom: 2.85rem;
-
-                &.n-m-b {
-                    @media (max-width: 559px) and (max-height: 750px) {
-                        margin-bottom: 0;
-                    }
-                }
+                margin-bottom: 1.85rem;
 
                 @media (min-width: 560px) {
                     align-items: flex-end;

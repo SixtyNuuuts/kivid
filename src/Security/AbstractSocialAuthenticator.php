@@ -4,19 +4,20 @@ namespace App\Security;
 
 use App\Entity\User;
 use App\Entity\Patient;
+use App\Service\NotificationService;
 use App\Security\RedirectFromRoleTrait;
-use App\Security\Exception\UserAuthenticatedException;
-use App\Security\Exception\UserOauthNotFoundException;
 use Doctrine\ORM\EntityManagerInterface;
-use League\OAuth2\Client\Provider\ResourceOwnerInterface;
-use KnpU\OAuth2ClientBundle\Security\Authenticator\OAuth2Authenticator;
-use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
+use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
+use App\Security\Exception\UserAuthenticatedException;
+use App\Security\Exception\UserOauthNotFoundException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use KnpU\OAuth2ClientBundle\Security\Authenticator\OAuth2Authenticator;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\PassportInterface;
@@ -32,17 +33,20 @@ abstract class AbstractSocialAuthenticator extends OAuth2Authenticator
     private $clientRegistry;
     protected $em;
     private $urlGenerator;
+    private $notificationService;
     private $tokenStorage;
 
     public function __construct(
         ClientRegistry $clientRegistry,
         EntityManagerInterface $em,
         UrlGeneratorInterface $urlGenerator,
+        NotificationService $notificationService,
         TokenStorageInterface $tokenStorage
     ) {
         $this->clientRegistry = $clientRegistry;
         $this->em = $em;
         $this->urlGenerator = $urlGenerator;
+        $this->notificationService = $notificationService;
         $this->tokenStorage = $tokenStorage;
     }
 
@@ -60,10 +64,12 @@ abstract class AbstractSocialAuthenticator extends OAuth2Authenticator
     {
         $client = $this->clientRegistry->getClient($this->serviceName);
         $accessToken = $this->fetchAccessToken($client);
+        $notificationService = $this->notificationService;
         $userType = json_decode($this->base64UrlDecode($request->get('state')))->userType;
+        $data = json_decode($this->base64UrlDecode($request->get('state')))->data;
 
         return new SelfValidatingPassport(
-            new UserBadge($accessToken, function () use ($accessToken, $client, $userType) {
+            new UserBadge($accessToken, function () use ($accessToken, $client, $notificationService, $userType, $data) {
                 $resourceOwner = $client->fetchUserFromToken($accessToken);
 
                 $user = $this->getCurrentUser();
@@ -72,7 +78,7 @@ abstract class AbstractSocialAuthenticator extends OAuth2Authenticator
                     throw new UserAuthenticatedException($user, $resourceOwner);
                 }
 
-                $user = $this->getUserFromResourceOwner($resourceOwner, $userType);
+                $user = $this->getUserFromResourceOwner($resourceOwner, $notificationService, $userType, $data);
 
                 if ($user instanceof Patient) {
                     $user->setLastLoginAt(new \DateTime());
@@ -123,7 +129,7 @@ abstract class AbstractSocialAuthenticator extends OAuth2Authenticator
         return $this->redirectFromRole($user);
     }
 
-    protected function getUserFromResourceOwner(ResourceOwnerInterface $resourceOwner, string $userType): ?User
+    protected function getUserFromResourceOwner(ResourceOwnerInterface $resourceOwner, NotificationService $notificationService, string $userType, object $data): ?User
     {
         return null;
     }

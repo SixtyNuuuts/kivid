@@ -33,6 +33,7 @@
                     icon-after
                     required
                     @click-icon="hasVisiblePassword = !hasVisiblePassword"
+                    :class="{ empty: !password }"
                 >
                     <template #icon>
                         <i v-if="!hasVisiblePassword" class="fas fa-eye"></i>
@@ -105,11 +106,7 @@ export default {
             document.location.href = `/oauth/connect/${this.userType}/${social}`;
         },
         register() {
-            if ("doctor" === this.userType) {
-                document.location.href = `/inscription/praticien`;
-            } else {
-                document.location.href = `/inscription`;
-            }
+            document.location.href = `/inscription`;
         },
         forgotPassword() {
             document.location.href = `/reset-password`;

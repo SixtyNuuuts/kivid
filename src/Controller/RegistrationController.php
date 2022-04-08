@@ -9,6 +9,7 @@ use Symfony\Component\Mime\Address;
 use App\Repository\DoctorRepository;
 use App\Repository\PatientRepository;
 use App\Security\LoginFormAuthenticator;
+use App\Service\NotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,7 +35,7 @@ class RegistrationController extends AbstractController
     }
 
     /**
-     * @Route("/inscription/{userType}", name="app_register")
+     * @Route("/inscription", name="app_register")
      */
     public function register(
         Request $request,
@@ -42,7 +43,9 @@ class RegistrationController extends AbstractController
         UserAuthenticatorInterface $authenticator,
         LoginFormAuthenticator $formAuthenticator,
         EntityManagerInterface $em,
-        string $userType = 'patient'
+        NotificationService $notificationService,
+        PatientRepository $patientRepository,
+        DoctorRepository $doctorRepository
     ): Response {
         if ($this->getUser()) {
             return $this->redirectFromIsGranted();
@@ -52,13 +55,37 @@ class RegistrationController extends AbstractController
             $data = json_decode($request->getContent());
 
             if ($this->isCsrfTokenValid('registration', $data->_token)) {
+                $patientWithThisEmail = $patientRepository->findOneBy(['email' => $data->email]);
+                $doctorWithThisEmail = $doctorRepository->findOneBy(['email' => $data->email]);
+
+                if ($patientWithThisEmail || $doctorWithThisEmail) {
+                    return $this->json(
+                        'Cet email est déjà utilisé par un membre',
+                        500,
+                    );
+                }
+
                 $user = 'doctor' === $data->userType ? new Doctor() : new Patient();
 
-                $user->setEmail($data->email);
+                $user->setEmail($data->email)->setFirstname($data->firstname)->setLastname($data->lastname);
                 $user->setPassword(
                     $passwordHasher->hashPassword($user, $data->plainPassword)
                 );
+                
+                if ('patient' === $data->userType && $data->doctorSelectId) {
+                    $patientDoctor = $doctorRepository->findOneBy(['id' => $data->doctorSelectId]);
+                    
+                    $user->setAddRequestDoctor(true);
 
+                    $user->setDoctor($patientDoctor);
+
+                    $notificationService->createSelectDoctorNotification($user, $patientDoctor);
+                }
+
+                if ('doctor' === $data->userType && $data->numRppsAmeli) {
+                    $user->setNumRppsAmeli($data->numRppsAmeli);
+                }
+                
                 $em->persist($user);
 
                 try {
@@ -95,9 +122,7 @@ class RegistrationController extends AbstractController
             }
         }
 
-        return $this->render('registration/register.html.twig', [
-            'userType' => $userType === "praticien" ? "doctor" : "patient",
-        ]);
+        return $this->render('registration/register.html.twig');
     }
 
     /**

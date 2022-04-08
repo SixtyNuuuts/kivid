@@ -20,10 +20,16 @@ class ScoreService
         ],
         "difficulty" => [
             "0" => 0.50,
-            "2.5" => 0.75,
+            "1" => 0.60,
+            "2" => 0.70,
+            "3" => 0.80,
+            "4" => 0.90,
             "5" => 1,
-            "7.5" => 0.75,
-            "10" => 0.50,
+            "6" => 0.90,
+            "7" => 0.80,
+            "8" => 0.70,
+            "9" => 0.60,
+            "10" => 0.50
         ],
         "sensitivity" => [
             "0" => 0.50,
@@ -40,7 +46,7 @@ class ScoreService
 
     public function getPonderation(string $statCriterion, string $exerciseStatValue): float
     {
-        return "technical" === $statCriterion
+        return "sensitivity" !== $statCriterion
                ? self::PONDERATION[$statCriterion][round((int)$exerciseStatValue)]
                : self::PONDERATION[$statCriterion][$exerciseStatValue]
         ;

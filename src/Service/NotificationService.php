@@ -6,15 +6,21 @@ use App\Entity\User;
 use App\Entity\Doctor;
 use App\Entity\Patient;
 use App\Entity\Worksheet;
-use App\Service\UserService;
 use App\Entity\Notification;
+use App\Service\UserService;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Mime\Address;
+use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class NotificationService
 {
     private $em;
     private $userService;
+    private $mailer;
+    private $router;
+
 
     // $this->notificationService->createPrescriptionNotification($worksheet, $patient);
     // $this->notificationService->createAcceptDoctorNotification($patient, $doctor);
@@ -25,10 +31,14 @@ class NotificationService
 
     public function __construct(
         EntityManagerInterface $entityManager,
-        UserService $userService
+        UserService $userService,
+        MailerInterface $mailer,
+        UrlGeneratorInterface $router
     ) {
         $this->em = $entityManager;
+        $this->mailer = $mailer;
         $this->userService = $userService;
+        $this->router = $router;
     }
 
     public function createNotification(
@@ -164,6 +174,30 @@ class NotificationService
             ],
             $doctor
         );
+
+        $patientPrescriptionUrl = $this->router->generate(
+            'app_doctor_worksheet_action',
+            [
+                'id' => $doctor->getId(),
+                'action' => 'creation',
+                'worksheetId' => 0,
+                'patientId' => $patient->getId(),
+            ],
+            UrlGeneratorInterface::ABSOLUTE_URL
+        );
+
+        $email = (new TemplatedEmail())
+            ->from(new Address('contact@kivid.fr', '"Kivid Contact"'))
+            ->to($doctor->getEmail())
+            ->subject('Vous avez un nouveau patient !')
+            ->htmlTemplate('/doctor/patient_add_doctor_email.html.twig')
+            ->context([
+                'patientName' => $this->userService->getUserName($patient),
+                'patientPrescriptionUrl' => $patientPrescriptionUrl,
+            ])
+        ;
+
+        $this->mailer->send($email);
     }
 
     public function createAddPatientNotification(

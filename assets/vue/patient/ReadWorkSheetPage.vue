@@ -96,7 +96,7 @@
                         csrfTokenCompleteWorksheetSession
                     "
                     :csrfTokenCompleteExercise="csrfTokenCompleteExercise"
-                    :csrfTokenCreateExerciseStat="csrfTokenCreateExerciseStat"
+                    :csrfTokenCreateSessionStat="csrfTokenCreateSessionStat"
                     :csrfTokenCreateCommentary="csrfTokenCreateCommentary"
                     @stripeCheckout="stripeCheckout"
                 />
@@ -131,7 +131,7 @@ export default {
             csrfTokenStartWorksheetSession: null,
             csrfTokenCompleteWorksheetSession: null,
             csrfTokenCompleteExercise: null,
-            csrfTokenCreateExerciseStat: null,
+            csrfTokenCreateSessionStat: null,
             csrfTokenCreateCommentary: null,
             modalTimingFriezeMobile: false,
             loading: false,
@@ -168,7 +168,12 @@ export default {
 
             if (
                 exerciseCommentaries.length &&
-                this.getCurrentWorksheetSession
+                this.getCurrentWorksheetSession &&
+                exerciseCommentaries.find(
+                    (c) =>
+                        c.worksheetSession.id ===
+                        this.getCurrentWorksheetSession.id
+                )
             ) {
                 commentary = exerciseCommentaries.find(
                     (c) =>
@@ -239,7 +244,7 @@ export default {
         this.csrfTokenCompleteWorksheetSession =
             data.csrfTokenCompleteWorksheetSession;
         this.csrfTokenCompleteExercise = data.csrfTokenCompleteExercise;
-        this.csrfTokenCreateExerciseStat = data.csrfTokenCreateExerciseStat;
+        this.csrfTokenCreateSessionStat = data.csrfTokenCreateSessionStat;
         this.csrfTokenCreateCommentary = data.csrfTokenCreateCommentary;
 
         this.stripeSubPlans = data.stripeSubPlans;

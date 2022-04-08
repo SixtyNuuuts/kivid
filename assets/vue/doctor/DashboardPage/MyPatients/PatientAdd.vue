@@ -310,7 +310,7 @@ export default {
                                 ? "male"
                                 : "female"
                             : "",
-                    email: this.createPatientDetails.email,
+                    email: this.createPatientDetails.email.toLowerCase(),
                 })
                 .then((response) => {
                     f.openSuccessNotification(

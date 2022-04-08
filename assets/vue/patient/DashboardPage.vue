@@ -1,13 +1,12 @@
 <template>
     <div class="container">
-        <DoctorChoice
+        <!-- <DoctorChoice
             v-if="!patient.doctor && !doctorView"
             :patient="patient"
             :csrfTokenSelectDoctor="csrfTokenSelectDoctor"
             :csrfTokenContact="csrfTokenContact"
-        />
+        /> -->
         <section
-            v-else
             id="dashboard"
             class="db-patient"
             :class="{ 'doctor-view': doctorView }"
@@ -132,9 +131,10 @@
                                     </vs-avatar>
                                     <vs-avatar
                                         v-if="
-                                            false ===
+                                            (false ===
                                                 patient.addRequestDoctor &&
-                                            !loadingDoctor
+                                                !loadingDoctor) ||
+                                            !patient.doctor
                                         "
                                         class="avatar waiting"
                                         circle
@@ -157,37 +157,42 @@
                                             !loadingDoctor
                                         "
                                     >
-                                        <p class="name">
-                                            {{ getUserName(patient.doctor) }}
-                                        </p>
-                                        <p class="entity-city">
+                                        <div class="name">
+                                            <span>{{
+                                                getUserName(patient.doctor)
+                                            }}</span>
+                                            <vs-button
+                                                size="mini"
+                                                class="btn-change-doctor"
+                                                @click="openModalChangeDoctor"
+                                                ><i class="fas fa-sync-alt"></i>
+                                                <span
+                                                    >Changer de praticien
+                                                </span>
+                                            </vs-button>
+                                        </div>
+                                        <div
+                                            class="entity-city"
+                                            v-if="
+                                                patient.doctor.entityName ||
+                                                patient.doctor.city
+                                            "
+                                        >
                                             <span
+                                                v-if="patient.doctor.entityName"
+                                                >{{
+                                                    patient.doctor.entityName
+                                                }}</span
+                                            ><span
                                                 v-if="
                                                     patient.doctor.entityName &&
-                                                    !patient.doctor.city
-                                                "
-                                            >
-                                                {{ patient.doctor.entityName }}
-                                            </span>
-                                            <span
-                                                v-if="
-                                                    !patient.doctor
-                                                        .entityName &&
                                                     patient.doctor.city
                                                 "
-                                            >
-                                                {{ patient.doctor.city }}
-                                            </span>
-                                            <span
-                                                v-if="
-                                                    patient.doctor.entityName &&
-                                                    patient.doctor.city
-                                                "
-                                            >
-                                                {{ patient.doctor.entityName }},
-                                                {{ patient.doctor.city }}
-                                            </span>
-                                        </p>
+                                                >, </span
+                                            ><span v-if="patient.doctor.city">{{
+                                                patient.doctor.city
+                                            }}</span>
+                                        </div>
                                     </div>
                                     <div
                                         v-if="
@@ -197,6 +202,9 @@
                                         "
                                     >
                                         <p>En attente de validation</p>
+                                    </div>
+                                    <div v-if="!patient.doctor">
+                                        <p>En attente</p>
                                     </div>
                                 </div>
                             </div>
@@ -244,6 +252,39 @@
                     :loadingPatientWorksheets="loadingPatientWorksheets"
                 />
             </main>
+            <div class="change-doctor-modal" v-if="modalChangeDoctor">
+                <div class="content">
+                    <section id="change-doctor-box" class="kiv-block">
+                        <button
+                            class="vs-dialog__close btn-close-modal"
+                            @click="closeModalChangeDoctor"
+                        >
+                            <i class="vs-icon-close vs-icon-hover-x"></i>
+                        </button>
+                        <h2>Changer de praticien</h2>
+                        <DoctorSelectBox
+                            class="big"
+                            :doctorSelected="doctorSelected"
+                            @setDoctorSelected="setDoctorSelected"
+                        />
+                        <div class="btn-container">
+                            <vs-button
+                                class="secondary"
+                                @click="closeModalChangeDoctor"
+                                >Annuler</vs-button
+                            >
+                            <vs-button
+                                :disabled="
+                                    loadingChangeDoctor || !doctorSelected
+                                "
+                                :loading="loadingChangeDoctor"
+                                @click="valideChangeDoctor"
+                                >Valider</vs-button
+                            >
+                        </div>
+                    </section>
+                </div>
+            </div>
         </section>
     </div>
 </template>
@@ -257,6 +298,7 @@ import MyScores from "./DashboardPage/MyScores.vue";
 import MyDashboardNotifications from "./DashboardPage/MyDashboardNotifications.vue";
 import MyWorksheets from "./DashboardPage/MyWorksheets.vue";
 import MyExerciseStats from "./DashboardPage/MyExerciseStats.vue";
+import DoctorSelectBox from "../components/DoctorSelectBox.vue";
 
 export default {
     components: {
@@ -265,6 +307,7 @@ export default {
         MyDashboardNotifications,
         MyWorksheets,
         MyExerciseStats,
+        DoctorSelectBox,
     },
     data() {
         return {
@@ -274,7 +317,6 @@ export default {
             csrfTokenSelectDoctor: null,
             csrfTokenAcceptDoctor: null,
             csrfTokenDeclineDoctor: null,
-            csrfTokenContact: null,
             myDBNotificationsContent: true,
             myScoresContent: true,
             myDoctorContent: true,
@@ -282,9 +324,23 @@ export default {
             loadingDoctor: false,
             loadingPatientWorksheets: false,
             patientWorksheets: [],
+            modalChangeDoctor: false,
+            doctorSelected: null,
+            loadingChangeDoctor: false,
         };
     },
     methods: {
+        openModalChangeDoctor() {
+            this.modalChangeDoctor = true;
+
+            document.body.classList.add("no-scrollbar");
+        },
+        closeModalChangeDoctor() {
+            this.modalChangeDoctor = false;
+            this.doctorSelected = this.patient.doctor;
+
+            document.body.classList.remove("no-scrollbar");
+        },
         getTimeLeftBeforeNextSession(endDateCurrentSession) {
             const timeLeft = f.getTimeLeftBeforeNextSession(
                 endDateCurrentSession
@@ -348,6 +404,42 @@ export default {
         rederictToDashboard() {
             document.location.href = `/doctor/${this.currentUser.id}/dashboard`;
         },
+        setDoctorSelected(doctorSelected) {
+            this.doctorSelected = doctorSelected;
+        },
+        valideChangeDoctor() {
+            this.loadingChangeDoctor = true;
+
+            this.axios
+                .post(`/patient/${this.patient.id}/select/doctor`, {
+                    _token: this.csrfTokenSelectDoctor,
+                    doctorId: this.doctorSelected.id,
+                })
+                .then((response) => {
+                    f.openSuccessNotification(
+                        "Choix du praticien enregistré",
+                        response.data
+                    );
+
+                    this.patient.addRequestDoctor = true;
+
+                    this.patient.doctor = this.doctorSelected;
+
+                    this.modalChangeDoctor = false;
+
+                    this.loadingChangeDoctor = false;
+                })
+                .catch((error) => {
+                    const errorMess =
+                        "object" === typeof error.response.data
+                            ? error.response.data.detail
+                            : error.response.data;
+
+                    this.loadingChangeDoctor = false;
+
+                    f.openErrorNotification("Erreur", errorMess);
+                });
+        },
     },
     created() {
         Vue.prototype.$vs = this.$vs;
@@ -364,7 +456,7 @@ export default {
         this.csrfTokenAcceptDoctor = data.csrfTokenAcceptDoctor;
         this.csrfTokenDeclineDoctor = data.csrfTokenDeclineDoctor;
         this.csrfTokenSelectDoctor = data.csrfTokenSelectDoctor;
-        this.csrfTokenContact = data.csrfTokenContact;
+        this.doctorSelected = this.patient.doctor;
 
         this.loadingPatientWorksheets = true;
 
@@ -391,6 +483,9 @@ export default {
                             .then((response) => {
                                 worksheet.currentWorksheetSession =
                                     response.data.currentWorksheetSession;
+
+                                worksheet.countOldWorksheetSessions =
+                                    response.data.countOldWorksheetSessions;
 
                                 if (response.data.currentWorksheetSession) {
                                     worksheet.timeLeftBeforeNextSession =
@@ -585,6 +680,102 @@ export default {
             }
             .mobile-view {
                 display: none !important;
+            }
+        }
+    }
+    .change-doctor-modal {
+        position: fixed;
+        z-index: 11111;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+
+        .btn-close-modal {
+            border-radius: 50%;
+        }
+
+        &::after {
+            content: "";
+            position: absolute;
+            z-index: -1;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            backdrop-filter: blur(0.5rem);
+            background: rgba(34, 46, 84, 0.8);
+            height: 100vh;
+            width: 100%;
+        }
+
+        .content {
+            height: 100%;
+            width: 100%;
+            padding: 6%;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-top: 7%;
+
+            .select-filter {
+                margin-bottom: 1rem;
+
+                &.loading {
+                    margin-bottom: 1.6rem;
+                }
+            }
+
+            &::-webkit-scrollbar {
+                width: 4px;
+                height: 4px;
+                display: block;
+                background: transparent;
+                border-radius: 4px;
+            }
+
+            &::-webkit-scrollbar-thumb {
+                background: #2e3858a1;
+                border: 1px solid transparent;
+                border-radius: 4px;
+            }
+
+            @media (max-height: 815px) {
+                align-items: flex-start;
+                overflow-y: auto;
+            }
+
+            #change-doctor-box {
+                min-width: initial;
+                max-width: 45rem;
+            }
+
+            .btn-container {
+                display: flex;
+                flex-direction: column;
+
+                .vs-button {
+                    width: 100%;
+
+                    &:last-child {
+                        margin-top: 1rem;
+                        margin-left: 0;
+                    }
+                }
+
+                @media (min-width: 300px) {
+                    flex-direction: row;
+
+                    .vs-button {
+                        width: 50%;
+
+                        &:last-child {
+                            margin-top: 0;
+                            margin-left: 1.7rem;
+                        }
+                    }
+                }
             }
         }
     }

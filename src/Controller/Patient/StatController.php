@@ -45,6 +45,65 @@ class StatController extends AbstractController
     }
 
     /**
+     * @Route("/{id}/create/session-stat/{statCriterion}", name="app_patient_create_session_stat", methods={"POST"})
+     * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
+     */
+    public function createSessionStat(Request $request, Patient $patient, string $statCriterion): JsonResponse
+    {
+        if ($request->isMethod('post')) {
+            $data = json_decode($request->getContent());
+
+            if ($this->isCsrfTokenValid('create_session_stat' . $patient->getId(), $data->_token)) {
+                $sessionStat =  $this->exerciseStatRepository->findOneBy([
+                    'criterion' => $statCriterion,
+                    'exercise' => null,
+                    'worksheetSession' => $data->worksheetSessionId
+                ]);
+
+                if (!$sessionStat) {
+                    $worksheet = $this->worksheetRepository->findOneBy(['id' => $data->worksheetId]);
+
+                    $worksheetSession = $this->worksheetSessionRepository->findOneBy(
+                        ['id' => $data->worksheetSessionId]
+                    );
+
+                    $sessionStat = new ExerciseStat();
+
+                    $sessionStat->setCriterion($statCriterion)
+                                 ->setExercise(null)
+                                 ->setWorksheet($worksheet)
+                                 ->setWorksheetSession($worksheetSession)
+                    ;
+                }
+
+                $sessionStat->setDoneAt(new \DateTime())
+                            ->setRating($data->sessionStatValue)
+                ;
+
+                $ponderation = $this->scoreService->getPonderation($statCriterion, $data->sessionStatValue);
+
+                $this->em->persist($sessionStat);
+
+                $this->em->flush();
+
+                return $this->json(
+                    [
+                        'message' => 'Stat enregistrée',
+                        'criterion' => $statCriterion,
+                        'ponderation' => $ponderation,
+                    ],
+                    200
+                );
+            }
+        }
+
+        return $this->json(
+            "Une erreur s'est produite lors de la création de la statistique",
+            500
+        );
+    }
+
+    /**
      * @Route("/{id}/create/exercise-stat/{statCriterion}", name="app_patient_create_exercise_stat", methods={"POST"})
      * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */

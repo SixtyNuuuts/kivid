@@ -38,7 +38,7 @@ class ExerciseStat
 
     /**
      * @ORM\ManyToOne(targetEntity=Exercise::class, inversedBy="exerciseStats")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      */
     private $exercise;
 
