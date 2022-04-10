@@ -466,41 +466,39 @@ export default {
 
             let result = 0;
 
-            if (stats.length > variationSlice) {
-                const lastStats = stats
-                    .sort(function (a, b) {
-                        return new Date(a.doneAt) - new Date(b.doneAt);
-                    })
-                    .filter((es, i) => i > stats.length - 1 - variationSlice);
+            // if (stats.length > variationSlice) {
+            const lastStats = stats
+                .sort(function (a, b) {
+                    return new Date(a.doneAt) - new Date(b.doneAt);
+                })
+                .filter((es, i) => i > stats.length - 1 - variationSlice);
 
-                const lastStatsAverage = this.statsAverage(lastStats);
+            const lastStatsAverage = this.statsAverage(lastStats);
 
-                if (!lastStats.length) {
-                    return null;
-                }
-
-                if ("sensitivity" === criterion) {
-                    // this.sensitivityLastStatsAverageForSmiley =
-                    //     this.statsAverage(stats);
-                    this.sensitivityLastStatsAverageForSmiley =
-                        lastStatsAverage;
-                }
-
-                const oldStats = stats
-                    .sort(function (a, b) {
-                        return new Date(a.doneAt) - new Date(b.doneAt);
-                    })
-                    .filter((es, i) => i <= stats.length - 1 - variationSlice);
-
-                const oldStatsAverage = this.statsAverage(oldStats);
-
-                result = Math.round(
-                    ((lastStatsAverage - oldStatsAverage) / oldStatsAverage) *
-                        100
-                );
-            } else {
+            if (!lastStats.length) {
                 return null;
             }
+
+            if ("sensitivity" === criterion) {
+                // this.sensitivityLastStatsAverageForSmiley =
+                //     this.statsAverage(stats);
+                this.sensitivityLastStatsAverageForSmiley = lastStatsAverage;
+            }
+
+            const oldStats = stats
+                .sort(function (a, b) {
+                    return new Date(a.doneAt) - new Date(b.doneAt);
+                })
+                .filter((es, i) => i <= stats.length - 1 - variationSlice);
+
+            const oldStatsAverage = this.statsAverage(oldStats);
+
+            result = Math.round(
+                ((lastStatsAverage - oldStatsAverage) / oldStatsAverage) * 100
+            );
+            // } else {
+            //     return null;
+            // }
 
             return {
                 variation:

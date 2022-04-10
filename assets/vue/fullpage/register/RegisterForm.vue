@@ -258,6 +258,7 @@
                         pour&nbsp;élaborer le traitement approprié
                     </p>
                     <p
+                        class="contact-par"
                         :class="{
                             desactive:
                                 (!registerDetails.email ||
@@ -285,7 +286,7 @@
                                     registerDetails.email
                                 }}</span>
                                 <span v-else
-                                    >Veuillez entrer une adresse e-mail</span
+                                    >Veuillez entrer une adresse email</span
                                 >)
                             </span>
                         </vs-radio>
@@ -981,6 +982,12 @@ export default {
             &.desactive {
                 color: #b6ada1;
             }
+
+            &.contact-par {
+                max-width: 67vw;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
         }
 
         > div {
@@ -992,6 +999,30 @@ export default {
             .contact-help {
                 font-style: italic;
                 font-size: 1.3rem;
+                display: inline-flex;
+                max-width: 40vw;
+
+                @media (min-width: 320px) {
+                    max-width: 43vw;
+                }
+
+                @media (min-width: 340px) {
+                    max-width: 45vw;
+                }
+
+                @media (min-width: 360px) {
+                    max-width: 47vw;
+                }
+
+                @media (min-width: 440px) {
+                    max-width: 25rem;
+                }
+
+                span {
+                    display: inline-block;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
             }
 
             .vs-radio {
