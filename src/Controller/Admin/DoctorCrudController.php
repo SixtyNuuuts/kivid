@@ -41,7 +41,7 @@ class DoctorCrudController extends AbstractCrudController
             TextField::new('lastname', 'Nom'),
             TextField::new('firstname', 'Prénom'),
             TextField::new('email', 'Email'),
-            TextField::new('numRppsAmeli', 'Numéro RPPS ou Ameli')->setSortable(true),
+            TextField::new('numRppsAmeli', 'Numéro RPPS ou ADELI')->setSortable(true),
             TextField::new('entityName', 'Cabinet')->setSortable(true),
             TextField::new('city', 'Ville')->setSortable(true),
             TextField::new('gender', 'Civilité')->onlyOnIndex(),

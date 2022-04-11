@@ -226,7 +226,7 @@
                 <vs-input
                     v-if="userType === 'doctor'"
                     v-model="registerDetails.numRppsAmeli"
-                    label-placeholder="Numéro RPPS ou Ameli"
+                    label-placeholder="Numéro RPPS ou ADELI"
                     icon-after
                     :class="{
                         error:
@@ -685,7 +685,7 @@ export default {
                     !this.registerDetails.numRppsAmeli
                 ) {
                     this.emptyMessage.numRppsAmeli =
-                        "Vous devez renseigner votre numéro RPPS ou Ameli";
+                        "Vous devez renseigner votre numéro RPPS ou ADELI";
                 }
 
                 if (!this.acceptCG) {

@@ -102,7 +102,7 @@
                                 v-if="'doctor' === userType"
                                 class="num-rpps-ameli"
                                 v-model="currentUser.numRppsAmeli"
-                                label-placeholder="Numéro RPPS ou Ameli"
+                                label-placeholder="Numéro RPPS ou ADELI"
                                 type="text"
                             >
                             </vs-input>
