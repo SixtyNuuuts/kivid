@@ -59,7 +59,7 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $lastname;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=500, nullable=true)
      * @Groups({"patient_read", "doctor_read", "user_read", "dashboard_worksheet_read"})
      */
     private $avatarUrl;
