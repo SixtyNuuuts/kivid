@@ -332,24 +332,41 @@ export default {
             }
         },
         getTotalExerciseCompleted() {
-            let countStats = 0;
+            let countExerciseCompleted = 0;
 
             this.patientWorksheets.forEach((w) => {
-                // Cet hack est fait pour voir si les stats sont postérieures (après) au "2022-04-02"
-                // car c'est à partir du 3 avril 2022 que les stats ont changées pour être des stats de session (1)
-                // et non des stats d'exercices (x*nb ex)
+                // Exercices complétés de la session en cours
+                if (
+                    w.worksheetProgression > 0 &&
+                    w.worksheetProgression < 100
+                ) {
+                    countExerciseCompleted += w.exercises.filter(
+                        (e) => e.isCompleted
+                    ).length;
+                }
+
+                // Exercices complétés des précédentes sessions terminées
+                // On utilise les stats pour déterminer le nombre d'exercices complétés
+                //// Cet hack est fait pour voir si les stats sont postérieures (après) au "2022-04-02"
+                //// car c'est à partir du 3 avril 2022 que les stats ont changées pour être des stats de session (1)
+                //// et non des stats d'exercices (x*nb ex)
                 const statsIsSessionStats = w.exerciseStats.find(
                     (s) => s.doneAt.substring(0, 10) > "2022-04-02"
                 );
 
+                // le divisé par 3 est appliqué car les stats sont dispatchées en : Sensibilité / Technique / Difficulté
                 if (statsIsSessionStats) {
-                    countStats += w.exerciseStats.length * w.exercises.length;
+                    countExerciseCompleted += Math.floor(
+                        (w.exerciseStats.length * w.exercises.length) / 3
+                    );
                 } else {
-                    countStats += w.exerciseStats.length;
+                    countExerciseCompleted += Math.floor(
+                        w.exerciseStats.length / 3
+                    );
                 }
             });
 
-            return this.formatNumbThousand(Math.floor(countStats / 3));
+            return this.formatNumbThousand(countExerciseCompleted);
         },
         getSensitivityVariation() {
             return this.calculVariation("sensitivity");
