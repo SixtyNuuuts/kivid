@@ -338,7 +338,7 @@ export default {
                 // Cet hack est fait pour voir si les stats sont postérieures (après) au "2022-04-02"
                 // car c'est à partir du 3 avril 2022 que les stats ont changées pour être des stats de session (1)
                 // et non des stats d'exercices (x*nb ex)
-                const statsIsSessionStats = w.exerciseStats.filter(
+                const statsIsSessionStats = w.exerciseStats.find(
                     (s) => s.doneAt.substring(0, 10) > "2022-04-02"
                 );
 
