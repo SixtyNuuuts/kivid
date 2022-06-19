@@ -4,12 +4,13 @@ namespace App\Controller\Admin;
 
 use App\Entity\Doctor;
 use App\Controller\Admin\ConfigureActionsTrait;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 
 class DoctorCrudController extends AbstractCrudController
 {
@@ -37,6 +38,7 @@ class DoctorCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
+            NumberField::new('id', 'Id')->onlyOnIndex()->setSortable(true),
             DateField::new('createdAt', 'Créé le')->onlyOnIndex()->setSortable(true),
             TextField::new('lastname', 'Nom'),
             TextField::new('firstname', 'Prénom'),
