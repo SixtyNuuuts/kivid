@@ -30,6 +30,8 @@ class SubscriptionRepository extends ServiceEntityRepository
             ->andWhere('s.patient = :user')
             ->setParameter('now', $now)
             ->setParameter('user', $user)
+            ->orderBy('s.currentPeriodEnd', 'DESC')
+            ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult()
         ;
