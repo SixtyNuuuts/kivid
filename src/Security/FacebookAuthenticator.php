@@ -48,7 +48,7 @@ class FacebookAuthenticator extends AbstractSocialAuthenticator
         if (!$user) {
             $user = 'doctor' === $userType ? new Doctor() : new Patient();
             $user->setFacebookId($facebookUser->getId())
-                 ->setEmail($facebookUser->getEmail())
+                 ->setEmail($facebookUser->getEmail()??$facebookUser->getId())
                  ->setFirstname($facebookUser->getFirstName())
                  ->setLastname($facebookUser->getLastName())
                  ->setAvatarUrl($facebookUser->getPictureUrl())
