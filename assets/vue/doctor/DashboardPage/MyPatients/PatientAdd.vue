@@ -96,9 +96,9 @@
                                                 ans</span
                                             >
                                         </div>
-                                        <div class="email">
+                                        <!-- <div class="email">
                                             {{ patient.email }}
-                                        </div>
+                                        </div> -->
                                     </div>
                                 </div>
                             </li>
