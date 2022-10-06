@@ -33,9 +33,9 @@
                                 ans</span
                             >
                         </div>
-                        <div class="email">
+                        <!-- <div class="email">
                             {{ userSelected.email }}
-                        </div>
+                        </div> -->
                     </div>
                 </div>
                 <input

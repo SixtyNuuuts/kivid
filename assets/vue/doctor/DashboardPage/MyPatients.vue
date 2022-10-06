@@ -130,6 +130,7 @@
                                             </span>
                                         </div>
                                         <div
+                                            v-if="patient.addRequestDoctor"
                                             class="mail"
                                             @click="
                                                 redirectToPatientDashboard(
