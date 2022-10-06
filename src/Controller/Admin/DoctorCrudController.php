@@ -10,6 +10,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
 class DoctorCrudController extends AbstractCrudController
@@ -50,6 +51,7 @@ class DoctorCrudController extends AbstractCrudController
             TextField::new('gender', 'Civilité (renseigner : "male" ou "female")')->onlyOnForms(),
             AssociationField::new('patients', 'Patient(s)')->onlyOnIndex(),
             AssociationField::new('worksheets', 'Fiche(s)')->onlyOnIndex(),
+            BooleanField::new('giveFreeAccessPrescri', 'Donne l\'accès gratuit à ses prescriptions ?')->onlyOnForms(),
         ];
     }
 }

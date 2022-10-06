@@ -148,7 +148,7 @@ class WorksheetController extends AbstractController
 
         $patientHasCurrentSubscription = $this->subscriptionRepository->findCurrentSubscription($patient);
 
-        if (!$patientHasCurrentSubscription) {
+        if (!$patient->getDoctor()->giveFreeAccessPrescri() && !$patientHasCurrentSubscription) {
             foreach ($exercises as $key => $exercise) {
                 if ($key > 1) {
                     $exercise->getVideo()->setYoutubeId(null)->setUrl('');

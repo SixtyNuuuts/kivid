@@ -66,6 +66,11 @@ class Doctor extends User
      */
     private $numRppsAmeli;
 
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $giveFreeAccessPrescri;
+
     public function __construct()
     {
         parent::__construct(['ROLE_DOCTOR']);
@@ -251,6 +256,18 @@ class Doctor extends User
     public function setNumRppsAmeli(?string $numRppsAmeli): self
     {
         $this->numRppsAmeli = $numRppsAmeli;
+
+        return $this;
+    }
+
+    public function giveFreeAccessPrescri(): ?bool
+    {
+        return $this->giveFreeAccessPrescri;
+    }
+
+    public function setGiveFreeAccessPrescri(?bool $giveFreeAccessPrescri): self
+    {
+        $this->giveFreeAccessPrescri = $giveFreeAccessPrescri;
 
         return $this;
     }
