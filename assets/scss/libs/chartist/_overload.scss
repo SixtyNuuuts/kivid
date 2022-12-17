@@ -22,6 +22,12 @@
     }
 }
 
+.ct-label 
+{
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .ct-major-second > svg {
     overflow: visible !important;
 }
