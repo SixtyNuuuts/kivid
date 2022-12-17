@@ -409,7 +409,7 @@
 <script>
 import f from "../../services/function";
 import Vue from "vue";
-import CG from "./CG.vue";
+import CG from "./ConditionGenerale.vue";
 import DoctorSelectBox from "../../components/DoctorSelectBox.vue";
 import VuePhoneNumberInput from "vue-phone-number-input";
 
