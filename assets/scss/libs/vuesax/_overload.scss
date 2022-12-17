@@ -1062,6 +1062,56 @@
     transform: translateY(3.6px);
 }
 
+//new pagination en mode select
+.pagination .vs-pagination-content
+{
+    margin: 0.625rem 0rem;
+    align-items: center;
+}
+
+.pagination .vs-pagination-content .vs-select-content
+{
+    max-width: 3.75rem;
+    min-width: 5.75rem;
+    margin: 0rem 1rem;
+}
+
+.pagination .vs-pagination-content .vs-select-content .vs-select__input
+{
+    padding: 0.573rem 1.3rem;
+    min-height: initial;
+}
+
+.pagination .vs-pagination-content .vs-select-content .vs-icon-arrow 
+{
+    width: 0.85rem;
+    height: 0.85rem;
+    margin-top: -0.7rem;
+}
+
+.pagination .vs-pagination-content .vs-select.activeOptions .vs-icon-arrow 
+{
+    margin-top: 0.4512rem !important;
+}
+
+.pagination .vs-select-content .vs-select__input:hover,
+.pagination .vs-select-content .vs-select__input:focus,
+.pagination .vs-select-content .vs-select.activeOptions .vs-select__input
+{
+    transform: none;
+}
+
+.pagination .vs-select-content .vs-select.top.activeOptions .vs-select__input
+{
+    border-radius: 0.5rem !important;
+}
+
+.pagination .vs-select-content .vs-select__options 
+{
+    border-radius: 0 0 0.3rem 0.3rem !important;
+    transform: translateY(0);
+}
+
 /* VueSax Overload */
 // :root {
 //   --vs-primary: 25, 91, 255;

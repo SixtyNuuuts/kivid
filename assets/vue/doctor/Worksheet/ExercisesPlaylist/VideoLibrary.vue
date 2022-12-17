@@ -202,14 +202,22 @@
                     <div class="loading videos-list" v-if="loadingVideos"></div>
                 </div>
                 <div class="pagination" v-if="videos.length > max">
-                    <vs-pagination
-                        v-model="page"
-                        buttons-dotted
-                        :length="getLength(getSearch(videos, search), max)"
-                    />
-                    <div class="count-page">
-                        Page : <b>{{ page }}</b>
-                    </div>
+                    <vs-pagination 
+                        v-model="page" 
+                        :length="
+                            getLength(getSearch(videos, search), max)
+                        "
+                    >
+                        <vs-select v-model="page">
+                            <vs-option
+                                v-for="numberPage in getLength(getSearch(videos, search), max)"
+                                :key="numberPage"
+                                :label="numberPage"
+                                :value="numberPage">
+                                {{ numberPage }}
+                            </vs-option>
+                        </vs-select>
+                    </vs-pagination>
                 </div>
                 <div class="btn-valid-selection">
                     <vs-button

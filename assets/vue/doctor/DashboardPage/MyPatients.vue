@@ -442,16 +442,22 @@
                     </div>
                 </div>
                 <div class="pagination" v-if="doctorPatients.length > max">
-                    <vs-pagination
-                        v-model="page"
-                        buttons-dotted
+                    <vs-pagination 
+                        v-model="page" 
                         :length="
                             getLength(getSearch(doctorPatients, search), max)
                         "
-                    />
-                    <div class="count-page">
-                        Page : <b>{{ page }}</b>
-                    </div>
+                    >
+                        <vs-select v-model="page">
+                            <vs-option
+                                v-for="numberPage in getLength(getSearch(doctorPatients, search), max)"
+                                :key="numberPage"
+                                :label="numberPage"
+                                :value="numberPage">
+                                {{ numberPage }}
+                            </vs-option>
+                        </vs-select>
+                    </vs-pagination>
                 </div>
             </div>
         </transition>
