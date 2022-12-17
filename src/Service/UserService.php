@@ -96,10 +96,10 @@ class UserService
     {
         $this->resetPasswordCleaner->handleGarbageCollection();
 
-        // 604800 : 7 jours
-        $expiresAt = new \DateTimeImmutable(sprintf('+%d seconds', 604800));
+        // 31536000 : Expiration 1 an
+        $expiresAt = new \DateTimeImmutable(sprintf('+%d seconds', 31536000));
 
-        $generatedAt = ($expiresAt->getTimestamp() - 604800);
+        $generatedAt = ($expiresAt->getTimestamp() - 31536000);
 
         $tokenComponents = $this->tokenGenerator->createToken(
             $expiresAt,
