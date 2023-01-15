@@ -40,7 +40,7 @@
                         }"
                     ></div>
                 </div>
-                <div
+                <!-- <div
                     v-if="!getExercise.video.youtubeId"
                     class="not-sub-message"
                     key="not-sub-message"
@@ -61,7 +61,7 @@
                             </vs-button>
                         </div>
                     </div>
-                </div>
+                </div> -->
                 <EvalFrame
                     v-show="technicalEvalFrame"
                     @validTechnicalValue="validTechnicalValue"

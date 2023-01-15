@@ -146,15 +146,16 @@ class WorksheetController extends AbstractController
             ['position' => 'ASC']
         );
 
-        $patientHasCurrentSubscription = $this->subscriptionRepository->findCurrentSubscription($patient);
+        // 15/01/2023 : remove Subscription for read worksheet 15/01/2023
+        // $patientHasCurrentSubscription = $this->subscriptionRepository->findCurrentSubscription($patient);
 
-        if (!$patient->getDoctor()->giveFreeAccessPrescri() && !$patientHasCurrentSubscription) {
-            foreach ($exercises as $key => $exercise) {
-                if ($key > 1) {
-                    $exercise->getVideo()->setYoutubeId(null)->setUrl('');
-                }
-            }
-        }
+        // if (!$patient->getDoctor()->giveFreeAccessPrescri() && !$patientHasCurrentSubscription) {
+        //     foreach ($exercises as $key => $exercise) {
+        //         if ($key > 1) {
+        //             $exercise->getVideo()->setYoutubeId(null)->setUrl('');
+        //         }
+        //     }
+        // }
 
         return $this->json(
             $exercises,

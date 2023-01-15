@@ -281,7 +281,7 @@
                     </div>
                 </div>
             </div>
-            <div
+            <!-- <div
                 v-if="!$parent.stripeSubscription && !doctorView"
                 class="request-subscription"
             >
@@ -299,7 +299,7 @@
                         Je m’abonne
                     </vs-button>
                 </div>
-            </div>
+            </div> -->
         </div>
         <transition name="fade">
             <VideoPlayer
