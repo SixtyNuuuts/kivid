@@ -725,7 +725,7 @@
             <p align="JUSTIFY">
                 b. Le Client peut formuler ses questions et demandes
                 d’interventions par email à l’adresse
-                <a href="mailto:support@kivid.fr">support@kivid.fr</a>
+                <a href="mailto:contact@kivid.fr">contact@kivid.fr</a>
             </p>
             <h2>
                 <a name="Bookmark11"></a>
@@ -935,7 +935,7 @@
                 droit d’accès, rectification, effacement, limitation du
                 traitement et objection au traitement depuis leur compte sur le
                 Site ou en s’adressant directement à
-                <a href="mailto:support@kivid.fr">support@kivid.fr</a>
+                <a href="mailto:contact@kivid.fr">contact@kivid.fr</a>
             </p>
             <p>
                 <u>i. Typologie des Données collectées par Kivid</u>
@@ -1267,7 +1267,7 @@
                 Si vous avez la moindre question concernant cette Politique de
                 Confidentialité et la façon dont nous utilisons vos Données
                 Personnelles, celle-ci est bienvenue et devra être adressée à
-                <a href="mailto:support@kivid.fr">support@kivid.fr</a>
+                <a href="mailto:contact@kivid.fr">contact@kivid.fr</a>
             </p>
         </div>
     </div>
