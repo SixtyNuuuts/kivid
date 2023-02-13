@@ -77,6 +77,11 @@ class Video
      */
     private $createdAt;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=VideoLibrary::class, inversedBy="videos")
+     */
+    private $videoLibrary;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -268,6 +273,18 @@ class Video
     public function setYoutubeId(?string $youtubeId): self
     {
         $this->youtubeId = $youtubeId;
+
+        return $this;
+    }
+
+    public function getVideoLibrary(): ?VideoLibrary
+    {
+        return $this->videoLibrary;
+    }
+
+    public function setVideoLibrary(?VideoLibrary $videoLibrary): self
+    {
+        $this->videoLibrary = $videoLibrary;
 
         return $this;
     }
