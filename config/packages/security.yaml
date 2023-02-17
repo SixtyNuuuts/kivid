@@ -18,6 +18,11 @@ security:
                             password: "$2y$13$Luq7iXbqzqklF/P9OuiFTuYMd80CFOsEK/kd5jnrJZmWeqyTe/dZ2",
                             roles: ["ROLE_ADMIN"],
                         }
+                    ffmkr-admin@mail.com:
+                        {
+                            password: "$2y$13$ufhJV0LEe.tgJHoBujVGTeg2qki5vZnkh//nhL.2negJMvFc3e/la",
+                            roles: ["ROLE_FFMKR_ADMIN"],
+                        }
         patient:
             entity:
                 class: App\Entity\Patient
@@ -60,3 +65,5 @@ security:
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/patient, roles: [ROLE_PATIENT, ROLE_DOCTOR, ROLE_ADMIN] }
         - { path: ^/doctor, roles: [ROLE_DOCTOR, ROLE_ADMIN] }
+        - { path: ^/ffmkr/adhesion, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/ffmkr, roles: [ROLE_FFMKR_ADMIN, ROLE_ADMIN] }

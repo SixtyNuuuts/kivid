@@ -20,6 +20,10 @@ trait RedirectFromIsGrantedTrait
             return $this->redirectToRoute('app_admin_dashboard');
         }
 
+        if ($this->isGranted('ROLE_FFMKR_ADMIN')) {
+            return $this->redirectToRoute('app_ffmkr_admin_dashboard');
+        }
+
         return $this->redirectToRoute('app_home');
     }
 }

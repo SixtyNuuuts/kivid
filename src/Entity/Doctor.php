@@ -71,6 +71,17 @@ class Doctor extends User
      */
     private $giveFreeAccessPrescri;
 
+    /**
+     * @ORM\OneToOne(targetEntity=FFMKRAdhesion::class, cascade={"persist", "remove"})
+     */
+    private $FFMKRAdhesion;
+
+    /**
+     * @ORM\Column(type="string", length=20, nullable=true)
+     * @Groups({"ffmkr_adhesion_read"})
+     */
+    private $FFMKRAdhesionRequestToken;
+
     public function __construct()
     {
         parent::__construct(['ROLE_DOCTOR']);
@@ -268,6 +279,30 @@ class Doctor extends User
     public function setGiveFreeAccessPrescri(?bool $giveFreeAccessPrescri): self
     {
         $this->giveFreeAccessPrescri = $giveFreeAccessPrescri;
+
+        return $this;
+    }
+
+    public function getFFMKRAdhesion(): ?FFMKRAdhesion
+    {
+        return $this->FFMKRAdhesion;
+    }
+
+    public function setFFMKRAdhesion(?FFMKRAdhesion $FFMKRAdhesion): self
+    {
+        $this->FFMKRAdhesion = $FFMKRAdhesion;
+
+        return $this;
+    }
+
+    public function getFFMKRAdhesionRequestToken(): ?string
+    {
+        return $this->FFMKRAdhesionRequestToken;
+    }
+
+    public function setFFMKRAdhesionRequestToken(?string $FFMKRAdhesionRequestToken): self
+    {
+        $this->FFMKRAdhesionRequestToken = $FFMKRAdhesionRequestToken;
 
         return $this;
     }

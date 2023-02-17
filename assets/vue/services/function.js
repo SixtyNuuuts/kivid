@@ -329,6 +329,11 @@ export default {
     });
 
     function compare(a, b) {
+      if ('numcli' === sortKey) {
+        a[sortKey] = parseInt(a[sortKey]);
+        b[sortKey] = parseInt(b[sortKey]);
+      }
+
       let sortKeyA = sortKey;
       let sortKeyB = sortKey;
       let sortKeySplitA = sortKey.split('.');

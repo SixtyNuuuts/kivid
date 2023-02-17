@@ -14,10 +14,10 @@
       "js": [
         "/build/runtime.d0ec15ab.js",
         "/build/429.ecc3ba87.js",
-        "/build/navbar.05bf7f5b.js"
+        "/build/navbar.c8cba656.js"
       ],
       "css": [
-        "/build/navbar.e3568fbb.css"
+        "/build/navbar.b6ea0fd3.css"
       ]
     },
     "settings-page": {
@@ -26,7 +26,7 @@
         "/build/429.ecc3ba87.js",
         "/build/247.3f1777ea.js",
         "/build/735.b06ed777.js",
-        "/build/settings-page.8962b80f.js"
+        "/build/settings-page.e1a10ec4.js"
       ],
       "css": [
         "/build/settings-page.8e1ab6bd.css"
@@ -36,7 +36,7 @@
       "js": [
         "/build/runtime.d0ec15ab.js",
         "/build/429.ecc3ba87.js",
-        "/build/login.bb6aa2e3.js"
+        "/build/login.b7bab3de.js"
       ]
     },
     "register": {
@@ -44,7 +44,7 @@
         "/build/runtime.d0ec15ab.js",
         "/build/429.ecc3ba87.js",
         "/build/295.1cc4bcec.js",
-        "/build/register.93076871.js"
+        "/build/register.eaca8056.js"
       ],
       "css": [
         "/build/register.0ce239eb.css"
@@ -54,7 +54,7 @@
       "js": [
         "/build/runtime.d0ec15ab.js",
         "/build/429.ecc3ba87.js",
-        "/build/reset-pass.b5ce677e.js"
+        "/build/reset-pass.a71a7b38.js"
       ],
       "css": [
         "/build/reset-pass.75e0df7d.css"
@@ -64,7 +64,7 @@
       "js": [
         "/build/runtime.d0ec15ab.js",
         "/build/429.ecc3ba87.js",
-        "/build/reset-pass-request.2dd38d3e.js"
+        "/build/reset-pass-request.0c269acb.js"
       ],
       "css": [
         "/build/reset-pass-request.1bcadc96.css"
@@ -74,7 +74,7 @@
       "js": [
         "/build/runtime.d0ec15ab.js",
         "/build/429.ecc3ba87.js",
-        "/build/patient-create-pass.0cae12fb.js"
+        "/build/patient-create-pass.79400d00.js"
       ],
       "css": [
         "/build/patient-create-pass.ad7eaeb9.css"
@@ -86,7 +86,7 @@
         "/build/429.ecc3ba87.js",
         "/build/247.3f1777ea.js",
         "/build/912.4cd1479e.js",
-        "/build/900.5c240a39.js",
+        "/build/900.7b4a857c.js",
         "/build/doctor-dashboard-page.e042c155.js"
       ],
       "css": [
@@ -99,7 +99,7 @@
         "/build/429.ecc3ba87.js",
         "/build/912.4cd1479e.js",
         "/build/770.ec01566d.js",
-        "/build/900.5c240a39.js",
+        "/build/900.7b4a857c.js",
         "/build/doctor-worksheet-page.4b2fb3ed.js"
       ],
       "css": [
@@ -112,7 +112,7 @@
         "/build/429.ecc3ba87.js",
         "/build/295.1cc4bcec.js",
         "/build/392.5aee6c46.js",
-        "/build/900.5c240a39.js",
+        "/build/900.7b4a857c.js",
         "/build/patient-dashboard-page.aaa02ddc.js"
       ],
       "css": [
@@ -126,11 +126,21 @@
         "/build/247.3f1777ea.js",
         "/build/770.ec01566d.js",
         "/build/557.a7b06eab.js",
-        "/build/900.5c240a39.js",
+        "/build/900.7b4a857c.js",
         "/build/patient-read-worksheet-page.017fc07b.js"
       ],
       "css": [
         "/build/patient-read-worksheet-page.f1bb0cf9.css"
+      ]
+    },
+    "ffmkr-admin-dashboard-page": {
+      "js": [
+        "/build/runtime.d0ec15ab.js",
+        "/build/429.ecc3ba87.js",
+        "/build/ffmkr-admin-dashboard-page.7413cc01.js"
+      ],
+      "css": [
+        "/build/ffmkr-admin-dashboard-page.95ae0305.css"
       ]
     }
   }
