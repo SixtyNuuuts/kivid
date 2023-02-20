@@ -1,0 +1,25 @@
+{% extends 'layout/fullpage-vue.html.twig' %}
+
+{% block title %}Créer votre mot de passe | KIVID{% endblock %}
+
+{% block stylesheets %}
+	{{ parent() }}
+
+	{{ encore_entry_link_tags('create-pass') }}
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+
+	{{ encore_entry_script_tags('create-pass') }}
+{% endblock %}
+
+{% block body %}
+	<div id="vue"></div>
+{% endblock %}
+
+{% block vueData %}
+		{
+			"csrfTokenCreatePass": {{ csrf_token('create_pass')|serialize('json')|raw }}
+		}
+{% endblock %}

@@ -112,7 +112,7 @@ class PatientController extends AbstractController
                     );
                 }
 
-                return $this->userService->processSendingPasswordCreationEmail($patient, $doctor);
+                return $this->userService->processSendingPasswordPatientCreationEmail($patient, $doctor);
             }
         }
         return $this->json(

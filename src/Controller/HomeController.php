@@ -65,7 +65,7 @@ class HomeController extends AbstractController
             if ($this->isCsrfTokenValid('contact', $data->_token)) {
                 $email = (new TemplatedEmail())
                 ->from(new Address($data->email, "{$data->firstname} {$data->lastname}"))
-                ->to('ponsoda.fabrice@gmail.com')
+                ->to('contact@kivid.fr')
                 ->subject("Demande de praticien")
                 ->htmlTemplate('home/contact_email.html.twig')
                 ->context([

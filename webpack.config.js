@@ -27,7 +27,7 @@ Encore
     .addEntry('register', './assets/vue/fullpage/register.js')
     .addEntry('reset-pass', './assets/vue/fullpage/resetpassword/reset-pass.js')
     .addEntry('reset-pass-request', './assets/vue/fullpage/resetpassword/reset-pass-request.js')
-    .addEntry('patient-create-pass', './assets/vue/fullpage/patientcreatepass/patient-create-pass.js')
+    .addEntry('create-pass', './assets/vue/fullpage/createpass/create-pass.js')
 
     // Doctor
     .addEntry('doctor-dashboard-page', './assets/vue/doctor/dashboard-page.js')
