@@ -18,7 +18,10 @@
 			margin-bottom: 2.3rem;
 			color: #c1b79d;
 		}
-
+		a {
+			color: #c1b79d;
+			font-weight: bold;
+		}
 		.vs-button
 		{
 			text-decoration:none;
@@ -40,14 +43,11 @@
 		<section class="kiv-block">
 			<h2>Le lien a expiré</h2>
 			<p class="text">
-				Malheureusement, ce lien de <strong>réinitialisation du mot de passe</strong> a déjà été utilisé ou a expiré, 
-				vous pouvez refaire une demande ou vous connecter avec vos anciens identifiants.
+				Malheureusement, ce lien de <strong>création de mot de passe</strong> a déjà été utilisé ou a expiré, 
+				vous pouvez quand même créer un nouveau mot de passe, en utilisant le processus de <strong>réinitialisation du mot de passe</strong> ou en nous envoyant un email <a href="mailto:contact@kivid.fr">contact@kivid.fr</a>.
 			</p>
-			<a href="{{ path('app_forgot_password_request') }}" class="vs-button rmdp w-100 vs-button--null vs-button--size-null vs-button--secondary vs-button--default">
+			<a href="{{ path('app_forgot_password_request') }}" class="vs-button w-100 vs-button--null vs-button--size-null vs-button--secondary vs-button--default">
 				<div class="vs-button__content">Réinitialiser le mot de passe</div>
-			</a>
-			<a href="{{ path('app_login') }}" class="vs-button w-100 vs-button--null vs-button--size-null vs-button--primary vs-button--default">
-				<div class="vs-button__content">Se connecter</div>
 			</a>
 		</section>
 	</div>

@@ -1,0 +1,2442 @@
+[33mcommit 622f876534275079f4fd1e2b6bc709fc8a8a710d[m[33m ([m[1;36mHEAD -> [m[1;32mkivid-v2[m[33m, [m[1;31mplatform/dev[m[33m, [m[1;32mdev[m[33m)[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Mon Feb 20 08:51:38 2023 +0100
+
+    modif : create pass + reset pass : email link
+
+[33mcommit 83806a2f488f28c4eb431f11761d7195d776c96c[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Feb 17 18:18:29 2023 +0100
+
+    feature : FFMKR Admin
+
+[33mcommit 52f3681ceb93edb98dc55f5ae1faee3581c98717[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Mon Feb 13 11:30:56 2023 +0100
+
+    feature: add VideoLibrary
+
+[33mcommit 4742ea1006b6bbf5c46215db577645e78306214c[m[33m ([m[1;31mplatform/master[m[33m, [m[1;31mplatform/HEAD[m[33m, [m[1;32mmaster[m[33m)[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sat Feb 11 08:41:54 2023 +0100
+
+    modif mail support>contact + modif lien btn home + update json composer
+
+[33mcommit 995ce6ef5a50f499171c07b5cdd3682be6931c38[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sun Jan 15 11:52:50 2023 +0100
+
+    remove subscription for read worksheet
+
+[33mcommit 4e985fc39cde7aca578636bff5e11763166b3d0c[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sat Dec 17 12:23:27 2022 +0100
+
+    modif label chart en overflow ellipsis
+
+[33mcommit dd4249d19c617c3b67032d606b52a02ad9dc7ae4[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sat Dec 17 09:16:26 2022 +0100
+
+    modif delais expiration création patient : 1 an
+
+[33mcommit 3920cd4f95bc44d14011dd8d2c22903db213165c[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sat Dec 17 08:53:53 2022 +0100
+
+    modif nom CG
+
+[33mcommit 2ea29a4e407f174cf70dcc372d6498de57ddf9ed[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sat Dec 17 08:39:08 2022 +0100
+
+    modif pagination style/forme
+
+[33mcommit 8003e7a51a818e9fc37976a8e8a1db56844363f6[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Thu Oct 6 08:00:10 2022 +0200
+
+    add give_free_access_prescri into Doctor entity
+
+[33mcommit f3bd6758d8a2c20a3c35bc4668840cc5e4229ba0[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Thu Oct 6 07:04:46 2022 +0200
+
+    hide email into AddPatientList 2 && build assets
+
+[33mcommit 04a2c26cfed8ae09ff1765d4796298d39a7fe5cc[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Oct 5 20:47:02 2022 +0200
+
+    build assets
+
+[33mcommit c4f572c62dfa96ff09a951c46b8b4a79da6fad8c[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Oct 5 20:46:24 2022 +0200
+
+    hide email into AddPatientList
+
+[33mcommit 42dd40135a9b104c86fd87ce177918430197b363[m[33m ([m[1;31mgitlab/master[m[33m)[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Jun 24 22:31:51 2022 +0200
+
+    revert setEmail null and set FacebookId Into Email if this is null
+
+[33mcommit c7d411082719df1cdcda5d2a20a024852660529d[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Jun 24 22:27:03 2022 +0200
+
+    setEmail null for Error Facebook Login
+
+[33mcommit 802b4bd296c7561a614a034383b045ed9dec5b6f[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sun Jun 19 23:01:50 2022 +0200
+
+    Add Id into Admin Patient/Doctor List
+
+[33mcommit 0eb83b81571646420e0e1b4cec5cbef2a4d4037c[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sun Jun 19 22:20:23 2022 +0200
+
+    fix bug multiples subscriptions
+
+[33mcommit d07fc10e3241cf24d7be778c029b2744b667c1f0[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed May 4 14:50:00 2022 +0200
+
+    fix exercises completed block count for session stats 3
+
+[33mcommit 6083d9ed2589c7af952cbe41bed4dbd0ebfc8415[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed May 4 11:59:42 2022 +0200
+
+    fix exercises completed block count for session stats 2.2
+
+[33mcommit 0e7bef9eda8dbc3a58390fdca8a92800da8ac838[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed May 4 11:58:43 2022 +0200
+
+    fix exercises completed block count for session stats 2
+
+[33mcommit 14ee84f262229c194126e1cb513248875611572f[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed May 4 11:52:47 2022 +0200
+
+    fix exercises completed block count for session stats
+
+[33mcommit e67077fff7aad97a1502e9915f9a77b90d6aeb30[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed May 4 10:03:42 2022 +0200
+
+    change avatarUrl length for facebookLogin bug
+
+[33mcommit e2d02ad422e92ea885f020bb0236bbda94ef12d9[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Mon Apr 11 18:15:13 2022 +0200
+
+    builds assets
+
+[33mcommit 49ef018f65001a659c083d49d01e9aeb1c8decc8[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Mon Apr 11 18:14:39 2022 +0200
+
+    wording : ADELI à la place de Ameli
+
+[33mcommit 5645b3544f8b2619630881f6a5daedad7d2fdb15[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sun Apr 10 19:02:19 2022 +0200
+
+    build assets
+
+[33mcommit 756141967640543c39c925598a90f4ecab8c611e[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sun Apr 10 19:01:30 2022 +0200
+
+    revert improve sensivity block
+
+[33mcommit 9c7f7d98c4722d344984c085cadd927fd2eface9[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sun Apr 10 18:57:38 2022 +0200
+
+    build assets
+
+[33mcommit 63a3ef1ab3256c8c330f243f760a5046539e8458[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sun Apr 10 18:56:43 2022 +0200
+
+    improve contact form + sensivity variation block
+
+[33mcommit 871ee2b9b32f0f1c6ee3b0e742b3ba891b8084a0[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Apr 8 09:25:36 2022 +0200
+
+    build assets
+
+[33mcommit 7e96e098a1f3ee96a0b14cc8d9b76866eaa5ebd4[m
+Merge: 3fb99a1 8c68ec0
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Apr 8 09:17:53 2022 +0200
+
+    Merge branch 'kivid-1.1'
+
+[33mcommit 8c68ec00a3e614240ef630d7660b6edb9e719965[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Apr 8 09:17:29 2022 +0200
+
+    add config for Subscription PROD
+
+[33mcommit 13360ee7924cd119a9ec724ff3e401d6c81d3e24[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Apr 6 06:59:01 2022 +0200
+
+    typo
+
+[33mcommit 8228dc26c96c500d63f6b4abbb1f53a60d1cd770[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Apr 6 06:57:31 2022 +0200
+
+    typo
+
+[33mcommit 07d418a00b51adfc0ac226a9cd68561e439756be[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Tue Apr 5 19:10:02 2022 +0200
+
+    correc bug select options : remplace vs-select par un select debase
+
+[33mcommit 02fe349de6818ac17b07c129dffe41a22f7eabb0[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Tue Apr 5 08:37:56 2022 +0200
+
+    Correc commentary
+
+[33mcommit c0401cf9ddba54aa2492c4e8e73cf02abb9a8dd1[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sun Apr 3 20:37:49 2022 +0200
+
+    correc 3
+
+[33mcommit 4ed6b927b6f1d4d8d8588d9c2d3d8bc0375995b3[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sun Apr 3 20:28:00 2022 +0200
+
+    correc 2
+
+[33mcommit 7b870d28e6005765670ac286ed0b1bec4adc456f[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sun Apr 3 11:46:23 2022 +0200
+
+    correc
+
+[33mcommit 267df6c2f0b0658564ba9b7ab8749ef1376925c7[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sun Apr 3 11:11:19 2022 +0200
+
+    remove eval for exercise / add eval for session 3
+
+[33mcommit 65288337e49a9b20a1ada1ef163e5b925b8dd301[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sun Apr 3 08:21:35 2022 +0200
+
+    remove eval for exercise / add eval for session 2
+
+[33mcommit 9d04e6ffc20cfce0a778a9cb7696e11d5ae39330[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sun Apr 3 08:15:05 2022 +0200
+
+    remove eval for exercise / add eval for session
+
+[33mcommit 54d120fa493f97d5f64195a7d2120ec0d819c761[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Apr 1 09:48:14 2022 +0200
+
+    correcs
+
+[33mcommit 0798aaa474d34ec8535222b79d7e2c0301f6195e[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Thu Mar 31 22:00:32 2022 +0200
+
+    improve comm 2
+
+[33mcommit 58c4c4df2d3c71b8ec1aafd79d87c4aab7a6663d[m[33m ([m[1;31mplatform/kivid-1.1[m[33m)[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Thu Mar 31 21:21:04 2022 +0200
+
+    improve comm
+
+[33mcommit df06701dc9b3b3c30b4c82cde373f0ee317a3c28[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Thu Mar 31 20:55:32 2022 +0200
+
+    improve commentary
+
+[33mcommit 8e8c8fe519966aa356d187c1969fe65f7a5b0b75[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Thu Mar 31 17:54:47 2022 +0200
+
+    improve css
+
+[33mcommit f63fd2925efaf9dd6917779e176f99acdc86fcbf[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Thu Mar 31 12:40:52 2022 +0200
+
+    correc css
+
+[33mcommit 872e566c63125bbfde875a62231b4b3ea244b2fc[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Thu Mar 31 11:45:13 2022 +0200
+
+    improve sensitivity smiley
+
+[33mcommit 448fbd6be7fb4b69d164fcd910d90ea03c2bee37[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Mar 30 20:03:04 2022 +0200
+
+    add smiley into sensivity block
+
+[33mcommit c73648492534582f6188147cbb3f179bf4ce629d[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Mar 30 18:20:02 2022 +0200
+
+    modif paliers
+
+[33mcommit 686c6c0a8aeb8ebde9c9a63101c5b0eac7d25520[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Mar 30 15:24:44 2022 +0200
+
+    mutiples petites correc
+
+[33mcommit 64c6d128af63aa68680b07bd0e957de639f26dd6[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Mar 30 08:58:26 2022 +0200
+
+    improve btn change doctor
+
+[33mcommit 5a786dff3c328f92034eb95c6ba8b27b65279320[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Tue Mar 29 20:26:45 2022 +0200
+
+    feature : improve footer homepage + improve empty options list+ ...
+
+[33mcommit a507c13aa2b2b0875b3257f6c9865a183df064d8[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Tue Mar 29 16:49:59 2022 +0200
+
+    feature : add btn change doctor + notif mail
+
+[33mcommit a6e28e7fb1920931e2e6a184c6aae1fae650fd8b[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Mon Mar 28 18:12:18 2022 +0200
+
+    new sign-in 3
+
+[33mcommit e46328602071597f191e7ee026f2d544518b2a1d[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sun Mar 27 10:31:26 2022 +0200
+
+    new sign-in 2
+
+[33mcommit fd5d1ce6edba343757e42aff276dfa73836bfa84[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Mar 25 19:22:57 2022 +0100
+
+    patient/doctor admin 1
+
+[33mcommit 2ef3c1b63e9a19be0c4596fc4fcd0fe0dbbe2f96[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Mar 25 18:36:25 2022 +0100
+
+    new sign-in 2
+
+[33mcommit 3fb99a1dc3cce02748bcf579eb3ff7e99e92ef20[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Mon Mar 21 16:16:29 2022 +0100
+
+    modif prix abo 9.90
+
+[33mcommit 2a737143404eaa23382666eff21df92762bac899[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Mon Mar 21 14:02:31 2022 +0100
+
+    new sign-in 1
+
+[33mcommit 921c4f4af1b92c4615a44e2289738552f9fd4374[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Thu Mar 10 08:48:04 2022 +0100
+
+    init kivid-1.1
+
+[33mcommit ad48f97758a6a6baa36851cec4d244aaca433b44[m
+Merge: 3ae56b8 474cf8d
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Thu Mar 10 08:37:48 2022 +0100
+
+    Merge branch 'master' of git.fr-3.platform.sh:763qyw5w7dwi4
+
+[33mcommit 3ae56b8fe517a119810797ac499fa080b614413c[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Thu Mar 10 08:31:03 2022 +0100
+
+    update snapshot cron
+
+[33mcommit ade74d86f57a4bea13e77c44dd9e5790bea007bf[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sat Feb 12 16:55:38 2022 +0100
+
+    Stripe en mode Test pour PREPROD
+
+[33mcommit 474cf8d40ad9cf05e2de0606cad9511fb0d04401[m
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Sat Feb 12 14:34:11 2022 +0100
+
+    Revert "Passage en mode maintenance"
+    
+    This reverts commit 9a9fb7f1b631d9137509325261aa8784f4e8c9e4.
+
+[33mcommit 9a9fb7f1b631d9137509325261aa8784f4e8c9e4[m
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Sat Feb 12 08:46:15 2022 +0100
+
+    Passage en mode maintenance
+
+[33mcommit d765078f06ed11669768c80b0f21ae07844844fe[m
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Fri Feb 11 21:34:44 2022 +0100
+
+    Force deploy
+
+[33mcommit a7727408483de3aa5bdcf6ad2ddf8cfb38d3ca4b[m
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Fri Feb 11 18:00:18 2022 +0100
+
+    Enable crons and workers
+
+[33mcommit d0c28db33c8b056e2b39d5328bde6734328dd48f[m
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Fri Feb 11 12:01:03 2022 +0100
+
+    Disable crons and workers
+
+[33mcommit b45241cda2b1ba920d5d34afd8e5366b48e83576[m
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Fri Feb 11 12:01:03 2022 +0100
+
+    Rename Platform.sh configuration files
+
+[33mcommit 097c41099f7105310e772e778432c77076ef446f[m
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Wed Feb 9 01:12:52 2022 +0100
+
+    modification artificielle pour forcer un commit (nécessaire pour mettre à jour le CLI symfony dans les containers SymfonyCloud)
+
+[33mcommit bfdb84c9ee3d615aaf09700ab56d98a85eea46fa[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Nov 19 02:46:09 2021 +0100
+
+    modif calcul stats variation
+
+[33mcommit 16e831be13bded5ad4a502c6e5c34840d5f1fdf8[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Nov 17 13:25:03 2021 +0100
+
+    correc gender into settings
+
+[33mcommit 3c0fd5660cda5d1310106dbaea62294d999ea773[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Tue Nov 16 23:10:41 2021 +0100
+
+    video-exe orphan remove
+
+[33mcommit 3b257ee1990c7ccebdf020c5e503baafd42163e2[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Tue Nov 16 21:06:39 2021 +0100
+
+    improve progress status prescri
+
+[33mcommit d23cb51805e2f3ae2277245a55cad221f70d6054[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Tue Nov 16 15:13:01 2021 +0100
+
+    improve responsive 2
+
+[33mcommit 1edd804504cbf0946f7231864e62f9ecadebf4c9[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Tue Nov 16 15:02:46 2021 +0100
+
+    improve responsive
+
+[33mcommit 02f02a4164c1944d1f0b51b2da986f9e16490688[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Mon Nov 15 16:09:11 2021 +0100
+
+    count user into admin
+
+[33mcommit 3daba692df9596f8aae0db12b36d17125f39279d[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Mon Nov 15 13:56:53 2021 +0100
+
+    btn doctor-register color orange
+
+[33mcommit 47adb50820d1abd57e839baaccab7658a6e512b2[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Mon Nov 15 12:59:27 2021 +0100
+
+    correc error 3
+
+[33mcommit 801934c0d68072714eb31242cda827fb4184a574[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sun Nov 14 20:12:33 2021 +0100
+
+    correc error 2
+
+[33mcommit 11a381ccb000c878cde022dcac19013d5d2d5e25[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sun Nov 14 20:10:22 2021 +0100
+
+    correc error
+
+[33mcommit b7bca218d39ed3cf2bbd59bfb65c1ad84e44050a[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sun Nov 14 14:45:17 2021 +0100
+
+    improve responsive
+
+[33mcommit b47104f61876ec8ba5d5710ba5dcc78cbd54bbaa[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sat Nov 13 14:13:50 2021 +0100
+
+    correc ci
+
+[33mcommit 76a25e3bf27c2ea8e0ca65538682a75ede85cd4d[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Nov 12 18:23:46 2021 +0100
+
+    m ci 2
+
+[33mcommit 978f278f0c9745fb4176f5fa39fda1fe77522b98[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Nov 12 18:23:33 2021 +0100
+
+    m ci
+
+[33mcommit 023030c68f3ceb5779c7effc96aa82924a45cb63[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Nov 12 17:35:49 2021 +0100
+
+    improve
+
+[33mcommit 37f346fdc9c1804bd35358ca3ba299555a56990e[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Nov 12 10:43:18 2021 +0100
+
+    improve : add alert mess into remove Prescri Message
+
+[33mcommit 92fce5c92aaa3b6b3f8c34f91249631ae09b2bf8[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Thu Nov 11 21:32:56 2021 +0100
+
+    abo plan 24.99
+
+[33mcommit c065a3be74dfc3a4e6d405ead63f8c43f2372835[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Thu Nov 11 21:32:15 2021 +0100
+
+    improve 15
+
+[33mcommit d4ec4bf5a4f58fad32e41332990b54a24a5646f5[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Thu Nov 11 19:00:49 2021 +0100
+
+    improve 14
+
+[33mcommit 9b3b2da3f7e4e13f37133a67e6cc2b2ddbfacf1d[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Nov 10 19:36:30 2021 +0100
+
+    improve 13
+
+[33mcommit 2a96adf632d9700f10884c1e87237cc49962b236[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Nov 10 16:52:07 2021 +0100
+
+    improve webhook - add userId 4.89
+
+[33mcommit ed2b6eb2a37a163574427d51f0c42a19dd37dcd2[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Nov 10 16:49:18 2021 +0100
+
+    improve webhook - add userId 4.88
+
+[33mcommit 79c6305bd4ca6141dbfe7d2f6e1b3363256c86a6[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Nov 10 16:46:42 2021 +0100
+
+    improve webhook - add userId 4.87
+
+[33mcommit 65ee7467e62b00d77a9a1a87ba9ceea6a8404925[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Nov 10 16:42:40 2021 +0100
+
+    improve webhook - add userId 4.86
+
+[33mcommit be57a8093f6738af7988582af6dca6db6ff55cf1[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Nov 10 16:39:50 2021 +0100
+
+    improve webhook - add userId 4.85
+
+[33mcommit d1bf0518e7e9b7c162064afbb11c61b694f66f67[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Nov 10 16:37:24 2021 +0100
+
+    improve webhook - add userId 4.84
+
+[33mcommit da361a66e5fe0b5268a6e75131a7934401f1bdc1[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Nov 10 16:33:37 2021 +0100
+
+    improve webhook - add userId 4.83
+
+[33mcommit 138426dc9d92f6971fc267599c4a8c73725560a7[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Nov 10 16:30:43 2021 +0100
+
+    improve webhook - add userId 4.82
+
+[33mcommit f4214b849ad97c1935abb575d73fa9f2d03cee6c[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Nov 10 16:29:02 2021 +0100
+
+    improve webhook - add userId 4.81
+
+[33mcommit c87ebfc8fc14bc5f897df9cdb5fdee16140e6a6c[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Nov 10 16:26:07 2021 +0100
+
+    improve webhook - add userId 4.8
+
+[33mcommit 34eafadbbbd9cfc26b942586e1ffc54cdf2bce46[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Nov 10 16:22:41 2021 +0100
+
+    improve webhook - add userId 4.71
+
+[33mcommit cbe447303001623dcd20f3b7ce72e9574a401c04[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Nov 10 16:19:55 2021 +0100
+
+    improve webhook - add userId 4.71
+
+[33mcommit 86a7fb4f5fd7aaf870dc8d92ce4e655ddecea28e[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Nov 10 16:11:25 2021 +0100
+
+    improve webhook - add userId 4.7
+
+[33mcommit 45d7cd469ed6fc5b4a9e8cc64ff2807b4e2064ae[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Nov 10 16:08:25 2021 +0100
+
+    improve webhook - add userId 4.6
+
+[33mcommit c76c4ee73f3ea27827d2178fdb816fe9ca2bf2d3[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Nov 10 16:04:59 2021 +0100
+
+    improve webhook - add userId 4.5
+
+[33mcommit d39e9483f94a991eb1c7b55ba307c58e4380c492[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Nov 10 16:02:56 2021 +0100
+
+    improve webhook - add userId 4.4
+
+[33mcommit 505f56d979e817a62dd2c460b09cc8a500afd2bb[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Nov 10 16:00:21 2021 +0100
+
+    improve webhook - add userId 4.3
+
+[33mcommit 3083ebae2f6e1239ee76b3761159b9543fc3c951[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Nov 10 15:57:25 2021 +0100
+
+    improve webhook - add userId 4.1
+
+[33mcommit 3c485fc5814514e387ccba12f2b80ed7dadaf777[m
+Merge: 0019223 f266070
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Nov 10 15:41:30 2021 +0100
+
+    Merge branch 'preprod'
+
+[33mcommit f26607081b06044dc986b66a66c777a0b6a0b01e[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Nov 10 15:40:59 2021 +0100
+
+    improve webhook - add userId 4
+
+[33mcommit 0019223f00a6b89567654be41e21fd81debeda55[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Nov 10 15:00:38 2021 +0100
+
+    improve webhook - add userId 3.1
+
+[33mcommit a0a9a5cd3252d55686b451dba3263026313de5d8[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Nov 10 14:58:24 2021 +0100
+
+    improve webhook - add userId 3
+
+[33mcommit 0b896fcecd453849d53ac4adc011aeb48d5fffda[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Nov 10 14:40:17 2021 +0100
+
+    improve webhook - add userId 2
+
+[33mcommit 916875f83789f06f721a4b2ab24fee3c1b739dfd[m
+Merge: 460f34c 0300ba0
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Nov 10 14:25:36 2021 +0100
+
+    Merge branch 'preprod'
+
+[33mcommit 0300ba0c95231ada41ee5c078c71a8ad0117728a[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Nov 10 14:25:13 2021 +0100
+
+    improve webhook - add userId
+
+[33mcommit 460f34c2881ac043e4f5d14e599600bc48795f27[m
+Merge: b2ea562 dd47850
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Nov 10 07:24:05 2021 +0100
+
+    Merge branch 'preprod'
+
+[33mcommit dd478508d635b104ab6682e762440051646dd034[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Nov 10 07:21:21 2021 +0100
+
+    improve 13
+
+[33mcommit 36405cc907da957327a10265d8576cc660a831a6[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Nov 10 06:00:11 2021 +0100
+
+    modif timestamp rec subscription
+
+[33mcommit b2ea56227b71c3070fd70c93241e68f069bf0741[m
+Merge: 77f4ec2 9a192f4
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Tue Nov 9 21:18:03 2021 +0100
+
+    Merge branch 'preprod'
+
+[33mcommit 9a192f44fb680b07bd52a62734444b623e2daf10[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Tue Nov 9 21:12:46 2021 +0100
+
+    improve 12
+
+[33mcommit 77f4ec21c6768b45f81a7eae2c65296b2c456c6d[m
+Merge: 5394704 fea0e36
+Author: SixtyNuuuts <sixty.nuuuts@gmail.com>
+Date:   Tue Nov 9 19:00:41 2021 +0000
+
+    Merge branch 'preprod' into 'master'
+    
+    webhook
+    
+    See merge request kivid/kivid!33
+
+[33mcommit fea0e36ea995a1f2922c5ce0ed12af34aa54ad18[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Tue Nov 9 19:41:35 2021 +0100
+
+    improve 11
+
+[33mcommit 397ef32e339b339fbf6e16a19d8afc01148305f4[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Tue Nov 9 15:58:03 2021 +0100
+
+    correc webhook build assets
+
+[33mcommit 81e65417ecbda67aebf1d1ea3fa29bd96864135c[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Tue Nov 9 15:54:01 2021 +0100
+
+    correc webhook 4
+
+[33mcommit fc10fcd4888a8035ee99bd0a9f61cd48749e1a91[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Tue Nov 9 04:22:47 2021 +0100
+
+    correc webhook 3
+
+[33mcommit 3b723c37cf98edfbdccb6c775004f40b3b0f2a36[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Tue Nov 9 04:17:49 2021 +0100
+
+    correc webhook 2
+
+[33mcommit 9894a873310ea3399e3861881c7c27a0f876ae13[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Mon Nov 8 19:06:41 2021 +0100
+
+    correc webhook
+
+[33mcommit 6476d51b6fc721a5324c8d6421d98a1b51f8d67c[m
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Mon Nov 8 15:34:55 2021 +0100
+
+    build des assets
+
+[33mcommit fb9cc24d9cf98b7160edde46c888c7cd869c3fab[m
+Merge: 3b5d127 bf1c0b1
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Mon Nov 8 15:33:13 2021 +0100
+
+    Merge branch 'kiv-improve-10' into preprod
+
+[33mcommit bf1c0b1cb3c3583a4ee6743cca401ecf0d9e1f64[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Mon Nov 8 15:26:44 2021 +0100
+
+    improve 10.5
+
+[33mcommit 683222b9d57ccbaea9e2d587d7dc1382661e0805[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sun Nov 7 21:26:50 2021 +0100
+
+    improve 10.4
+
+[33mcommit 2f33d082973afaa9501e9c06e94a2d122c20e2b4[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sun Nov 7 15:25:38 2021 +0100
+
+    improve 10.3
+
+[33mcommit 62993a5d343fe5abb3dc9c98ac1e81f22a9c77ba[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sat Nov 6 14:44:46 2021 +0100
+
+    improve 10.2
+
+[33mcommit 341f461a28e55434fa2988d02226cde4c3c81c1c[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sat Nov 6 11:57:19 2021 +0100
+
+    improve 10.1
+
+[33mcommit 5588266f590540cb93939e71f26831fbb2a297cc[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Nov 5 15:54:45 2021 +0100
+
+    correc 2 improve 10
+
+[33mcommit 1a1c5c81495f1851f59011116ad901135666fecb[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Nov 5 11:54:05 2021 +0100
+
+    correc improve 10
+
+[33mcommit 3b5d127ff42d8bbf4bb7d2ea46d1f47c040b32cd[m
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Wed Nov 3 15:33:11 2021 +0100
+
+    build des assets
+
+[33mcommit f82ade82978a83c3a4c8418791570f2e01f6b1de[m
+Merge: 08033c0 188a56e
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Wed Nov 3 15:32:07 2021 +0100
+
+    Merge branch 'kiv-improve-10' into preprod
+
+[33mcommit 188a56ee0c108f480430b4bb5198c67f7ef262db[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Nov 3 13:02:31 2021 +0100
+
+    setup webhook stripe
+
+[33mcommit 2cce58b1c2d2af8bb8e3be6506abc5142d11e2d3[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Nov 3 11:32:16 2021 +0100
+
+    improve 10.1
+
+[33mcommit 08033c0daf4a63a859acc6ae36552a7aa87a01aa[m
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Tue Nov 2 16:26:58 2021 +0100
+
+    build des assets
+
+[33mcommit 1747067c20e15f16e15029350df5133044065f3b[m
+Merge: 95f42ca 5394704
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Tue Nov 2 16:25:49 2021 +0100
+
+    Merge branch 'master' of https://gitlab.com/kivid/kivid into preprod
+
+[33mcommit 5394704e7764096e504896b482e54e34dd8f70d3[m
+Merge: 346342e ba6ebbf
+Author: SixtyNuuuts <sixty.nuuuts@gmail.com>
+Date:   Tue Nov 2 15:14:06 2021 +0000
+
+    Merge branch 'kiv-improve-9' into 'master'
+    
+    improve-9
+    
+    See merge request kivid/kivid!31
+
+[33mcommit ba6ebbf0c71651989b50879f19576038cb2e6746[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Tue Nov 2 16:09:01 2021 +0100
+
+    improve-9
+
+[33mcommit 95f42ca001a8b8595825131312e9834918f80cdd[m
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Sun Oct 31 16:54:54 2021 +0100
+
+    build des assets
+
+[33mcommit 42c2bab376d7118318abeb3919232bc79a6312db[m
+Merge: 340b222 346342e
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Sun Oct 31 16:49:57 2021 +0100
+
+    Merge branch 'master' of https://gitlab.com/kivid/kivid
+
+[33mcommit 346342e43c4d1b00b1422635f289adf4eaebd5c9[m
+Merge: b164f05 5833a31
+Author: SixtyNuuuts <sixty.nuuuts@gmail.com>
+Date:   Sun Oct 31 14:51:28 2021 +0000
+
+    Merge branch 'kiv-homaepage' into 'master'
+    
+    Homepage
+    
+    See merge request kivid/kivid!30
+
+[33mcommit 5833a31c6ea591f2c0c25686bc5675e93c098d87[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sun Oct 31 15:44:54 2021 +0100
+
+    homepage
+
+[33mcommit 340b22207b7b383ec8545873158019fd4e7286b9[m
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Fri Oct 29 14:19:53 2021 +0200
+
+    build des assets
+
+[33mcommit c007c0acad695f61c2a0dbaa9799191fdb5c921a[m
+Merge: a7e0ce8 b164f05
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Fri Oct 29 14:19:08 2021 +0200
+
+    Merge branch 'master' of https://gitlab.com/kivid/kivid
+
+[33mcommit b164f051f18119568f3c40eca864ad61d0253079[m
+Merge: c9298db abec44d
+Author: SixtyNuuuts <sixty.nuuuts@gmail.com>
+Date:   Fri Oct 29 12:15:52 2021 +0000
+
+    Merge branch 'kiv-improve-8-homepage' into 'master'
+    
+    improve-8
+    
+    See merge request kivid/kivid!29
+
+[33mcommit abec44d422f383581d3237b575806f520d3b8b23[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Oct 29 14:12:20 2021 +0200
+
+    improve-8
+
+[33mcommit a7e0ce8f9599c307a67766a3bbfedf40a5eac9fb[m
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Thu Oct 28 23:14:41 2021 +0200
+
+    build des assets
+
+[33mcommit 96019b1091ccf17bc678ee4126f37e366e01f230[m
+Merge: db2f12d c9298db
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Thu Oct 28 22:04:24 2021 +0200
+
+    Merge branch 'master' of https://gitlab.com/kivid/kivid
+
+[33mcommit c9298dbca9492db0cbdc28900204e729f7e95b58[m
+Merge: b5e785e 99ee4e9
+Author: SixtyNuuuts <sixty.nuuuts@gmail.com>
+Date:   Thu Oct 28 17:23:46 2021 +0000
+
+    Merge branch 'kiv-improve-7' into 'master'
+    
+    improve-7
+    
+    See merge request kivid/kivid!28
+
+[33mcommit 99ee4e98e596622c7963d5300dab9bd673b9f435[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Thu Oct 28 19:20:21 2021 +0200
+
+    improve-7
+
+[33mcommit db2f12df30f3487f3b180e1a4ea50867807f3f7e[m
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Thu Oct 28 10:30:53 2021 +0200
+
+    build des assets
+
+[33mcommit 21fbe6e534a2e37b8733b962e6add940c4f737fd[m
+Merge: 3218c47 b5e785e
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Thu Oct 28 09:13:00 2021 +0200
+
+    Merge branch 'master' of https://gitlab.com/kivid/kivid
+
+[33mcommit b5e785e8944c5ce9a517f62e29417ccfa411c103[m
+Merge: 5c9b68f 7adc461
+Author: SixtyNuuuts <sixty.nuuuts@gmail.com>
+Date:   Wed Oct 27 17:20:23 2021 +0000
+
+    Merge branch 'kiv-improve-6' into 'master'
+    
+    improve 5
+    
+    See merge request kivid/kivid!27
+
+[33mcommit 7adc46199ab5e3ce194f7cd1033cbcf33aaae09c[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Oct 27 19:16:53 2021 +0200
+
+    improve 5.1
+
+[33mcommit 7136c5e76600c039c1857d6356571f4cca88f087[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Oct 27 19:08:02 2021 +0200
+
+    improve 5
+
+[33mcommit 5c9b68fb90d7625b933666a25bbbfd892ecce116[m
+Merge: 7d0339c c1d444f
+Author: SixtyNuuuts <sixty.nuuuts@gmail.com>
+Date:   Tue Oct 26 14:04:15 2021 +0000
+
+    Merge branch 'kiv-improve-5-template-mail' into 'master'
+    
+    improve 5 and template mail
+    
+    See merge request kivid/kivid!26
+
+[33mcommit c1d444f920d447fd0c89818b59eb3dbbc8419dfe[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Tue Oct 26 16:00:43 2021 +0200
+
+    improve 5
+
+[33mcommit b152c4c0c200549355be597b9fca2f9f0ffbd441[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Tue Oct 26 15:46:45 2021 +0200
+
+    improve 5 and template mail
+
+[33mcommit 3218c47b10831d46cd8c89e79bfe9e8b49b32f3c[m
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Tue Oct 26 07:33:49 2021 +0200
+
+    build des assets
+
+[33mcommit c177127a8ccd92a6e37c1858c99f4543fafed811[m
+Merge: 9f6144b 7d0339c
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Tue Oct 26 07:31:55 2021 +0200
+
+    Merge branch 'master' of https://gitlab.com/kivid/kivid
+
+[33mcommit 7d0339cd1d0904516f274f0508c2f1cc8d794eef[m
+Merge: 5ce3b11 2307ea9
+Author: SixtyNuuuts <sixty.nuuuts@gmail.com>
+Date:   Mon Oct 25 16:50:22 2021 +0000
+
+    Merge branch 'kiv-improve-4' into 'master'
+    
+    Kiv improve 4
+    
+    See merge request kivid/kivid!25
+
+[33mcommit 2307ea9106062ff50af57af3f8180e200dd37997[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Mon Oct 25 18:45:07 2021 +0200
+
+    improve 4.1
+
+[33mcommit d20caa769d554468ac5aac223b44486d8796a97b[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Mon Oct 25 18:23:54 2021 +0200
+
+    improve 4
+
+[33mcommit 9f6144b9a70319920cd7871ae8992c1bde0878b7[m
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Fri Oct 22 16:15:00 2021 +0200
+
+    build des assets
+
+[33mcommit f6703ebcd310b656da2c4f84ee096cd291787422[m
+Merge: 7e3980e 5ce3b11
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Fri Oct 22 16:13:12 2021 +0200
+
+    Merge branch 'master' of https://gitlab.com/kivid/kivid
+
+[33mcommit 5ce3b116384ea3b6313ae1079c7090837c9ebe2b[m
+Merge: 9d06aa5 33af54f
+Author: SixtyNuuuts <sixty.nuuuts@gmail.com>
+Date:   Fri Oct 22 12:50:32 2021 +0000
+
+    Merge branch 'kiv-improve-3' into 'master'
+    
+    Kiv improve 3
+    
+    See merge request kivid/kivid!24
+
+[33mcommit 33af54fb4725439b5e2e66df15066c4dbd74cc7d[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Oct 22 14:46:14 2021 +0200
+
+    kiv improve 3.1
+
+[33mcommit fad5710e250bfb66c499da9fb791efe039e27fc3[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Oct 22 14:36:17 2021 +0200
+
+    kiv improve 3
+
+[33mcommit 7e3980e1604e8979779a3435c3eb970dc3e8ed0d[m
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Mon Oct 18 22:39:39 2021 +0200
+
+    build des assets
+
+[33mcommit 69239b61190993c196e6cf044611ee2bff8fcb1a[m
+Merge: 5596f5f 9d06aa5
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Mon Oct 18 22:38:25 2021 +0200
+
+    Merge branch 'master' of https://gitlab.com/kivid/kivid
+
+[33mcommit 9d06aa5a60192b2fe6655fe447c47d89b91a2b64[m
+Merge: 56a111f 731a0f8
+Author: SixtyNuuuts <sixty.nuuuts@gmail.com>
+Date:   Mon Oct 18 20:02:19 2021 +0000
+
+    Merge branch 'kiv-improve-2' into 'master'
+    
+    KIV improve 2
+    
+    See merge request kivid/kivid!23
+
+[33mcommit 731a0f88a5940e888947f7be1dd63f4caeac0d5c[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Mon Oct 18 21:58:52 2021 +0200
+
+    improve 2
+
+[33mcommit 5596f5fe268084d410a68ae2af249a50ca2fa063[m
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Mon Oct 18 15:47:17 2021 +0200
+
+    build des assets
+
+[33mcommit a0d7eab14d8a669d5330416105854f0fc4349353[m
+Merge: dbaae3a 56a111f
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Mon Oct 18 15:45:29 2021 +0200
+
+    Merge branch 'master' of https://gitlab.com/kivid/kivid
+
+[33mcommit 56a111f9292724de9d8b30bad06bf8495e93b85a[m
+Merge: 1ac2a3e 43e6c85
+Author: SixtyNuuuts <sixty.nuuuts@gmail.com>
+Date:   Mon Oct 18 12:54:40 2021 +0000
+
+    Merge branch 'kiv-improve' into 'master'
+    
+    KIV - improve 1
+    
+    See merge request kivid/kivid!22
+
+[33mcommit 43e6c85aac34cf855ab1e4f67187228e2c0ee7f9[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Mon Oct 18 14:48:14 2021 +0200
+
+    improve 1
+
+[33mcommit dbaae3a0b9407cdb7294e152e8a3d20293fbc9e6[m
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Mon Oct 4 01:33:00 2021 +0200
+
+    Build des assets pour la prod
+
+[33mcommit 1ac2a3ecd90fd3451ae102f67d743ab34a8d8d0b[m
+Merge: 9f91e06 3ceadf9
+Author: SixtyNuuuts <sixty.nuuuts@gmail.com>
+Date:   Sun Oct 3 12:51:17 2021 +0000
+
+    Merge branch 'KIV-integration-front' into 'master'
+    
+    Kiv integration front
+    
+    See merge request kivid/kivid!21
+
+[33mcommit 3ceadf960e677fddb5ad4a4db64ef3bfb05b1183[m
+Merge: b2d00b3 9786ec7
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sun Oct 3 14:48:05 2021 +0200
+
+    Merge branch 'KIV-integration-front' of https://gitlab.com/kivid/kivid into KIV-integration-front
+
+[33mcommit b2d00b3fab7bd63c26a9a7203e15a515e8443432[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sun Oct 3 14:47:54 2021 +0200
+
+    rebase master
+
+[33mcommit 2c2d46eabbcdefcb74253ea556105049969d0db7[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sun Oct 3 13:52:49 2021 +0200
+
+    correc 3 and improve notif
+
+[33mcommit 8e1a235499835819a7ca66a0fe460030a24f863c[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sat Oct 2 20:13:08 2021 +0200
+
+    correc 2
+
+[33mcommit e8b79ce640e83f052c58572979e7ab81a7e43438[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Oct 1 21:09:45 2021 +0200
+
+    correc 1
+
+[33mcommit de34de7a322638d988f9300184c035b461ab39ce[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Oct 1 15:04:01 2021 +0200
+
+    add Subscription
+
+[33mcommit a25f7f3b2b3bf62cf7d895d266177c193b7dc583[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Thu Sep 30 14:47:18 2021 +0200
+
+    refont login/register/reset-pass/creat-pass + Settings User Edit
+
+[33mcommit 9e0789d2cd1de26b1eedb836f5456a10833646a6[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Sep 24 16:41:08 2021 +0200
+
+    dashboard kin 3
+
+[33mcommit 70feb06d451c4e689274b53379515ce0891dc4c8[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Tue Sep 21 23:12:22 2021 +0200
+
+    Dashboard Kine 2
+
+[33mcommit 6869715e23e6765c59fe5f49bf6b5d7b156aa389[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Tue Sep 21 19:52:30 2021 +0200
+
+    dashboard kine 1
+
+[33mcommit 5ce27e4841de8c47ea7885369f763d819bdb3e0c[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sat Sep 18 00:18:09 2021 +0200
+
+    improve chart
+
+[33mcommit dffd47f7d341ba829a31bb32a226c7ccef255ced[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Sep 17 12:58:04 2021 +0200
+
+    integration design step 9.2
+
+[33mcommit a3301655a63c42e39081202d5bc183934e572a5a[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Sep 17 04:49:37 2021 +0200
+
+     integration design step 9.2
+
+[33mcommit dcec37ba0a09ac1eb2998001705836458fd61e2f[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Sep 17 04:41:04 2021 +0200
+
+     integration design step 9
+
+[33mcommit 55d0a398ec5f0ed134532136136168367668b649[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Sep 15 12:23:35 2021 +0200
+
+    integration design step 9
+
+[33mcommit 3d366bf37740658727728ed3cea8a0cde1494043[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sat Sep 11 15:10:59 2021 +0200
+
+    integration design step 8
+
+[33mcommit 6917869f14450a8344a26c852d4665a79f8a24af[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Sep 10 21:05:05 2021 +0200
+
+    integration design step 7
+
+[33mcommit 94d0693da72448e1d9a5d236975031f2a6ddfad9[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Thu Sep 9 16:08:05 2021 +0200
+
+    integration design step 6
+
+[33mcommit 2b673630aa68453b1f87177a9b19f3d0e230bbd4[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Tue Sep 7 16:40:25 2021 +0200
+
+     integration design step 5
+
+[33mcommit 586c8a66074f7bf238eadb94626121f7abc815b2[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sun Sep 5 17:18:34 2021 +0200
+
+    integration design step 5
+
+[33mcommit ab2af9344b25c7494c63628eb3661600eb20480f[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Sep 3 17:33:17 2021 +0200
+
+    integration design step 4
+
+[33mcommit 9826de53edaeffdf833423993ae9a2a723f1b9af[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Sep 1 19:20:00 2021 +0200
+
+    integration design step 3
+
+[33mcommit 30080b0053b6160fb19ea739a7458010a59e1b6a[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Mon Aug 30 19:16:18 2021 +0200
+
+    integration design step 2
+
+[33mcommit aa289814b8bbc5ff350ca097bcf23762398b27f9[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Aug 25 15:00:32 2021 +0200
+
+    integration design step 1
+
+[33mcommit 9786ec77f231d19423d942c062e899097ec29329[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sun Oct 3 13:52:49 2021 +0200
+
+    correc 3 and improve notif
+
+[33mcommit ef66afdd5356c2ee1b4c18fed7e3801f7a05a593[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sat Oct 2 20:13:08 2021 +0200
+
+    correc 2
+
+[33mcommit cd17f3ea5fdc0e5cd1c2a5d4aa404b987d5b6ce6[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Oct 1 21:09:45 2021 +0200
+
+    correc 1
+
+[33mcommit e941011b06dc8cd5436adf0f1fdd6e293cffde4b[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Oct 1 15:04:01 2021 +0200
+
+    add Subscription
+
+[33mcommit a65d79a3f3c810701bdb13135aa001e369cd5634[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Thu Sep 30 14:47:18 2021 +0200
+
+    refont login/register/reset-pass/creat-pass + Settings User Edit
+
+[33mcommit 39d68963412d244a776c559b5fe9c310a62266e9[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Sep 24 16:41:08 2021 +0200
+
+    dashboard kin 3
+
+[33mcommit 134927fdf156bd123092dc0811d16fd5d95500e7[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Tue Sep 21 23:12:22 2021 +0200
+
+    Dashboard Kine 2
+
+[33mcommit 4bed505278806d9e59f2fc78c162c498b1812a9c[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Tue Sep 21 19:52:30 2021 +0200
+
+    dashboard kine 1
+
+[33mcommit ed77aa5d7bba5fb5817b60856f59df2f243683fe[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sat Sep 18 00:18:09 2021 +0200
+
+    improve chart
+
+[33mcommit 066ef42acdf5988e16fcf9233fea105f6b6f4a47[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Sep 17 12:58:04 2021 +0200
+
+    integration design step 9.2
+
+[33mcommit 67a9d390885c54d0f32220f0ad9a57ac93543dbe[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Sep 17 04:49:37 2021 +0200
+
+     integration design step 9.2
+
+[33mcommit 238b4e7a03f1bd1d69cbb963739698a88e4d4d04[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Sep 17 04:41:04 2021 +0200
+
+     integration design step 9
+
+[33mcommit b6eebc2697049b65174ddfe3c7e41f737a48a83e[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Sep 15 12:23:35 2021 +0200
+
+    integration design step 9
+
+[33mcommit f22952b75ae0b488f63993040e011e3d57cecede[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sat Sep 11 15:10:59 2021 +0200
+
+    integration design step 8
+
+[33mcommit c7368108f21881326715b626c8093a3907006824[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Sep 10 21:05:05 2021 +0200
+
+    integration design step 7
+
+[33mcommit bbcf539cb22c3446dc0a31d6f88eed670a5ab8a4[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Thu Sep 9 16:08:05 2021 +0200
+
+    integration design step 6
+
+[33mcommit 704c0657a2f47a9dc3f89b741001480b24fc5552[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Tue Sep 7 16:40:25 2021 +0200
+
+     integration design step 5
+
+[33mcommit 7f8ac9611aedf2ee88d15c3d4871e9b7a0fa8e33[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sun Sep 5 17:18:34 2021 +0200
+
+    integration design step 5
+
+[33mcommit 203ebee907e1b39fe40fee08cabe9f4bc7d4d11f[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Sep 3 17:33:17 2021 +0200
+
+    integration design step 4
+
+[33mcommit b27bd9ccb1158a1dfa2bba229c94ca6cba3721d1[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Sep 1 19:20:00 2021 +0200
+
+    integration design step 3
+
+[33mcommit 8267f973447d427434db80cb357a182216014bad[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Mon Aug 30 19:16:18 2021 +0200
+
+    integration design step 2
+
+[33mcommit 9f91e06d506a96be9e9f1239f28adce9dacb9347[m
+Merge: 1decfac 79317ff
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Wed Aug 25 16:17:54 2021 +0200
+
+    Merge branch 'master' of https://gitlab.com/kivid/kivid
+
+[33mcommit 1decfacd1cd025cd218af11928dd262c1b07797c[m
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Wed Aug 25 15:46:04 2021 +0200
+
+    tentative de fix de la phase de build
+
+[33mcommit 79317ffb7c25d29df2e313be5a089d2f6c17990d[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Aug 25 15:40:01 2021 +0200
+
+    add accept/decline AddPatientRequest Notification
+
+[33mcommit 291b541655aba9dc52a72ae223176db6dd652c10[m
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Wed Aug 25 15:32:49 2021 +0200
+
+    Mise à jour des dépendances
+
+[33mcommit 68f23c82b92af1ea5221ce2bab2d8b92e8538045[m
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Wed Aug 25 15:27:57 2021 +0200
+
+    Ajout de composer 2 en dépendance de PHP
+
+[33mcommit a1c47ecabb26db42d7e9c682c4b51fb139988cf5[m
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Wed Aug 25 13:33:01 2021 +0200
+
+    Déplacement du NotificationService en dehors des controllers
+
+[33mcommit a85ba13619e3d66f9a817d595a785a89dcc215b3[m
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Wed Aug 25 15:24:13 2021 +0200
+
+    Ajout de la config de BDD
+
+[33mcommit 431fb7f621f1e0ef88b9e139e69dcc07c4838491[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Aug 25 15:00:32 2021 +0200
+
+    integration design step 1
+
+[33mcommit 90cb05d853ea3b49eb6b0f7652bb3517a5f783f3[m
+Merge: c99f438 f796501
+Author: SixtyNuuuts <sixty.nuuuts@gmail.com>
+Date:   Sun Aug 22 15:45:56 2021 +0000
+
+    Merge branch 'KIV-subscription-payment-stripe' into 'master'
+    
+    EN COURS - KIV - Subscription / Payment by Stripe
+    
+    See merge request kivid/kivid!20
+
+[33mcommit f796501bcfb5789943247541d52aa0c30a3ddab5[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sun Aug 22 17:40:46 2021 +0200
+
+    correct prescriptionList
+
+[33mcommit 6b6811ae0d666300a7d47d3dca806c476a30bb2d[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sun Aug 22 17:32:53 2021 +0200
+
+    commentaries 2 + new create traitement
+
+[33mcommit 63ee13a53610dae124feda00aa8093a103cf8dc0[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Aug 20 19:22:59 2021 +0200
+
+    create commentary
+
+[33mcommit 408bdfe44be95ee45965ad9a5a5b6f9f94d38c50[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Aug 20 12:34:05 2021 +0200
+
+    show Patient into PatientList Kiné
+
+[33mcommit 93274c8994e4cc7788efbbce026f4f6a7b15095c[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Thu Aug 19 15:43:11 2021 +0200
+
+    notification 2
+
+[33mcommit ffa69eb466fff62435afee1af6bb199659653b28[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Aug 18 19:06:05 2021 +0200
+
+    create notifications
+
+[33mcommit 4af44bfef29a2d2346b7f5a4f7ff70bed5ebd1c9[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Mon Aug 16 15:23:29 2021 +0200
+
+    config stripe + Subscription Entity & Controller
+
+[33mcommit 1f3b16090c4a092f70d4c1acc6cd2f05e610945e[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sat Aug 14 20:28:41 2021 +0200
+
+    add stripe + first config
+
+[33mcommit c99f438c536f5cc899c8ca9c330d66c82b73cfce[m
+Merge: 5f35769 18d7d50
+Author: SixtyNuuuts <sixty.nuuuts@gmail.com>
+Date:   Fri Aug 13 14:34:24 2021 +0000
+
+    Merge branch 'KIV-patient-my-worksheets' into 'master'
+    
+    KIV Patient Worksheets/Dashboard
+    
+    See merge request kivid/kivid!19
+
+[33mcommit 18d7d50de4a4bb224bf2e89458bd8fbc712852b6[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Aug 13 16:29:09 2021 +0200
+
+    worksheetSession 5.55
+
+[33mcommit 6e307dab758279d48efdab13a9e23f37e77bb6dc[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Aug 13 16:25:09 2021 +0200
+
+    worksheetSession 5.5
+
+[33mcommit 09355f2bede80998662b98e6d83262bde5932759[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Aug 13 15:14:01 2021 +0200
+
+    worksheetSession 5
+
+[33mcommit fa762fbc175f37434fca3d04f10d8c550e39eabe[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Aug 13 01:02:25 2021 +0200
+
+    worksheetSession 4
+
+[33mcommit 19a48c149733dcbefc03c6a0c33de0252b929504[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Thu Aug 12 17:22:56 2021 +0200
+
+    worksheetSession 3
+
+[33mcommit f94a7a9943b41199a1d375780e1baba32f9011cd[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Thu Aug 12 11:47:21 2021 +0200
+
+    worksheetSession refact 2 + improve css worksheetList
+
+[33mcommit 2f14f610922c7eafb639c2ab9f2139c2ee275fed[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Aug 11 14:37:17 2021 +0200
+
+    worksheetSession refact 1
+
+[33mcommit 46db8515d141efa57d1859ac999b6d02c0346ad0[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Tue Aug 10 21:01:05 2021 +0200
+
+    refact & correcs
+
+[33mcommit 1ca99ab0be1aff1b7780eeb33f0bf608f69eee0e[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Tue Aug 10 13:21:06 2021 +0200
+
+    config charts js / filter exercisesStats Data
+
+[33mcommit 52bacc7b4cd9c74294a2b39acdceb0303384068b[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Aug 6 18:41:05 2021 +0200
+
+    add chartjs and config 2
+
+[33mcommit 173b84ec87e3cb9a18679f208e8d89d4dc0d3677[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Aug 6 18:10:06 2021 +0200
+
+    add chartjs and first config
+
+[33mcommit 1cdfd6ea7f5301ecd47521b611c67cc26a89620d[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Thu Aug 5 19:02:52 2021 +0200
+
+    modifs
+
+[33mcommit 570139094b5c3d33f9b8713cf1a1bd2d87705666[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Aug 4 16:55:57 2021 +0200
+
+    modif
+
+[33mcommit 4d9e068453d9b349c7e090af19b4bd948c80ef38[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Tue Aug 3 20:59:47 2021 +0200
+
+    patient WorksheetList 5.1
+
+[33mcommit 4e61db2e9969f96844f591e94b0ac1220c21a807[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Tue Aug 3 20:33:29 2021 +0200
+
+    patient WorksheetList 5
+
+[33mcommit 03e36fd933c7331c21e07c1c31cc20e64685cc14[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Mon Aug 2 19:34:03 2021 +0200
+
+    patient WorksheetList 4
+
+[33mcommit 51e3a38b8498fb61debead88dc3692a0b443cdf3[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Mon Aug 2 16:27:29 2021 +0200
+
+    patient WorksheetList 3
+
+[33mcommit 218dd414740f79d7a7ec679c461cef123cec1c3c[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Jul 30 15:41:46 2021 +0200
+
+    patient WorksheetList 2
+
+[33mcommit f8a2fde250f7a0621467d246f910f07768a9d9ee[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Jul 30 14:20:22 2021 +0200
+
+    patient WorksheetList 1
+
+[33mcommit 5f3576922ff88bf7c28ceec6b67650beee41470f[m
+Merge: b05b599 cd73fc1
+Author: SixtyNuuuts <sixty.nuuuts@gmail.com>
+Date:   Wed Jul 28 13:21:50 2021 +0000
+
+    Merge branch 'KIV-23-24-26-54-fiches' into 'master'
+    
+    KIV 23 24 26 54 Fiches & Prescriptions
+    
+    See merge request kivid/kivid!18
+
+[33mcommit cd73fc1682c8de8f96a07199e4125fd74d71ca65[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Jul 28 15:07:03 2021 +0200
+
+    improve worksheet patient into patientsList
+
+[33mcommit 70078fc0b4d486b3a1b532c5871617ad8a651f98[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Jul 28 14:56:29 2021 +0200
+
+    add remove prescri
+
+[33mcommit 892722b47105d6e48250b75c2ef814cb47a15f28[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Jul 28 14:22:32 2021 +0200
+
+    improve responsive patientsList
+
+[33mcommit c2e20c5525e648f88088d75fd57c9d9eebf7b277[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Jul 28 13:50:18 2021 +0200
+
+    modif scss
+
+[33mcommit c1a507f0be929131254311941b89f4bbef6a6f88[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Jul 28 12:34:57 2021 +0200
+
+    correc 3
+
+[33mcommit 0f2e0faf8b6747b9cec04855d4b8137536421972[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Jul 28 12:30:18 2021 +0200
+
+    correc 2
+
+[33mcommit 6d9cad002be68ee8afb293c07022b2f2e5846d70[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Jul 28 10:21:55 2021 +0200
+
+    correc loading
+
+[33mcommit a3816d60dca5f8fd52b5dbdc031ea21a0482e579[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Jul 28 10:04:38 2021 +0200
+
+    correc marg btn
+
+[33mcommit 74c9a1731158e778a0504376280addc994d27e36[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Tue Jul 27 21:57:01 2021 +0200
+
+    refact
+
+[33mcommit cba0204efab3e2b3a9d09106bc050e9a838c5f0f[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Mon Jul 19 16:50:19 2021 +0200
+
+    improve vid list
+
+[33mcommit a2860d8245c47a93ebe70eba24b6d346c888fdae[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Mon Jul 19 15:36:36 2021 +0200
+
+    KIV-23 improve creat worksheet
+
+[33mcommit 78596927ce330fbf58df117d732294acf9a9febe[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Jul 16 16:06:33 2021 +0200
+
+    KIV-23 prescri
+
+[33mcommit 17573db7d26aeee0f42d82e1448c26e15e79c461[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Jul 16 12:12:58 2021 +0200
+
+    KIV-23 create worksheet
+
+[33mcommit e993cac9e96c8a6a00908962427e924d3df14e3c[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Jul 16 08:44:12 2021 +0200
+
+    KIV-23 improve video list + correc
+
+[33mcommit 86f9c37aaf8b73b465fa630576eeeaa739520f86[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Thu Jul 15 20:28:38 2021 +0200
+
+    KIV-23 Create Worksheet 1
+
+[33mcommit 914777efd277508dc4bd42ac7cc887f9332fafa1[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Thu Jul 15 08:08:33 2021 +0200
+
+    KIV-23-24-26-54 correc 3.2
+
+[33mcommit a8b1699cc635e84617b47d7e185465de51c90171[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Thu Jul 15 08:07:20 2021 +0200
+
+    KIV-23-24-26-54 correc 3
+
+[33mcommit 875c9c9c176623d9c5d88789ee79895921d3a9db[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Jul 14 19:38:24 2021 +0200
+
+    KIV-23-24-26-54 correc 2
+
+[33mcommit 5cfa76b47c0227fff292e7b0b1db1d2f6aa57f39[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Jul 14 10:38:35 2021 +0200
+
+    KIV-23-24-26-54 correc 1
+
+[33mcommit 9214ff1c81271dfdc3dc569ce7b06d7e782d1b64[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Mon Jul 12 17:49:24 2021 +0200
+
+    modif css
+
+[33mcommit e42bec0b4f3db44ebe705beefb871d4d0796c8a3[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Mon Jul 12 17:38:35 2021 +0200
+
+    kiv-54 improve/refact for worksheet/prescription list 2
+
+[33mcommit a2f8f46ea6b5f3d4bf920188cb2b846ef68428fc[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Mon Jul 12 13:39:02 2021 +0200
+
+    kiv-54 improve/refact for worksheet/prescription list
+
+[33mcommit cb4eb165185744bb1e54b5d1a3687649da8d9e90[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sat Jul 10 11:42:34 2021 +0200
+
+    kiv-54 worksheet/prescription list
+
+[33mcommit b05b5994f4ed7792a9dc5b6b0ff7ae7b350aaefc[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Thu Jul 8 14:01:36 2021 +0200
+
+    improve PatientList
+
+[33mcommit 64b3879fafe20657eabcdd513af73515c02590b6[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Thu Jul 8 13:16:21 2021 +0200
+
+    correc PatientList
+
+[33mcommit 9668d01d91bf9ef5396a99e7fcd2b898961aaa8a[m
+Merge: a90d260 3a42014
+Author: SixtyNuuuts <sixty.nuuuts@gmail.com>
+Date:   Thu Jul 8 11:00:04 2021 +0000
+
+    Merge branch 'KIV-20-25-36-53-patient-list' into 'master'
+    
+    KIV-20-25-36-53 Mes Patients
+    
+    See merge request kivid/kivid!17
+
+[33mcommit 3a420146a55d8b29c7a226499f4165fe6f17513a[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Thu Jul 8 12:54:22 2021 +0200
+
+    improve PatientList 2
+
+[33mcommit 7848a1a71716056ca28c65e40eed04942522758c[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Thu Jul 8 12:51:57 2021 +0200
+
+    improve PatientList
+
+[33mcommit 7cb2e7c66b5adcfee2d6796b5e06690f0c946859[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Thu Jul 8 11:48:53 2021 +0200
+
+    add Email Password creation process
+
+[33mcommit 06ab4765cd63a9df40d33721fb27aba25c1a2458[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Jul 7 18:03:22 2021 +0200
+
+    create 'suivi par Nom Prenom Kine' div into patient search
+
+[33mcommit f21d9441a5089d999ef06597a88e510b7a703a5d[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Jul 7 17:21:49 2021 +0200
+
+    refact sort & scss
+
+[33mcommit 9ae70110b4c7a756e37a44941b0098845e68e4fa[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Jul 7 00:22:53 2021 +0200
+
+    refact security AddPatient/RemovePatient post + csrf token
+
+[33mcommit d2c47cb0c8776f87c14f1aa6c121f45c7207320a[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Tue Jul 6 16:34:56 2021 +0200
+
+    Mes patients v2
+
+[33mcommit 4eef5646017e4ede26e90d4cbc2c58df9db06b75[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Mon Jul 5 22:40:44 2021 +0200
+
+    correc
+
+[33mcommit 101f79462c6aa5fce0b9436187f641157d499c30[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Mon Jul 5 22:39:42 2021 +0200
+
+    correc
+
+[33mcommit 81e2f27cb613ee644b5f96b0ed2d3a795b5a81de[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Mon Jul 5 22:35:12 2021 +0200
+
+    create UX vue Mes patients
+
+[33mcommit d677561e8b3c9f0f710f1eab757338454bed4d8d[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sat Jul 3 22:39:01 2021 +0200
+
+    add Vuesax UI framework
+
+[33mcommit 88aecaef4f81b1e7b066fc893187ca8fc7c2e8d1[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sat Jul 3 22:32:04 2021 +0200
+
+    add Vue + config
+
+[33mcommit a90d2602506f65f797a85b003067f8b77dfdca75[m
+Merge: 06d70a7 8561c45
+Author: SixtyNuuuts <sixty.nuuuts@gmail.com>
+Date:   Sat Jul 3 14:36:57 2021 +0000
+
+    Merge branch 'replace-manytomany-with-manytoone' into 'master'
+    
+    Replace ManyToMany -> ManyToOne : remove DoctorPatien Entity + refact
+    
+    See merge request kivid/kivid!16
+
+[33mcommit 8561c452ab27696b1573144fc4f954d92f4948f0[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sat Jul 3 16:32:04 2021 +0200
+
+    replace ManyToMany -> ManyToOne remove DoctorPatien Entity + refact
+
+[33mcommit 06d70a72b712bcccaa448fd1102c78d8c83241f7[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Jul 2 18:00:27 2021 +0200
+
+    correc twig
+
+[33mcommit 31abd22a2c119a76eca60f4f9715adca57543546[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Jul 2 17:22:38 2021 +0200
+
+    create DoctorPatient Entity + refact
+
+[33mcommit d34888d7b0a8c13d9740b81af897f8a772475c42[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Jul 2 12:03:03 2021 +0200
+
+    refact improve User Edit
+
+[33mcommit 901b800f418c912ad19a26a98cb5e4f0fcb8b497[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Jul 2 11:11:23 2021 +0200
+
+    refact & correc
+
+[33mcommit b19702b61e4a33da3308c156e11b101c388a6fb5[m
+Merge: f86abe1 c1898e7
+Author: SixtyNuuuts <sixty.nuuuts@gmail.com>
+Date:   Thu Jul 1 19:19:32 2021 +0000
+
+    Merge branch 'KIV-20-patient-details' into 'master'
+    
+    KIV-20 Ajout de patient
+    
+    See merge request kivid/kivid!15
+
+[33mcommit c1898e76ff68aed877801b520695a5776cb3d41c[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Thu Jul 1 21:09:58 2021 +0200
+
+    correc phpcs
+
+[33mcommit 42bad9ba284eb2cc3fdd56bca0331de7537f8bd9[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Thu Jul 1 21:05:51 2021 +0200
+
+    correc phpstan
+
+[33mcommit c865257fb64da8e152b58deb3530c8c2e356c0ce[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Thu Jul 1 20:52:34 2021 +0200
+
+    improve DoctorPatiensList
+
+[33mcommit e74840a04921a1d94865e057b4366410c3980ef0[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Thu Jul 1 16:05:19 2021 +0200
+
+    refact crud
+
+[33mcommit f86abe1542dcd82c6f9e1f6cabeeab42d42d9ef7[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Thu Jul 1 11:36:53 2021 +0200
+
+    correc Faker
+
+[33mcommit 7d2763221fc997d057b4360c3d40f817290f5661[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Thu Jul 1 11:18:46 2021 +0200
+
+    create PatientsList for Doctor + Fixtures
+
+[33mcommit 41b0096005444794fcc50809e9c1b22d78821250[m
+Merge: dd8231c 842220d
+Author: SixtyNuuuts <sixty.nuuuts@gmail.com>
+Date:   Wed Jun 30 20:43:21 2021 +0000
+
+    Merge branch 'KIV-19-nav' into 'master'
+    
+    KIV-19 Menu
+    
+    See merge request kivid/kivid!14
+
+[33mcommit 842220d5684938f34e0c1c92348e03992a12517a[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Jun 30 22:39:53 2021 +0200
+
+    improve menu + improve edit Doctor+Patient
+
+[33mcommit dd8231c7952c56d412926cba6065412f58393dd7[m
+Merge: 30cb46c fcf61d5
+Author: SixtyNuuuts <sixty.nuuuts@gmail.com>
+Date:   Wed Jun 30 16:48:49 2021 +0000
+
+    Merge branch 'KIV-18-edit-patient' into 'master'
+    
+    KIV-18  Patient Edition
+    
+    See merge request kivid/kivid!13
+
+[33mcommit fcf61d5c52b35bbe0fe21bb3fd7a37c031426c2f[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Jun 30 18:45:44 2021 +0200
+
+    create Edit Action + Modal + Ajax
+
+[33mcommit 4e07d89fccbe32bdd1fd2cf140195acaa55edfd0[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Jun 30 14:51:12 2021 +0200
+
+    improve display profil into dashboard
+
+[33mcommit 30cb46c176af267d1f28ad6b975b2a0e3e11e5aa[m
+Merge: a734638 653061d
+Author: SixtyNuuuts <sixty.nuuuts@gmail.com>
+Date:   Wed Jun 30 06:04:06 2021 +0000
+
+    Merge branch 'KIV-17-profil-patient' into 'master'
+    
+    KIV-17 Profil Patient dans le Dashboard
+    
+    See merge request kivid/kivid!12
+
+[33mcommit 653061d1d58778bfe1e864f36084ce0bbd054c42[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Jun 30 08:00:29 2021 +0200
+
+    create profil into Dashboard
+
+[33mcommit a734638650dfdee3c051ac4c04cfc33f09e6ebc2[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Tue Jun 29 18:47:35 2021 +0200
+
+    correc display avatar google
+
+[33mcommit 65f1537a98d8ddcb670c1f0459204de0251eaf2c[m
+Merge: 234af77 c4b9cab
+Author: SixtyNuuuts <sixty.nuuuts@gmail.com>
+Date:   Tue Jun 29 14:57:31 2021 +0000
+
+    Merge branch 'KIV-15-admin-video-crud' into 'master'
+    
+    KIV-15 Admin Video Crud
+    
+    See merge request kivid/kivid!11
+
+[33mcommit c4b9cab7591c68369dc1b4778dade9de11d69d3c[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Tue Jun 29 16:34:56 2021 +0200
+
+    improve avatar (default)
+
+[33mcommit 44d5639d2e9408715eeb107e244aadb258e85c67[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Tue Jun 29 16:06:17 2021 +0200
+
+    create EasyAdminEvent for Thumbnail & custom Action btn
+
+[33mcommit 5378442f4311f517973b67156f701fdcd46ce55a[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Tue Jun 29 14:06:40 2021 +0200
+
+    create Video & Tag Entity+AdminCRUD 2
+
+[33mcommit eaac1ec040c80d7f90508a66172b3f9363e3085d[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Tue Jun 29 14:05:39 2021 +0200
+
+    create Video & Tag Entity+AdminCRUD
+
+[33mcommit 234af772f65461f27607ec8fba0bc446cba27e35[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Mon Jun 28 19:49:07 2021 +0200
+
+    correc template 2
+
+[33mcommit c123888ac159c2d9be41b7c9a303d2793a8d4322[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Mon Jun 28 19:45:28 2021 +0200
+
+    correc template
+
+[33mcommit 0af69466dda451dc6dfa10482d72d21e3b712e3c[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Mon Jun 28 19:36:41 2021 +0200
+
+    create temporary template
+
+[33mcommit a5ccccdc4abe42a45f4a13d013de94c0e55b3514[m
+Merge: 1af65db 7a0de99
+Author: SixtyNuuuts <sixty.nuuuts@gmail.com>
+Date:   Mon Jun 28 08:09:31 2021 +0000
+
+    Merge branch 'KIV-11-back-office-admin' into 'master'
+    
+    KIV-11 Dashboard Admin
+    
+    See merge request kivid/kivid!10
+
+[33mcommit 7a0de9975e30960f308d0e8a9e797b73d56fcabf[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Mon Jun 28 10:04:22 2021 +0200
+
+    create admin dashboard + adminUser provider + security acces & redirect
+
+[33mcommit 1af65dbaca3a9bb5c6697fa60c79139eaf812c1e[m
+Merge: 431990c 9159cd2
+Author: SixtyNuuuts <sixty.nuuuts@gmail.com>
+Date:   Mon Jun 28 04:18:40 2021 +0000
+
+    Merge branch 'KIV-12-oauth-google' into 'master'
+    
+    KIV-12 KIV-13 Social Login
+    
+    See merge request kivid/kivid!9
+
+[33mcommit 9159cd22e5626e89876a5572e6e931f6da450ac9[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sun Jun 27 19:20:17 2021 +0200
+
+    create PatientVoter & DoctorVoter + update Readme/env
+
+[33mcommit 9df4171de9c01a7ba1bab2d0815f05cf9d205fd0[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sun Jun 27 16:43:37 2021 +0200
+
+    add userType handler
+
+[33mcommit a1f0ca7c55abb3e013cee0a8dd56a1bb62b250cb[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sun Jun 27 11:58:18 2021 +0200
+
+    refact code
+
+[33mcommit 59bad66e17796860b32542ac1a8b35a27541b332[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sun Jun 27 11:42:57 2021 +0200
+
+    refact oauth2 bundle + create facebookLogin service
+
+[33mcommit 95a6a3178ac1a47a1e8361593d87e8cf795b3e3a[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Sat Jun 26 22:46:20 2021 +0200
+
+    setup oauth2 bundle + create googleLogin service
+
+[33mcommit 431990c4e10b53df0c5131f0a615266124affb7c[m
+Merge: 5e66930 068487c
+Author: SixtyNuuuts <sixty.nuuuts@gmail.com>
+Date:   Fri Jun 25 14:03:12 2021 +0000
+
+    Merge branch 'KIV-14-reset-password' into 'master'
+    
+    KIV-14 Fonctionnalité oubli de mot de passe
+    
+    See merge request kivid/kivid!8
+
+[33mcommit 068487c001eaf44d501322afa15f6ffb508b0258[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Fri Jun 25 16:00:06 2021 +0200
+
+    refact & config reset-password
+
+[33mcommit be55d4c0cfeb04362d4d5c30f044bc262825ed3e[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Thu Jun 24 19:20:52 2021 +0200
+
+    create reset-password
+
+[33mcommit 5e669308f388603e9ce8828c8b26d79405bab895[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Thu Jun 24 10:01:13 2021 +0200
+
+    refact LoginFormAuthenticator
+
+[33mcommit c2f3d259c8888c902762eaf15c38029d11d392b4[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Thu Jun 24 09:40:26 2021 +0200
+
+    refact RegistrationController
+
+[33mcommit a477d706eab1c43c64fdc011d266878ea1b2dda0[m
+Merge: 12e6b35 e1eb950
+Author: SixtyNuuuts <sixty.nuuuts@gmail.com>
+Date:   Wed Jun 23 21:59:08 2021 +0000
+
+    Merge branch 'KIV-8-auth' into 'master'
+    
+    KIV-8 Page de login
+    
+    See merge request kivid/kivid!7
+
+[33mcommit e1eb9509fbf8e7c00f6b65025b16d0123c54fa21[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Jun 23 23:55:59 2021 +0200
+
+    add @isGranted into Dashboards
+
+[33mcommit f5b697f05b6649bfc1e862b1f030269040721986[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Jun 23 23:35:32 2021 +0200
+
+    create LoginFormAuthenticator
+
+[33mcommit 39f5b90082b65180783196c53449b5b2d4af20dd[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Jun 23 18:56:44 2021 +0200
+
+    create login_form + logout + routes
+
+[33mcommit 12e6b355085092b5a7f5897eb007c039af12968d[m
+Merge: f108c07 4b8584a
+Author: SixtyNuuuts <sixty.nuuuts@gmail.com>
+Date:   Wed Jun 23 14:39:06 2021 +0000
+
+    Merge branch 'KIV-10-dashboard-kine' into 'master'
+    
+    KIV-10 Dashboard Kiné
+    
+    See merge request kivid/kivid!6
+
+[33mcommit 4b8584ac0566b6886298b39c6dee4c64d43dfbe9[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Jun 23 16:35:56 2021 +0200
+
+    create dashboard kine
+
+[33mcommit f108c07defda08d638818f482c0117a2f71cfe01[m
+Merge: 557c71d 1685d17
+Author: SixtyNuuuts <sixty.nuuuts@gmail.com>
+Date:   Wed Jun 23 14:27:10 2021 +0000
+
+    Merge branch 'KIV-9-dashboard-patient' into 'master'
+    
+    KIV-9 Dashboard Patient
+    
+    See merge request kivid/kivid!5
+
+[33mcommit 1685d17f184a6276a8df5c46ed34987cbd2a4b73[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Jun 23 16:23:53 2021 +0200
+
+    create dashboard patient
+
+[33mcommit 557c71d450656d5881d64a42dfe4033bb4f41f83[m
+Merge: e6df0fe 9a2a6ac
+Author: SixtyNuuuts <sixty.nuuuts@gmail.com>
+Date:   Wed Jun 23 13:57:28 2021 +0000
+
+    Merge branch 'KIV-7-registration-page-emailverif' into 'master'
+    
+    KIV-7 Page d'inscription avec validation du compte par email
+    
+    See merge request kivid/kivid!4
+
+[33mcommit 9a2a6ac11a32ff5343292bacb2a8234edaa55f00[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Jun 23 15:52:43 2021 +0200
+
+    refact registration
+
+[33mcommit fde0339727dcd7c19d8824f0c087b3c061a67a9d[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Jun 23 11:51:36 2021 +0200
+
+    create registration pages patient/doctor + verify email
+
+[33mcommit 47046f8600895611b0ddddb20a1eb9f586764f2f[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Wed Jun 23 00:00:22 2021 +0200
+
+    create entity/repo : user / patient / doctor + config security.yaml
+
+[33mcommit e6df0fea74745ed30b8859272208698855d2af59[m
+Merge: 6cde68b 31b159d
+Author: SixtyNuuuts <sixty.nuuuts@gmail.com>
+Date:   Tue Jun 22 16:01:13 2021 +0000
+
+    Merge branch 'KIV-5-tech-init' into 'master'
+    
+    Kiv 5 - Initialisation technique
+    
+    See merge request kivid/kivid!3
+
+[33mcommit 31b159df5408ebc18506991fd8516385ffbe6332[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Tue Jun 22 15:29:59 2021 +0200
+
+    add phpcs + phpcbf + update readme
+
+[33mcommit cb075958c5681eae0d0a1f90bed97bc260b21eec[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Tue Jun 22 15:13:19 2021 +0200
+
+    add phpstan + update readme
+
+[33mcommit 8c3c99e4dfb901c23494e57ad4968701ca41f190[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Tue Jun 22 14:54:01 2021 +0200
+
+    add webpack encore + sassloader + postcssloader/autoprefixer
+
+[33mcommit f502f8929ef5eb505019c3e58a6aaa5ba8cd5658[m
+Author: Damien Dupuy <sixty.nuuuts@gmail.com>
+Date:   Tue Jun 22 13:27:52 2021 +0200
+
+    add docker bd & mailcatcher + readme
+
+[33mcommit 6cde68b64985e87279bc639d703e7620bd57bf3b[m
+Merge: d8ea693 e6f6fc3
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Mon Jun 21 08:09:11 2021 +0000
+
+    Merge branch 'KIV-3-demo-inte' into 'master'
+    
+    fonctionnalité de démo
+    
+    See merge request kivid/kivid!2
+
+[33mcommit e6f6fc386cf3fb922bd78f69e894b619b6df365a[m
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Mon Jun 21 10:03:44 2021 +0200
+
+    fonctionnalité de démo
+
+[33mcommit d8ea693295d19d21babe20371f585fb0abb84ec9[m
+Merge: 4c100c1 6b24cd2
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Sat Jun 19 07:17:27 2021 +0000
+
+    Merge branch 'KIV-1-Test-inte-gitlab' into 'master'
+    
+    Commit bidon pour tester l'intégration jira-gitlab
+    
+    See merge request kivid/kivid!1
+
+[33mcommit 6b24cd20660c1ae4e54854efa370a6204974a03a[m
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Sat Jun 19 08:59:36 2021 +0200
+
+    Commit bidon pour tester l'intégration jira-gitlab
+
+[33mcommit 4c100c110d527bf9a054b86e510666017fea6ea4[m
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Fri Jun 18 15:44:28 2021 +0200
+
+    fix du phpcs dans la pipeline gitlab - encore
+
+[33mcommit 6a0fc0a6392fa2183c6a74ff91b6d00a8ba15e8e[m
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Fri Jun 18 15:41:01 2021 +0200
+
+    fix du phpcs dans la pipeline gitlab
+
+[33mcommit 17b96c4b32f489e551a39a3ed1f2fab8d4977fb4[m
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Fri Jun 18 15:28:02 2021 +0200
+
+    Mise à jour d'une librairie qui avait une faille de sécurité
+
+[33mcommit 30591f96c9273854c99f9ec02496ce9f5d23d50c[m
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Fri Jun 18 15:25:01 2021 +0200
+
+    Mise à jour du security checker
+
+[33mcommit 056cce3ff3a3187328e3dc7a9d80b5931a9b1d45[m
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Fri Jun 18 15:21:22 2021 +0200
+
+    fix du .gitlab-ci.yml
+
+[33mcommit 806e5a130829911b5f0decce5513db43f5159516[m
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Fri Jun 18 15:18:26 2021 +0200
+
+    ajout de la config symfony cloud + initialisation fichier de ci pour gitlab
+
+[33mcommit 0451695ff6291b047b870ef053388815cacc2b79[m
+Author: Vincent BOURDEIX <vbourdeix@gmail.com>
+Date:   Fri Jun 18 14:17:36 2021 +0200
+
+    commit initial - initialisation projet symfony cloud

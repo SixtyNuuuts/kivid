@@ -49,10 +49,7 @@ class CreatePasswordController extends AbstractController
         try {
             $user = $this->passwordHelper->validateTokenAndFetchUser($token);
         } catch (ResetPasswordExceptionInterface $e) {
-            return $this->json(
-                "Erreur lors du processus de création de mot de passe",
-                500
-            );
+            return $this->render('create_password/invalid-token.html.twig');
         }
 
         if ($request->isMethod('post')) {

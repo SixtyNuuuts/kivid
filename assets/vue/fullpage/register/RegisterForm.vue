@@ -536,7 +536,7 @@ export default {
 
                                     setTimeout(() => {
                                         document.location.href = `/connexion`;
-                                    }, 2000);
+                                    }, 1000);
                                 })
                                 .catch((error) => {
                                     const errorMess =
@@ -555,7 +555,7 @@ export default {
 
                             setTimeout(() => {
                                 document.location.href = `/connexion`;
-                            }, 2000);
+                            }, 1000);
                         }
                     })
                     .catch((error) => {
