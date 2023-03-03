@@ -21,6 +21,7 @@
 {% block vueData %}
 		{
 			"csrfTokenRegister": {{ csrf_token('registration')|serialize('json')|raw }},
-			"csrfTokenContact": {{ csrf_token('contact')|serialize('json')|raw }}
+			"csrfTokenContact": {{ csrf_token('contact')|serialize('json')|raw }},
+			"registerType": {{ registerType|serialize('json')|raw }}
 		}
 {% endblock %}

@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <section id="dashboard" class="db-doctor">
+        <section id="dashboard">
             <h1>
                 <transition name="fade">
                     <span
@@ -15,19 +15,19 @@
             </h1>
             <main>
                  <section
-                    id="ffmkr-doctors"
+                    id="ffmkr-adhesions"
                     class="kiv-block"
-                    :class="{ reduced: !FFMKRDoctorsContent }"
+                    :class="{ reduced: !FFMKRAdhesionsContent }"
                 >
                     <button
                         class="toggle-content"
-                        @click="FFMKRDoctorsContent = !FFMKRDoctorsContent"
+                        @click="FFMKRAdhesionsContent = !FFMKRAdhesionsContent"
                     >
                         <i class="kiv-chevron-down icon-3"></i>
                     </button>
-                    <h2>Praticiens FFMKR <span v-if="!loadingFFMKRDoctors">({{ FFMKRDoctors.length }} adhérents)</span></h2>
+                    <h2>Adhesions FFMKR <span v-if="!loadingFFMKRAdhesions">({{ FFMKRAdhesions.length }} adhérents)</span></h2>
                     <transition name="height">
-                        <div v-if="FFMKRDoctorsContent">
+                        <div v-if="FFMKRAdhesionsContent">
                             <div class="primary-actions">
                                 <div class="search">
                                     <vs-input
@@ -48,67 +48,80 @@
                                             accept=".csv, text/csv"
                                             @change="loadCsvFile($event)"
                                         />
-                                        <i class="fas fa-file-import"></i> <span><span v-if="FFMKRDoctors.length>0">Mettre à jour les praticiens (CSV)</span><span v-else>Importer des praticiens (CSV)</span></span>
+                                        <i class="fas fa-file-import"></i> <span><span v-if="FFMKRAdhesions.length>0">Mettre à jour les adhesions (CSV)</span><span v-else>Importer les adhesions (CSV)</span></span>
                                     </vs-button>                    
                                 </div>
                             </div>
-                            <div class="doctors-list">
-                                <div v-if="!loadingFFMKRDoctors">
+                            <div class="adhesions-list">
+                                <div v-if="!loadingFFMKRAdhesions">
                                     <vs-table>
                                         <template #thead>
                                             <vs-tr>
-                                                <vs-th sort @click="sortData($event, FFMKRDoctors, 'doctor.FFMKRAdhesionRequestToken')">
+                                                <vs-th sort @click="sortData($event, FFMKRAdhesions, 'numcli')">
+                                                    NumCli
+                                                </vs-th>
+                                                <vs-th sort @click="sortData($event, FFMKRAdhesions, 'firstname')">
+                                                    Prénom
+                                                </vs-th>
+                                                <vs-th sort @click="sortData($event, FFMKRAdhesions, 'lastname')">
+                                                    Nom
+                                                </vs-th>
+                                                <vs-th sort @click="sortData($event, FFMKRAdhesions, 'email')">
+                                                    Email
+                                                </vs-th>
+                                                <vs-th sort @click="sortData($event, FFMKRAdhesions, 'numRpps')">
+                                                    Num RPPS
+                                                </vs-th>
+                                                <vs-th sort @click="sortData($event, FFMKRAdhesions, 'dateOf')">
+                                                    Date De
+                                                </vs-th>
+                                                <vs-th sort @click="sortData($event, FFMKRAdhesions, 'dateOf')" class="max-w-12rem">
+                                                    Statut Kivid
+                                                </vs-th>
+                                                <vs-th sort @click="sortData($event, FFMKRAdhesions, 'requestToken')" class="max-w-6-5rem">
                                                     <span class="logo-blason-kivid"><img src="/img/logo-kivid-gradient-grey.svg" alt="logo Kivid"></span>
-                                                </vs-th>
-                                                <vs-th sort @click="sortData($event, FFMKRDoctors, 'numcli')">
-                                                NumCli
-                                                </vs-th>
-                                                <vs-th sort @click="sortData($event, FFMKRDoctors, 'firstname')">
-                                                Prénom
-                                                </vs-th>
-                                                <vs-th sort @click="sortData($event, FFMKRDoctors, 'lastname')">
-                                                Nom
-                                                </vs-th>
-                                                <vs-th sort @click="sortData($event, FFMKRDoctors, 'email')">
-                                                Email
-                                                </vs-th>
-                                                <vs-th sort @click="sortData($event, FFMKRDoctors, 'numRpps')">
-                                                Num RPPS
-                                                </vs-th>
-                                                <vs-th sort @click="sortData($event, FFMKRDoctors, 'dateOf')">
-                                                Date De
                                                 </vs-th>
                                             </vs-tr>
                                         </template>
                                         <template #tbody>
                                             <vs-tr
-                                                v-for="(doctor, i) in getFFMKRDoctors"
-                                                :data="doctor"
+                                                v-for="(adhesion, i) in getFFMKRAdhesions"
+                                                :data="adhesion"
                                                 :key="i"
                                             >
                                                 <vs-td>
-                                                    <vs-tooltip class="logo-blason-kivid-tooltip" v-if="doctor.doctor.FFMKRAdhesionRequestToken">
+                                                    {{ adhesion.numcli ? adhesion.numcli : '---' }}
+                                                </vs-td>
+                                                <vs-td>
+                                                    {{ adhesion.firstname ? adhesion.firstname : '---' }}
+                                                </vs-td>
+                                                <vs-td>
+                                                    {{ adhesion.lastname ? adhesion.lastname : '---' }}
+                                                </vs-td>
+                                                <vs-td>
+                                                    {{ adhesion.email ? adhesion.email : '---' }}
+                                                </vs-td>
+                                                <vs-td>
+                                                    {{ adhesion.numRpps ? adhesion.numRpps : '---' }}
+                                                </vs-td>
+                                                <vs-td>
+                                                    {{ adhesion.dateOf ? adhesion.dateOf : '---' }}
+                                                </vs-td>
+                                                <vs-td>
+                                                    <div class="status" v-if="adhesion.doctor">
+                                                        <div class="icon-active-status"></div>
+                                                        <p class="text-status">inscrit</p>
+                                                    </div>
+                                                   <div class="status" v-else>
+                                                        <div class="icon-inactive-status"></div>
+                                                        <p class="text-status">non inscrit</p>
+                                                    </div>
+                                                </vs-td>
+                                                <vs-td>
+                                                    <vs-tooltip class="logo-blason-kivid-tooltip" v-if="adhesion.requestToken">
                                                         <span class="logo-blason-kivid"><img src="/img/logo-kivid-gradient.svg" alt="logo Kivid"></span>
                                                         <template #tooltip>Adhésion via kivid</template>
                                                     </vs-tooltip>
-                                                </vs-td>
-                                                <vs-td>
-                                                    {{ doctor.numcli ? doctor.numcli : '---' }}
-                                                </vs-td>
-                                                <vs-td>
-                                                    {{ doctor.firstname ? ucwords(doctor.firstname) : '---' }}
-                                                </vs-td>
-                                                <vs-td>
-                                                    {{ doctor.lastname ? ucwords(doctor.lastname) : '---' }}
-                                                </vs-td>
-                                                <vs-td>
-                                                    {{ doctor.email ? doctor.email : '---' }}
-                                                </vs-td>
-                                                <vs-td>
-                                                    {{ doctor.numRpps ? doctor.numRpps : '---' }}
-                                                </vs-td>
-                                                <vs-td>
-                                                    {{ doctor.dateOf ? doctor.dateOf : '---' }}
                                                 </vs-td>
                                             </vs-tr>
                                         </template>
@@ -117,28 +130,28 @@
                                 <div
                                     class="not-found"
                                     v-if="
-                                        !loadingFFMKRDoctors &&
-                                        !getFFMKRDoctors.length &&
+                                        !loadingFFMKRAdhesions &&
+                                        !getFFMKRAdhesions.length &&
                                         !search
                                     "
                                 >
                                     <p>
                                         <i class="fas fa-user-minus"></i>
-                                        <span>Il n'y a pas de praticien FFMKR sur Kivid</span>
+                                        <span>Il n'y a pas d'adhesion FFMKR sur Kivid</span>
                                     </p>
                                 </div>
                                 <div
                                     class="not-found"
                                     v-if="
-                                        !loadingFFMKRDoctors &&
-                                        !getFFMKRDoctors.length &&
+                                        !loadingFFMKRAdhesions &&
+                                        !getFFMKRAdhesions.length &&
                                         search
                                     "
                                 >
                                     <p>
                                         <i class="fas fa-user-minus"></i>
                                         <span
-                                            >Aucun praticien FFMKR n'a été trouvé avec
+                                            >Aucune adhesion FFMKR n'a été trouvé avec
                                             <span v-if="search"
                                                 >"<strong>{{ search }}</strong
                                                 >"</span
@@ -146,7 +159,7 @@
                                         >
                                     </p>
                                 </div>
-                                <div v-if="loadingFFMKRDoctors">
+                                <div v-if="loadingFFMKRAdhesions">
                                     <div
                                         v-for="(loading, i) in 26"
                                         :key="i"
@@ -155,16 +168,16 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="pagination" v-if="FFMKRDoctors.length > max">
+                            <div class="pagination" v-if="FFMKRAdhesions.length > max">
                                 <vs-pagination 
                                     v-model="page" 
                                     :length="
-                                        getLength(getSearch(FFMKRDoctors, search), max)
+                                        getLength(getSearch(FFMKRAdhesions, search), max)
                                     "
                                 >
                                     <vs-select v-model="page">
                                         <vs-option
-                                            v-for="numberPage in getLength(getSearch(FFMKRDoctors, search), max)"
+                                            v-for="numberPage in getLength(getSearch(FFMKRAdhesions, search), max)"
                                             :key="numberPage"
                                             :label="numberPage"
                                             :value="numberPage">
@@ -189,34 +202,34 @@ import moment from "moment";
 export default {
     data() {
         return {
-            FFMKRDoctorsContent: true,
-            FFMKRDoctors: [],
+            FFMKRAdhesionsContent: true,
+            FFMKRAdhesions: [],
             search: "",
             page: 1,
             max: 25,
-            loadingFFMKRDoctors: false,
+            loadingFFMKRAdhesions: false,
             btnLoadingLoadCsvFile: false,
         };
     },
     computed: {
-        getFFMKRDoctors() {
+        getFFMKRAdhesions() {
             return this.getPage(
-                f.getSearch(this.FFMKRDoctors, this.search),
+                f.getSearch(this.FFMKRAdhesions, this.search),
                 this.page,
                 this.max
             );
         },
     },
     methods: {   
-        getFFMKRDoctorsData() {
-        this.loadingFFMKRDoctors = true;
+        getFFMKRAdhesionsData() {
+        this.loadingFFMKRAdhesions = true;
         this.btnLoadingLoadCsvFile = true;
 
         this.axios
-            .get(`/ffmkr/get/doctors`)
+            .get(`/ffmkr/get/adhesions`)
             .then((response) => {
-                this.FFMKRDoctors = response.data;
-                this.loadingFFMKRDoctors = false;
+                this.FFMKRAdhesions = response.data;
+                this.loadingFFMKRAdhesions = false;
                 this.btnLoadingLoadCsvFile = false;
             })
             .catch((error) => {
@@ -234,32 +247,32 @@ export default {
                 const formData = new FormData();
                 formData.append('csv_file', csvFile.files[0]);
            
-                this.loadingFFMKRDoctors = true;
+                this.loadingFFMKRAdhesions = true;
                 this.btnLoadingLoadCsvFile = true;
 
                 this.axios
-                    .post(`/ffmkr/import/doctors`, formData, {
+                    .post(`/ffmkr/import/adhesions`, formData, {
                         headers: {
                             'Content-Type': 'multipart/form-data'
                         }
                     })
                     .then((response) => {
                         csvFile.value = '';
-                        this.loadingFFMKRDoctors = false;
+                        this.loadingFFMKRAdhesions = false;
                         this.btnLoadingLoadCsvFile = false;
-                        const hasChanges = response.data.createdFFMKRDoctorsCount > 0 || response.data.updatedFFMKRDoctorsCount > 0 || response.data.deletedFFMKRDoctorsCount > 0;
+                        const hasChanges = response.data.createdFFMKRAdhesionsCount > 0 || response.data.updatedFFMKRAdhesionsCount > 0 || response.data.deletedFFMKRAdhesionsCount > 0;
 
                         f.openSuccessNotification(
-                            "Praticiens mis à jour",
+                            "Adhésion(s) mis à jour",
                              hasChanges ? `
-                             Praticien(s) créé(s) : ${response.data.createdFFMKRDoctorsCount}<br>
-                             Praticien(s) modifié(s) : ${response.data.updatedFFMKRDoctorsCount}<br>
-                             Praticien(s) supprimé(s) : ${response.data.deletedFFMKRDoctorsCount}
+                             Adhésion(s) créé(s) : ${response.data.createdFFMKRAdhesionsCount}<br>
+                             Adhésion(s) modifié(s) : ${response.data.updatedFFMKRAdhesionsCount}<br>
+                             Adhésion(s) supprimé(s) : ${response.data.deletedFFMKRAdhesionsCount}
                              ` : 'Votre fichier .csv ne contient aucune nouvelles données'
                         );
 
                         if(hasChanges)
-                            this.getFFMKRDoctorsData();
+                            this.getFFMKRAdhesionsData();
                     })
                     .catch((error) => {
                         console.log(error);
@@ -271,12 +284,6 @@ export default {
                         );
                     });
             }
-        },
-        ucwords(str) {
-        return str.toLowerCase().replace(/(^([a-zA-Z\p{M}]))|([ -][a-zA-Z\p{M}])/g,
-            function(s){
-                return s.toUpperCase();
-            });
         },
         formatDate(datetime) {
             return moment(datetime).format("DD/MM/YYYY");
@@ -295,7 +302,7 @@ export default {
         },
         sortData(evt, data, sortKey) {
             this.page = 1;
-            this.FFMKRDoctors = f.sortData(evt, data, sortKey);
+            this.FFMKRAdhesions = f.sortData(evt, data, sortKey);
         },
     },
     created() {
@@ -304,7 +311,7 @@ export default {
 
         const data = JSON.parse(document.getElementById("vueData").innerHTML);
 
-        this.getFFMKRDoctorsData();
+        this.getFFMKRAdhesionsData();
     },
 };
 </script>
@@ -319,7 +326,7 @@ export default {
     }
 }
 
-#ffmkr-doctors {
+#ffmkr-adhesions {
     .primary-actions {
         flex-direction: row;
 
@@ -353,7 +360,15 @@ export default {
         }
     }
 
-    .doctors-list {
+    .adhesions-list {
+        .max-w-12rem {
+            max-width: 12rem;
+        }
+
+        .max-w-6-5rem {
+            max-width: 6.5rem;
+        }
+
         .logo-blason-kivid-tooltip {
             width: 1.9625rem;
             height: 1.9625rem;
@@ -372,11 +387,58 @@ export default {
             border: 0.0625rem solid #f2f2f2;
             box-shadow: 0rem 0.4rem 0.7rem rgba(148,96,77, 0.04);
             margin-right: 0.4rem;
+            user-select: none;
 
             img {
                 width: 100%;
             };
         }
+
+        .status {
+            border: 1px solid #e8e8e8;
+            padding: 0.35rem 0.7rem;
+            padding-bottom: 0.4rem;
+            border-radius: 0.3rem;
+            align-items: center;
+            display: inline-flex;
+            color: #7a7a7a;
+            text-transform: uppercase;
+            font-size: 1rem;
+            position: relative;
+            left: -0.6rem;
+            white-space: nowrap;
+
+            .icon-active-status,
+            .icon-inactive-status {
+                border-radius: 50%;
+                margin-right: 0.4rem;
+            }
+
+            .icon-active-status {
+                width: 1rem;
+                height: 1rem;
+                min-width: 1rem;
+                max-height: 1rem;
+                border: 1px solid #fdfdfd;
+                background-color: #5ad5b0;
+            }
+
+            .icon-inactive-status {
+                width: 0.85rem;
+                height: 0.85rem;
+                min-width: 0.85rem;
+                max-height: 0.85rem;
+                border: 1px solid #e8e8e8;
+                background-color: #f0f0f0;
+            }
+
+            p.text-status {
+                margin: 0;
+                position: relative;
+                top: 0.15rem;
+            }
+        }
+
 
         .loading-block:first-child {
             min-height: 2.125rem;

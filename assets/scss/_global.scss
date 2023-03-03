@@ -1272,6 +1272,7 @@ p.alert {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-top: 2.7rem;
 
             >div {
                 display: flex;
@@ -1289,7 +1290,7 @@ p.alert {
 
             .vs-button {
                 width: 48%;
-                font-size: 1rem;
+                font-size: 1.3rem!important;
                 white-space: nowrap;
                 box-shadow: 0rem 0.4rem 1.4rem 0rem rgba(185, 174, 162, 0.5);
 

@@ -1,7 +1,7 @@
 <template>
     <div class="container fullpage">
         <vs-button
-            v-if="activeStep != 1"
+                v-if="activeStep != 1 && !this.registerType"
             @click="
                 activeStep != previousStep
                     ? (activeStep = previousStep)
@@ -15,7 +15,7 @@
         >
             <i class="kiv-arrow-left icon-31"></i>
         </vs-button>
-        <div id="register-steps">
+        <div id="register-steps" v-if="!this.registerType">
             <div
                 class="step"
                 :class="{ active: activeStep == 1 }"
@@ -62,6 +62,7 @@
                 :userHasDoctor="userHasDoctor"
                 :csrfTokenRegister="csrfTokenRegister"
                 :csrfTokenContact="csrfTokenContact"
+                :registerType="registerType"
             />
         </transition>
     </div>
@@ -78,6 +79,7 @@ export default {
         return {
             csrfTokenRegister: null,
             csrfTokenContact: null,
+            registerType: null,
             activeStep: 1,
             previousStep: 1,
             userType: null,
@@ -120,6 +122,11 @@ export default {
 
         this.csrfTokenRegister = data.csrfTokenRegister;
         this.csrfTokenContact = data.csrfTokenContact;
+        this.registerType = data.registerType;
+
+        if(this.registerType === 'ffmkr') {
+            this.setUserTypeChoice('doctor');
+        }
     },
 };
 </script>

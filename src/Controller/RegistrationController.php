@@ -4,13 +4,15 @@ namespace App\Controller;
 
 use App\Entity\Doctor;
 use App\Entity\Patient;
+use App\Entity\FFMKRAdhesion;
 use App\Security\EmailVerifier;
 use Symfony\Component\Mime\Address;
 use App\Repository\DoctorRepository;
+use App\Service\NotificationService;
 use App\Repository\PatientRepository;
 use App\Security\LoginFormAuthenticator;
-use App\Service\NotificationService;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\FFMKRAdhesionRepository;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -45,7 +47,9 @@ class RegistrationController extends AbstractController
         EntityManagerInterface $em,
         NotificationService $notificationService,
         PatientRepository $patientRepository,
-        DoctorRepository $doctorRepository
+        DoctorRepository $doctorRepository,
+        FFMKRAdhesionRepository $FFMKRAdhesionRepository,
+        ?string $registerType
     ): Response {
         if ($this->getUser()) {
             return $this->redirectFromIsGranted();
@@ -54,7 +58,7 @@ class RegistrationController extends AbstractController
         if ($request->isMethod('post')) {
             $data = json_decode($request->getContent());
 
-            if ($this->isCsrfTokenValid('registration', $data->_token)) {
+            if ($this->isCsrfTokenValid('registration', $data->_token) && !empty($data->userType) && !empty($data->email)) {
                 $patientWithThisEmail = $patientRepository->findOneBy(['email' => $data->email]);
                 $doctorWithThisEmail = $doctorRepository->findOneBy(['email' => $data->email]);
 
@@ -67,12 +71,7 @@ class RegistrationController extends AbstractController
 
                 $user = 'doctor' === $data->userType ? new Doctor() : new Patient();
 
-                $user->setEmail($data->email)->setFirstname($data->firstname)->setLastname($data->lastname);
-                $user->setPassword(
-                    $passwordHasher->hashPassword($user, $data->plainPassword)
-                );
-                
-                if ('patient' === $data->userType && $data->doctorSelectId) {
+                if ('patient' === $data->userType && !empty($data->doctorSelectId)) {
                     $patientDoctor = $doctorRepository->findOneBy(['id' => $data->doctorSelectId]);
                     
                     $user->setAddRequestDoctor(true);
@@ -82,10 +81,35 @@ class RegistrationController extends AbstractController
                     $notificationService->createSelectDoctorNotification($user, $patientDoctor);
                 }
 
-                if ('doctor' === $data->userType && $data->numRppsAmeli) {
+                if ('doctor' === $data->userType) {                    
+                    $userFFMKRAdhesion = $FFMKRAdhesionRepository->findOneBy(['email'=> $data->email]);
+                    if($userFFMKRAdhesion instanceof FFMKRAdhesion) {
+                        if($data->registerType === 'ffmkr') {
+                            $data->firstname = ucwords(strtolower($userFFMKRAdhesion->getFirstname()));
+                            $data->lastname = ucwords(strtolower($userFFMKRAdhesion->getLastName()));
+                            $data->numRppsAmeli = $userFFMKRAdhesion->getNumRpps();
+                        }
+
+                        $userFFMKRAdhesion->setDoctor($user);
+                    }
+                    if ($data->registerType === 'ffmkr' && !$userFFMKRAdhesion instanceof FFMKRAdhesion) {
+                        return $this->json(
+                            'ffmkr-adhesion-not-found',
+                            200,
+                        );    
+                    }    
+
                     $user->setNumRppsAmeli($data->numRppsAmeli);
                 }
-                
+
+                if(empty($data->firstname)||empty($data->lastname)||empty($data->plainPassword))
+                    return $this->json('Erreur',500,);
+        
+                $user->setEmail($data->email)->setFirstname($data->firstname)->setLastname($data->lastname);
+                $user->setPassword(
+                    $passwordHasher->hashPassword($user, $data->plainPassword)
+                );
+
                 $em->persist($user);
 
                 try {
@@ -120,9 +144,19 @@ class RegistrationController extends AbstractController
                     200
                 );
             }
+
+            return $this->json('Erreur',500,);
         }
 
-        return $this->render('registration/register.html.twig');
+        return $this->render('registration/register.html.twig', ['registerType'  => $registerType]);
+    }
+
+    /**
+     * @Route("/inscription/ffmkr", name="app_register_ffmkr")
+     */
+    public function registerFFmkr() 
+    {    
+        return $this->forward('App\Controller\RegistrationController::register', ['registerType'  => 'ffmkr']);
     }
 
     /**

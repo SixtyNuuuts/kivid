@@ -17,19 +17,19 @@ class FFMKRAdhesion
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"doctor_read", "ffmkr_adhesion_read"})
+     * @Groups({"ffmkr_adhesion_read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="datetime_immutable")
-     * @Groups({"doctor_read", "ffmkr_adhesion_read"})
+     * @Groups({"ffmkr_adhesion_read"})
      */
     private $createdAt;
 
     /**
      * @ORM\Column(type="string", length=255, unique=true)
-     * @Groups({"doctor_read", "ffmkr_adhesion_read"})
+     * @Groups({"ffmkr_adhesion_read"})
      */
     private $numcli;
 
@@ -133,6 +133,12 @@ class FFMKRAdhesion
      * @Groups({"ffmkr_adhesion_read"})
      */
     private $doctor;
+
+    /**
+     * @ORM\Column(type="string", length=20, nullable=true)
+     * @Groups({"ffmkr_adhesion_read"})
+     */
+    private $requestToken;
 
     /**
      * @ORM\Column(type="boolean")
@@ -408,6 +414,18 @@ class FFMKRAdhesion
         }
 
         $this->doctor = $doctor;
+
+        return $this;
+    }
+
+    public function getRequestToken(): ?string
+    {
+        return $this->requestToken;
+    }
+
+    public function setRequestToken(?string $requestToken): self
+    {
+        $this->requestToken = $requestToken;
 
         return $this;
     }

@@ -28,7 +28,7 @@ class FFMKRAdhesionRepository extends ServiceEntityRepository
         $this->em->createQuery('UPDATE App\Entity\FFMKRAdhesion a SET a.isActive = false')->execute();
     }
 
-    public function getAdhesionIdsWhereIsActiveIsFalse():array
+    public function getNotActiveAdhesions():array
     {
         return $this->em->createQuery('SELECT a.id FROM App\Entity\FFMKRAdhesion a WHERE a.isActive = false')->getResult();
     }
