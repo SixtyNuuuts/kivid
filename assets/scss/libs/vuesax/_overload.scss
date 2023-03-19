@@ -851,6 +851,9 @@
     color: #987a40;
 }
 /// CHECKBOX
+#register-form .vs-checkbox-con {
+    flex: none;
+}
 .vs-checkbox-mask {
     background: $white;
 }
@@ -868,9 +871,17 @@
     color: $black;
 }
 
+.vs-checkbox:hover ~ .vs-checkbox-mask:before {
+    border: 2px solid rgba(var(--vs-gray-4), 1);
+}
+
 /// SWITCH
 .vs-switch {
     max-width: 4rem;
+    height: 22px;
+    min-width: 41px;
+    position: relative;
+    left: -0.2rem;
 
     &:hover {
         .vs-switch__background {
@@ -878,6 +889,17 @@
         }
     }
 }
+
+.vs-switch__circle {
+    width: 16px;
+    height: 16px;
+    left: 4px;
+}
+
+.vs-switch__input:checked ~ .vs-switch__circle {
+    left: calc(100% - 20px);
+}
+
 
 /// AVATAR
 

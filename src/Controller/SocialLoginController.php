@@ -30,22 +30,16 @@ class SocialLoginController extends AbstractController
     }
 
     /**
-     * @Route("/connect/{userType}/{service}/{doctorId}/{doctorNumRppsAmeli}", name="app_oauth_connect")
+     * @Route("/connect/{userType}/{service}", name="app_oauth_connect")
      */
-    public function connect(string $userType, string $service, int $doctorId = 0, string $doctorNumRppsAmeli = 'nc'): RedirectResponse
+    public function connect(string $userType, string $service): RedirectResponse
     {
         $this->ensureUserTypeAccepted($userType);
         $this->ensureServiceAccepted($service);
 
         return $this->clientRegistry->getClient($service)->redirect(
             self::SCOPES[$service],
-            ['state' => $this->stateStringGeneration(
-                $userType,
-                [
-                    'doctorId' => $doctorId,
-                    'doctorNumRppsAmeli' => $doctorNumRppsAmeli,
-                ]
-            )]
+            ['state' => $this->stateStringGeneration($userType)]
         );
     }
 
@@ -76,12 +70,11 @@ class SocialLoginController extends AbstractController
         return strtr(base64_encode($inputStr), '+/=', '-_,');
     }
 
-    private function stateStringGeneration(string $userType, array $data): string
+    private function stateStringGeneration(string $userType): string
     {
         $randomState = bin2hex(random_bytes(32 / 2));
         $stateArray = [
             'userType' => $userType,
-            'data' => $data,
             'randomState' => $randomState
         ];
         $stateString = $this->base64UrlEncode(json_encode($stateArray));

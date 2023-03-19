@@ -1,11 +1,32 @@
 <template>
     <section id="doctor-choice">
+        <vs-button
+            v-if="patientHasDoctorChoice !== null"
+            @click="patientHasDoctorChoice = null"
+            class="btn-prev"
+            circle
+            floating
+        >
+            <i class="kiv-arrow-left icon-31"></i>
+        </vs-button>
         <h1>Bienvenue sur Kivid !</h1>
-        <h4>
-            Vous n’avez pas encore de praticien attritré. <br />
-            Recherchez-en dans la liste ci-dessous.
-        </h4>
+        <div v-if="patientHasDoctorChoice === null" class="btn-container">
+            <h4> Avez-vous&nbsp;un&nbsp;praticien ?</h4>
+            <vs-button
+                class="w-100"
+                @click="patientHasDoctorChoice = true"
+            >
+                Oui, j'ai un praticien
+            </vs-button>
+            <vs-button
+                class="w-100"
+                @click="patientHasNoDoctorChoice"
+            >
+                Non, je n'en ai pas
+            </vs-button>
+        </div>
         <div
+            v-if="patientHasDoctorChoice"
             v-click-outside="hideSelectBox"
             class="select-filter"
             :class="{ loading: loading }"
@@ -42,8 +63,8 @@
                     }"
                     :placeholder="
                         !selectBox
-                            ? 'Sélectionnez un praticien'
-                            : 'Recherchez un praticien'
+                            ? 'Sélectionnez votre praticien'
+                            : 'Recherchez votre praticien'
                     "
                     autocomplete="off"
                 />
@@ -95,111 +116,11 @@
                     </div>
                 </transition>
             </div>
-        </div>
-        <a class="contact" @click="modalContact = true"
-            >Vous n'avez pas de praticien ?</a
-        >
-        <div class="btn-container">
-            <vs-button :disabled="!doctorSelected" @click="valideDoctorChoice"
-                >Valider et accéder à mon dashboard</vs-button
-            >
-        </div>
-        <vs-dialog width="450px" v-model="modalContact">
-            <h2>Je n'ai pas de praticien</h2>
-
-            <div class="contact-form">
-                <vs-input
-                    v-model="patient.firstname"
-                    label-placeholder="Prénom"
-                    type="text"
-                >
-                </vs-input>
-
-                <vs-input
-                    v-model="patient.lastname"
-                    label-placeholder="Nom"
-                    type="text"
-                >
-                </vs-input>
-
-                <vs-input
-                    :danger="validationMessage.email != null"
-                    v-model="patient.email"
-                    @keyup="validationEmail"
-                    label-placeholder="Email"
-                    autocomplete="email"
-                    type="email"
-                    icon-after
-                    :class="{
-                        error: validationMessage.email && patient.email,
-                    }"
-                >
-                    <template
-                        v-if="validationMessage.email && patient.email"
-                        #icon
-                    >
-                        <i class="kiv-error error icon-24"></i>
-                    </template>
-
-                    <template
-                        v-if="validationMessage.email && patient.email"
-                        #message-danger
-                    >
-                        {{ validationMessage.email }}
-                    </template>
-                </vs-input>
-
-                <VuePhoneNumberInput
-                    default-country-code="FR"
-                    :only-countries="['FR']"
-                    :no-example="true"
-                    :no-country-selector="true"
-                    :translations="{
-                        countrySelectorLabel: 'Code pays',
-                        countrySelectorError: 'Choisir un pays',
-                        phoneNumberLabel: 'Numéro de téléphone',
-                        example: 'Exemple :',
-                    }"
-                    v-model="contactTel"
-                    :class="{
-                        filled: contactTel != null,
-                        error: errorTel,
-                    }"
-                    color="#c1b79d"
-                    valid-color="#c1b79d"
-                    error-color="#ff564b"
-                    :error="errorTel"
-                />
-
-                <!-- <div class="message-block">
-                    <textarea
-                        v-model="contactMessage"
-                        id="contact-message"
-                        cols="30"
-                        rows="6"
-                        :class="{ filled: contactMessage != '' }"
-                    >
-                    </textarea>
-                    <label for="contact-message">Message</label>
-                </div> -->
+            <div class="valid-doctor-container">
+                <vs-button @click="valideDoctorChoice">Valider</vs-button>
+                <a class="contact" @click="patientHasNoDoctorChoice">Je n'ai pas de praticien</a>
             </div>
-            <div
-                class="btn-container"
-                :class="{ disabled: btnLoadingValidContact }"
-            >
-                <vs-button
-                    :disabled="
-                        validationMessage.email ||
-                        !patient.email ||
-                        btnLoadingValidContact
-                    "
-                    :loading="btnLoadingValidContact"
-                    class="w-100"
-                    @click="validContact"
-                    >Me contacter</vs-button
-                >
-            </div>
-        </vs-dialog>
+        </div>
     </section>
 </template>
 
@@ -235,7 +156,7 @@ export default {
                 email: null,
             },
             contactTel: null,
-            // contactMessage: "",
+            patientHasDoctorChoice: null,
         };
     },
     computed: {
@@ -260,31 +181,35 @@ export default {
     },
     methods: {
         valideDoctorChoice() {
-            this.axios
-                .post(`/patient/${this.patient.id}/select/doctor`, {
-                    _token: this.csrfTokenSelectDoctor,
-                    doctorId: this.doctorSelected.id,
-                })
-                .then((response) => {
-                    f.openSuccessNotification(
-                        "Choix du praticien enregistré",
-                        response.data
-                    );
+            if (this.doctorSelected)
+                this.axios
+                    .post(`/patient/${this.patient.id}/select/doctor`, {
+                        _token: this.csrfTokenSelectDoctor,
+                        doctorId: this.doctorSelected.id,
+                    })
+                    .then((response) => {
+                        f.openSuccessNotification(
+                            "Choix du praticien enregistré",
+                            response.data
+                        );
 
-                    this.patient.addRequestDoctor = true;
+                        this.patient.addRequestDoctor = true;
 
-                    this.patient.doctor = this.doctorSelected;
+                        this.patient.doctor = this.doctorSelected;
 
-                    this.footer.classList.remove("hidden");
-                })
-                .catch((error) => {
-                    const errorMess =
-                        "object" === typeof error.response.data
-                            ? error.response.data.detail
-                            : error.response.data;
+                        this.footer.classList.remove("hidden");
+                    })
+                    .catch((error) => {
+                        const errorMess =
+                            "object" === typeof error.response.data
+                                ? error.response.data.detail
+                                : error.response.data;
 
-                    f.openErrorNotification("Erreur", errorMess);
-                });
+                        f.openErrorNotification("Erreur", errorMess);
+                    });
+        },
+        patientHasNoDoctorChoice() {
+            this.$emit("patientHasNoDoctorChoice", true);
         },
         toggleSelectBox() {
             this.selectBox = !this.selectBox;
@@ -409,13 +334,61 @@ export default {
 @import "../../../scss/variables";
 
 #doctor-choice {
-    max-width: 53rem;
+    max-width: 34rem;
     width: 100%;
     margin: auto;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
+
+    h1 {
+        white-space: nowrap;
+    }
+
+    .vs-button.btn-prev {
+        opacity: 0;
+        animation: 0.5s ease 0.2s forwards fadeEnter;
+        color: $orange;
+        box-shadow: 0rem 0.4rem 1.4rem 0rem rgba(251, 139, 104, 0.3);
+        background: #fffdfc00;
+
+        &:hover {
+            box-shadow: 0rem 0.4rem 1.4rem 0rem rgba(251, 139, 104, 0.8);
+        }
+
+        left: 2rem;
+        top: 8rem;
+
+        @media (min-width: 1250px) {
+            left: 5rem;
+            top: 10rem;
+        }
+
+        @media (min-width: 450px) {
+            left: 3.5rem;
+            top: 9.5rem;
+        }
+    }
+
+    .valid-doctor-container {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        margin: auto;
+        margin-top: 2.2rem;
+    }
+
+    .btn-container {
+        width: 100%;
+        max-width: 24rem;
+
+        .vs-button {
+            &:not(:first-child) {
+                margin-top: 2.5rem;
+            }
+        }
+    }
 
     .select-filter {
         width: 100%;
@@ -439,7 +412,7 @@ export default {
 
             width: 100%;
             color: $black;
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             border-radius: 0.8rem;
             padding: 1.9rem 2rem;
             padding-right: 4.5rem;
@@ -588,6 +561,7 @@ export default {
         display: flex;
         justify-content: center;
         margin: 0;
+        margin-top: 3.1rem;
         margin-bottom: 3rem;
         text-decoration: underline;
         cursor: pointer;

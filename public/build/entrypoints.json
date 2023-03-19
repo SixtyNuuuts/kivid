@@ -47,9 +47,7 @@
       "js": [
         "/build/runtime.js",
         "/build/vendors-node_modules_axios_index_js-node_modules_core-js_modules_es_array_concat_js-node_modu-38d47d.js",
-        "/build/vendors-node_modules_vue-click-outside_index_js-node_modules_vue-phone-number-input_dist_vue--694fde.js",
         "/build/assets_vue_services_function_js-node_modules_moment_locale_sync_recursive_.js",
-        "/build/assets_vue_components_DoctorSelectBox_vue.js",
         "/build/register.js"
       ],
       "css": [
@@ -120,11 +118,9 @@
       "js": [
         "/build/runtime.js",
         "/build/vendors-node_modules_axios_index_js-node_modules_core-js_modules_es_array_concat_js-node_modu-38d47d.js",
-        "/build/vendors-node_modules_vue-click-outside_index_js-node_modules_vue-phone-number-input_dist_vue--694fde.js",
-        "/build/vendors-node_modules_chartist-plugin-tooltips_dist_chartist-plugin-tooltip_js-node_modules_co-38b6a2.js",
+        "/build/vendors-node_modules_chartist-plugin-tooltips_dist_chartist-plugin-tooltip_js-node_modules_co-f61cc6.js",
         "/build/assets_vue_services_function_js-node_modules_moment_locale_sync_recursive_.js",
         "/build/assets_vue_components_BtnChartWorksheetPartOfBody_vue-assets_vue_components_TagPartOfBody_vue-72399a.js",
-        "/build/assets_vue_components_DoctorSelectBox_vue.js",
         "/build/patient-dashboard-page.js"
       ],
       "css": [

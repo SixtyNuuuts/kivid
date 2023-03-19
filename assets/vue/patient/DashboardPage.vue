@@ -1,12 +1,14 @@
 <template>
     <div class="container">
-        <!-- <DoctorChoice
-            v-if="!patient.doctor && !doctorView"
+        <DoctorChoice
+            v-if="!patient.doctor && !patientHasNoDoctorChoice && !doctorView"
             :patient="patient"
             :csrfTokenSelectDoctor="csrfTokenSelectDoctor"
             :csrfTokenContact="csrfTokenContact"
-        /> -->
+            @patientHasNoDoctorChoice="setPatientHasNoDoctorChoice"
+        />
         <section
+            v-else
             id="dashboard"
             class="db-patient"
             :class="{ 'doctor-view': doctorView }"
@@ -204,7 +206,10 @@
                                         <p>En attente de validation</p>
                                     </div>
                                     <div v-if="!patient.doctor">
-                                        <p>En attente</p>
+                                        <p class="p">En attente</p>
+                                        <p class="subp">Un de nos praticiens va prendre contact avec vous
+                                           pour&nbsp;élaborer le traitement approprié
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -314,6 +319,7 @@ export default {
             patient: null,
             currentUser: null,
             doctorView: null,
+            csrfTokenContact: null,
             csrfTokenSelectDoctor: null,
             csrfTokenAcceptDoctor: null,
             csrfTokenDeclineDoctor: null,
@@ -327,6 +333,7 @@ export default {
             modalChangeDoctor: false,
             doctorSelected: null,
             loadingChangeDoctor: false,
+            patientHasNoDoctorChoice: false,
         };
     },
     methods: {
@@ -334,6 +341,9 @@ export default {
             this.modalChangeDoctor = true;
 
             document.body.classList.add("no-scrollbar");
+        },
+        setPatientHasNoDoctorChoice(patientHasNoDoctorChoice) {
+            this.patientHasNoDoctorChoice = patientHasNoDoctorChoice;
         },
         closeModalChangeDoctor() {
             this.modalChangeDoctor = false;
@@ -454,6 +464,7 @@ export default {
         this.currentUser = data.currentUser;
         this.doctorView = data.doctorView;
         this.csrfTokenAcceptDoctor = data.csrfTokenAcceptDoctor;
+        this.csrfTokenContact = data.csrfTokenContact;
         this.csrfTokenDeclineDoctor = data.csrfTokenDeclineDoctor;
         this.csrfTokenSelectDoctor = data.csrfTokenSelectDoctor;
         this.doctorSelected = this.patient.doctor;
@@ -682,6 +693,14 @@ export default {
                 display: none !important;
             }
         }
+    }
+    .p {
+        margin-bottom: 0.4rem;
+    }
+    .subp {
+        font-size: 1.4rem;
+        max-width: 28rem;
+        margin-top: 0rem;
     }
     .change-doctor-modal {
         position: fixed;
