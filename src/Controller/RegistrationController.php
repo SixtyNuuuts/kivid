@@ -8,7 +8,6 @@ use App\Entity\FFMKRAdhesion;
 use App\Security\EmailVerifier;
 use Symfony\Component\Mime\Address;
 use App\Repository\DoctorRepository;
-use App\Service\NotificationService;
 use App\Repository\PatientRepository;
 use App\Security\LoginFormAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
@@ -45,7 +44,6 @@ class RegistrationController extends AbstractController
         UserAuthenticatorInterface $authenticator,
         LoginFormAuthenticator $formAuthenticator,
         EntityManagerInterface $em,
-        NotificationService $notificationService,
         PatientRepository $patientRepository,
         DoctorRepository $doctorRepository,
         FFMKRAdhesionRepository $FFMKRAdhesionRepository,
@@ -71,23 +69,12 @@ class RegistrationController extends AbstractController
 
                 $user = 'doctor' === $data->userType ? new Doctor() : new Patient();
 
-                if ('patient' === $data->userType && !empty($data->doctorSelectId)) {
-                    $patientDoctor = $doctorRepository->findOneBy(['id' => $data->doctorSelectId]);
-                    
-                    $user->setAddRequestDoctor(true);
-
-                    $user->setDoctor($patientDoctor);
-
-                    $notificationService->createSelectDoctorNotification($user, $patientDoctor);
-                }
-
                 if ('doctor' === $data->userType) {                    
                     $userFFMKRAdhesion = $FFMKRAdhesionRepository->findOneBy(['email'=> $data->email]);
                     if($userFFMKRAdhesion instanceof FFMKRAdhesion) {
                         if($data->registerType === 'ffmkr') {
                             $data->firstname = ucwords(strtolower($userFFMKRAdhesion->getFirstname()));
                             $data->lastname = ucwords(strtolower($userFFMKRAdhesion->getLastName()));
-                            $data->numRppsAmeli = $userFFMKRAdhesion->getNumRpps();
                         }
 
                         $userFFMKRAdhesion->setDoctor($user);
@@ -97,13 +84,11 @@ class RegistrationController extends AbstractController
                             'ffmkr-adhesion-not-found',
                             200,
                         );    
-                    }    
-
-                    $user->setNumRppsAmeli($data->numRppsAmeli);
+                    }
                 }
 
                 if(empty($data->firstname)||empty($data->lastname)||empty($data->plainPassword))
-                    return $this->json('Erreur',500,);
+                    return $this->json('Erreur', 500,);
         
                 $user->setEmail($data->email)->setFirstname($data->firstname)->setLastname($data->lastname);
                 $user->setPassword(

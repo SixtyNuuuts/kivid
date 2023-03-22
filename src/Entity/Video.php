@@ -79,6 +79,7 @@ class Video
 
     /**
      * @ORM\ManyToOne(targetEntity=VideoLibrary::class, inversedBy="videos")
+     * @Groups({"video_read"})
      */
     private $videoLibrary;
 

@@ -73,6 +73,7 @@ class Doctor extends User
 
     /**
      * @ORM\OneToOne(targetEntity=FFMKRAdhesion::class, inversedBy="doctor", cascade={"persist", "remove"})
+     * @Groups({"doctor_read"})
      */
     private $FFMKRAdhesion;
 

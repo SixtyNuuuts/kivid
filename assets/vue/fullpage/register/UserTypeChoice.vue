@@ -5,14 +5,14 @@
             <vs-button
                 class="w-100"
                 @click="validUserTypeChoice('patient')"
-                :class="{ secondary: $parent.userType == 'doctor' }"
+                :class="{ secondary: $parent.userChoice.userType.value == 'doctor' }"
             >
                 Je suis un particulier
             </vs-button>
             <vs-button
                 class="w-100"
                 @click="validUserTypeChoice('doctor')"
-                :class="{ secondary: $parent.userType == 'patient' }"
+                :class="{ secondary: $parent.userChoice.userType.value == 'patient' }"
             >
                 Je suis un professionnel
             </vs-button>
@@ -24,7 +24,7 @@
 export default {
     methods: {
         validUserTypeChoice(userType) {
-            this.$emit("userTypeChoice", userType);
+            this.$emit("userTypeChoice", {type: 'userType', value: userType });
         },
     },
 };
