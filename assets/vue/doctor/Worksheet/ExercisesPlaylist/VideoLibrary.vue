@@ -63,6 +63,28 @@
                         </vs-select>
                         <div v-else class="loading select-tags"></div>
                     </div>
+                    <div class="kiv-select tags">
+                        <vs-select
+                            filter
+                            multiple
+                            placeholder="Bibliothèque"
+                            v-model="selectedVideoLibraries"
+                            @change="page = 1"
+                            @input="selectTag()"
+                        >
+                            <vs-option
+                                v-for="(library, i) in videoLibraries"
+                                :key="i"
+                                :label="library.nom"
+                                :value="library.reference"
+                            >
+                                {{ library.nom }}
+                            </vs-option>
+                            <template slot="notData">
+                                Aucune bibliothèque ne correspond.</template
+                            >
+                        </vs-select>
+                    </div>
                     <SelectPartOfBody
                         :partOfBody="selectedPoB"
                         @partOfBodySelected="filterByPartOfBody"
@@ -77,11 +99,18 @@
                         <div
                             :key="i"
                             v-for="(video, i) in getVideos"
+                            @click="requestFFMKRAdhesion(video)"
                             :class="{
                                 'selected-video':
                                     selectedVideos.includes(video),
+                                'disabled-video':
+                                    video.videoLibrary.reference === 'ffmkr' && !getDoctorIsFFMKRAdherent,
+                                'video-ffmkr' : video.videoLibrary.reference === 'ffmkr'
                             }"
                         >
+                            <div v-if="video.videoLibrary.reference === 'ffmkr'" class="video-ffmkr-blason">
+                                <img class="logo-ffmkr" :src="video.videoLibrary.reference === 'ffmkr' && !getDoctorIsFFMKRAdherent ? '/img/logo-kivid-FFMKR-grey.svg' : '/img/logo-kivid-FFMKR-white.svg'" alt="Logo FFMKR">
+                            </div>
                             <div class="video-thumbnail">
                                 <a class="video-link" @click="viewVideo(video)">
                                     <img
@@ -237,6 +266,23 @@
                 :video-id="selectedViewVideo.youtubeId"
             ></youtube>
         </vs-dialog>
+        <vs-dialog class="modal-ffmkr-adhesion" v-model="modalRequestFFMKRAdhesion">
+            <h2>Vidéo FFMKR</h2>
+            <p>Pour utiliser les vidéos de la FFMKR vous devez y adhérer</p>
+            <div
+                class="btn-container"
+                :class="{ disabled: btnLoadingFFMKRAdhesion }"
+            >
+                <vs-button
+                    :loading="btnLoadingFFMKRAdhesion"
+                    class="w-100"
+                    type="submit"
+                    @click="validFFMKRAdhesion"
+                >
+                    <span>Adhérer à la <img class="logo-ffmkr" src="/img/logo-kivid-FFMKR-white.svg" alt="Logo FFMKR"></span>
+                </vs-button>
+            </div>
+        </vs-dialog>
     </div>
 </template>
 
@@ -272,11 +318,15 @@ export default {
             selectedTags: [],
             selectedPoB: null,
             selectedVideos: [],
+            selectedVideoLibraries: [],
             modalAddVideo: false,
             modalViewVideo: false,
             selectedViewVideo: false,
             btnLoadingValidVideosSelection: false,
             inputChips: null,
+            modalRequestFFMKRAdhesion: false,
+            btnLoadingFFMKRAdhesion: false,
+            videoLibraries: [{nom:'Kivid', reference:'kivid'}, {nom:'FFMKR', reference:'ffmkr'}],
         };
     },
     computed: {
@@ -299,6 +349,9 @@ export default {
         getTagsFromAllVideos() {
             return f.getTagsFromAllVideos(this.videos);
         },
+        getDoctorIsFFMKRAdherent() {
+            return this.doctor.FFMKRAdhesion && this.doctor.FFMKRAdhesion.numcli;
+        },
     },
     methods: {
         selectTag() {
@@ -310,6 +363,14 @@ export default {
 
             this.inputChips.focus();
             this.inputChips.blur();
+        },
+        validFFMKRAdhesion() {
+             this.btnLoadingFFMKRAdhesion = true;
+             window.open('//www.ffmkr.org/adhesion/vos-informations?kividtoken=eyJ1c2VyVHlwZSI6InBh', '_blank');
+
+            setTimeout(() => {
+                this.btnLoadingFFMKRAdhesion = false;
+            }, 3000);
         },
         filterByPartOfBody(partOfBody) {
             this.selectedPoB = partOfBody;
@@ -325,10 +386,15 @@ export default {
             return (this.modalViewVideo = !this.modalViewVideo);
         },
         addVideo(video) {
-            this.selectedVideos.push(video);
+            if(video.videoLibrary.reference != 'ffmkr' || this.getDoctorIsFFMKRAdherent)
+                this.selectedVideos.push(video);
         },
         removeVideo(video) {
             this.selectedVideos.splice(this.selectedVideos.indexOf(video), 1);
+        },
+        requestFFMKRAdhesion(video) {
+            if(video.videoLibrary.reference === 'ffmkr' && !this.getDoctorIsFFMKRAdherent)
+                this.modalRequestFFMKRAdhesion = true;
         },
         validVideosSelection() {
             this.btnLoadingValidVideosSelection = true;
@@ -376,6 +442,12 @@ export default {
                     }
 
                     return !results.includes(false);
+                });
+            }
+
+            if (this.selectedVideoLibraries.length) {
+                videosListFiltered = videosListFiltered.filter((v) => {
+                    return this.selectedVideoLibraries.includes(v.videoLibrary.reference);
                 });
             }
 
@@ -739,7 +811,6 @@ export default {
                     }
 
                     > div {
-                        border-radius: 1rem;
                         margin: 1.6vw 2.5vw;
                         transition: border 0.15s ease;
                         display: flex;
@@ -748,9 +819,34 @@ export default {
                         justify-content: space-between;
                         padding: 0;
                         position: relative;
-                        overflow: hidden;
-                        background: white;
                         width: 100%;
+                        border-radius: 1rem;
+
+                        &.video-ffmkr {
+                           border: 2px solid #f6f2e6;
+                           box-shadow: 0 0 0.7rem #978c728c;
+                        }
+
+                        .video-ffmkr-blason {
+                            position: absolute;
+                            top: -1.1rem;
+                            left: 50%;
+                            z-index: 5;
+                            transform: translateX(-50%);
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: center;
+                            align-items: center;
+                            background-color: #e7dfcd;
+                            border-radius: 1rem;
+                            width: 6.1rem;
+                            box-shadow: 0 0.15rem 0.4rem rgba(102, 113, 143, 0.4) !important;
+                            padding: 0.5rem !important;
+
+                            > img {
+                                width: 4.4rem;
+                            }
+                        }
 
                         @media (min-width: 450px) {
                             width: 46%;
@@ -780,8 +876,18 @@ export default {
                         }
 
                         &.selected-video {
+                            border: 1px solid $orange;
                             box-shadow: 0 0 0.7rem $orange;
                             transition: border 0.15s ease;
+
+                            &.video-ffmkr {
+                                border: 1px solid $orange;
+                                box-shadow: 0 0 0.7rem $orange;
+                            }
+
+                            .video-ffmkr-blason {
+                                background-color: $orange;
+                            }
 
                             .video-thumbnail {
                                 background-color: $orange;
@@ -790,6 +896,86 @@ export default {
                             .video-details {
                                 padding: 0.5em !important;
                             }
+                        }
+
+                        &.disabled-video {
+                            cursor: pointer;
+
+                            &.video-ffmkr {
+                                border: 2px solid #eeece5;
+                                box-shadow: 0 0 0.7rem #978c7242;
+                            }
+
+                            .video-ffmkr-blason {
+                                background-color: #ffffff;
+                                border: 1px solid #e9e4d8;
+                                box-shadow: 0 0.15rem 0.4rem rgb(150 154 165 / 31%) !important;
+                                width: 6rem;
+                                padding: 0.4rem !important;
+                            }
+
+                            .video-thumbnail {
+                                position: relative;
+                                -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
+                                filter: grayscale(100%);
+                                pointer-events: none;
+
+                                .video-link {
+                                    background-color: #ffffff;   
+
+                                    img {
+                                        opacity: 0.3;
+                                    }
+
+                                    svg {
+                                        display: none;
+                                    }
+                                }
+                            }
+
+                            .video-thumbnail::after {
+                                content: '';
+                                display: block;
+                                width: 100%;
+                                height: 100%;
+                                background-color: rgb(246 242 230 / 36%);;
+                                position: absolute;
+                                top: 0;
+                                left: 0;
+                                z-index: 1;
+                            }
+
+                            .video-details {
+                                .video-name {
+                                    color: #dddad2;
+                                }
+
+                                padding: 0.5em !important;
+                            }
+
+                            .btn-add-vid {
+                                background: #ffffff; // border: 2px solid #ffb34b;
+                                // box-shadow: 0 0.15rem 0.4rem rgb(102 113 143 / 10%) !important;
+                                border: 2px solid #ede7d9;
+
+                                .vs-button__content {
+                                    padding: 1px 7px;
+                                }
+
+                                &:hover {
+                                    background: #ffffff; // border: 2px solid #ffb34b;
+                                    border: 2px solid #ede7d9;
+
+                                     svg {
+                                        color: #e7dfcd;
+                                    }
+                                }
+
+                                svg {
+                                    color: #e7dfcd;
+                                }
+                            }
+
                         }
 
                         &:hover {
@@ -806,7 +992,6 @@ export default {
                             text-align: center;
                             line-height: 1.2;
                             padding: 0.3em 0;
-                            border-radius: 0 !important;
 
                             &:first-child {
                                 padding: 0;
@@ -829,6 +1014,8 @@ export default {
                         height: 37vw;
                         min-height: 37vw;
                         max-height: 37vw;
+                        padding: 0;
+                        border-radius: 0.9rem 0.9rem 0 0;
 
                         @media (min-width: 450px) {
                             height: 19vw;
@@ -892,6 +1079,8 @@ export default {
                         justify-content: space-between !important;
                         padding: 0.4em !important;
                         height: 100%;
+                        border-radius: 0 0 0.9rem 0.9rem;
+                        background: white;
 
                         .video-name {
                             font-size: 1.2rem;
@@ -922,9 +1111,11 @@ export default {
                         max-height: 3.5rem;
                         min-height: 3.5rem;
                         margin-bottom: 0.7rem !important;
-                        background: #f2f2f2; // border: 2px solid #ffb34b;
-                        box-shadow: 0 0.15rem 0.4rem rgb(102 113 143 / 40%) !important;
+                        // background: #e7dfcd; // border: 2px solid #ffb34b;
+                        box-shadow: 0 0.15rem 0.4rem rgb(102 113 143 / 10%) !important;
                         font-size: 1em;
+                        background: #ffffff; // border: 2px solid #ffb34b;
+                        border: 2px solid #ede7d9;
 
                         .vs-button__content {
                             padding: 1px 7px;
@@ -940,7 +1131,7 @@ export default {
                         }
 
                         svg {
-                            color: $orange;
+                            color: #e7dfcd;
                         }
                     }
 
@@ -1001,6 +1192,26 @@ export default {
                 top: 0;
             }
         }
+    }
+}
+
+.modal-ffmkr-adhesion {
+    
+    h2 {
+        margin-bottom: 1.5rem !important;
+    }
+
+    p {
+        font-size: 1.4rem;
+        margin: 1.7rem 0;
+        margin-top: 0;
+    }
+
+    .logo-ffmkr {
+        width: 5.8rem;
+        position: relative;
+        top: 0.2rem;
+        margin-left: 0.2rem;
     }
 }
 </style>
