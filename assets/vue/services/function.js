@@ -14,6 +14,15 @@ export default {
     }, []);
   },
 
+  getLibrariesFromAllVideos(videos) {
+    return videos.reduce((r, video) => {
+      if (!r.filter(vl=>vl.reference===video.videoLibrary.reference).length) {
+        r.push(video.videoLibrary);
+      }
+      return r;
+    }, []);
+  },
+
   getTagsFromAll(tagsFromExercises) {
     return tagsFromExercises.reduce((r, exercise) => {
       exercise.forEach((tag) => {
