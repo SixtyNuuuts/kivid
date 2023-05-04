@@ -228,7 +228,7 @@ export default {
         this.axios
             .get(`/ffmkr/get/adhesions`)
             .then((response) => {
-                this.FFMKRAdhesions = response.data;
+                this.FFMKRAdhesions = response.data.filter(a=>!a.numcli.includes('NUMCLITEMP'));
                 this.loadingFFMKRAdhesions = false;
                 this.btnLoadingLoadCsvFile = false;
             })

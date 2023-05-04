@@ -171,6 +171,7 @@
                     :loadingVideos="loadingVideos"
                     :videos="videos"
                     :csrfTokenRemoveExercise="csrfTokenRemoveExercise"
+                    :csrfTokenSaveFFMKRRequestToken="csrfTokenSaveFFMKRRequestToken"
                 />
             </section>
         </main>
@@ -243,6 +244,7 @@ export default {
             csrfTokenCreateWorksheet: null,
             csrfTokenEditWorksheet: null,
             csrfTokenRemoveExercise: null,
+            csrfTokenSaveFFMKRRequestToken:null,
             loading: false,
             maxDuration: {
                 duration: 52,
@@ -518,6 +520,7 @@ export default {
         this.csrfTokenCreateWorksheet = data.csrfTokenCreateWorksheet;
         this.csrfTokenEditWorksheet = data.csrfTokenEditWorksheet;
         this.csrfTokenRemoveExercise = data.csrfTokenRemoveExercise;
+        this.csrfTokenSaveFFMKRRequestToken= data.csrfTokenSaveFFMKRRequestToken;
 
         this.loading = true;
 

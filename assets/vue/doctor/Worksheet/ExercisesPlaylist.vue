@@ -321,6 +321,7 @@
                 :doctor="doctor"
                 :loadingVideos="loadingVideos"
                 :videos="videos"
+                :csrfTokenSaveFFMKRRequestToken="csrfTokenSaveFFMKRRequestToken"
                 @closeVideoLibrary="closeVideoLibrary"
                 @videos-selection="addVideosSelection"
             />
@@ -379,6 +380,7 @@ export default {
         csrfTokenRemoveExercise: String,
         loadingVideos: Boolean,
         videos: Array,
+        csrfTokenSaveFFMKRRequestToken: String,
     },
     data() {
         return {

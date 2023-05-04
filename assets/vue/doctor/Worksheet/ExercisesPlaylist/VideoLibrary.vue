@@ -321,6 +321,7 @@ export default {
         doctor: Object,
         loadingVideos: Boolean,
         videos: Array,
+        csrfTokenSaveFFMKRRequestToken: String,
     },
     components: {
         PlusIcon,
@@ -377,7 +378,7 @@ export default {
             return f.getLibrariesFromAllVideos(this.videos);
         },
         getDoctorIsFFMKRAdherent() {
-            return this.doctor.FFMKRAdhesion && this.doctor.FFMKRAdhesion.numcli;
+            return this.doctor.FFMKRAdhesion && this.doctor.FFMKRAdhesion.numcli && !this.doctor.FFMKRAdhesion.numcli.includes('NUMCLITEMP');
         },
     },
     methods: {
@@ -392,12 +393,46 @@ export default {
             this.inputChips.blur();
         },
         validFFMKRAdhesion() {
-             this.btnLoadingFFMKRAdhesion = true;
-             window.open('//www.ffmkr.org/adhesion/vos-informations?kividtoken=eyJ1c2VyVHlwZSI6InBh', '_blank');
+            this.btnLoadingFFMKRAdhesion = true;
+            this.axios
+                .post(`/ffmkr/request-token/set/${this.doctor.id}`, {
+                    _token: this.csrfTokenSaveFFMKRRequestToken,
+                })
+                .then((response) => {
+                    window.open(`//www.ffmkr.org/adhesion/vos-informations?kividretour=//${window.location.hostname}/ffmkr/adhesion/${response.data.kividToken}`, '_blank');
+                    
+                    setTimeout(() => {
+                        const checkAdhesion = setInterval(() => {
+                            this.axios
+                                .post(`/ffmkr/request-adhesion/check/${this.doctor.id}`, {})
+                                .then((response) => {
+                                    if(!response.data.ffmkrAdhesionNumCli.includes('NUMCLITEMP'))
+                                    {
+                                        clearInterval(checkAdhesion);
+                                        this.btnLoadingFFMKRAdhesion = false;
+                                        this.doctor.FFMKRAdhesion.numcli = response.data.ffmkrAdhesionNumCli;
+                                        this.modalRequestFFMKRAdhesion = false;
+                                    }
+                                })
+                                .catch((error) => {
+                                    const errorMess =
+                                        "object" === typeof error.response.data
+                                            ? error.response.data.detail
+                                            : error.response.data;
 
-            setTimeout(() => {
-                this.btnLoadingFFMKRAdhesion = false;
-            }, 3000);
+                                    f.openErrorNotification("Erreur", errorMess);
+                                });
+                        }, 2000);
+                    }, 500);
+                })
+                .catch((error) => {
+                    const errorMess =
+                        "object" === typeof error.response.data
+                            ? error.response.data.detail
+                            : error.response.data;
+
+                    f.openErrorNotification("Erreur", errorMess);
+                });
         },
         filterByPartOfBody(partOfBody) {
             this.selectedPoB = partOfBody;
@@ -952,16 +987,6 @@ export default {
                         }
 
                         &.disabled-video {
-                            .video-ffmkr-blason {
-                                background-color: #ffffff;
-                                border: 1px solid #e9e4d8;
-                                box-shadow: 0 0.15rem 0.4rem rgb(150 154 165 / 31%) !important;
-                                width: 6rem;
-                                padding: 0.4rem !important;
-                            }
-                        }
-
-                        &.disabled-video {
 
                             &.video-ffmkr {
                                 border: 2px solid #e5e1d7;
@@ -973,7 +998,7 @@ export default {
                                 border: 1px solid #e9e4d8;
                                 box-shadow: 0 0.15rem 0.4rem rgb(150 154 165 / 31%) !important;
                                 width: 6rem;
-                                padding: 0.4rem !important;
+                                padding: 0.39rem !important;
                             }
 
 
@@ -1138,17 +1163,9 @@ export default {
                         }
 
                         &.btn-unlock-vid {
-                           background: #e7dfcd;
-                           border: none;
-
-                            svg {
-                                fill: #ffffff;
-                                width: 1.3rem;
-                            }
-
-                            &:hover {
-                                background: #fb8b68;
-                                border: initial;
+                           svg {
+                                width: 1.33rem;
+                                transform: rotate(43deg);
                             }
                         }
                     }

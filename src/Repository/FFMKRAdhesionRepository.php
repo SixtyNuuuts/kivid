@@ -25,7 +25,7 @@ class FFMKRAdhesionRepository extends ServiceEntityRepository
 
     public function resetAdhesionStatus():void
     {
-        $this->em->createQuery('UPDATE App\Entity\FFMKRAdhesion a SET a.isActive = false')->execute();
+        $this->em->createQuery('UPDATE App\Entity\FFMKRAdhesion a SET a.isActive = false WHERE a.numcli NOT LIKE \'NUMCLITEMP%\'')->execute();
     }
 
     public function getNotActiveAdhesions():array

@@ -66,4 +66,6 @@ security:
         - { path: ^/patient, roles: [ROLE_PATIENT, ROLE_DOCTOR, ROLE_ADMIN] }
         - { path: ^/doctor, roles: [ROLE_DOCTOR, ROLE_ADMIN] }
         - { path: ^/ffmkr/adhesion, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/ffmkr/request-token, roles: [ROLE_DOCTOR, ROLE_ADMIN] }
+        - { path: ^/ffmkr/request-adhesion, roles: [ROLE_DOCTOR, ROLE_ADMIN] }
         - { path: ^/ffmkr, roles: [ROLE_FFMKR_ADMIN, ROLE_ADMIN] }

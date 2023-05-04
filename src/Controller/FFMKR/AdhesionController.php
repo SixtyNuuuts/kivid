@@ -14,6 +14,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
  * @Route("/ffmkr")
@@ -41,12 +42,26 @@ class AdhesionController extends AbstractController
     }
 
     /**
-     * @Route("/adhesion", name="app_ffmkr_adhesion", methods={"GET"})
+     * @Route("/adhesion/{kividtoken}/{numcli}", name="app_ffmkr_adhesion", methods={"GET"})
      */
-    public function adhesion(): JsonResponse
+    public function adhesion(string $kividtoken, string $numcli): JsonResponse
     {
+        $kividTokenDecode = json_decode(base64_decode(strtr($kividtoken??'', '-_,', '+/=')));
+
+        $doctor = $this->doctorRepository->findOneBy(['id' => $kividTokenDecode->doctorId??'']);
+
+        if(!$doctor instanceof Doctor || !$doctor->getFFMKRAdhesion() || $doctor->getFFMKRAdhesion()->getNumcli() != 'NUMCLITEMP-'. $doctor->getId() || empty($numcli))
+            return $this->json(
+                "Une erreur s'est produite lors de la création d'adhésion FFMKR'",
+                500
+            );
+
+        $doctor->getFFMKRAdhesion()->setNumcli((int)$numcli)->setFirstname(strtoupper($doctor->getFirstname()))->setLastName(strtoupper($doctor->getLastname()))->setEmail($doctor->getEmail());
+
+        $this->em->flush();
+
         return $this->json(
-            'Adhesion',
+            'Adhesion FFMKR bien enregistrée !',
             200
         );
     }
@@ -61,6 +76,69 @@ class AdhesionController extends AbstractController
             200,
             [],
             ['groups' => 'ffmkr_adhesion_read']
+        );
+    }
+
+    /**
+     * @Route("/request-token/set/{id}", name="app_ffmkr_set_request_token", methods={"POST"})
+     * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
+     */
+    public function setRequestToken(Request $request, Doctor $doctor): JsonResponse
+    {
+        if ($request->isMethod('post')) {
+            $data = json_decode($request->getContent());
+
+            if ($this->isCsrfTokenValid('save_ffmkr_request_token' . $doctor->getId(), $data->_token)) {
+                $dataToken = [
+                    'doctorId' => $doctor->getId(),
+                    'rt' => bin2hex(random_bytes(5))
+                ];
+                $kividToken = strtr(base64_encode(json_encode($dataToken)), '+/=', '-_,');
+                $numCliTemp = 'NUMCLITEMP-'.$dataToken['doctorId'];
+
+                $FFMKRAdhesion = $this->FFMKRAdhesionRepository->findOneBy(['numcli' => $numCliTemp]);
+                
+                if(!$FFMKRAdhesion instanceof FFMKRAdhesion)
+                    $FFMKRAdhesion = new FFMKRAdhesion();
+
+                $FFMKRAdhesion->setNumcli($numCliTemp)->setDoctor($doctor)->setRequestToken($dataToken['rt']);
+
+                $this->em->persist($FFMKRAdhesion);
+                $this->em->flush();
+                
+                return $this->json(
+                    [
+                        'kividToken' => $kividToken,
+                    ],
+                    200
+                );
+            }
+        }
+
+        return $this->json(
+            "Une erreur s'est produite lors de sauvegarde du Request Token FFMKR",
+            500
+        );
+    }
+
+    /**
+     * @Route("/request-adhesion/check/{id}", name="app_ffmkr_check_request_adhesion", methods={"POST"})
+     * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
+     */
+    public function checkRequestAdhesion(Request $request, Doctor $doctor): JsonResponse
+    {
+        if ($request->isMethod('post')) {
+            return $this->json(
+                [
+                    'ffmkrAdhesionNumCli' => $doctor->getFFMKRAdhesion()->getNumcli(),
+                ],
+                200
+            );
+        }
+
+        return $this->json(
+            "Une erreur s'est produite lors de sauvegarde du Request Token FFMKR",
+            500
         );
     }
 
@@ -148,7 +226,12 @@ class AdhesionController extends AbstractController
 
                         $doctor = $this->doctorRepository->findOneBy(['email' => $FFMKRAdhesionsData['email']??'']);
                         if($doctor instanceof Doctor)
-                            $FFMKRAdhesion->setDoctor($doctor);
+                        {
+                            if(!empty($doctor->getFFMKRAdhesion()))
+                                $FFMKRAdhesion = $doctor->getFFMKRAdhesion();
+                            else    
+                                $FFMKRAdhesion->setDoctor($doctor);
+                        }
 
                         $isFFMKRAdhesionCreation = true;   
                         $createdFFMKRAdhesionsCount++;
