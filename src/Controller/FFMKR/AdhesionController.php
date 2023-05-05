@@ -211,6 +211,7 @@ class AdhesionController extends AbstractController
             $updatedFFMKRAdhesionsCount = 0;
             $createdFFMKRAdhesionsCount = 0;
             $deletedFFMKRAdhesionsCount = 0;
+            $batchSize = 10000;
 
             while (($data = fgetcsv($csv, 1000, ';')) !== FALSE) 
             {
@@ -252,10 +253,16 @@ class AdhesionController extends AbstractController
                         $updatedFFMKRAdhesionsCount++;
 
                     $FFMKRAdhesion->setIsActive(true);
+
+                    if (($row % $batchSize) === 0) {
+                        $this->em->flush();
+                        $this->em->clear();
+                    }                
                 }
                 $row++;
             }
             $this->em->flush();
+            $this->em->clear();
             fclose($csv);
 
             $deletedFFMKRAdhesionsIds = $this->FFMKRAdhesionRepository->getNotActiveAdhesions();
