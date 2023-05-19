@@ -143,138 +143,159 @@ class AdhesionController extends AbstractController
     }
 
     /**
-     * @Route("/import/adhesions", name="app_ffmkr_import_adhesions", methods={"POST"})
+     * @Route("/import/adhesions/start", name="app_ffmkr_start_import_adhesions", methods={"GET"})
      */
-    public function importAdhesions(Request $request): JsonResponse
+    public function startImportAdhesions(): JsonResponse
+    {        
+        $this->FFMKRAdhesionRepository->resetAdhesionStatus();
+        return $this->json(
+            'Start Import Adhesions',
+            200
+        );
+    }
+
+    /**
+     * @Route("/import/adhesions/chunk", name="app_ffmkr_import_chunk_adhesions", methods={"POST"})
+     */
+    public function importChunkAdhesions(Request $request): JsonResponse
     {
-        $csvFile = $request->files->get('csv_file');
+        if ($request->isMethod('post')) {
+            $data = json_decode($request->getContent());
 
-        if (!$csvFile instanceof UploadedFile) {
-            throw new \InvalidArgumentException('Fichier CSV introuvable dans la requête');
-        }
+            if (!empty($data->chunk)) {
+                $csvLinesArray = preg_split("/\r\n|\n|\r/", $data->chunk);
 
-        if (($csv = fopen($csvFile->getPathname(), 'r')) !== FALSE) {
-            // $columnsHeaders = fgetcsv($csv, 1000, ";");
-            // 'NUMCLI' => 'numcli',
-            // 'CIVILITE' => 'civility',
-            // 'NOM' => 'lastname',
-            // 'NOM_JEUNE_FILLE' => 'maidenName',
-            // 'PRENOM' => 'firstname',
-            // 'NOM_SUITE' => 'suiteName',
-            // 'DETINATAIRE' => 'entityName',
-            // 'NOVOIE' => 'streetNumber',
-            // 'VOIE' => 'streetName',
-            // 'COMPLEMENT' => 'streetComplement',
-            // 'CP' => 'postalCode',
-            // 'VILLE' => 'city',
-            // 'PAYS' => 'country',
-            // 'DATE_DE' => 'dateOf',
-            // 'NUM_RPPS' => 'numRpps',
-            // 'TEL' => 'tel',
-            // 'MOBILE' => 'mobile',
-            // 'EMAIL' => 'email',
-            // 'DATE NAISSANCE' => 'birthdate',
-            $columnsHeaders = 
-            [
-                0 => 'numcli',
-                1 => 'civility',
-                2 => 'lastname',
-                3 => 'maidenName',
-                4 => 'firstname',
-                5 => 'suiteName',
-                6 => 'entityName',
-                7 => 'streetNumber',
-                8 => 'streetName',
-                9 => 'streetComplement',
-                10 => 'postalCode',
-                11 => 'city',
-                12 => 'country',
-                13 => '',
-                14 => 'dateOf',
-                15 => '',
-                16 => '',
-                17 => 'numRpps',
-                18 => 'tel',
-                19 => '',
-                20 => 'mobile',
-                21 => 'email',
-                22 => '',
-                23 => '',
-                24 => '',
-                25 => '',
-                26 => 'birthdate',  
-            ];
-
-            $this->FFMKRAdhesionRepository->resetAdhesionStatus();
-            
-            $row = 0;
-            $updatedFFMKRAdhesionsCount = 0;
-            $createdFFMKRAdhesionsCount = 0;
-            $deletedFFMKRAdhesionsCount = 0;
-
-            while (($data = fgetcsv($csv, 1000, ';')) !== FALSE) 
-            {
-                $FFMKRAdhesionsData = array_combine($columnsHeaders, $data);
-
-                if($row >= 1 && !empty($FFMKRAdhesionsData['numcli']))
-                {
-                    $FFMKRAdhesion = $this->FFMKRAdhesionRepository->findOneBy(['numcli' => $FFMKRAdhesionsData['numcli']]);
-
-                    if(!$FFMKRAdhesion instanceof FFMKRAdhesion) 
-                    {
-                        $FFMKRAdhesion = new FFMKRAdhesion();
-
-                        $doctor = $this->doctorRepository->findOneBy(['email' => $FFMKRAdhesionsData['email']??'']);
-                        if($doctor instanceof Doctor)
-                        {
-                            if(!empty($doctor->getFFMKRAdhesion()))
-                                $FFMKRAdhesion = $doctor->getFFMKRAdhesion();
-                            else    
-                                $FFMKRAdhesion->setDoctor($doctor);
-                        }
-
-                        $isFFMKRAdhesionCreation = true;   
-                        $createdFFMKRAdhesionsCount++;
-                        $this->em->persist($FFMKRAdhesion);
-                    }
-
-                    $hasChanges = false;
-                    foreach ($FFMKRAdhesionsData as $key => $value) 
-                    {
-                        if ($key != '' && $FFMKRAdhesion->{'get' . ucfirst($key)}() !== $value) 
-                        {
-                            $FFMKRAdhesion->{'set' . ucfirst($key)}($value);
-                            $hasChanges = true;
-                        }
-                    }
-    
-                    if (empty($isFFMKRAdhesionCreation) && $hasChanges)
-                        $updatedFFMKRAdhesionsCount++;
-
-                    $FFMKRAdhesion->setIsActive(true);
-                }
-                $row++;
-            }
-            $this->em->flush();
-            fclose($csv);
-
-            $deletedFFMKRAdhesionsIds = $this->FFMKRAdhesionRepository->getNotActiveAdhesions();
-            if(!empty($deletedFFMKRAdhesionsIds))
-            {
-                $deletedFFMKRAdhesionsIds = array_reduce($deletedFFMKRAdhesionsIds, function ($IdsArray, $el) 
-                {
-                    $IdsArray[] = $el['id'];
-                    return $IdsArray;
-                }, []);
+                // 'NUMCLI' => 'numcli',
+                // 'CIVILITE' => 'civility',
+                // 'NOM' => 'lastname',
+                // 'NOM_JEUNE_FILLE' => 'maidenName',
+                // 'PRENOM' => 'firstname',
+                // 'NOM_SUITE' => 'suiteName',
+                // 'DETINATAIRE' => 'entityName',
+                // 'NOVOIE' => 'streetNumber',
+                // 'VOIE' => 'streetName',
+                // 'COMPLEMENT' => 'streetComplement',
+                // 'CP' => 'postalCode',
+                // 'VILLE' => 'city',
+                // 'PAYS' => 'country',
+                // 'DATE_DE' => 'dateOf',
+                // 'NUM_RPPS' => 'numRpps',
+                // 'TEL' => 'tel',
+                // 'MOBILE' => 'mobile',
+                // 'EMAIL' => 'email',
+                // 'DATE NAISSANCE' => 'birthdate',
+                $columnsHeaders = 
+                [
+                    0 => 'numcli',
+                    1 => 'civility',
+                    2 => 'lastname',
+                    3 => 'maidenName',
+                    4 => 'firstname',
+                    5 => 'suiteName',
+                    6 => 'entityName',
+                    7 => 'streetNumber',
+                    8 => 'streetName',
+                    9 => 'streetComplement',
+                    10 => 'postalCode',
+                    11 => 'city',
+                    12 => 'country',
+                    13 => '',
+                    14 => 'dateOf',
+                    15 => '',
+                    16 => '',
+                    17 => 'numRpps',
+                    18 => 'tel',
+                    19 => '',
+                    20 => 'mobile',
+                    21 => 'email',
+                    22 => '',
+                    23 => '',
+                    24 => '',
+                    25 => '',
+                    26 => 'birthdate',  
+                ];
                 
-                $deletedFFMKRAdhesions = $this->FFMKRAdhesionRepository->deleteAdhesions($deletedFFMKRAdhesionsIds);
-                $deletedFFMKRAdhesionsCount = $deletedFFMKRAdhesions['deletedFFMKRAdhesionsResult'];
-            }
+                $updatedFFMKRAdhesionsCount = 0;
+                $createdFFMKRAdhesionsCount = 0;
 
-            return $this->json(
-                ['updatedFFMKRAdhesionsCount' => $updatedFFMKRAdhesionsCount, 'createdFFMKRAdhesionsCount' => $createdFFMKRAdhesionsCount, 'deletedFFMKRAdhesionsCount' => $deletedFFMKRAdhesionsCount],
-                200
-            );
+                foreach ($csvLinesArray as $csvLine) {
+                    if(strlen($csvLine)>10)
+                    {
+                        $FFMKRAdhesionsData = array_combine($columnsHeaders, explode(';',$csvLine));
+                        $isFFMKRAdhesionCreation = false; 
+
+                        if(!empty($FFMKRAdhesionsData['numcli']))
+                        {
+                            $FFMKRAdhesion = $this->FFMKRAdhesionRepository->findOneBy(['numcli' => $FFMKRAdhesionsData['numcli']]);
+        
+                            if(!$FFMKRAdhesion instanceof FFMKRAdhesion) 
+                            {
+                                $FFMKRAdhesion = new FFMKRAdhesion();
+        
+                                $doctor = $this->doctorRepository->findOneBy(['email' => $FFMKRAdhesionsData['email']??'']);
+                                if($doctor instanceof Doctor)
+                                {
+                                    if(!empty($doctor->getFFMKRAdhesion()))
+                                        $FFMKRAdhesion = $doctor->getFFMKRAdhesion();
+                                    else    
+                                        $FFMKRAdhesion->setDoctor($doctor);
+                                }
+        
+                                $isFFMKRAdhesionCreation = true;   
+                                $createdFFMKRAdhesionsCount++;
+                                $this->em->persist($FFMKRAdhesion);
+                            }
+        
+                            $hasChanges = false;
+                            foreach ($FFMKRAdhesionsData as $key => $value) 
+                            {
+                                if ($key != '' && $FFMKRAdhesion->{'get' . ucfirst($key)}() !== $value) 
+                                {
+                                    $FFMKRAdhesion->{'set' . ucfirst($key)}($value);
+                                    $hasChanges = true;
+                                }
+                            }
+            
+                            if (!$isFFMKRAdhesionCreation && $hasChanges)
+                                $updatedFFMKRAdhesionsCount++;
+        
+                            $FFMKRAdhesion->setIsActive(true);
+                        }    
+                    }
+                }
+                $this->em->flush();
+                $this->em->clear();
+        
+                return $this->json(
+                    ['updatedFFMKRAdhesionsCount' => $updatedFFMKRAdhesionsCount, 'createdFFMKRAdhesionsCount' => $createdFFMKRAdhesionsCount],
+                    200
+                );
+            }
         }
+    }
+
+    /**
+     * @Route("/import/adhesions/stop", name="app_ffmkr_stop_import_adhesions", methods={"GET"})
+     */
+    public function stopImportAdhesions(): JsonResponse
+    {
+        $deletedFFMKRAdhesionsCount = 0;
+        $deletedFFMKRAdhesionsIds = $this->FFMKRAdhesionRepository->getNotActiveAdhesions();
+        if(!empty($deletedFFMKRAdhesionsIds))
+        {
+            $deletedFFMKRAdhesionsIds = array_reduce($deletedFFMKRAdhesionsIds, function ($IdsArray, $el) 
+            {
+                $IdsArray[] = $el['id'];
+                return $IdsArray;
+            }, []);
+            
+            $deletedFFMKRAdhesions = $this->FFMKRAdhesionRepository->deleteAdhesions($deletedFFMKRAdhesionsIds);
+            $deletedFFMKRAdhesionsCount = $deletedFFMKRAdhesions['deletedFFMKRAdhesionsResult'];
+        }
+
+        return $this->json(
+            ['deletedFFMKRAdhesionsCount' => $deletedFFMKRAdhesionsCount],
+            200
+        );
     }
 }

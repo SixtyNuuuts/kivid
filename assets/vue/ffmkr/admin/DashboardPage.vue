@@ -33,7 +33,7 @@
                                     <vs-input
                                         v-model="search"
                                         @keyup="page = 1"
-                                        label-placeholder="Filtrer par nom ou email"
+                                        label-placeholder="Filtrer par NumCli, Nom ou Email"
                                     />
                                 </div>
                                 <div class="btn-primary-action">
@@ -162,7 +162,17 @@
                                         >
                                     </p>
                                 </div>
-                                <div v-if="loadingFFMKRAdhesions">
+                                <div v-if="loadingFFMKRAdhesions" style="position: relative;">
+                                    <div class="loading-info" v-if="chunkInProgress">
+                                        <div class="progressbar-total-chunk-ended">
+                                            <div class="progressbar-completed" :class="{ error: chunkError, 'transition-width': chunkInProgress}" :style="{ width: `${totalChunkEndedPourcent}%`}"></div>
+                                        </div>                  
+                                        <div>
+                                            <span>Adhésion(s) créée(s) : <strong>{{adhInfos.createdFFMKRAdhesionsCount}}</strong></span>
+                                            <span>Adhésion(s) modifiée(s) : <strong>{{adhInfos.updatedFFMKRAdhesionsCount}}</strong></span>
+                                            <span>Adhésion(s) supprimée(s) : <strong>{{adhInfos.deletedFFMKRAdhesionsCount}}</strong></span>
+                                        </div>
+                                    </div>
                                     <div
                                         v-for="(loading, i) in 26"
                                         :key="i"
@@ -202,6 +212,7 @@ export default {
             search: "",
             page: 1,
             max: 25,
+            adhInfos: {createdFFMKRAdhesionsCount:0,updatedFFMKRAdhesionsCount:0,deletedFFMKRAdhesionsCount:0},
             loadingFFMKRAdhesions: false,
             btnLoadingLoadCsvFile: false,
             totalChunkEndedPourcent: 0,
@@ -212,7 +223,7 @@ export default {
     computed: {
         getFFMKRAdhesions() {
             return this.getPage(
-                f.getSearch(this.FFMKRAdhesions, this.search),
+                f.getSearch(this.FFMKRAdhesions, this.search,'','ffmkr_adhesion'),
                 this.page,
                 this.max
             );
@@ -247,7 +258,7 @@ export default {
 
                 this.loadingFFMKRAdhesions = true;
                 this.btnLoadingLoadCsvFile = true;
-                const chunkSize = 10000;
+                const chunkSize = 500;
                 reader.onload = (event) => {
                     const csv = event.target.result;
                     const rows = csv.split('\n');
@@ -269,12 +280,9 @@ export default {
                         chunks.push(chunk.join('\n'));
                     }
 
-                    const adhInfos = {createdFFMKRAdhesionsCount:0,updatedFFMKRAdhesionsCount:0,deletedFFMKRAdhesionsCount:0};
-
                     this.axios
                         .get(`/ffmkr/import/adhesions/start`)
                         .then((response) => {
-                            console.log(response.data, 'resetAdhesionStatus');
                             this.totalChunkEndedPourcent = 0;
 
                             for (let i = 0; i < chunks.length; i++) {
@@ -283,9 +291,9 @@ export default {
                                         chunk: chunks[i]
                                     })
                                     .then((response) => {
-                                        adhInfos.createdFFMKRAdhesionsCount += response.data.createdFFMKRAdhesionsCount;
-                                        adhInfos.updatedFFMKRAdhesionsCount += response.data.updatedFFMKRAdhesionsCount;
-                                        
+                                        this.adhInfos.createdFFMKRAdhesionsCount += response.data.createdFFMKRAdhesionsCount;
+                                        this.adhInfos.updatedFFMKRAdhesionsCount += response.data.updatedFFMKRAdhesionsCount;
+
                                         this.chunkInProgress = true;
                                         if(this.totalChunkEndedPourcent<100)
                                             this.totalChunkEndedPourcent += (100/chunks.length);
@@ -298,33 +306,35 @@ export default {
                                                     this.axios
                                                         .get(`/ffmkr/import/adhesions/stop`)
                                                             .then((response) => {
-                                                                adhInfos.deletedFFMKRAdhesionsCount += response.data.deletedFFMKRAdhesionsCount;
-                                                                
+                                                                this.adhInfos.deletedFFMKRAdhesionsCount += response.data.deletedFFMKRAdhesionsCount;
+
                                                                 csvFile.value = '';
-                                                                this.loadingFFMKRAdhesions = false;
-                                                                this.btnLoadingLoadCsvFile = false;
-                                                                const hasChanges = adhInfos.createdFFMKRAdhesionsCount > 0 || adhInfos.updatedFFMKRAdhesionsCount > 0 || adhInfos.deletedFFMKRAdhesionsCount > 0;
+                                                                const hasChanges = this.adhInfos.createdFFMKRAdhesionsCount > 0 || this.adhInfos.updatedFFMKRAdhesionsCount > 0 || this.adhInfos.deletedFFMKRAdhesionsCount > 0;
 
                                                                 f.openSuccessNotification(
                                                                     "Adhésion(s) mis à jour",
                                                                     hasChanges ? `
-                                                                    Adhésion(s) créé(s) : ${adhInfos.createdFFMKRAdhesionsCount}<br>
-                                                                    Adhésion(s) modifié(s) : ${adhInfos.updatedFFMKRAdhesionsCount}<br>
-                                                                    Adhésion(s) supprimé(s) : ${adhInfos.deletedFFMKRAdhesionsCount}
+                                                                    Adhésion(s) créée(s) : ${this.adhInfos.createdFFMKRAdhesionsCount}<br>
+                                                                    Adhésion(s) modifiée(s) : ${this.adhInfos.updatedFFMKRAdhesionsCount}<br>
+                                                                    Adhésion(s) supprimée(s) : ${this.adhInfos.deletedFFMKRAdhesionsCount}
                                                                     ` : 'Votre fichier .csv ne contient aucune nouvelles données'
                                                                 );
 
                                                                 if(hasChanges)
                                                                     this.getFFMKRAdhesionsData();
 
-                                                                clearInterval(endedImport);
-                                                                this.chunkInProgress = false;
-                                                                console.log('Ended Import Adhesions',this.totalChunkEndedPourcent);
+                                                                clearInterval(endedImport);                                                                
+                                                                setTimeout(() => {
+                                                                   this.chunkInProgress = false;
+                                                                   this.loadingFFMKRAdhesions = false;
+                                                                    this.btnLoadingLoadCsvFile = false;
+                                                                }, 1000);
                                                             })
                                                             .catch((error) => {
                                                                 console.log(error);
                                                                 this.chunkError = true;
                                                                 this.chunkInProgress = false;
+                                                                csvFile.value = '';
                                                                 f.openErrorNotification(
                                                                     "Erreur",
                                                                     "Erreur lors du processus d'importation du fichier .csv"
@@ -338,6 +348,7 @@ export default {
                                         console.log(error);
                                         this.chunkError = true;
                                         this.chunkInProgress = false;
+                                        csvFile.value = '';
                                         f.openErrorNotification(
                                             "Erreur",
                                             "Erreur lors du processus d'importation du fichier .csv"
@@ -349,6 +360,7 @@ export default {
                             console.log(error);
                             this.chunkError = true;
                             this.chunkInProgress = false;
+                            csvFile.value = '';
                             f.openErrorNotification(
                                 "Erreur",
                                 "Erreur lors du processus d'importation du fichier .csv"
@@ -367,7 +379,7 @@ export default {
             return f.getLength(data, maxItems);
         },
         getSearch(data, filter) {
-            return f.getSearch(data, filter);
+            return f.getSearch(data, filter,'','ffmkr_adhesion');
         },
         getUserName(user) {
             return f.getUserName(user);
@@ -408,7 +420,8 @@ export default {
 
         .btn-primary-action {
             width: 29.4rem;
-
+            position: relative;
+            
             .vs-button .vs-button__content i {
                 top: -0.018rem;
                 font-size: 1.5rem;
@@ -573,6 +586,8 @@ export default {
             i {
                 max-width: 3.75rem;
             }
+        }
+    }
 
     .vs-pagination__slot > div
     {
@@ -581,6 +596,60 @@ export default {
 
         > .sepa {
             margin: 0 0.2rem;
+        }
+    }
+
+    .loading-info
+    {
+        background-color: rgba(255,255,255, 0.06);
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 2;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        line-height: 2;
+
+        .progressbar-total-chunk-ended 
+        {
+            width: 100%;
+            height: 2.3rem;
+            max-width: 80rem;
+            border-radius: 0.4rem;
+            border: 1px solid #e6ecfd;
+            margin-bottom: 1.2rem;
+            background-color: #fff;
+
+            .progressbar-completed
+            {
+                background-color: #5ad5b0;
+                height: 100%;
+                border-radius: 0.4rem;
+
+                &.transition-width {
+                    transition: width 2s;
+                }
+
+                &.error {
+                    background-color: #ec2b2b;
+                }
+            }
+        }
+
+        span 
+        {
+            font-size: 2rem;
+            display: inline-flex;
+            margin: 0 3rem;
+
+            strong {
+                margin-left: 0.6rem;
+            }
         }
     }
 }

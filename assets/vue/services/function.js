@@ -260,7 +260,7 @@ export default {
     }
   },
 
-  getSearch(data, search, exclude) {
+  getSearch(data, search, exclude, target) {
     if (search === void 0) {
       search = '';
     }
@@ -275,6 +275,9 @@ export default {
       let searchFields = ["firstname", "lastname", "email", "title", "name", "worksheet", "patient", "doctor"];
       if ('doctor' === exclude) {
         searchFields = ["firstname", "lastname", "email", "title", "name", "worksheet", "patient"];
+      }
+      if ('ffmkr_adhesion' === target) {
+        searchFields = ["numcli", "lastname", "email"];
       }
 
       const objFilteredBySearchField = Object.keys(obj).reduce((r, key) => {
