@@ -33,7 +33,7 @@
                                     <vs-input
                                         v-model="search"
                                         @keyup="page = 1"
-                                        label-placeholder="Filtrer par nom ou email"
+                                        label-placeholder="Filtrer par NumCli, Nom ou Email"
                                     />
                                 </div>
                                 <div class="btn-primary-action">
@@ -49,7 +49,10 @@
                                             @change="loadCsvFile($event)"
                                         />
                                         <i class="fas fa-file-import"></i> <span><span v-if="FFMKRAdhesions.length>0">Mettre à jour les adhesions (CSV)</span><span v-else>Importer les adhesions (CSV)</span></span>
-                                    </vs-button>                    
+                                    </vs-button>
+                                    <div class="progressbar-total-chunk-ended">
+                                        <div class="progressbar-completed" :class="{ error: chunkError, 'transition-width': chunkInProgress}" :style="{ width: `${totalChunkEndedPourcent}%`}"></div>
+                                    </div>                  
                                 </div>
                             </div>
                             <div class="adhesions-list">
@@ -159,7 +162,17 @@
                                         >
                                     </p>
                                 </div>
-                                <div v-if="loadingFFMKRAdhesions">
+                                <div v-if="loadingFFMKRAdhesions" style="position: relative;">
+                                    <div class="loading-info" v-if="chunkInProgress">
+                                        <div class="progressbar-total-chunk-ended">
+                                            <div class="progressbar-completed" :class="{ error: chunkError, 'transition-width': chunkInProgress}" :style="{ width: `${totalChunkEndedPourcent}%`}"></div>
+                                        </div>                  
+                                        <div>
+                                            <span>Adhésion(s) créée(s) : <strong>{{adhInfos.createdFFMKRAdhesionsCount}}</strong></span>
+                                            <span>Adhésion(s) modifiée(s) : <strong>{{adhInfos.updatedFFMKRAdhesionsCount}}</strong></span>
+                                            <span>Adhésion(s) supprimée(s) : <strong>{{adhInfos.deletedFFMKRAdhesionsCount}}</strong></span>
+                                        </div>
+                                    </div>
                                     <div
                                         v-for="(loading, i) in 26"
                                         :key="i"
@@ -168,22 +181,14 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="pagination" v-if="FFMKRAdhesions.length > max">
+                            <div class="pagination">
                                 <vs-pagination 
                                     v-model="page" 
-                                    :length="
-                                        getLength(getSearch(FFMKRAdhesions, search), max)
-                                    "
+                                    :length="getLength(getSearch(FFMKRAdhesions, search), max)"
                                 >
-                                    <vs-select v-model="page">
-                                        <vs-option
-                                            v-for="numberPage in getLength(getSearch(FFMKRAdhesions, search), max)"
-                                            :key="numberPage"
-                                            :label="numberPage"
-                                            :value="numberPage">
-                                            {{ numberPage }}
-                                        </vs-option>
-                                    </vs-select>
+                                    <div>
+                                        Page : <b>{{ page }}</b><span class="sepa">/</span>{{ getLength(getSearch(FFMKRAdhesions, search), max) }}
+                                    </div>
                                 </vs-pagination>
                             </div>
                         </div>
@@ -207,20 +212,24 @@ export default {
             search: "",
             page: 1,
             max: 25,
+            adhInfos: {createdFFMKRAdhesionsCount:0,updatedFFMKRAdhesionsCount:0,deletedFFMKRAdhesionsCount:0},
             loadingFFMKRAdhesions: false,
             btnLoadingLoadCsvFile: false,
+            totalChunkEndedPourcent: 0,
+            chunkError: false,
+            chunkInProgress: false
         };
     },
     computed: {
         getFFMKRAdhesions() {
             return this.getPage(
-                f.getSearch(this.FFMKRAdhesions, this.search),
+                f.getSearch(this.FFMKRAdhesions, this.search,'','ffmkr_adhesion'),
                 this.page,
                 this.max
             );
         },
     },
-    methods: {   
+    methods: {
         getFFMKRAdhesionsData() {
         this.loadingFFMKRAdhesions = true;
         this.btnLoadingLoadCsvFile = true;
@@ -244,45 +253,120 @@ export default {
         loadCsvFile(event) {
             const csvFile = event.target;
             if (csvFile.files[0]) {
-                const formData = new FormData();
-                formData.append('csv_file', csvFile.files[0]);
-           
+                const reader = new FileReader();
+                reader.readAsText(csvFile.files[0]);
+
                 this.loadingFFMKRAdhesions = true;
                 this.btnLoadingLoadCsvFile = true;
+                const chunkSize = 500;
+                reader.onload = (event) => {
+                    const csv = event.target.result;
+                    const rows = csv.split('\n');
 
-                this.axios
-                    .post(`/ffmkr/import/adhesions`, formData, {
-                        headers: {
-                            'Content-Type': 'multipart/form-data'
+                    let chunks = [];
+                    let chunk = [];
+
+                    for (let i = 0; i < rows.length; i++) {
+                        if (chunk.length >= chunkSize) {
+                            chunks.push(chunk.join('\n'));
+                            chunk = [];
                         }
-                    })
-                    .then((response) => {
-                        csvFile.value = '';
-                        this.loadingFFMKRAdhesions = false;
-                        this.btnLoadingLoadCsvFile = false;
-                        const hasChanges = response.data.createdFFMKRAdhesionsCount > 0 || response.data.updatedFFMKRAdhesionsCount > 0 || response.data.deletedFFMKRAdhesionsCount > 0;
 
-                        f.openSuccessNotification(
-                            "Adhésion(s) mis à jour",
-                             hasChanges ? `
-                             Adhésion(s) créé(s) : ${response.data.createdFFMKRAdhesionsCount}<br>
-                             Adhésion(s) modifié(s) : ${response.data.updatedFFMKRAdhesionsCount}<br>
-                             Adhésion(s) supprimé(s) : ${response.data.deletedFFMKRAdhesionsCount}
-                             ` : 'Votre fichier .csv ne contient aucune nouvelles données'
-                        );
+                        if(i!=0&&!rows[i].includes('numcli'))
+                            chunk.push(rows[i]);
+                    }
 
-                        if(hasChanges)
-                            this.getFFMKRAdhesionsData();
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                        csvFile.value = '';
+                    if (chunk.length > 0) {
+                        chunks.push(chunk.join('\n'));
+                    }
 
-                        f.openErrorNotification(
-                            "Erreur",
-                            "Erreur lors du processus d'importation du fichier .csv"
-                        );
-                    });
+                    this.axios
+                        .get(`/ffmkr/import/adhesions/start`)
+                        .then((response) => {
+                            this.totalChunkEndedPourcent = 0;
+
+                            for (let i = 0; i < chunks.length; i++) {
+                                this.axios
+                                    .post(`/ffmkr/import/adhesions/chunk`, {
+                                        chunk: chunks[i]
+                                    })
+                                    .then((response) => {
+                                        this.adhInfos.createdFFMKRAdhesionsCount += response.data.createdFFMKRAdhesionsCount;
+                                        this.adhInfos.updatedFFMKRAdhesionsCount += response.data.updatedFFMKRAdhesionsCount;
+
+                                        this.chunkInProgress = true;
+                                        if(this.totalChunkEndedPourcent<100)
+                                            this.totalChunkEndedPourcent += (100/chunks.length);
+
+                                        if(i==chunks.length-1)
+                                        {
+                                            const endedImport = setInterval(() => {
+                                                if(this.totalChunkEndedPourcent>=100)
+                                                {
+                                                    this.axios
+                                                        .get(`/ffmkr/import/adhesions/stop`)
+                                                            .then((response) => {
+                                                                this.adhInfos.deletedFFMKRAdhesionsCount += response.data.deletedFFMKRAdhesionsCount;
+
+                                                                csvFile.value = '';
+                                                                const hasChanges = this.adhInfos.createdFFMKRAdhesionsCount > 0 || this.adhInfos.updatedFFMKRAdhesionsCount > 0 || this.adhInfos.deletedFFMKRAdhesionsCount > 0;
+
+                                                                f.openSuccessNotification(
+                                                                    "Adhésion(s) mis à jour",
+                                                                    hasChanges ? `
+                                                                    Adhésion(s) créée(s) : ${this.adhInfos.createdFFMKRAdhesionsCount}<br>
+                                                                    Adhésion(s) modifiée(s) : ${this.adhInfos.updatedFFMKRAdhesionsCount}<br>
+                                                                    Adhésion(s) supprimée(s) : ${this.adhInfos.deletedFFMKRAdhesionsCount}
+                                                                    ` : 'Votre fichier .csv ne contient aucune nouvelles données'
+                                                                );
+
+                                                                if(hasChanges)
+                                                                    this.getFFMKRAdhesionsData();
+
+                                                                clearInterval(endedImport);                                                                
+                                                                setTimeout(() => {
+                                                                   this.chunkInProgress = false;
+                                                                   this.loadingFFMKRAdhesions = false;
+                                                                    this.btnLoadingLoadCsvFile = false;
+                                                                }, 1000);
+                                                            })
+                                                            .catch((error) => {
+                                                                console.log(error);
+                                                                this.chunkError = true;
+                                                                this.chunkInProgress = false;
+                                                                csvFile.value = '';
+                                                                f.openErrorNotification(
+                                                                    "Erreur",
+                                                                    "Erreur lors du processus d'importation du fichier .csv"
+                                                                );
+                                                            });
+                                                }
+                                            }, 1000);
+                                        }
+                                    })
+                                    .catch((error) => {
+                                        console.log(error);
+                                        this.chunkError = true;
+                                        this.chunkInProgress = false;
+                                        csvFile.value = '';
+                                        f.openErrorNotification(
+                                            "Erreur",
+                                            "Erreur lors du processus d'importation du fichier .csv"
+                                        );
+                                    });
+                            }
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                            this.chunkError = true;
+                            this.chunkInProgress = false;
+                            csvFile.value = '';
+                            f.openErrorNotification(
+                                "Erreur",
+                                "Erreur lors du processus d'importation du fichier .csv"
+                            );
+                        });
+                };
             }
         },
         formatDate(datetime) {
@@ -295,7 +379,7 @@ export default {
             return f.getLength(data, maxItems);
         },
         getSearch(data, filter) {
-            return f.getSearch(data, filter);
+            return f.getSearch(data, filter,'','ffmkr_adhesion');
         },
         getUserName(user) {
             return f.getUserName(user);
@@ -336,7 +420,8 @@ export default {
 
         .btn-primary-action {
             width: 29.4rem;
-
+            position: relative;
+            
             .vs-button .vs-button__content i {
                 top: -0.018rem;
                 font-size: 1.5rem;
@@ -351,6 +436,29 @@ export default {
                     font-size: 1.3rem;
                     position: relative;
                     top: 0.1rem;
+                }
+            }
+
+            .progressbar-total-chunk-ended 
+            {
+                width: 100%;
+                height: 1.5rem;
+                position: absolute;
+                bottom: -0.35rem;
+
+                .progressbar-completed
+                {
+                    background-color: #5ad5b0;
+                    height: 100%;
+                    border-radius: 1rem;
+
+                    &.transition-width {
+                        transition: width 2s;
+                    }
+
+                    &.error {
+                        background-color: #ec2b2b;
+                    }
                 }
             }
 
@@ -477,6 +585,70 @@ export default {
 
             i {
                 max-width: 3.75rem;
+            }
+        }
+    }
+
+    .vs-pagination__slot > div
+    {
+        font-size: 1.2rem;
+        margin: 0 1.2rem;
+
+        > .sepa {
+            margin: 0 0.2rem;
+        }
+    }
+
+    .loading-info
+    {
+        background-color: rgba(255,255,255, 0.06);
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 2;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        line-height: 2;
+
+        .progressbar-total-chunk-ended 
+        {
+            width: 100%;
+            height: 2.3rem;
+            max-width: 80rem;
+            border-radius: 0.4rem;
+            border: 1px solid #e6ecfd;
+            margin-bottom: 1.2rem;
+            background-color: #fff;
+
+            .progressbar-completed
+            {
+                background-color: #5ad5b0;
+                height: 100%;
+                border-radius: 0.4rem;
+
+                &.transition-width {
+                    transition: width 2s;
+                }
+
+                &.error {
+                    background-color: #ec2b2b;
+                }
+            }
+        }
+
+        span 
+        {
+            font-size: 2rem;
+            display: inline-flex;
+            margin: 0 3rem;
+
+            strong {
+                margin-left: 0.6rem;
             }
         }
     }
