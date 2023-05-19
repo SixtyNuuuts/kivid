@@ -284,6 +284,9 @@ export default {
                         .get(`/ffmkr/import/adhesions/start`)
                         .then((response) => {
                             this.totalChunkEndedPourcent = 0;
+                            this.adhInfos.createdFFMKRAdhesionsCount = 0;
+                            this.adhInfos.updatedFFMKRAdhesionsCount = 0;
+                            this.adhInfos.deletedFFMKRAdhesionsCount = 0;
 
                             for (let i = 0; i < chunks.length; i++) {
                                 this.axios
