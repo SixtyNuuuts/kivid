@@ -164,9 +164,11 @@
                                 >
                                     <svg v-if="video.videoLibrary.reference === 'ffmkr' && !getDoctorIsFFMKRAdherent" version="1.1" id="Calque_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                                         viewBox="0 0 32 32" style="enable-background:new 0 0 32 32;" xml:space="preserve">
-                                        <path style="fill:none;stroke:#E7DFCD;stroke-width:2;stroke-miterlimit:10;" d="M16,8H8H6H4v14h16V8h-2H16z M12,17c-1.1,0-2-0.9-2-2s0.9-2,2-2s2,0.9,2,2S13.1,17,12,17z"/>
-                                        <path style="fill:#E7DFCD;" d="M7.5,3.3C8.6,1.9,10.3,1,12.2,1c3.3,0,6,2.7,6,6v1h-2V7c0-2.3-1.7-4-4-4C10.9,3,9.7,3.6,9,4.5L7.5,3.3z"/>
+                                        <path style="fill:none;stroke:#E7DFCD;stroke-width:2;stroke-miterlimit:10;" d="M16,8H8H6H4v14h16V8h-2H16z"/>
+                                        <path style="fill:#E7DFCD;" d="M17,3.2c-1-1.4-2.7-2.4-4.6-2.5C9.1,0.5,6.3,3,6.1,6.4l0,1l2,0.1l0-1c0.1-2.3,1.9-3.9,4.2-3.8
+                                            c1.3,0.1,2.4,0.7,3.1,1.7L17,3.2z"/>
                                         <path style="fill:none;stroke:#E7DFCD;stroke-width:2;stroke-miterlimit:10;" d="M8.2,7"/>
+                                        <circle style="fill:#E7DFCD;" cx="12" cy="15" r="2"/>
                                     </svg>
                                     <plus-icon v-else size="2x"></plus-icon>
                                 </vs-button>
