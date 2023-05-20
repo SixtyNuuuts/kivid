@@ -417,13 +417,48 @@ export default {
     .primary-actions {
         flex-direction: row;
 
+        @media (max-width: 780px)
+        {
+            flex-direction: column;
+        }
+
         .search {
-            margin-right: 1.5rem;
+            margin-right: 4rem;
+            position: relative;
+
+            @media (max-width: 780px)
+            {
+                order: 2;
+                margin-right: 0;
+            }
+
+            &::after{
+                content:'';
+                display: block;
+                width: 1px;
+                height: 80%;
+                position: absolute;
+                top: 10%;
+                right: -2rem;
+                background-color: #e7e7e7;
+
+                @media (max-width: 780px)
+                {
+                    display: none;
+                }
+            }
         }
 
         .btn-primary-action {
             width: 29.4rem;
             position: relative;
+
+            @media (max-width: 780px)
+            {
+                order: 1;
+                width: 100%;
+                margin-bottom: 1.9rem;
+            }
             
             .vs-button .vs-button__content i {
                 top: -0.018rem;
@@ -617,12 +652,13 @@ export default {
         justify-content: center;
         text-align: center;
         line-height: 2;
+        padding: 0 3rem;
 
         .progressbar-total-chunk-ended 
         {
             width: 100%;
             height: 2.3rem;
-            max-width: 80rem;
+            max-width: 83rem;
             border-radius: 0.4rem;
             border: 1px solid #e6ecfd;
             margin-bottom: 1.2rem;
