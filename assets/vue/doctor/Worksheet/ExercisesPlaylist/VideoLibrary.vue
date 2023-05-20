@@ -1146,7 +1146,7 @@ export default {
                         border: 2px solid #ede7d9;
 
                         .vs-button__content {
-                            padding: 1px 7px;
+                            padding: 1px;
                         }
 
                         &:hover {
@@ -1161,6 +1161,7 @@ export default {
                         svg {
                             color: #e7dfcd;
                             fill: #e7dfcd;
+                            width: 4rem;
                         }
 
                         &.btn-unlock-vid {
@@ -1173,6 +1174,30 @@ export default {
                                 position: relative;
                                 top: 0.2rem;
                                 left: 0.3rem;
+                            }
+
+                            &:hover
+                            {
+                                svg {
+                                    path:nth-child(1)
+                                    {
+                                        stroke: #fff!important;
+                                    }
+
+                                    path:nth-child(2)
+                                    {
+                                        fill: #fff!important;
+                                    }
+
+                                    path:nth-child(3)
+                                    {
+                                        stroke: #fff!important;
+                                    }
+
+                                    circle {
+                                        fill: #fff!important;
+                                    }
+                                }
                             }
                         }
                     }
