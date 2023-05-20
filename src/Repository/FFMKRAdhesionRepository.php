@@ -55,6 +55,34 @@ class FFMKRAdhesionRepository extends ServiceEntityRepository
 
         return ['updatedDoctorsResult' => $updatedDoctorsResult, 'deletedFFMKRAdhesionsResult' => $deletedFFMKRAdhesionsResult];
     }
+
+    public function countTotalAdhesions()
+    {
+        return $this->em->createQuery('SELECT COUNT(DISTINCT a.numcli) FROM App\Entity\FFMKRAdhesion a  WHERE a.numcli NOT LIKE \'NUMCLITEMP%\'')->getSingleScalarResult();
+    }
+
+    public function findByCriteria(int $maxresult, int $firstresult, ?string $search = null, string $searchColumn = null, ?string $sortColumnName, ?string $sortColumnStatus)
+    {
+        if($search && $search != '' && $searchColumn)
+            $searchWhere = 'AND (lower(a.'.$searchColumn.') LIKE lower(\'%'.$search.'%\')) ';
+
+        $orderBy =  $sortColumnName && $sortColumnStatus? 'ORDER BY a.'.$sortColumnName.' '.$sortColumnStatus : 'ORDER BY a.numcli DESC';
+        
+        return 
+            $this->em->createQuery('SELECT a.numcli, a.firstname, a.lastname, a.email, a.numRpps, a.dateOf, a.requestToken, a.kividStatus FROM App\Entity\FFMKRAdhesion a  WHERE a.numcli NOT LIKE \'NUMCLITEMP%\' '.($searchWhere??'').''.$orderBy.'')
+            ->setMaxResults($maxresult)
+            ->setFirstResult($firstresult)
+            ->getResult()
+        ;
+    }
+
+    public function countFilteredAdhesions(?string $search = null, string $searchColumn = null, ?string $sortColumnName, ?string $sortColumnStatus)
+    {
+        if($search && $search != '' && $searchColumn)
+            $searchWhere = 'AND (lower(a.'.$searchColumn.') LIKE lower(\'%'.$search.'%\')) ';
+
+        return $this->em->createQuery('SELECT COUNT(DISTINCT a.numcli) FROM App\Entity\FFMKRAdhesion a WHERE a.numcli NOT LIKE \'NUMCLITEMP%\' '.($searchWhere??'').'')->getSingleScalarResult();
+    }
  
     // /**
     //  * @return FFMKRAdhesion[] Returns an array of FFMKRAdhesion objects
