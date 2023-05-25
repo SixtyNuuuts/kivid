@@ -79,6 +79,7 @@ class Doctor extends User
     
     /**
      * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"doctor_read"})
      */
     private $giveAccessPublicWorksheetGeneration;
 
