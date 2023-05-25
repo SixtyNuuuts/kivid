@@ -404,97 +404,126 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="big-buttons">
-                                    <div class="btn-create-action">
-                                        <vs-button
-                                            :disabled="$parent.prescriProcess"
-                                            :loading="
-                                                btnLoadingCopyWorksheet ===
-                                                worksheet.id
-                                            "
-                                            @click="
-                                                redirectToCreatePage(
+                                <div class="bloc-footer">
+                                    <div class="big-buttons">
+                                        <div class="btn-create-action">
+                                            <vs-button
+                                                :disabled="$parent.prescriProcess"
+                                                :loading="
+                                                    btnLoadingCopyWorksheet ===
                                                     worksheet.id
-                                                )
-                                            "
-                                            class="w-100"
+                                                "
+                                                @click="
+                                                    redirectToCreatePage(
+                                                        worksheet.id
+                                                    )
+                                                "
+                                                class="w-100"
+                                            >
+                                                <i class="fas fa-plus-circle"></i>
+                                                Copier
+                                            </vs-button>
+                                        </div>
+                                        <div
+                                            class="btn-prescription-action"
+                                            :class="{
+                                                active: prescriProcess,
+                                                selected:
+                                                    $parent.prescriProcessWorksheetSelected &&
+                                                    $parent
+                                                        .prescriProcessWorksheetSelected
+                                                        .id === worksheet.id,
+                                            }"
                                         >
-                                            <i class="fas fa-plus-circle"></i>
-                                            Copier
-                                        </vs-button>
-                                    </div>
-                                    <div
-                                        class="btn-prescription-action"
-                                        :class="{
-                                            active: prescriProcess,
-                                            selected:
-                                                $parent.prescriProcessWorksheetSelected &&
-                                                $parent
-                                                    .prescriProcessWorksheetSelected
-                                                    .id === worksheet.id,
-                                        }"
-                                    >
-                                        <vs-button
-                                            :loading="
-                                                btnLoadingWorksheetPrescriProcessRedirect ===
-                                                worksheet.id
-                                            "
-                                            @click="
-                                                prescriProcessWorksheetChoice(
-                                                    worksheet
-                                                )
-                                            "
-                                            class="w-100"
-                                        >
-                                            <transition name="fade">
-                                                <span
-                                                    v-if="
-                                                        (!prescriProcess &&
-                                                            !$parent.prescriProcessWorksheetSelected) ||
-                                                        ($parent.prescriProcessWorksheetSelected &&
+                                            <vs-button
+                                                :loading="
+                                                    btnLoadingWorksheetPrescriProcessRedirect ===
+                                                    worksheet.id
+                                                "
+                                                @click="
+                                                    prescriProcessWorksheetChoice(
+                                                        worksheet
+                                                    )
+                                                "
+                                                class="w-100"
+                                            >
+                                                <transition name="fade">
+                                                    <span
+                                                        v-if="
+                                                            (!prescriProcess &&
+                                                                !$parent.prescriProcessWorksheetSelected) ||
+                                                            ($parent.prescriProcessWorksheetSelected &&
+                                                                $parent
+                                                                    .prescriProcessWorksheetSelected
+                                                                    .id !=
+                                                                    worksheet.id)
+                                                        "
+                                                        ><i
+                                                            class="
+                                                                fas
+                                                                fa-folder-plus
+                                                            "
+                                                        ></i
+                                                        >Prescrire</span
+                                                    >
+                                                    <span
+                                                        v-if="
+                                                            prescriProcess &&
+                                                            !$parent.prescriProcessWorksheetSelected
+                                                        "
+                                                        ><i
+                                                            class="
+                                                                fas
+                                                                fa-folder-plus
+                                                            "
+                                                        ></i
+                                                        >Sélectionner</span
+                                                    >
+                                                    <span
+                                                        v-if="
+                                                            $parent.prescriProcessWorksheetSelected &&
                                                             $parent
                                                                 .prescriProcessWorksheetSelected
-                                                                .id !=
-                                                                worksheet.id)
-                                                    "
-                                                    ><i
-                                                        class="
-                                                            fas
-                                                            fa-folder-plus
+                                                                .id === worksheet.id
                                                         "
-                                                    ></i
-                                                    >Prescrire</span
-                                                >
-                                                <span
-                                                    v-if="
-                                                        prescriProcess &&
-                                                        !$parent.prescriProcessWorksheetSelected
-                                                    "
-                                                    ><i
-                                                        class="
-                                                            fas
-                                                            fa-folder-plus
-                                                        "
-                                                    ></i
-                                                    >Sélectionner</span
-                                                >
-                                                <span
-                                                    v-if="
-                                                        $parent.prescriProcessWorksheetSelected &&
-                                                        $parent
-                                                            .prescriProcessWorksheetSelected
-                                                            .id === worksheet.id
-                                                    "
-                                                    ><i
-                                                        class="
-                                                            fas
-                                                            fa-check-circle
-                                                        "
-                                                    ></i
-                                                    >Sélectionné</span
-                                                >
-                                            </transition>
+                                                        ><i
+                                                            class="
+                                                                fas
+                                                                fa-check-circle
+                                                            "
+                                                        ></i
+                                                        >Sélectionné</span
+                                                    >
+                                                </transition>
+                                            </vs-button>
+                                        </div>
+                                    </div>
+                                    <div class="btn-create-public-access">
+                                        <vs-button
+                                            v-if="!worksheet.accessPublicSlug"
+                                            :disabled="$parent.prescriProcess"
+                                            :loading="btnLoadingCreatePublicAccess"
+                                            @click="createPublicAccess(worksheet)"
+                                            class="w-100"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24px" height="24px"><path d="M 3 3 L 3 21 L 21 21 L 21 12 L 19 12 L 19 19 L 5 19 L 5 5 L 12 5 L 12 3 L 3 3 z M 14 3 L 14 5 L 17.585938 5 L 8.2929688 14.292969 L 9.7070312 15.707031 L 19 6.4140625 L 19 10 L 21 10 L 21 3 L 14 3 z"/></svg>
+                                            <span>Créer un accès public</span>
                                         </vs-button>
+                                        <div v-else class="public-worksheet-url">
+                                           <span class="label">accès public</span>
+                                           <span class="link" @click="copyToClipboard(`${publicWorksheetBaseUrl}/${worksheet.accessPublicSlug}`)">
+                                                <!-- <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" width="24px" height="24px">    <path d="M 5 1 C 3.9 1 3 1.9 3 3 L 3 17 L 5 17 L 5 3 L 17 3 L 17 1 L 5 1 z M 9 5 C 7.9 5 7 5.9 7 7 L 7 21 C 7 22.1 7.9 23 9 23 L 20 23 C 21.1 23 22 22.1 22 21 L 22 10 L 17 5 L 9 5 z M 9 7 L 16 7 L 16 11 L 20 11 L 20 21 L 9 21 L 9 7 z M 11 13 L 11 15 L 18 15 L 18 13 L 11 13 z M 11 17 L 11 19 L 18 19 L 18 17 L 11 17 z"/></svg> -->
+                                                {{ `${publicWorksheetBaseUrl}/${worksheet.accessPublicSlug}` }}
+                                                <transition name="fade">
+                                                    <span v-if="popUpCopyActive" class="popUp-copy-active">Lien copié dans le presse-papier</span>
+                                                </transition>
+                                            </span>
+                                            <vs-button
+                                                :loading="btnLoadingCreatePublicAccess"
+                                                @click="deletePublicAccess(worksheet)"
+                                            >
+                                            <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 72 72" width="64px" height="64px"><path d="M 32.5 9 C 28.364 9 25 12.364 25 16.5 L 25 18 L 17 18 C 14.791 18 13 19.791 13 22 C 13 24.209 14.791 26 17 26 L 17.232422 26 L 18.671875 51.916016 C 18.923875 56.449016 22.67875 60 27.21875 60 L 44.78125 60 C 49.32125 60 53.076125 56.449016 53.328125 51.916016 L 54.767578 26 L 55 26 C 57.209 26 59 24.209 59 22 C 59 19.791 57.209 18 55 18 L 47 18 L 47 16.5 C 47 12.364 43.636 9 39.5 9 L 32.5 9 z M 32.5 16 L 39.5 16 C 39.775 16 40 16.224 40 16.5 L 40 18 L 32 18 L 32 16.5 C 32 16.224 32.225 16 32.5 16 z M 36 28 C 37.104 28 38 28.896 38 30 L 38 47.923828 C 38 49.028828 37.104 49.923828 36 49.923828 C 34.896 49.923828 34 49.027828 34 47.923828 L 34 30 C 34 28.896 34.896 28 36 28 z M 27.392578 28.001953 C 28.459578 27.979953 29.421937 28.827641 29.460938 29.931641 L 30.085938 47.931641 C 30.123938 49.035641 29.258297 49.959047 28.154297 49.998047 C 28.131297 49.999047 28.108937 50 28.085938 50 C 27.012938 50 26.125891 49.148359 26.087891 48.068359 L 25.462891 30.068359 C 25.424891 28.964359 26.288578 28.040953 27.392578 28.001953 z M 44.607422 28.001953 C 45.711422 28.039953 46.575109 28.964359 46.537109 30.068359 L 45.912109 48.068359 C 45.874109 49.148359 44.986063 50 43.914062 50 C 43.891062 50 43.868703 49.999047 43.845703 49.998047 C 42.741703 49.960047 41.876063 49.035641 41.914062 47.931641 L 42.539062 29.931641 C 42.577062 28.827641 43.518422 27.979953 44.607422 28.001953 z"/></svg>                                            </vs-button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -893,6 +922,8 @@ export default {
             btnLoadingValidRemoveWorksheet: false,
             btnLoadingAddWorksheet: false,
             btnLoadingCopyWorksheet: null,
+            btnLoadingCreatePublicAccess: false,
+            popUpCopyActive: false
         };
     },
     computed: {
@@ -909,6 +940,10 @@ export default {
         getTagsFromAll() {
             return f.getTagsFromAll(this.tagsFromExercises);
         },
+        publicWorksheetBaseUrl()
+        {
+            return `${window.location.protocol}//${window.location.host}/fiche`;
+        }
     },
     methods: {
         selectTag() {
@@ -1036,6 +1071,79 @@ export default {
 
             return worksheetTemplatesFiltered;
         },
+        createPublicAccess(worksheet)
+        {
+            this.btnLoadingCreatePublicAccess = true;
+
+            this.axios
+                .post(`/doctor/${this.doctor.id}/create/public-access/${worksheet.id}`, {
+                    worksheetTitleSlug: this.slugify(worksheet.title).substring(0, 255),
+                })
+                .then((response) => {
+                    this.btnLoadingCreatePublicAccess = false;
+                    worksheet.accessPublicSlug = response.data;
+                })
+                .catch((error) => {
+                    const errorMess =
+                        "object" === typeof error.response.data
+                            ? error.response.data.detail
+                            : error.response.data;
+                    this.btnLoadingCreatePublicAccess = false;
+
+                    f.openErrorNotification("Erreur", errorMess);
+                    this.btnLoadingValidRemoveWorksheet = false;
+                    this.modalConfirmRemoveWorksheet = false;
+                });
+
+        },
+        deletePublicAccess(worksheet)
+        {
+            this.btnLoadingCreatePublicAccess = true;
+
+            this.axios
+                .post(`/doctor/${this.doctor.id}/delete/public-access/${worksheet.id}`, {})
+                .then((response) => {
+                    this.btnLoadingCreatePublicAccess = false;
+                    worksheet.accessPublicSlug = response.data;
+                })
+                .catch((error) => {
+                    const errorMess =
+                        "object" === typeof error.response.data
+                            ? error.response.data.detail
+                            : error.response.data;
+                    this.btnLoadingCreatePublicAccess = false;
+
+                    f.openErrorNotification("Erreur", errorMess);
+                    this.btnLoadingValidRemoveWorksheet = false;
+                    this.modalConfirmRemoveWorksheet = false;
+                });
+
+        },
+        slugify(string)
+		{
+			return string
+				.toString()
+				.normalize('NFD')
+				.replace(/[\u0300-\u036f]/g,'')
+				.toLowerCase()
+				.trim()
+				.replace(/[^a-z0-9 ]/g,'')
+				.replace(/\s+/g,'-');
+		},
+        copyToClipboard(url)
+        {
+            if ('clipboard' in navigator)
+            {
+                navigator.clipboard.writeText(url)
+                .then(()=> {
+                    this.popUpCopyActive = true;    
+                    setTimeout(() => {
+                        this.popUpCopyActive = false;
+                    }, 1500);
+                })
+                .catch((e)=>console.log(e));
+            }
+        }
     },
 };
 </script>
@@ -1133,41 +1241,57 @@ export default {
         }
     }
 
-    .big-buttons {
+    .bloc-footer
+    {
         display: flex;
         margin-top: 1.5rem;
         margin-bottom: -0.3rem;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
 
         @media (min-width: 550px) {
             margin-top: 1.4rem;
             margin-bottom: 0;
+            align-items: flex-start;
         }
 
-        .btn-prescription-action,
-        .btn-create-action {
-            white-space: nowrap;
+        @media (min-width: 780px) {
+            flex-direction: row;
+            align-items: center;
+        }
+    }
 
-            .vs-button {
-                background: $white;
-                font-size: 1.4rem;
-                color: $orange;
-                border-radius: 0.5rem;
-                box-shadow: 0rem 0.2rem 0.8rem 0rem rgba(255, 104, 56, 0.15);
+    .btn-prescription-action,
+    .btn-create-action,
+    .btn-create-public-access
+    {
+        white-space: nowrap;
 
-                &:hover {
-                    box-shadow: 0rem 0.4rem 1.4rem 0rem rgba(255, 104, 56, 0.43);
-                }
+        .vs-button {
+            background: $white;
+            font-size: 1.4rem;
+            color: $orange;
+            border-radius: 0.5rem;
+            box-shadow: 0rem 0.2rem 0.8rem 0rem rgba(255, 104, 56, 0.15);
 
-                i {
-                    font-size: 1.5rem;
-                }
+            &:hover {
+                box-shadow: 0rem 0.4rem 1.4rem 0rem rgba(255, 104, 56, 0.43);
+            }
 
-                .vs-button__content {
-                    padding: 0.7rem 1.5rem;
-                    padding-top: 0.8rem;
-                }
+            i {
+                font-size: 1.5rem;
+            }
+
+            .vs-button__content {
+                padding: 0.7rem 1.5rem;
+                padding-top: 0.8rem;
             }
         }
+    }
+
+    .big-buttons {
+        display: flex;
 
         .btn-prescription-action {
             position: relative;
@@ -1196,6 +1320,155 @@ export default {
                 i {
                     margin-right: 0.7rem;
                     font-size: 1.4rem;
+                }
+            }
+        }
+    }
+
+    .btn-create-public-access {
+        display: flex;
+        align-items: center;
+        margin-top: 1.6rem;
+        max-width: 100%;
+
+        @media (min-width: 550px) {
+            position: relative;
+            top: 0.3rem;
+        }
+
+        .public-worksheet-url
+        {             
+            border: 1px solid $orange;
+            height: 3.2rem;
+            border-radius: 0.5rem;
+            padding: 1.8rem 1.1rem;
+            padding-top: 0.6rem;
+            padding-bottom: 0.4rem;
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: 100%;
+
+            .label 
+            {
+                position: absolute;
+                top: -0.8125rem;
+                left: 1.0625rem;
+                text-transform: uppercase;
+                font-weight: bold;
+                color: white;
+                background-color: $orange;
+                padding: 0.2rem 0.4rem;
+                padding-top: 0.2rem;
+                font-size: 0.6rem;
+                border-radius: 0.3rem;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+            }
+
+            .link
+            {
+                display: flex;
+                align-items: center;
+                color: $orange;
+                margin-right: 0.4rem;
+                font-size: 1.2rem;
+                max-width: 93.5%;
+                display: block;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                cursor: pointer;
+                position: relative;
+
+                svg
+                {
+                    width: 1.5rem;
+                    height: 1.3rem;
+                    margin-right: 0.2rem;
+                    position: relative;
+                    top: -0.15rem;
+                    fill: $orange;
+                }
+
+                .popUp-copy-active
+                {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    display: block;
+                    width: 100%;
+                    height: 100%;
+                    background-color: #fff;
+                    color: $black;
+                    padding: 0.2rem 0.5rem;
+                    font-size: 1rem;
+                    border-radius: 0.3rem;
+                    box-shadow: 0rem 0rem 0.4rem rgba(228, 221, 204, 0.9);
+                }
+            }
+
+            .vs-button
+            {
+                width: 1.8rem;
+                height: 1.8rem;
+                border-radius: 50%;
+                position: relative;
+                left: 0.4rem;
+                top: -0.1rem;
+                flex: none;
+                
+                svg
+                {
+                    width: 1.3rem;
+                    height: 1.3rem;
+                    top: -0.02rem;
+                }
+
+                .vs-button__content {
+                    padding: 0;
+                    padding-top: 0;
+                    position: relative;
+                    left: 0.25rem;
+                    top: 0.015rem;              
+                }
+            }
+        }
+        
+        @media (min-width: 780px) {
+            margin-left: 1.6rem;
+            margin-top: 0;
+            top: 0;
+        }
+
+        .vs-button {
+            background: $orange;
+            color: $white;
+            letter-spacing: 0.005rem;
+            font-weight: 500;
+            font-size: 1.3rem;
+
+            .vs-button__loading {
+                background: rgb(158 64 34 / 61%);
+            }
+            
+            .vs-button__content {
+                padding: 0.7rem 1.2rem;
+                padding-top: 0.7rem;                
+            }
+
+            svg {
+                fill: #fff;
+                width: 1.6rem;
+                margin-right: 0.5rem;
+                height: 1.7rem;
+                position: relative;
+                top: -0.1rem;
+                transition: 0.25s;
+
+                &.supp-public-access {
+                    transform: rotate(180deg);    
                 }
             }
         }

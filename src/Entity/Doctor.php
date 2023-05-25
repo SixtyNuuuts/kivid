@@ -76,6 +76,11 @@ class Doctor extends User
      * @Groups({"doctor_read"})
      */
     private $FFMKRAdhesion;
+    
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $giveAccessPublicWorksheetGeneration;
 
     public function __construct()
     {
@@ -266,7 +271,7 @@ class Doctor extends User
         return $this;
     }
 
-    public function giveFreeAccessPrescri(): ?bool
+    public function isGiveFreeAccessPrescri(): ?bool
     {
         return $this->giveFreeAccessPrescri;
     }
@@ -286,6 +291,18 @@ class Doctor extends User
     public function setFFMKRAdhesion(?FFMKRAdhesion $FFMKRAdhesion): self
     {
         $this->FFMKRAdhesion = $FFMKRAdhesion;
+
+        return $this;
+    }
+      
+    public function isGiveAccessPublicWorksheetGeneration(): ?bool
+    {
+        return $this->giveAccessPublicWorksheetGeneration;
+    }
+
+    public function setGiveAccessPublicWorksheetGeneration(?bool $giveAccessPublicWorksheetGeneration): self
+    {
+        $this->giveAccessPublicWorksheetGeneration = $giveAccessPublicWorksheetGeneration;
 
         return $this;
     }
