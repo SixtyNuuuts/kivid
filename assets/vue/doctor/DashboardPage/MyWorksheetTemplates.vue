@@ -498,7 +498,7 @@
                                             </vs-button>
                                         </div>
                                     </div>
-                                    <div class="btn-create-public-access">
+                                    <div v-if="doctor.giveAccessPublicWorksheetGeneration" class="btn-create-public-access">
                                         <vs-button
                                             v-if="!worksheet.accessPublicSlug"
                                             :disabled="$parent.prescriProcess"
