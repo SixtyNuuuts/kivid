@@ -1330,10 +1330,13 @@ export default {
         align-items: center;
         margin-top: 1.6rem;
         max-width: 100%;
+        background-color: #faf8f4;
+        z-index: 5;
 
         @media (min-width: 550px) {
             position: relative;
             top: 0.3rem;
+            max-width: 59.2vw;
         }
 
         .public-worksheet-url
@@ -1352,27 +1355,28 @@ export default {
             .label 
             {
                 position: absolute;
-                top: -0.8125rem;
+                top: -7px;
                 left: 1.0625rem;
                 text-transform: uppercase;
-                font-weight: bold;
-                color: white;
-                background-color: $orange;
-                padding: 0.2rem 0.4rem;
-                padding-top: 0.2rem;
-                font-size: 0.6rem;
+                color: $orange;
+                background-color: #faf8f4;
+                padding: 1px 4px;
+                padding-top: 4px;
+                font-size: 7px;
                 border-radius: 0.3rem;
                 -webkit-user-select: none;
                 -moz-user-select: none;
                 -ms-user-select: none;
                 user-select: none;
+                font-weight: bold;
+                letter-spacing: 0.7px;
             }
 
             .link
             {
                 display: flex;
                 align-items: center;
-                color: $orange;
+                color: $black;
                 margin-right: 0.4rem;
                 font-size: 1.2rem;
                 max-width: 93.5%;
@@ -1400,8 +1404,8 @@ export default {
                     display: block;
                     width: 100%;
                     height: 100%;
-                    background-color: #fff;
-                    color: $black;
+                    background-color: $black;
+                    color: #fff;
                     padding: 0.2rem 0.5rem;
                     font-size: 1rem;
                     border-radius: 0.3rem;
@@ -1440,6 +1444,26 @@ export default {
             margin-left: 1.6rem;
             margin-top: 0;
             top: 0;
+            max-width: 32rem;
+        }
+
+        @media (min-width: 780px) {
+            margin-left: 1.6rem;
+            margin-top: 0;
+            top: 0;
+            max-width: 38vw;
+        }
+
+        @media (min-width: 1100px) {
+            max-width: 20vw;
+        }
+
+        @media (min-width: 1200px) {
+            max-width: 26.5vw;
+        }
+
+        @media (min-width: 1300px) {
+            max-width: 30vw;
         }
 
         .vs-button {
@@ -1756,7 +1780,7 @@ export default {
                             align-items: flex-end;
                             padding: 0;
                             top: auto;
-                            bottom: 2rem;
+                            bottom: 2.1rem;
                             right: 1.8rem;
                         }
                     }
