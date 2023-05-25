@@ -17,13 +17,13 @@ class PartOfBody
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"video_read", "dashboard_worksheet_read", "worksheet_read"})
+     * @Groups({"video_read", "dashboard_worksheet_read", "worksheet_read", "public_worksheet_read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"video_read", "dashboard_worksheet_read", "worksheet_read", "patient_read"})
+     * @Groups({"video_read", "dashboard_worksheet_read", "worksheet_read", "patient_read", "public_worksheet_read"})
      */
     private $name;
 
@@ -39,7 +39,7 @@ class PartOfBody
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"video_read", "dashboard_worksheet_read", "worksheet_read", "patient_read"})
+     * @Groups({"video_read", "dashboard_worksheet_read", "worksheet_read", "patient_read", "public_worksheet_read"})
      */
     private $icon;
 

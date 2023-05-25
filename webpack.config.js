@@ -35,6 +35,8 @@ Encore
     // Patient
     .addEntry('patient-dashboard-page', './assets/vue/patient/dashboard-page.js')
     .addEntry('patient-read-worksheet-page', './assets/vue/patient/read-worksheet-page.js')
+    // Public
+    .addEntry('public-read-worksheet-page', './assets/vue/public/read-worksheet-page.js')
 
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
     // .enableStimulusBridge('./assets/controllers.json')

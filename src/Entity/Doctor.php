@@ -71,6 +71,11 @@ class Doctor extends User
      */
     private $giveFreeAccessPrescri;
 
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $giveAccessPublicWorksheetGeneration;
+
     public function __construct()
     {
         parent::__construct(['ROLE_DOCTOR']);
@@ -260,7 +265,7 @@ class Doctor extends User
         return $this;
     }
 
-    public function giveFreeAccessPrescri(): ?bool
+    public function isGiveFreeAccessPrescri(): ?bool
     {
         return $this->giveFreeAccessPrescri;
     }
@@ -268,6 +273,18 @@ class Doctor extends User
     public function setGiveFreeAccessPrescri(?bool $giveFreeAccessPrescri): self
     {
         $this->giveFreeAccessPrescri = $giveFreeAccessPrescri;
+
+        return $this;
+    }
+
+    public function isGiveAccessPublicWorksheetGeneration(): ?bool
+    {
+        return $this->giveAccessPublicWorksheetGeneration;
+    }
+
+    public function setGiveAccessPublicWorksheetGeneration(?bool $giveAccessPublicWorksheetGeneration): self
+    {
+        $this->giveAccessPublicWorksheetGeneration = $giveAccessPublicWorksheetGeneration;
 
         return $this;
     }

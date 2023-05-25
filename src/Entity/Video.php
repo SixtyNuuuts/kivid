@@ -17,13 +17,13 @@ class Video
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"worksheet_read", "video_read"})
+     * @Groups({"worksheet_read", "video_read", "public_worksheet_read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"worksheet_read", "video_read"})
+     * @Groups({"worksheet_read", "video_read", "public_worksheet_read"})
      */
     private $name;
 
@@ -34,7 +34,7 @@ class Video
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"worksheet_read", "video_read"})
+     * @Groups({"worksheet_read", "video_read", "public_worksheet_read"})
      */
     private $thumbnailUrl;
 
@@ -63,7 +63,7 @@ class Video
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"worksheet_read", "video_read"})
+     * @Groups({"worksheet_read", "video_read", "public_worksheet_read"})
      */
     private $youtubeId;
 

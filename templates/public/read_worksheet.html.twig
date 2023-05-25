@@ -1,0 +1,24 @@
+{% extends 'layout/vue.html.twig' %}
+
+{% block title %}Fiche | KIVID{% endblock %}
+
+{% block stylesheets %}
+	{{ parent() }}
+
+	{{ encore_entry_link_tags('public-read-worksheet-page') }}
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+
+	{{ encore_entry_script_tags('public-read-worksheet-page') }}
+{% endblock %}
+
+{% block body %}
+	<div id="vue"></div>
+{% endblock %}
+{% block vueData %}
+	{
+		"worksheetId": {{ worksheetId|serialize('json')|raw }}
+	}
+{% endblock %}

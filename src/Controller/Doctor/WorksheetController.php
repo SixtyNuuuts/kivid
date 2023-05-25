@@ -107,6 +107,61 @@ class WorksheetController extends AbstractController
     }
 
     /**
+     * @Route("/{id}/create/public-access/{worksheetId}", name="app_doctor_create_public_access", methods={"POST"})
+     */
+    public function createPublicAccess(Request $request, Doctor $doctor, int $worksheetId): JsonResponse
+    {
+        if($doctor->isGiveAccessPublicWorksheetGeneration())
+        {   
+            $worksheet = $this->worksheetRepository->findOneBy(['id' => $worksheetId]);
+            $data = json_decode($request->getContent());
+
+            if($worksheet instanceof Worksheet && !empty($data->worksheetTitleSlug))
+            {
+                $worksheet->setAccessPublicSlug($data->worksheetTitleSlug);
+                $this->em->flush();
+
+                return $this->json(
+                    $worksheet->getAccessPublicSlug(),
+                    200
+                );        
+            }
+        }
+
+        return $this->json(
+            "Une erreur s'est produite lors de la création de l'accès public de la fiche",
+            500,
+        );
+    }
+
+    /**
+     * @Route("/{id}/delete/public-access/{worksheetId}", name="app_doctor_delete_public_access", methods={"POST"})
+     */
+    public function deletePublicAccess(Request $request, Doctor $doctor, int $worksheetId): JsonResponse
+    {
+        if($doctor->isGiveAccessPublicWorksheetGeneration())
+        {   
+            $worksheet = $this->worksheetRepository->findOneBy(['id' => $worksheetId]);
+
+            if($worksheet instanceof Worksheet)
+            {
+                $worksheet->setAccessPublicSlug('');
+                $this->em->flush();
+
+                return $this->json(
+                    null,
+                    200
+                );        
+            }
+        }
+
+        return $this->json(
+            "Une erreur s'est produite lors de la suppression de l'accès public de la fiche",
+            500,
+        );
+    }
+
+    /**
      * @Route("/{id}/get/all/worksheets", name="app_doctor_get_all_worksheets", methods={"GET"})
      */
     public function getAllWorksheets(Doctor $doctor): JsonResponse

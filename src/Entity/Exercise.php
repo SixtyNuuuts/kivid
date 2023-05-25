@@ -17,44 +17,44 @@ class Exercise
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"worksheet_read"})
+     * @Groups({"worksheet_read", "public_worksheet_read"})
      */
     private $id;
 
     /**
      * @ORM\ManyToOne(targetEntity=Video::class, inversedBy="exercises")
-     * @Groups({"worksheet_read", "dashboard_worksheet_read"})
+     * @Groups({"worksheet_read", "dashboard_worksheet_read", "public_worksheet_read"})
      */
     private $video;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"worksheet_read"})
+     * @Groups({"worksheet_read", "public_worksheet_read"})
      */
     private $numberOfRepetitions;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"worksheet_read"})
+     * @Groups({"worksheet_read", "public_worksheet_read"})
      */
     private $numberOfSeries;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"worksheet_read"})
+     * @Groups({"worksheet_read", "public_worksheet_read"})
      */
     private $option;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"worksheet_read"})
+     * @Groups({"worksheet_read", "public_worksheet_read"})
      */
     private $tempo;
 
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"worksheet_read"})
+     * @Groups({"worksheet_read", "public_worksheet_read"})
      */
     private $hold;
 
@@ -70,7 +70,7 @@ class Exercise
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"worksheet_read"})
+     * @Groups({"worksheet_read", "public_worksheet_read"})
      */
     private $position;
 
