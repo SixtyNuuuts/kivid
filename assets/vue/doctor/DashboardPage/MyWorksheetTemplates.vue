@@ -502,7 +502,7 @@
                                         <vs-button
                                             v-if="!worksheet.accessPublicSlug"
                                             :disabled="$parent.prescriProcess"
-                                            :loading="btnLoadingCreatePublicAccess"
+                                            :loading="btnLoadingCreatePublicAccess===worksheet.id"
                                             @click="createPublicAccess(worksheet)"
                                             class="w-100"
                                         >
@@ -511,15 +511,15 @@
                                         </vs-button>
                                         <div v-else class="public-worksheet-url">
                                            <span class="label">accès public</span>
-                                           <span class="link" @click="copyToClipboard(`${publicWorksheetBaseUrl}/${worksheet.accessPublicSlug}`)">
+                                           <span class="link" @click="copyToClipboard(`${publicWorksheetBaseUrl}/${worksheet.accessPublicSlug}`, worksheet.id)">
                                                 <!-- <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" width="24px" height="24px">    <path d="M 5 1 C 3.9 1 3 1.9 3 3 L 3 17 L 5 17 L 5 3 L 17 3 L 17 1 L 5 1 z M 9 5 C 7.9 5 7 5.9 7 7 L 7 21 C 7 22.1 7.9 23 9 23 L 20 23 C 21.1 23 22 22.1 22 21 L 22 10 L 17 5 L 9 5 z M 9 7 L 16 7 L 16 11 L 20 11 L 20 21 L 9 21 L 9 7 z M 11 13 L 11 15 L 18 15 L 18 13 L 11 13 z M 11 17 L 11 19 L 18 19 L 18 17 L 11 17 z"/></svg> -->
                                                 {{ `${publicWorksheetBaseUrl}/${worksheet.accessPublicSlug}` }}
                                                 <transition name="fade">
-                                                    <span v-if="popUpCopyActive" class="popUp-copy-active">Lien copié dans le presse-papier</span>
+                                                    <span v-if="popUpCopyActive===worksheet.id" class="popUp-copy-active">Lien copié dans le presse-papier</span>
                                                 </transition>
                                             </span>
                                             <vs-button
-                                                :loading="btnLoadingCreatePublicAccess"
+                                                :loading="btnLoadingCreatePublicAccess===worksheet.id"
                                                 @click="deletePublicAccess(worksheet)"
                                             >
                                             <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 72 72" width="64px" height="64px"><path d="M 32.5 9 C 28.364 9 25 12.364 25 16.5 L 25 18 L 17 18 C 14.791 18 13 19.791 13 22 C 13 24.209 14.791 26 17 26 L 17.232422 26 L 18.671875 51.916016 C 18.923875 56.449016 22.67875 60 27.21875 60 L 44.78125 60 C 49.32125 60 53.076125 56.449016 53.328125 51.916016 L 54.767578 26 L 55 26 C 57.209 26 59 24.209 59 22 C 59 19.791 57.209 18 55 18 L 47 18 L 47 16.5 C 47 12.364 43.636 9 39.5 9 L 32.5 9 z M 32.5 16 L 39.5 16 C 39.775 16 40 16.224 40 16.5 L 40 18 L 32 18 L 32 16.5 C 32 16.224 32.225 16 32.5 16 z M 36 28 C 37.104 28 38 28.896 38 30 L 38 47.923828 C 38 49.028828 37.104 49.923828 36 49.923828 C 34.896 49.923828 34 49.027828 34 47.923828 L 34 30 C 34 28.896 34.896 28 36 28 z M 27.392578 28.001953 C 28.459578 27.979953 29.421937 28.827641 29.460938 29.931641 L 30.085938 47.931641 C 30.123938 49.035641 29.258297 49.959047 28.154297 49.998047 C 28.131297 49.999047 28.108937 50 28.085938 50 C 27.012938 50 26.125891 49.148359 26.087891 48.068359 L 25.462891 30.068359 C 25.424891 28.964359 26.288578 28.040953 27.392578 28.001953 z M 44.607422 28.001953 C 45.711422 28.039953 46.575109 28.964359 46.537109 30.068359 L 45.912109 48.068359 C 45.874109 49.148359 44.986063 50 43.914062 50 C 43.891062 50 43.868703 49.999047 43.845703 49.998047 C 42.741703 49.960047 41.876063 49.035641 41.914062 47.931641 L 42.539062 29.931641 C 42.577062 28.827641 43.518422 27.979953 44.607422 28.001953 z"/></svg>                                            </vs-button>
@@ -922,8 +922,8 @@ export default {
             btnLoadingValidRemoveWorksheet: false,
             btnLoadingAddWorksheet: false,
             btnLoadingCopyWorksheet: null,
-            btnLoadingCreatePublicAccess: false,
-            popUpCopyActive: false
+            btnLoadingCreatePublicAccess: null,
+            popUpCopyActive: null
         };
     },
     computed: {
@@ -1073,14 +1073,14 @@ export default {
         },
         createPublicAccess(worksheet)
         {
-            this.btnLoadingCreatePublicAccess = true;
-
+            this.btnLoadingCreatePublicAccess = worksheet.id;
+            
             this.axios
                 .post(`/doctor/${this.doctor.id}/create/public-access/${worksheet.id}`, {
                     worksheetTitleSlug: this.slugify(worksheet.title).substring(0, 255),
                 })
                 .then((response) => {
-                    this.btnLoadingCreatePublicAccess = false;
+                    this.btnLoadingCreatePublicAccess = null;
                     worksheet.accessPublicSlug = response.data;
                 })
                 .catch((error) => {
@@ -1088,7 +1088,7 @@ export default {
                         "object" === typeof error.response.data
                             ? error.response.data.detail
                             : error.response.data;
-                    this.btnLoadingCreatePublicAccess = false;
+                    this.btnLoadingCreatePublicAccess = null;
 
                     f.openErrorNotification("Erreur", errorMess);
                     this.btnLoadingValidRemoveWorksheet = false;
@@ -1098,12 +1098,12 @@ export default {
         },
         deletePublicAccess(worksheet)
         {
-            this.btnLoadingCreatePublicAccess = true;
+            this.btnLoadingCreatePublicAccess = worksheet.id;
 
             this.axios
                 .post(`/doctor/${this.doctor.id}/delete/public-access/${worksheet.id}`, {})
                 .then((response) => {
-                    this.btnLoadingCreatePublicAccess = false;
+                    this.btnLoadingCreatePublicAccess = null;
                     worksheet.accessPublicSlug = response.data;
                 })
                 .catch((error) => {
@@ -1111,7 +1111,7 @@ export default {
                         "object" === typeof error.response.data
                             ? error.response.data.detail
                             : error.response.data;
-                    this.btnLoadingCreatePublicAccess = false;
+                    this.btnLoadingCreatePublicAccess = null;
 
                     f.openErrorNotification("Erreur", errorMess);
                     this.btnLoadingValidRemoveWorksheet = false;
@@ -1130,15 +1130,15 @@ export default {
 				.replace(/[^a-z0-9 ]/g,'')
 				.replace(/\s+/g,'-');
 		},
-        copyToClipboard(url)
+        copyToClipboard(url, worksheetId)
         {
             if ('clipboard' in navigator)
             {
                 navigator.clipboard.writeText(url)
                 .then(()=> {
-                    this.popUpCopyActive = true;    
+                    this.popUpCopyActive = worksheetId;    
                     setTimeout(() => {
-                        this.popUpCopyActive = false;
+                        this.popUpCopyActive = null;
                     }, 1500);
                 })
                 .catch((e)=>console.log(e));
@@ -1358,12 +1358,12 @@ export default {
 
         .public-worksheet-url
         {             
-            border: 1px solid $orange;
+            border: 0.0625rem solid $orange;
             height: 3.2rem;
             border-radius: 0.5rem;
             padding: 1.8rem 1.1rem;
-            padding-top: 0.6rem;
-            padding-bottom: 0.4rem;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
             position: relative;
             display: flex;
             align-items: center;
@@ -1372,21 +1372,21 @@ export default {
             .label 
             {
                 position: absolute;
-                top: -7px;
+                top: -0.6rem;
                 left: 1.0625rem;
                 text-transform: uppercase;
                 color: $orange;
                 background-color: #faf8f4;
-                padding: 1px 4px;
-                padding-top: 4px;
-                font-size: 7px;
+                padding: 0.0625rem 0.25rem;
+                padding-top: 0.25rem;
+                font-size: 0.6875rem;
                 border-radius: 0.3rem;
                 -webkit-user-select: none;
                 -moz-user-select: none;
                 -ms-user-select: none;
                 user-select: none;
                 font-weight: bold;
-                letter-spacing: 0.7px;
+                letter-spacing: 0.0437rem;
             }
 
             .link
