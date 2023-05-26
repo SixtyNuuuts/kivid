@@ -1,0 +1,22 @@
+{% extends 'email/emailBase.html.twig' %}
+
+{% block content %}
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td class="h1 pb25" style="color:#dcd4c1; font-family:'Muli', Arial,sans-serif; font-size:25px; line-height:32px; text-align:center; padding-bottom:20px;">
+                {{ patient }}
+                souhaite vous contacter
+            </td>
+        </tr>
+        <tr>
+            <td
+                class="text-center pb25" style="color:#0c2956; font-family:'Muli', Arial,sans-serif; font-size:16px; line-height:26px; text-align:center;">
+                <p style="font-weight:bold;">{{ contactSubject }}</p>
+                <br>
+                <p>{{ contactMessage }}</p>
+
+                <br>Email : {{ contactEmail }}
+            </td>
+        </tr>
+    </table>
+{% endblock %}

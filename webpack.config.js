@@ -23,6 +23,7 @@ Encore
     .addEntry('app', './assets/app.js')
     .addEntry('navbar', './assets/vue/navbar.js')
     .addEntry('settings-page', './assets/vue/settings-page.js')
+    .addEntry('help-support-page', './assets/vue/help-support-page.js')
     .addEntry('login', './assets/vue/fullpage/login.js')
     .addEntry('register', './assets/vue/fullpage/register.js')
     .addEntry('reset-pass', './assets/vue/fullpage/resetpassword/reset-pass.js')

@@ -1,0 +1,26 @@
+{% extends 'layout/vue.html.twig' %}
+
+{% block title %}Support | KIVID{% endblock %}
+
+{% block stylesheets %}
+	{{ parent() }}
+
+	{{ encore_entry_link_tags('help-support-page') }}
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+
+	{{ encore_entry_script_tags('help-support-page') }}
+{% endblock %}
+
+{% block body %}
+	<div id="vue"></div>
+{% endblock %}
+{% block vueData %}
+	{
+        "currentUser": {{ currentUser|serialize('json', {'groups': 'user_read'})|raw }},
+		"csrfTokenContact": {{ csrf_token('support_contact' ~ app.user.id)|serialize('json')|raw }},
+		"activeTab": "1"
+	}
+{% endblock %}
