@@ -14,10 +14,10 @@
       "js": [
         "/build/runtime.d0ec15ab.js",
         "/build/429.ecc3ba87.js",
-        "/build/navbar.05bf7f5b.js"
+        "/build/navbar.0e2648af.js"
       ],
       "css": [
-        "/build/navbar.e3568fbb.css"
+        "/build/navbar.06181c37.css"
       ]
     },
     "settings-page": {
@@ -30,6 +30,16 @@
       ],
       "css": [
         "/build/settings-page.8e1ab6bd.css"
+      ]
+    },
+    "help-support-page": {
+      "js": [
+        "/build/runtime.d0ec15ab.js",
+        "/build/429.ecc3ba87.js",
+        "/build/help-support-page.a85e80c2.js"
+      ],
+      "css": [
+        "/build/help-support-page.2d2f19b9.css"
       ]
     },
     "login": {
