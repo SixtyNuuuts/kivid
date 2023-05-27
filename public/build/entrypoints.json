@@ -2,53 +2,41 @@
   "entrypoints": {
     "app": {
       "js": [
-        "/build/runtime.js",
-        "/build/vendors-node_modules_aos_dist_aos_js-node_modules_aos_dist_aos_css-node_modules_simple-parall-ca19ef.js",
-        "/build/app.js"
+        "/build/runtime.d0ec15ab.js",
+        "/build/app.27a3bcfa.js"
       ],
       "css": [
-        "/build/vendors-node_modules_aos_dist_aos_js-node_modules_aos_dist_aos_css-node_modules_simple-parall-ca19ef.css",
-        "/build/app.css"
+        "/build/108.fc93ce1c.css",
+        "/build/app.f6f247f4.css"
       ]
     },
     "navbar": {
       "js": [
-<<<<<<< HEAD
         "/build/runtime.d0ec15ab.js",
         "/build/429.ecc3ba87.js",
-        "/build/navbar.0e2648af.js"
+        "/build/navbar.38db8c4b.js"
       ],
       "css": [
-        "/build/navbar.06181c37.css"
-=======
-        "/build/runtime.js",
-        "/build/vendors-node_modules_axios_index_js-node_modules_core-js_modules_es_array_concat_js-node_modu-38d47d.js",
-        "/build/assets_vue_services_function_js-node_modules_moment_locale_sync_recursive_.js",
-        "/build/navbar.js"
-      ],
-      "css": [
-        "/build/navbar.css"
->>>>>>> kivid-ffmkr-reverse
+        "/build/navbar.e03d050c.css"
       ]
     },
     "settings-page": {
       "js": [
-        "/build/runtime.js",
-        "/build/vendors-node_modules_axios_index_js-node_modules_core-js_modules_es_array_concat_js-node_modu-38d47d.js",
-        "/build/vendors-node_modules_core-js_internals_inherit-if-required_js-node_modules_core-js_modules_we-9f7dbb.js",
-        "/build/vendors-node_modules_core-js_modules_es_typed-array_copy-within_js-node_modules_core-js_modul-1feda0.js",
-        "/build/assets_vue_services_function_js-node_modules_moment_locale_sync_recursive_.js",
-        "/build/settings-page.js"
+        "/build/runtime.d0ec15ab.js",
+        "/build/429.ecc3ba87.js",
+        "/build/247.3f1777ea.js",
+        "/build/735.b06ed777.js",
+        "/build/settings-page.bd5a1c48.js"
       ],
       "css": [
-        "/build/settings-page.css"
+        "/build/settings-page.8e1ab6bd.css"
       ]
     },
     "help-support-page": {
       "js": [
         "/build/runtime.d0ec15ab.js",
         "/build/429.ecc3ba87.js",
-        "/build/help-support-page.a85e80c2.js"
+        "/build/help-support-page.0aa3a007.js"
       ],
       "css": [
         "/build/help-support-page.2d2f19b9.css"
@@ -56,126 +44,111 @@
     },
     "login": {
       "js": [
-        "/build/runtime.js",
-        "/build/vendors-node_modules_axios_index_js-node_modules_core-js_modules_es_array_concat_js-node_modu-38d47d.js",
-        "/build/assets_vue_services_function_js-node_modules_moment_locale_sync_recursive_.js",
-        "/build/login.js"
+        "/build/runtime.d0ec15ab.js",
+        "/build/429.ecc3ba87.js",
+        "/build/login.fdb3469a.js"
       ]
     },
     "register": {
       "js": [
-<<<<<<< HEAD
-        "/build/runtime.js",
-        "/build/vendors-node_modules_axios_index_js-node_modules_core-js_modules_es_array_concat_js-node_modu-38d47d.js",
-        "/build/assets_vue_services_function_js-node_modules_moment_locale_sync_recursive_.js",
-        "/build/register.js"
-=======
         "/build/runtime.d0ec15ab.js",
         "/build/429.ecc3ba87.js",
-        "/build/295.1cc4bcec.js",
-        "/build/register.23be695f.js"
->>>>>>> help-support
+        "/build/register.7eba2b3a.js"
       ],
       "css": [
-        "/build/register.css"
+        "/build/register.a8ee9742.css"
       ]
     },
     "reset-pass": {
       "js": [
-        "/build/runtime.js",
-        "/build/vendors-node_modules_axios_index_js-node_modules_core-js_modules_es_array_concat_js-node_modu-38d47d.js",
-        "/build/assets_vue_services_function_js-node_modules_moment_locale_sync_recursive_.js",
-        "/build/reset-pass.js"
+        "/build/runtime.d0ec15ab.js",
+        "/build/429.ecc3ba87.js",
+        "/build/reset-pass.8edb97fb.js"
       ],
       "css": [
-        "/build/reset-pass.css"
+        "/build/reset-pass.75e0df7d.css"
       ]
     },
     "reset-pass-request": {
       "js": [
-        "/build/runtime.js",
-        "/build/vendors-node_modules_axios_index_js-node_modules_core-js_modules_es_array_concat_js-node_modu-38d47d.js",
-        "/build/assets_vue_services_function_js-node_modules_moment_locale_sync_recursive_.js",
-        "/build/reset-pass-request.js"
+        "/build/runtime.d0ec15ab.js",
+        "/build/429.ecc3ba87.js",
+        "/build/reset-pass-request.ab537472.js"
       ],
       "css": [
-        "/build/reset-pass-request.css"
+        "/build/reset-pass-request.1bcadc96.css"
       ]
     },
     "create-pass": {
       "js": [
-        "/build/runtime.js",
-        "/build/vendors-node_modules_axios_index_js-node_modules_core-js_modules_es_array_concat_js-node_modu-38d47d.js",
-        "/build/assets_vue_services_function_js-node_modules_moment_locale_sync_recursive_.js",
-        "/build/create-pass.js"
+        "/build/runtime.d0ec15ab.js",
+        "/build/429.ecc3ba87.js",
+        "/build/create-pass.09dab47f.js"
       ],
       "css": [
-        "/build/create-pass.css"
+        "/build/create-pass.31a65b0c.css"
       ]
     },
     "doctor-dashboard-page": {
       "js": [
-        "/build/runtime.js",
-        "/build/vendors-node_modules_axios_index_js-node_modules_core-js_modules_es_array_concat_js-node_modu-38d47d.js",
-        "/build/vendors-node_modules_core-js_internals_inherit-if-required_js-node_modules_core-js_modules_we-9f7dbb.js",
-        "/build/vendors-node_modules_core-js_modules_es_array_find_js-node_modules_core-js_modules_es_array_s-f64eb6.js",
-        "/build/assets_vue_services_function_js-node_modules_moment_locale_sync_recursive_.js",
-        "/build/assets_vue_components_BtnChartWorksheetPartOfBody_vue-assets_vue_components_TagPartOfBody_vue-72399a.js",
-        "/build/doctor-dashboard-page.js"
+        "/build/runtime.d0ec15ab.js",
+        "/build/429.ecc3ba87.js",
+        "/build/247.3f1777ea.js",
+        "/build/912.4cd1479e.js",
+        "/build/900.013f7323.js",
+        "/build/doctor-dashboard-page.e042c155.js"
       ],
       "css": [
-        "/build/doctor-dashboard-page.css"
+        "/build/doctor-dashboard-page.f5d136a1.css"
       ]
     },
     "doctor-worksheet-page": {
       "js": [
-        "/build/runtime.js",
-        "/build/vendors-node_modules_axios_index_js-node_modules_core-js_modules_es_array_concat_js-node_modu-38d47d.js",
-        "/build/vendors-node_modules_core-js_modules_es_array_find_js-node_modules_core-js_modules_es_array_s-f64eb6.js",
-        "/build/vendors-node_modules_vue-youtube_dist_vue-youtube_js.js",
-        "/build/assets_vue_services_function_js-node_modules_moment_locale_sync_recursive_.js",
-        "/build/doctor-worksheet-page.js"
+        "/build/runtime.d0ec15ab.js",
+        "/build/429.ecc3ba87.js",
+        "/build/912.4cd1479e.js",
+        "/build/770.ec01566d.js",
+        "/build/900.013f7323.js",
+        "/build/doctor-worksheet-page.e00bdce3.js"
       ],
       "css": [
-        "/build/doctor-worksheet-page.css"
+        "/build/doctor-worksheet-page.29927792.css"
       ]
     },
     "patient-dashboard-page": {
       "js": [
-        "/build/runtime.js",
-        "/build/vendors-node_modules_axios_index_js-node_modules_core-js_modules_es_array_concat_js-node_modu-38d47d.js",
-        "/build/vendors-node_modules_chartist-plugin-tooltips_dist_chartist-plugin-tooltip_js-node_modules_co-f61cc6.js",
-        "/build/assets_vue_services_function_js-node_modules_moment_locale_sync_recursive_.js",
-        "/build/assets_vue_components_BtnChartWorksheetPartOfBody_vue-assets_vue_components_TagPartOfBody_vue-72399a.js",
-        "/build/patient-dashboard-page.js"
+        "/build/runtime.d0ec15ab.js",
+        "/build/429.ecc3ba87.js",
+        "/build/725.d49aa1d8.js",
+        "/build/900.013f7323.js",
+        "/build/patient-dashboard-page.a95f30df.js"
       ],
       "css": [
-        "/build/patient-dashboard-page.css"
+        "/build/patient-dashboard-page.80f0ed03.css"
       ]
     },
     "patient-read-worksheet-page": {
       "js": [
-        "/build/runtime.js",
-        "/build/vendors-node_modules_axios_index_js-node_modules_core-js_modules_es_array_concat_js-node_modu-38d47d.js",
-        "/build/vendors-node_modules_core-js_internals_inherit-if-required_js-node_modules_core-js_modules_we-9f7dbb.js",
-        "/build/vendors-node_modules_vue-youtube_dist_vue-youtube_js.js",
-        "/build/vendors-node_modules_core-js_modules_es_array_find_js-node_modules_core-js_modules_es_array_s-eeff55.js",
-        "/build/assets_vue_services_function_js-node_modules_moment_locale_sync_recursive_.js",
-        "/build/patient-read-worksheet-page.js"
+        "/build/runtime.d0ec15ab.js",
+        "/build/429.ecc3ba87.js",
+        "/build/247.3f1777ea.js",
+        "/build/770.ec01566d.js",
+        "/build/557.a7b06eab.js",
+        "/build/900.013f7323.js",
+        "/build/patient-read-worksheet-page.017fc07b.js"
       ],
       "css": [
-        "/build/patient-read-worksheet-page.css"
+        "/build/patient-read-worksheet-page.f1bb0cf9.css"
       ]
     },
     "ffmkr-admin-dashboard-page": {
       "js": [
-        "/build/runtime.js",
-        "/build/vendors-node_modules_axios_index_js-node_modules_core-js_modules_es_array_concat_js-node_modu-38d47d.js",
-        "/build/assets_vue_services_function_js-node_modules_moment_locale_sync_recursive_.js",
-        "/build/ffmkr-admin-dashboard-page.js"
+        "/build/runtime.d0ec15ab.js",
+        "/build/429.ecc3ba87.js",
+        "/build/ffmkr-admin-dashboard-page.6ec607f1.js"
       ],
       "css": [
-        "/build/ffmkr-admin-dashboard-page.css"
+        "/build/ffmkr-admin-dashboard-page.3eb3a507.css"
       ]
     }
   }
