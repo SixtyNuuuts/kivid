@@ -94,22 +94,22 @@
         "/build/runtime.d0ec15ab.js",
         "/build/429.ecc3ba87.js",
         "/build/247.3f1777ea.js",
-        "/build/912.4cd1479e.js",
+        "/build/879.db9feee4.js",
         "/build/900.013f7323.js",
-        "/build/doctor-dashboard-page.e042c155.js"
+        "/build/doctor-dashboard-page.282e2a06.js"
       ],
       "css": [
-        "/build/doctor-dashboard-page.f5d136a1.css"
+        "/build/doctor-dashboard-page.ef94f4a9.css"
       ]
     },
     "doctor-worksheet-page": {
       "js": [
         "/build/runtime.d0ec15ab.js",
         "/build/429.ecc3ba87.js",
-        "/build/912.4cd1479e.js",
-        "/build/770.ec01566d.js",
+        "/build/274.57a26017.js",
+        "/build/879.db9feee4.js",
         "/build/900.013f7323.js",
-        "/build/doctor-worksheet-page.e00bdce3.js"
+        "/build/doctor-worksheet-page.9f8ef382.js"
       ],
       "css": [
         "/build/doctor-worksheet-page.29927792.css"
@@ -132,13 +132,25 @@
         "/build/runtime.d0ec15ab.js",
         "/build/429.ecc3ba87.js",
         "/build/247.3f1777ea.js",
-        "/build/770.ec01566d.js",
-        "/build/557.a7b06eab.js",
+        "/build/274.57a26017.js",
+        "/build/949.4fd1511a.js",
         "/build/900.013f7323.js",
-        "/build/patient-read-worksheet-page.017fc07b.js"
+        "/build/patient-read-worksheet-page.9606270b.js"
       ],
       "css": [
         "/build/patient-read-worksheet-page.f1bb0cf9.css"
+      ]
+    },
+    "public-read-worksheet-page": {
+      "js": [
+        "/build/runtime.d0ec15ab.js",
+        "/build/429.ecc3ba87.js",
+        "/build/274.57a26017.js",
+        "/build/900.013f7323.js",
+        "/build/public-read-worksheet-page.532b29d9.js"
+      ],
+      "css": [
+        "/build/public-read-worksheet-page.d6a579d0.css"
       ]
     },
     "ffmkr-admin-dashboard-page": {
