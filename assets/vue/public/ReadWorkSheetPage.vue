@@ -36,7 +36,7 @@
                 <div v-if="!loading && !allExercisesIsCompleted">
                     <i class="kiv-info icon-17"></i>
                     <p>
-                        Cette fiche a été conçue par un praticien sur Kivid, n'hésitez pas à vous inscrire pour en découvrir d'autres !
+                        Cette fiche a été générée par Kivid, n'hésitez pas à vous inscrire pour en découvrir d'autres !
                     </p>
                 </div>
                 <div v-if="loading" class="loading-block">
