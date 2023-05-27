@@ -17,13 +17,13 @@ class Worksheet
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"worksheet_read", "dashboard_worksheet_read", "patient_read"})
+     * @Groups({"worksheet_read", "dashboard_worksheet_read", "patient_read", "public_worksheet_read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"worksheet_read", "dashboard_worksheet_read", "patient_read"})
+     * @Groups({"worksheet_read", "dashboard_worksheet_read", "patient_read", "public_worksheet_read"})
      */
     private $title;
 
@@ -35,25 +35,25 @@ class Worksheet
 
     /**
      * @ORM\OneToMany(targetEntity=Exercise::class, mappedBy="worksheet", orphanRemoval=true)
-     * @Groups({"dashboard_worksheet_read"})
+     * @Groups({"dashboard_worksheet_read", "public_worksheet_read"})
      */
     private $exercises;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"worksheet_read", "dashboard_worksheet_read"})
+     * @Groups({"worksheet_read", "dashboard_worksheet_read", "public_worksheet_read"})
      */
     private $duration;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"worksheet_read", "dashboard_worksheet_read"})
+     * @Groups({"worksheet_read", "dashboard_worksheet_read", "public_worksheet_read"})
      */
     private $perDay;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"worksheet_read", "dashboard_worksheet_read"})
+     * @Groups({"worksheet_read", "dashboard_worksheet_read", "public_worksheet_read"})
      */
     private $perWeek;
 
@@ -88,9 +88,15 @@ class Worksheet
 
     /**
      * @ORM\ManyToOne(targetEntity=PartOfBody::class, inversedBy="worksheets")
-     * @Groups({"worksheet_read", "dashboard_worksheet_read", "patient_read"})
+     * @Groups({"worksheet_read", "dashboard_worksheet_read", "patient_read", "public_worksheet_read"})
      */
     private $partOfBody;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"dashboard_worksheet_read"})
+     */
+    private $accessPublicSlug;
 
     public function __construct()
     {
@@ -333,6 +339,18 @@ class Worksheet
     public function setPartOfBody(?PartOfBody $partOfBody): self
     {
         $this->partOfBody = $partOfBody;
+
+        return $this;
+    }
+
+    public function getAccessPublicSlug(): ?string
+    {
+        return $this->accessPublicSlug;
+    }
+
+    public function setAccessPublicSlug(string $accessPublicSlug): self
+    {
+        $this->accessPublicSlug = $accessPublicSlug;
 
         return $this;
     }

@@ -16,21 +16,13 @@
                             alt="Icone d'une basket"
                         />
                     </i>
-                    <h2 v-if="getCurrentWorksheetSession">
-                        Session n°{{ getCurrentWorksheetSession.execOrder }}
+                    <h2>
+                        C'est parti !
                     </h2>
-                    <div
-                        v-if="getCurrentWorksheetSession"
-                        class="total-sessions"
-                    >
-                        sur {{ getTotalWorksheetSessions }}
-                    </div>
-                    <h3 v-if="!getCurrentWorksheetSession">Aucune Session</h3>
                 </div>
                 <div class="session-timing-line">
                     <div class="progressbar-steps">
                         <div
-                            v-if="getCurrentWorksheetSession"
                             class="session-start-date"
                         >
                             <i class="kiv-calendar icon-10"></i>
@@ -38,22 +30,15 @@
                                 <div class="date">
                                     {{ getWorksheetSessionStartDate }}
                                 </div>
-                                <div class="hours">
-                                    {{ getWorksheetSessionStartHours }}
-                                </div>
                             </div>
                         </div>
                         <div
-                            v-if="getCurrentWorksheetSession"
                             class="session-end-date"
                         >
                             <i class="kiv-calendar icon-10"></i>
                             <div class="date-hours">
                                 <div class="date">
                                     {{ getWorksheetSessionEndDate }}
-                                </div>
-                                <div class="hours">
-                                    {{ getWorksheetSessionEndHours }}
                                 </div>
                             </div>
                         </div>
@@ -87,15 +72,6 @@
                                     >de la fiche a été fait
                                 </div>
                                 <div
-                                    v-if="
-                                        !getWorksheetSessionDoneDate &&
-                                        getCurrentWorksheetSession
-                                    "
-                                    class="final-goal"
-                                >
-                                    {{ getTimeLeftBeforeNextSession }}
-                                </div>
-                                <div
                                     v-if="getWorksheetSessionDoneDate"
                                     class="final-goal"
                                 >
@@ -121,8 +97,6 @@ export default {
         loading: Boolean,
         worksheet: Object,
         exercises: Array,
-        currentWorksheetSession: [Object, Boolean],
-        totalWorksheetSessions: Number,
     },
     data() {
         return {
@@ -135,12 +109,6 @@ export default {
         },
         getExercises() {
             return this.exercises;
-        },
-        getCurrentWorksheetSession() {
-            return this.currentWorksheetSession;
-        },
-        getTotalWorksheetSessions() {
-            return this.totalWorksheetSessions;
         },
         getTimingPercentage() {
             let progression = 0;
@@ -160,76 +128,22 @@ export default {
             return progression;
         },
         getWorksheetSessionStartDate() {
-            return moment(this.getCurrentWorksheetSession.startAt).format(
+            return moment().format(
                 "DD/MM/YYYY"
-            );
-        },
-        getWorksheetSessionStartHours() {
-            return moment(this.getCurrentWorksheetSession.startAt).format(
-                "HH:mm:ss"
             );
         },
         getWorksheetSessionEndDate() {
-            return moment(this.getCurrentWorksheetSession.endAt).format(
+            return moment().format(
                 "DD/MM/YYYY"
             );
         },
-        getWorksheetSessionEndHours() {
-            return moment(this.getCurrentWorksheetSession.endAt).format(
-                "HH:mm:ss"
-            );
-        },
         getWorksheetSessionDoneDate() {
-            if (
-                this.getCurrentWorksheetSession &&
-                this.getCurrentWorksheetSession.doneAt
-            ) {
-                return moment(this.getCurrentWorksheetSession.donetAt).format(
-                    "DD/MM/YYYY"
-                );
-            }
             return null;
         },
         getWorksheetSessionDoneHours() {
-            if (
-                this.getCurrentWorksheetSession &&
-                this.getCurrentWorksheetSession.doneAt
-            ) {
-                return moment(this.getCurrentWorksheetSession.donetAt).format(
-                    "HH:mm:ss"
-                );
-            }
             return null;
         },
         getTimeLeftBeforeNextSession() {
-            const timeLeft = f.getTimeLeftBeforeNextSession(
-                this.getCurrentWorksheetSession.endAt
-            );
-
-            if (timeLeft.days >= 1) {
-                return Math.round(timeLeft.days) === 1
-                    ? `${Math.round(timeLeft.days)} jour restant`
-                    : `${Math.round(timeLeft.days)} jours restants`;
-            }
-
-            if (timeLeft.hours >= 1) {
-                return timeLeft.hours === 1
-                    ? `${Math.round(timeLeft.hours)} heure restante`
-                    : `${Math.round(timeLeft.hours)} heures restantes`;
-            }
-
-            if (timeLeft.minutes >= 1) {
-                return timeLeft.minutes === 1
-                    ? `${Math.round(timeLeft.minutes)} minute restante`
-                    : `${Math.round(timeLeft.minutes)} minutes restantes`;
-            }
-
-            if (timeLeft.seconds >= 1) {
-                return timeLeft.seconds === 1
-                    ? `${Math.round(timeLeft.seconds)} seconde restante`
-                    : `${Math.round(timeLeft.seconds)} secondes restantes`;
-            }
-
             return null;
         },
     },
@@ -401,13 +315,17 @@ export default {
                         .date {
                             font-weight: 700;
                             font-size: 1.9rem;
+                            position: relative;
+                            top: -0.88rem;
 
                             @media (min-width: 576px) {
                                 font-size: 1.6rem;
+                                top: -0.65rem;
                             }
 
                             @media (min-width: 650px) {
                                 font-size: 1.7rem;
+                                top: -0.75rem;
                             }
                         }
 
@@ -482,7 +400,7 @@ export default {
 
                     &.max {
                         .legend {
-                            transform: translateY(-165.8%);
+                            transform: translateY(-184.6%);
                         }
                         .point {
                             transform: translateY(-1.9rem);

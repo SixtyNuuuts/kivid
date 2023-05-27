@@ -51,7 +51,8 @@ class DoctorCrudController extends AbstractCrudController
             TextField::new('gender', 'Civilité (renseigner : "male" ou "female")')->onlyOnForms(),
             AssociationField::new('patients', 'Patient(s)')->onlyOnIndex(),
             AssociationField::new('worksheets', 'Fiche(s)')->onlyOnIndex(),
-            BooleanField::new('giveFreeAccessPrescri', 'Donne l\'accès gratuit à ses prescriptions ?')->onlyOnForms(),
+            // BooleanField::new('giveFreeAccessPrescri', 'Donner l\'accès gratuit à ses prescriptions ?')->onlyOnForms(),
+            BooleanField::new('giveAccessPublicWorksheetGeneration', 'Donner l\'accès à la génération de fiches publiques ?')->onlyOnForms(),
         ];
     }
 }
