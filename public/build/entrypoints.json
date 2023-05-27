@@ -45,10 +45,17 @@
     },
     "register": {
       "js": [
+<<<<<<< HEAD
         "/build/runtime.js",
         "/build/vendors-node_modules_axios_index_js-node_modules_core-js_modules_es_array_concat_js-node_modu-38d47d.js",
         "/build/assets_vue_services_function_js-node_modules_moment_locale_sync_recursive_.js",
         "/build/register.js"
+=======
+        "/build/runtime.d0ec15ab.js",
+        "/build/429.ecc3ba87.js",
+        "/build/295.1cc4bcec.js",
+        "/build/register.23be695f.js"
+>>>>>>> help-support
       ],
       "css": [
         "/build/register.css"
