@@ -14,7 +14,7 @@
             {{ encore_entry_script_tags('app') }}
         {% endblock %}
     </head>
-    <body data-app>
+    <body data-app class="{% block body_class %}{% endblock %}">
         {% block layout %}{% endblock %}
     </body>
 </html>

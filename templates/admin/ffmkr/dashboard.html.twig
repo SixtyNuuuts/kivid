@@ -1,0 +1,24 @@
+{% extends 'layout/vue.html.twig' %}
+
+{% block title %}Dashboard FFMKR Admin | KIVID{% endblock %}
+
+{% block stylesheets %}
+	{{ parent() }}
+
+	{{ encore_entry_link_tags('ffmkr-admin-dashboard-page') }}
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+
+	{{ encore_entry_script_tags('ffmkr-admin-dashboard-page') }}
+{% endblock %}
+
+{% block body %}
+	<div id="vue"></div>
+{% endblock %}
+{% block vueData %}
+	{
+		"currentUser": {{ app.user|serialize('json', {'groups': 'user_read'})|raw }}
+	}
+{% endblock %}

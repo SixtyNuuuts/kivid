@@ -1,0 +1,55 @@
+{% extends 'layout/fullpage-vue.html.twig' %}
+
+{% block title %}Le lien a expiré | KIVID{% endblock %}
+
+{% block stylesheets %}
+	{{ parent() }}
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+{% endblock %}
+
+{% block body_class %}fuzzy-balls animated{% endblock %}
+{% block body %}
+	<style>
+		.text {
+			font-size: 1.4rem;
+			margin-bottom: 2.3rem;
+			color: #c1b79d;
+		}
+		a {
+			color: #c1b79d;
+			font-weight: bold;
+		}
+		.vs-button
+		{
+			text-decoration:none;
+		}
+		.vs-button.rmdp
+		{
+			background: #fff;
+			color: #fb8b68;
+		}
+		.vs-button:last-child
+		{
+			margin-top: 1.5rem;
+		}
+	</style>
+	<div class="container fullpage">
+		<a href="{{ path('app_home') }}" class="logo">
+			<img src="/img/logo-kivid.svg" alt="Logo Kivid">
+		</a> 
+		<section class="kiv-block">
+			<h2>Le lien a expiré</h2>
+			<p class="text">
+				Malheureusement, ce lien de <strong>création de mot de passe</strong> a déjà été utilisé ou a expiré, 
+				vous pouvez quand même créer un nouveau mot de passe, en utilisant le processus de <strong>réinitialisation du mot de passe</strong> ou en nous envoyant un email <a href="mailto:contact@kivid.fr">contact@kivid.fr</a>.
+			</p>
+			<a href="{{ path('app_forgot_password_request') }}" class="vs-button w-100 vs-button--null vs-button--size-null vs-button--secondary vs-button--default">
+				<div class="vs-button__content">Réinitialiser le mot de passe</div>
+			</a>
+		</section>
+	</div>
+{% endblock %}
+ 

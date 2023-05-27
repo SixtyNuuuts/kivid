@@ -24,8 +24,7 @@ class UserService
     private $tokenGenerator;
     private $resetPasswordCleaner;
 
-    // Le bundle 'ResetPassword' est utilisé dans la génération du mail "création d'un patient" par le kiné,
-    // et lors de la création du mot de passe par ce client.
+    // Le bundle 'ResetPassword' est utilisé dans la création d'un utilisateur
     public function __construct(
         MailerInterface $mailer,
         SerializerInterface $serializer,
@@ -54,7 +53,7 @@ class UserService
         return $this->getCivility($user->getGender()) . $name;
     }
 
-    public function processSendingPasswordCreationEmail(Patient $patient, Doctor $doctor): JsonResponse
+    public function processSendingPasswordPatientCreationEmail(Patient $patient, Doctor $doctor): JsonResponse
     {
         // Le bundle 'ResetPassword' est utilisé pour la génération du token.
         try {
@@ -71,7 +70,7 @@ class UserService
             ->from(new Address('contact@kivid.fr', '"Kivid Contact"'))
             ->to($patient->getEmail())
             ->subject("Vous avez été ajouté comme patient par {$this->getUserName($doctor)}")
-            ->htmlTemplate('patient/create_pass/email.html.twig')
+            ->htmlTemplate('create_password/patient-email.html.twig')
             ->context([
                 'passToken' => $passToken,
                 'doctor' => $doctor,
@@ -92,7 +91,7 @@ class UserService
         return new JsonResponse($json, 200, [], true);
     }
 
-    private function generatePasswordCreationToken(Patient $patient): ResetPasswordToken
+    private function generatePasswordCreationToken(User $user): ResetPasswordToken
     {
         $this->resetPasswordCleaner->handleGarbageCollection();
 
@@ -103,12 +102,12 @@ class UserService
 
         $tokenComponents = $this->tokenGenerator->createToken(
             $expiresAt,
-            $this->resetPasswordRequestRepository->getUserIdentifier($patient)
+            $this->resetPasswordRequestRepository->getUserIdentifier($user)
         );
 
         // Le bundle 'ResetPassword' est utilisé pour la persistence du token.
         $passwordResetRequest = $this->resetPasswordRequestRepository->createResetPasswordRequest(
-            $patient,
+            $user,
             $expiresAt,
             $tokenComponents->getSelector(),
             $tokenComponents->getHashedToken()

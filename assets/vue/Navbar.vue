@@ -1,7 +1,7 @@
 <template>
     <div class="navbar">
-        <div class="logo" @click="homepage()">
-            <img src="../img/logo-kivid-navbar.svg" alt="Logo Kivid" />
+        <div class="logo" @click="homepage()" :class="{'logo-ffmkr': currentUser ? currentUser.roles.includes('ROLE_FFMKR_ADMIN') : ''}">
+            <img :src="currentUser && currentUser.roles.includes('ROLE_FFMKR_ADMIN') ? '/img/logo-kivid-FFMKR-coul-light-navbar.svg' : '/img/logo-kivid-navbar.svg'" alt="Logo Kivid" />
         </div>
         <nav v-if="currentUser && 'admin' != currentUserType">
             <ul>
@@ -448,7 +448,7 @@ export default {
         this.currentUser = data.currentUser;
 
         if (this.currentUser) {
-            this.currentUserType = this.currentUser.roles.includes("ROLE_ADMIN")
+            this.currentUserType = this.currentUser.roles.includes("ROLE_ADMIN") || this.currentUser.roles.includes("ROLE_FFMKR_ADMIN")
                 ? "admin"
                 : this.currentUser.roles.includes("ROLE_PATIENT")
                 ? "patient"
@@ -497,6 +497,12 @@ export default {
         width: 11.7rem;
         min-width: 6rem;
         cursor: pointer;
+
+        &.logo-ffmkr
+        {
+            width: 20.8rem;
+            margin-bottom: -0.2rem;
+        }
     }
 
     > nav {

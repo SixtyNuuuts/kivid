@@ -25,6 +25,7 @@
 		"patient": {{ patient|serialize('json', {'groups': 'patient_read'})|raw }},
 		"csrfTokenCreateWorksheet": {{ csrf_token('create_worksheet' ~ doctor.id)|serialize('json')|raw }},
 		"csrfTokenEditWorksheet": {{ csrf_token('edit_worksheet' ~ doctor.id)|serialize('json')|raw }},
-		"csrfTokenRemoveExercise": {{ csrf_token('remove_exercise' ~ doctor.id)|serialize('json')|raw }}
+		"csrfTokenRemoveExercise": {{ csrf_token('remove_exercise' ~ doctor.id)|serialize('json')|raw }},
+		"csrfTokenSaveFFMKRRequestToken": {{ csrf_token('save_ffmkr_request_token' ~ doctor.id)|serialize('json')|raw }}
 	}
 {% endblock %}

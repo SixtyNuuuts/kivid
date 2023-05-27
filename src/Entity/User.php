@@ -86,6 +86,12 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $gender;
 
+    /**
+     * @ORM\Column(type="string", length=2, nullable=true)
+     * @Groups({"patient_read", "doctor_read", "user_read"})
+     */
+    private $civility;
+
     public function __construct(array $roles)
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -291,6 +297,18 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setGender(?string $gender): self
     {
         $this->gender = $gender;
+
+        return $this;
+    }
+
+    public function getCivility(): ?string
+    {
+        return $this->civility;
+    }
+
+    public function setCivility(?string $civility): self
+    {
+        $this->civility = $civility;
 
         return $this;
     }

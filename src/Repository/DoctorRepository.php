@@ -22,6 +22,15 @@ class DoctorRepository extends ServiceEntityRepository
         parent::__construct($registry, Doctor::class);
     }
 
+    public function findFFMKRDoctors(): ?array
+    {
+        return $this->createQueryBuilder('d')
+            ->where('d.FFMKRAdhesion IS NOT NULL')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     public function countAllDoctors(): int
     {
         return $this->createQueryBuilder('d')

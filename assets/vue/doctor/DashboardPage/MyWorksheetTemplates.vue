@@ -1131,23 +1131,6 @@ export default {
             margin-bottom: 0.4rem;
             white-space: nowrap;
         }
-
-        .vs-switch {
-            height: 22px;
-            min-width: 41px;
-            position: relative;
-            left: -0.2rem;
-        }
-
-        .vs-switch__circle {
-            width: 16px;
-            height: 16px;
-            left: 4px;
-        }
-
-        .vs-switch__input:checked ~ .vs-switch__circle {
-            left: calc(100% - 20px);
-        }
     }
 
     .big-buttons {

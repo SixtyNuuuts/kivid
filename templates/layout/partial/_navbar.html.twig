@@ -13,6 +13,18 @@
 				"currentRoute": {{ app.request.get('_route')|serialize('json')|raw }}
 			}
 		</script>
+	{% elseif is_granted('ROLE_FFMKR_ADMIN') %}
+		<script id="navbar-vueData" type="application/json">
+			{
+				"homePath": {{ path('app_home')|serialize('json')|raw }},
+				"loginPath": {{ path('app_login')|serialize('json')|raw }},
+				"logoutPath": {{ path('app_logout')|serialize('json')|raw }},
+				"adminDashboardPath": {{ path('app_ffmkr_admin_dashboard')|serialize('json')|raw }},
+				"adminDashboardRoute": "app_ffmkr_admin_dashboard",
+				"currentUser": {{ app.user|serialize('json')|raw }},
+				"currentRoute": {{ app.request.get('_route')|serialize('json')|raw }}
+			}
+		</script>
 	{% else %}
 		<script id="navbar-vueData" type="application/json">
 			{

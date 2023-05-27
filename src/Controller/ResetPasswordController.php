@@ -90,10 +90,7 @@ class ResetPasswordController extends AbstractController
         try {
             $user = $this->resetPasswordHelper->validateTokenAndFetchUser($token);
         } catch (ResetPasswordExceptionInterface $e) {
-            return $this->json(
-                "Erreur lors du processus de réinitialisation de mot de passe",
-                500
-            );
+            return $this->render('reset_password/invalid-token.html.twig');
         }
 
 

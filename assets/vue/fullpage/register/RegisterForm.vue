@@ -1,398 +1,418 @@
 <template>
     <section id="register-form" class="kiv-block">
         <div>
-            <h2 v-if="userType === 'patient' && userHasDoctor">Inscription</h2>
-            <h2 v-if="userType === 'doctor'">Inscription praticien</h2>
-            <h2 v-if="userType === 'patient' && !userHasDoctor">
-                Inscription +&nbsp;Prise&nbsp;de&nbsp;contact
-            </h2>
+            <h2 v-if="userType === 'patient'">Inscription</h2>
+            <h2 v-if="userType === 'doctor'">Inscription praticien <span v-if="registerType === 'ffmkr'">FFMKR</span></h2>
 
-            <div class="register-form">
-                <vs-input
-                    v-model="registerDetails.lastname"
-                    label-placeholder="Nom"
-                    autocomplete="family-name"
-                    icon-after
-                    :class="{
-                        error:
-                            emptyMessage.lastname && !registerDetails.lastname,
-                    }"
-                >
-                    <template
-                        v-if="
-                            emptyMessage.lastname && !registerDetails.lastname
-                        "
-                        #message-danger
-                    >
-                        {{ emptyMessage.lastname }}
-                    </template>
-                </vs-input>
-
-                <vs-input
-                    v-model="registerDetails.firstname"
-                    label-placeholder="Prénom"
-                    autocomplete="given-name"
-                    icon-after
-                    :class="{
-                        error:
-                            emptyMessage.firstname &&
-                            !registerDetails.firstname,
-                    }"
-                >
-                    <template
-                        v-if="
-                            emptyMessage.firstname && !registerDetails.firstname
-                        "
-                        #message-danger
-                    >
-                        {{ emptyMessage.firstname }}
-                    </template>
-                </vs-input>
-
-                <vs-input
-                    :danger="validationMessage.email != null"
-                    v-model="registerDetails.email"
-                    @keyup="validationEmail"
-                    label-placeholder="Email"
-                    autocomplete="email"
-                    type="email"
-                    icon-after
-                    :class="{
-                        error:
-                            (validationMessage.email &&
-                                registerDetails.email) ||
-                            (emptyMessage.email && !registerDetails.email),
-                    }"
-                >
-                    <template
-                        v-if="validationMessage.email && registerDetails.email"
-                        #icon
-                    >
-                        <i class="kiv-error error icon-24"></i>
-                    </template>
-
-                    <template
-                        v-if="
-                            (validationMessage.email &&
-                                registerDetails.email) ||
-                            (emptyMessage.email && !registerDetails.email)
-                        "
-                        #message-danger
-                    >
-                        <span
-                            v-if="
-                                validationMessage.email && registerDetails.email
-                            "
-                            >{{ validationMessage.email }}</span
-                        >
-                        <span
-                            v-if="emptyMessage.email && !registerDetails.email"
-                            >{{ emptyMessage.email }}</span
-                        >
-                    </template>
-                </vs-input>
-
-                <DoctorSelectBox
-                    v-if="userType === 'patient' && userHasDoctor"
-                    :doctorSelected="registerDetails.doctorSelect"
-                    :errorMessage="getEmptyDoctorSelectErrorMessage"
-                    @setDoctorSelected="setDoctorSelected"
-                    :class="{
-                        error:
-                            emptyMessage.doctorSelect &&
-                            !registerDetails.doctorSelect,
-                    }"
-                />
-
-                <VuePhoneNumberInput
-                    v-if="userType === 'patient' && !userHasDoctor"
-                    default-country-code="FR"
-                    :only-countries="['FR']"
-                    :no-example="true"
-                    :no-country-selector="true"
-                    :translations="{
-                        countrySelectorLabel: 'Code pays',
-                        countrySelectorError: 'Choisir un pays',
-                        phoneNumberLabel: 'Numéro de téléphone',
-                        example: 'Exemple :',
-                    }"
-                    v-model="contactTel"
-                    :class="{
-                        filled: contactTel != null,
-                        error: errorTel,
-                    }"
-                    color="#c1b79d"
-                    valid-color="#c1b79d"
-                    error-color="#ff564b"
-                    :error="errorTel"
-                />
-
-                <vs-input
-                    type="password"
-                    v-model="registerDetails.plainPassword"
-                    label-placeholder="Mot de passe"
-                    :visiblePassword="hasVisiblePassword"
-                    icon-after
-                    @keyup="validationPassword"
-                    required
-                    @click-icon="hasVisiblePassword = !hasVisiblePassword"
-                    :progress="getSecurePassProgress"
-                    autocomplete="new-password"
-                    :class="{
-                        empty: !registerDetails.plainPassword,
-                        error:
-                            emptyMessage.plainPassword &&
-                            !registerDetails.plainPassword,
-                    }"
-                >
-                    <template #icon>
-                        <i v-if="!hasVisiblePassword" class="fas fa-eye"></i>
-                        <i v-else class="fas fa-eye-slash"></i>
-                    </template>
-
-                    <template
-                        v-if="
-                            emptyMessage.plainPassword &&
-                            !registerDetails.plainPassword
-                        "
-                        #message-danger
-                    >
-                        {{ emptyMessage.plainPassword }}
-                    </template>
-
-                    <template
-                        v-if="getSecurePassProgress >= 100"
-                        #message-success
-                    >
-                        Mot de passe sécurisé
-                    </template>
-                </vs-input>
-
-                <vs-input
-                    type="password"
-                    v-model="passwordConfirm"
-                    label-placeholder="Confirmation du mot de passe"
-                    :visiblePassword="hasVisiblePasswordConfirm"
-                    icon-after
-                    @keyup="validationPassword"
-                    required
-                    @click-icon="
-                        hasVisiblePasswordConfirm = !hasVisiblePasswordConfirm
-                    "
-                    :class="{
-                        error:
-                            (validationMessage.password &&
-                                registerDetails.plainPassword &&
-                                passwordConfirm) ||
-                            (emptyMessage.passwordConfirm && !passwordConfirm),
-                        empty: !passwordConfirm,
-                    }"
-                    autocomplete="new-password"
-                >
-                    <template #icon>
-                        <i
-                            v-if="!hasVisiblePasswordConfirm"
-                            class="fas fa-eye"
-                        ></i>
-                        <i v-else class="fas fa-eye-slash"></i>
-                    </template>
-
-                    <template
-                        v-if="
-                            (validationMessage.password &&
-                                registerDetails.plainPassword &&
-                                passwordConfirm) ||
-                            (emptyMessage.passwordConfirm && !passwordConfirm)
-                        "
-                        #message-danger
-                    >
-                        <span
-                            v-if="
-                                validationMessage.password &&
-                                registerDetails.plainPassword &&
-                                passwordConfirm
-                            "
-                            >{{ validationMessage.password }}</span
-                        >
-                        <span
-                            v-if="
-                                emptyMessage.passwordConfirm && !passwordConfirm
-                            "
-                            >{{ emptyMessage.passwordConfirm }}</span
-                        >
-                    </template>
-                </vs-input>
-
-                <vs-input
-                    v-if="userType === 'doctor'"
-                    v-model="registerDetails.numRppsAmeli"
-                    label-placeholder="Numéro RPPS ou ADELI"
-                    icon-after
-                    :class="{
-                        error:
-                            emptyMessage.numRppsAmeli &&
-                            !registerDetails.numRppsAmeli,
-                    }"
-                >
-                    <template
-                        v-if="
-                            emptyMessage.numRppsAmeli &&
-                            !registerDetails.numRppsAmeli
-                        "
-                        #message-danger
-                    >
-                        {{ emptyMessage.numRppsAmeli }}
-                    </template>
-                </vs-input>
-
-                <div
-                    id="contact-choice"
-                    v-if="userType === 'patient' && !userHasDoctor"
-                >
-                    <p class="contact-info">
-                        <img
-                            src="../../../img/icons/information.svg"
-                            alt="icon information"
-                        />
-                        Un de nos praticiens va prendre contact avec vous
-                        pour&nbsp;élaborer le traitement approprié
-                    </p>
-                    <p
-                        class="contact-par"
+            <div v-if="!formLoadingRegister">
+                <div v-if="registerType === 'ffmkr'" class="ffmkr-check-register-form">
+                    <p>Veuillez entrer l'email utilisé sur votre compte FFMKR</p>
+                    <vs-input
+                        :danger="validationMessage.email != null"
+                        v-model="registerDetails.email"
+                        @keyup="validationEmail"
+                        label-placeholder="Email"
+                        autocomplete="email"
+                        type="email"
+                        icon-after
                         :class="{
-                            desactive:
-                                (!registerDetails.email ||
-                                    validationMessage.email != null) &&
-                                (!contactTel ||
-                                    (contactTel && contactTel.length < 5) ||
-                                    errorTel),
+                            error:
+                                (validationMessage.email &&
+                                    registerDetails.email) ||
+                                (emptyMessage.email && !registerDetails.email),
                         }"
                     >
-                        Je souhaite que l'on me contacte par
-                    </p>
-                    <div>
-                        <vs-radio
-                            :disabled="
-                                !registerDetails.email ||
-                                validationMessage.email != null
-                            "
-                            v-model="contactChoice"
-                            val="1"
-                            style="margin-bottom: 5px"
+                        <template
+                            v-if="validationMessage.email && registerDetails.email"
+                            #icon
                         >
-                            e-mail
-                            <span class="contact-help"
-                                >(<span v-if="registerDetails.email">{{
-                                    registerDetails.email
-                                }}</span>
-                                <span v-else
-                                    >Veuillez entrer une adresse email</span
-                                >)
-                            </span>
-                        </vs-radio>
-                        <vs-radio
-                            :disabled="
-                                !contactTel ||
-                                (contactTel && contactTel.length < 5) ||
-                                errorTel
-                            "
-                            v-model="contactChoice"
-                            val="2"
-                        >
-                            téléphone
-                            <span class="contact-help"
-                                >(<span v-if="contactTel">{{
-                                    contactTel
-                                }}</span>
-                                <span class="contact-help" v-else
-                                    >Veuillez entrer un num. de tél.</span
-                                >)</span
-                            >
-                        </vs-radio>
-                    </div>
-                </div>
+                            <i class="kiv-error error icon-24"></i>
+                        </template>
 
-                <div
-                    id="accept-CG-block"
-                    :class="{
-                        error: emptyMessage.acceptCG && !acceptCG,
-                    }"
-                >
-                    <vs-checkbox
-                        v-model="acceptCG"
-                        :class="{ active: acceptCG }"
-                    >
-                        <span
-                            >j'ai lu et j'accepte les
-                            <a @click="modalCG = true"
-                                >conditions générales</a
-                            ></span
-                        >
-                    </vs-checkbox>
-                    <div
-                        class="empty-error-mess pt-0"
-                        v-if="emptyMessage.acceptCG && !acceptCG"
-                    >
-                        {{ emptyMessage.acceptCG }}
-                    </div>
-                </div>
-
-                <div
-                    class="btn-container"
-                    :class="{ disabled: btnLoadingRegister }"
-                >
-                    <vs-button
-                        :loading="btnLoadingRegister"
-                        class="w-100"
-                        type="submit"
-                        @click="validRegistration"
-                        ><span
+                        <template
                             v-if="
-                                (userType === 'patient' && userHasDoctor) ||
-                                userType === 'doctor'
+                                (validationMessage.email &&
+                                    registerDetails.email) ||
+                                (emptyMessage.email && !registerDetails.email)
                             "
-                            >S'inscrire</span
-                        ><span v-if="userType === 'patient' && !userHasDoctor"
-                            >C'est parti !</span
-                        ></vs-button
+                            #message-danger
+                        >
+                            <span
+                                v-if="
+                                    validationMessage.email && registerDetails.email
+                                "
+                                >{{ validationMessage.email }}</span
+                            >
+                            <span
+                                v-if="emptyMessage.email && !registerDetails.email"
+                                >{{ emptyMessage.email }}</span
+                            >
+                        </template>
+                    </vs-input>
+
+                    <vs-input
+                        type="password"
+                        v-model="registerDetails.plainPassword"
+                        label-placeholder="Mot de passe"
+                        :visiblePassword="hasVisiblePassword"
+                        icon-after
+                        @keyup="validationPassword"
+                        required
+                        @click-icon="hasVisiblePassword = !hasVisiblePassword"
+                        :progress="getSecurePassProgress"
+                        autocomplete="new-password"
+                        :class="{
+                            empty: !registerDetails.plainPassword,
+                            error:
+                                emptyMessage.plainPassword &&
+                                !registerDetails.plainPassword,
+                        }"
                     >
+                        <template #icon>
+                            <i v-if="!hasVisiblePassword" class="fas fa-eye"></i>
+                            <i v-else class="fas fa-eye-slash"></i>
+                        </template>
+
+                        <template
+                            v-if="
+                                emptyMessage.plainPassword &&
+                                !registerDetails.plainPassword
+                            "
+                            #message-danger
+                        >
+                            {{ emptyMessage.plainPassword }}
+                        </template>
+
+                        <template
+                            v-if="getSecurePassProgress >= 100"
+                            #message-success
+                        >
+                            Mot de passe sécurisé
+                        </template>
+                    </vs-input>
+
+                    <vs-input
+                        type="password"
+                        v-model="passwordConfirm"
+                        label-placeholder="Confirmation du mot de passe"
+                        :visiblePassword="hasVisiblePasswordConfirm"
+                        icon-after
+                        @keyup="validationPassword"
+                        required
+                        @click-icon="
+                            hasVisiblePasswordConfirm = !hasVisiblePasswordConfirm
+                        "
+                        :class="{
+                            error:
+                                (validationMessage.password &&
+                                    registerDetails.plainPassword &&
+                                    passwordConfirm) ||
+                                (emptyMessage.passwordConfirm && !passwordConfirm),
+                            empty: !passwordConfirm,
+                        }"
+                        autocomplete="new-password"
+                    >
+                        <template #icon>
+                            <i
+                                v-if="!hasVisiblePasswordConfirm"
+                                class="fas fa-eye"
+                            ></i>
+                            <i v-else class="fas fa-eye-slash"></i>
+                        </template>
+
+                        <template
+                            v-if="
+                                (validationMessage.password &&
+                                    registerDetails.plainPassword &&
+                                    passwordConfirm) ||
+                                (emptyMessage.passwordConfirm && !passwordConfirm)
+                            "
+                            #message-danger
+                        >
+                            <span
+                                v-if="
+                                    validationMessage.password &&
+                                    registerDetails.plainPassword &&
+                                    passwordConfirm
+                                "
+                                >{{ validationMessage.password }}</span
+                            >
+                            <span
+                                v-if="
+                                    emptyMessage.passwordConfirm && !passwordConfirm
+                                "
+                                >{{ emptyMessage.passwordConfirm }}</span
+                            >
+                        </template>
+                    </vs-input>
+
+                    <div
+                        class="btn-container"
+                        :class="{ disabled: btnLoadingRegister }"
+                    >
+                        <vs-button
+                            :loading="btnLoadingRegister"
+                            class="w-100"
+                            type="submit"
+                            @click="validRegistration"
+                        >
+                            <span>S'inscrire avec <img class="logo-ffmkr" src="/img/logo-kivid-FFMKR-white.svg" alt="Logo FFMKR"></span>
+                        </vs-button>
+                    </div>
+                </div>
+                <div v-else class="register-form">
+                    <div class="btn-container social-register">
+                        <transition name="fade">
+                            <div>
+                                <vs-button
+                                    class="w-100"
+                                    @click="registerOauth('facebook')"
+                                >
+                                    S'inscrire avec <i class="fab fa-facebook-f"></i
+                                ></vs-button>
+
+                                <vs-button
+                                    class="w-100"
+                                    @click="registerOauth('google')"
+                                    >S'inscrire avec <i class="fab fa-google"></i
+                                ></vs-button>
+                            </div>
+                        </transition>
+                    </div>
+
+                    <div class="divider">
+                        <div class="divider-text">ou</div>
+                    </div>
+
+                    <vs-input
+                        v-model="registerDetails.lastname"
+                        label-placeholder="Nom"
+                        autocomplete="family-name"
+                        icon-after
+                        :class="{
+                            error:
+                                emptyMessage.lastname && !registerDetails.lastname,
+                        }"
+                    >
+                        <template
+                            v-if="
+                                emptyMessage.lastname && !registerDetails.lastname
+                            "
+                            #message-danger
+                        >
+                            {{ emptyMessage.lastname }}
+                        </template>
+                    </vs-input>
+
+                    <vs-input
+                        v-model="registerDetails.firstname"
+                        label-placeholder="Prénom"
+                        autocomplete="given-name"
+                        icon-after
+                        :class="{
+                            error:
+                                emptyMessage.firstname &&
+                                !registerDetails.firstname,
+                        }"
+                    >
+                        <template
+                            v-if="
+                                emptyMessage.firstname && !registerDetails.firstname
+                            "
+                            #message-danger
+                        >
+                            {{ emptyMessage.firstname }}
+                        </template>
+                    </vs-input>
+
+                    <vs-input
+                        :danger="validationMessage.email != null"
+                        v-model="registerDetails.email"
+                        @keyup="validationEmail"
+                        label-placeholder="Email"
+                        autocomplete="email"
+                        type="email"
+                        icon-after
+                        :class="{
+                            error:
+                                (validationMessage.email &&
+                                    registerDetails.email) ||
+                                (emptyMessage.email && !registerDetails.email),
+                        }"
+                    >
+                        <template
+                            v-if="validationMessage.email && registerDetails.email"
+                            #icon
+                        >
+                            <i class="kiv-error error icon-24"></i>
+                        </template>
+
+                        <template
+                            v-if="
+                                (validationMessage.email &&
+                                    registerDetails.email) ||
+                                (emptyMessage.email && !registerDetails.email)
+                            "
+                            #message-danger
+                        >
+                            <span
+                                v-if="
+                                    validationMessage.email && registerDetails.email
+                                "
+                                >{{ validationMessage.email }}</span
+                            >
+                            <span
+                                v-if="emptyMessage.email && !registerDetails.email"
+                                >{{ emptyMessage.email }}</span
+                            >
+                        </template>
+                    </vs-input>
+
+                    <vs-input
+                        type="password"
+                        v-model="registerDetails.plainPassword"
+                        label-placeholder="Mot de passe"
+                        :visiblePassword="hasVisiblePassword"
+                        icon-after
+                        @keyup="validationPassword"
+                        required
+                        @click-icon="hasVisiblePassword = !hasVisiblePassword"
+                        :progress="getSecurePassProgress"
+                        autocomplete="new-password"
+                        :class="{
+                            empty: !registerDetails.plainPassword,
+                            error:
+                                emptyMessage.plainPassword &&
+                                !registerDetails.plainPassword,
+                        }"
+                    >
+                        <template #icon>
+                            <i v-if="!hasVisiblePassword" class="fas fa-eye"></i>
+                            <i v-else class="fas fa-eye-slash"></i>
+                        </template>
+
+                        <template
+                            v-if="
+                                emptyMessage.plainPassword &&
+                                !registerDetails.plainPassword
+                            "
+                            #message-danger
+                        >
+                            {{ emptyMessage.plainPassword }}
+                        </template>
+
+                        <template
+                            v-if="getSecurePassProgress >= 100"
+                            #message-success
+                        >
+                            Mot de passe sécurisé
+                        </template>
+                    </vs-input>
+
+                    <vs-input
+                        type="password"
+                        v-model="passwordConfirm"
+                        label-placeholder="Confirmation du mot de passe"
+                        :visiblePassword="hasVisiblePasswordConfirm"
+                        icon-after
+                        @keyup="validationPassword"
+                        required
+                        @click-icon="
+                            hasVisiblePasswordConfirm = !hasVisiblePasswordConfirm
+                        "
+                        :class="{
+                            error:
+                                (validationMessage.password &&
+                                    registerDetails.plainPassword &&
+                                    passwordConfirm) ||
+                                (emptyMessage.passwordConfirm && !passwordConfirm),
+                            empty: !passwordConfirm,
+                        }"
+                        autocomplete="new-password"
+                    >
+                        <template #icon>
+                            <i
+                                v-if="!hasVisiblePasswordConfirm"
+                                class="fas fa-eye"
+                            ></i>
+                            <i v-else class="fas fa-eye-slash"></i>
+                        </template>
+
+                        <template
+                            v-if="
+                                (validationMessage.password &&
+                                    registerDetails.plainPassword &&
+                                    passwordConfirm) ||
+                                (emptyMessage.passwordConfirm && !passwordConfirm)
+                            "
+                            #message-danger
+                        >
+                            <span
+                                v-if="
+                                    validationMessage.password &&
+                                    registerDetails.plainPassword &&
+                                    passwordConfirm
+                                "
+                                >{{ validationMessage.password }}</span
+                            >
+                            <span
+                                v-if="
+                                    emptyMessage.passwordConfirm && !passwordConfirm
+                                "
+                                >{{ emptyMessage.passwordConfirm }}</span
+                            >
+                        </template>
+                    </vs-input>
+
+                    <div
+                        id="accept-CG-block"
+                        :class="{
+                            error: emptyMessage.acceptCG && !acceptCG,
+                        }"
+                    >
+                        <vs-checkbox
+                            v-model="acceptCG"
+                            :class="{ active: acceptCG }"
+                        >
+                            <span
+                                >j'ai lu et j'accepte les
+                                <a @click="modalCG = true"
+                                    >conditions générales</a
+                                ></span
+                            >
+                        </vs-checkbox>
+                        <div
+                            class="empty-error-mess pt-0"
+                            v-if="emptyMessage.acceptCG && !acceptCG"
+                        >
+                            {{ emptyMessage.acceptCG }}
+                        </div>
+                    </div>
+
+                    <div
+                        class="btn-container"
+                        :class="{ disabled: btnLoadingRegister }"
+                    >
+                        <vs-button
+                            :loading="btnLoadingRegister"
+                            class="w-100"
+                            type="submit"
+                            @click="validRegistration"
+                            >
+                            <span>S'inscrire</span>
+                        </vs-button>
+                    </div>
                 </div>
             </div>
-
-            <div
-                class="divider"
-                v-if="
-                    (userType === 'patient' && userHasDoctor) ||
-                    userType === 'doctor'
-                "
-            >
-                <div class="divider-text">ou</div>
+            <div v-else class="loading-form-block">
+                <div
+                    v-for="(loading, i) in 9"
+                    :key="i"
+                    class="loading loading-block"
+                >
+                </div>
             </div>
-
-            <div
-                class="btn-container social-register"
-                v-if="
-                    (userType === 'patient' && userHasDoctor) ||
-                    userType === 'doctor'
-                "
-            >
-                <transition name="fade">
-                    <div>
-                        <vs-button
-                            class="w-100"
-                            @click="registerOauth('facebook')"
-                        >
-                            S'inscrire avec <i class="fab fa-facebook-f"></i
-                        ></vs-button>
-
-                        <vs-button
-                            class="w-100"
-                            @click="registerOauth('google')"
-                            >S'inscrire avec <i class="fab fa-google"></i
-                        ></vs-button>
-                    </div>
-                </transition>
-            </div>
+            
         </div>
         <vs-dialog width="450px" v-model="modalCG">
             <h2>Conditions Générales</h2>
@@ -408,53 +428,42 @@
 
 <script>
 import f from "../../services/function";
-import Vue from "vue";
 import CG from "./ConditionGenerale.vue";
-import DoctorSelectBox from "../../components/DoctorSelectBox.vue";
-import VuePhoneNumberInput from "vue-phone-number-input";
 
 export default {
     components: {
         CG,
-        DoctorSelectBox,
-        VuePhoneNumberInput,
     },
     props: {
         userType: String,
-        userHasDoctor: Boolean,
         csrfTokenRegister: String,
-        csrfTokenContact: String,
+        registerType: String,
     },
     data() {
         return {
             registerDetails: {
-                doctorSelect: null,
                 lastname: "",
                 firstname: "",
                 email: "",
                 plainPassword: "",
-                numRppsAmeli: "",
             },
             validationMessage: {
                 email: null,
                 password: null,
             },
             emptyMessage: {
-                doctorSelect: null,
                 lastname: null,
                 firstname: null,
                 email: null,
                 plainPassword: null,
                 passwordConfirm: null,
-                numRppsAmeli: null,
                 acceptCG: null,
             },
-            contactTel: null,
-            contactChoice: null,
             passwordConfirm: "",
             hasVisiblePassword: false,
             hasVisiblePasswordConfirm: false,
             btnLoadingRegister: false,
+            formLoadingRegister: false,
             modalCG: false,
             acceptCG: false,
         };
@@ -466,85 +475,33 @@ export default {
         },
         validRegistration() {
             if (
-                this.checkIfFieldsAreNotEmpty() &&
                 !this.validationMessage.password &&
-                !this.validationMessage.email
+                !this.validationMessage.email &&
+                ((!this.registerType && this.checkIfFieldsAreNotEmpty()) 
+                || (this.registerType === 'ffmkr' && this.checkIfFFMKRFieldsAreNotEmpty()))
             ) {
                 this.btnLoadingRegister = true;
+                this.formLoadingRegister = true;
 
                 this.axios
                     .post(`/inscription`, {
                         _token: this.csrfTokenRegister,
-                        doctorSelectId: this.registerDetails.doctorSelect
-                            ? this.registerDetails.doctorSelect.id
-                            : null,
                         lastname: this.registerDetails.lastname,
                         firstname: this.registerDetails.firstname,
                         email: this.registerDetails.email.toLowerCase(),
                         plainPassword: this.registerDetails.plainPassword,
-                        numRppsAmeli: this.registerDetails.numRppsAmeli
-                            ? this.registerDetails.numRppsAmeli
-                            : null,
                         userType: this.userType,
+                        registerType: this.registerType,
                     })
                     .then((response) => {
-                        f.openSuccessNotificationStay(
-                            "Inscription validée",
-                            response.data
-                        );
-
-                        if (
-                            this.contactChoice &&
-                            (this.contactTel || this.registerDetails.email) &&
-                            this.userType === "patient" &&
-                            !this.userHasDoctor
-                        ) {
-                            this.axios
-                                .post(`/contact`, {
-                                    _token: this.csrfTokenContact,
-                                    lastname: this.registerDetails.lastname,
-                                    firstname: this.registerDetails.firstname,
-                                    email: this.registerDetails.email.toLowerCase(),
-                                    contactTel: this.contactTel,
-                                    contactChoice:
-                                        this.contactChoice == 1
-                                            ? "email"
-                                            : this.contactChoice == 2
-                                            ? "téléphone"
-                                            : "",
-                                })
-                                .then((response) => {
-                                    f.openSuccessNotification(
-                                        "Prise de contact",
-                                        response.data
-                                    );
-                                    this.btnLoadingRegister = false;
-
-                                    this.resetData();
-
-                                    setTimeout(() => {
-                                        document.location.href = `/connexion`;
-                                    }, 2000);
-                                })
-                                .catch((error) => {
-                                    const errorMess =
-                                        "object" === typeof error.response.data
-                                            ? error.response.data.detail
-                                            : error.response.data;
-
-                                    f.openErrorNotification(
-                                        "Erreur",
-                                        errorMess
-                                    );
-                                });
-                        } else {
+                        if(response.data === 'ffmkr-adhesion-not-found') {
                             this.btnLoadingRegister = false;
-
-                            this.resetData();
-
-                            setTimeout(() => {
-                                document.location.href = `/connexion`;
-                            }, 2000);
+                            this.formLoadingRegister = false;
+                            this.registerType = null;
+                        }
+                        else 
+                        {
+                            this.validUserIsRegisteredChoice(true);
                         }
                     })
                     .catch((error) => {
@@ -554,6 +511,7 @@ export default {
                                 : error.response.data;
                         f.openErrorNotificationStay("Erreur", errorMess);
                         this.btnLoadingRegister = false;
+                        this.formLoadingRegister = false;
                     });
             }
         },
@@ -580,112 +538,46 @@ export default {
                     "Les mots de passe ne correspondent pas.";
             }
         },
-        resetData() {
-            this.registerDetails = {
-                doctorSelect: null,
-                lastname: "",
-                firstname: "",
-                email: "",
-                plainPassword: "",
-                numRppsAmeli: "",
-            };
-
-            this.validationMessage = {
-                email: null,
-                password: null,
-            };
-
-            this.emptyMessage = {
-                doctorSelect: null,
-                lastname: null,
-                firstname: null,
-                email: null,
-                plainPassword: null,
-                passwordConfirm: null,
-                numRppsAmeli: null,
-                acceptCG: null,
-            };
-
-            this.passwordConfirm = "";
-            this.acceptCG = false;
-            this.contactTel = null;
-            this.contactChoice = null;
+        ucwords(str) {
+            return str.toLowerCase().replace(/(^([a-zA-Z\p{M}]))|([ -][a-zA-Z\p{M}])/g,
+                function(s){
+                    return s.toUpperCase();
+                });
         },
         registerOauth(social) {
-            if (
-                this.checkIfFieldsAreNotEmpty(true) &&
-                !this.validationMessage.password &&
-                !this.validationMessage.email
-            ) {
-                const doctorId =
-                    this.registerDetails.doctorSelect && this.userHasDoctor
-                        ? this.registerDetails.doctorSelect.id
-                        : 0;
-
-                const doctorNumRppsAmeli = this.registerDetails.numRppsAmeli
-                    ? this.registerDetails.numRppsAmeli
-                    : "nc";
-
-                document.location.href = `/oauth/connect/${this.userType}/${social}/${doctorId}/${doctorNumRppsAmeli}`;
-            }
+            document.location.href = `/oauth/connect/${this.userType}/${social}`;
         },
-        setDoctorSelected(doctorSelected) {
-            this.registerDetails.doctorSelect = doctorSelected;
-        },
-        checkIfFieldsAreNotEmpty(oauth = false) {
+        checkIfFieldsAreNotEmpty() {
             if (
-                (!oauth && !this.registerDetails.lastname) ||
-                (!oauth && !this.registerDetails.firstname) ||
-                (!oauth && !this.registerDetails.email) ||
-                (!oauth &&
-                    (!this.registerDetails.plainPassword ||
-                        !this.passwordConfirm)) ||
-                (this.userType === "patient" &&
-                    this.userHasDoctor &&
-                    !this.registerDetails.doctorSelect) ||
-                (this.userType === "doctor" &&
-                    !this.registerDetails.numRppsAmeli) ||
-                !this.acceptCG
+                !this.registerDetails.lastname
+                || !this.registerDetails.firstname
+                || !this.registerDetails.email 
+                || !this.registerDetails.plainPassword 
+                || !this.passwordConfirm
+                || !this.acceptCG
             ) {
-                if (!oauth && !this.registerDetails.lastname) {
+                if (!this.registerDetails.lastname) {
                     this.emptyMessage.lastname =
                         "Vous devez renseigner votre nom";
                 }
 
-                if (!oauth && !this.registerDetails.firstname) {
+                if (!this.registerDetails.firstname) {
                     this.emptyMessage.firstname =
                         "Vous devez renseigner votre prénom";
                 }
 
-                if (!oauth && !this.registerDetails.email) {
+                if (!this.registerDetails.email) {
                     this.emptyMessage.email = "Vous devez renseigner un email";
                 }
 
-                if (!oauth && !this.registerDetails.plainPassword) {
+                if (!this.registerDetails.plainPassword) {
                     this.emptyMessage.plainPassword =
                         "Vous devez renseigner un mot de passe";
                 }
 
-                if (!oauth && !this.passwordConfirm) {
+                if (!this.passwordConfirm) {
                     this.emptyMessage.passwordConfirm =
                         "Vous devez confirmer votre mot de passe";
-                }
-
-                if (
-                    this.userType === "patient" &&
-                    this.userHasDoctor &&
-                    !this.registerDetails.doctorSelect
-                ) {
-                    this.emptyMessage.doctorSelect =
-                        "Vous devez sélectionner votre praticien";
-                }
-
-                if (
-                    this.userType === "doctor" &&
-                    !this.registerDetails.numRppsAmeli
-                ) {
-                    this.emptyMessage.numRppsAmeli =
-                        "Vous devez renseigner votre numéro RPPS ou ADELI";
                 }
 
                 if (!this.acceptCG) {
@@ -697,6 +589,30 @@ export default {
             }
 
             return true;
+        },
+        checkIfFFMKRFieldsAreNotEmpty() {
+            if (!this.registerDetails.plainPassword || !this.passwordConfirm) {
+                if (!this.registerDetails.email) {
+                    this.emptyMessage.email = "Vous devez renseigner un email";
+                }
+
+                if (!this.registerDetails.plainPassword) {
+                    this.emptyMessage.plainPassword =
+                        "Vous devez renseigner un mot de passe";
+                }
+
+                if (!this.passwordConfirm) {
+                    this.emptyMessage.passwordConfirm =
+                        "Vous devez confirmer votre mot de passe";
+                }
+
+                return false;
+            }
+
+            return true;
+        },
+        validUserIsRegisteredChoice(userIsRegistered) {
+            this.$emit("userIsRegisteredChoice", {type: 'userIsRegistered', value: userIsRegistered});
         },
     },
     computed: {
@@ -730,34 +646,6 @@ export default {
 
             return progress;
         },
-        errorTel() {
-            let error = false;
-
-            if (this.contactTel && this.contactTel.length > 4) {
-                let contactTelFormated = this.contactTel.replace(/ /g, "");
-
-                const re = /^0[1-9]([-. ]?[0-9]{2}){4}$/;
-
-                if (!re.test(String(contactTelFormated))) {
-                    error = true;
-                }
-            }
-
-            if (this.contactTel && this.contactTel.length == 14) {
-                if (this.contactTel.replace(/ /g, "").length == 10) {
-                    this.contactChoice = 2;
-                } else {
-                    this.contactChoice = this.registerDetails.email ? 1 : null;
-                }
-            } else {
-                this.contactChoice = this.registerDetails.email ? 1 : null;
-            }
-
-            return error;
-        },
-        getEmptyDoctorSelectErrorMessage() {
-            return this.emptyMessage.doctorSelect;
-        },
     },
 };
 </script>
@@ -770,7 +658,40 @@ export default {
 }
 
 #register-form {
+    .ffmkr-check-register-form {
+        > p {
+            font-size: 1.45rem;
+            line-height: 1.2;
+            color: #c2b9a2;
+        }
+
+        .logo-ffmkr {
+            width: 5.7rem;
+            position: relative;
+            top: 0.1rem;
+            margin-left: 0.1rem;
+        }
+
+        .vs-input-parent {
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-container {
+            margin-top: 2.1rem;
+        }
+    }
+
+    .loading-form-block {
+        > .loading {
+            height: 5.2rem;
+            margin-bottom: 1.5rem;
+            border-radius: 0.5rem;
+        }
+    }
+
     .select-filter {
+        margin-bottom: -0.9rem;
+
         &.error {
             input {
                 border: 0.1rem solid #ff564b;
@@ -919,143 +840,6 @@ export default {
         &.error {
             input:focus ~ label {
                 color: rgb(255, 86, 75) !important;
-            }
-        }
-    }
-
-    #contact-choice {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        font-size: 1.4rem;
-        font-weight: 600;
-        margin-top: 1.8rem;
-        margin-bottom: 1.8rem;
-        padding: 2.5rem;
-        white-space: nowrap;
-        position: relative;
-        padding-top: 6.5rem;
-        border-radius: 0.5rem;
-
-        &::after {
-            content: "";
-            border: 1px solid #e7dfcd;
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 2;
-            border-radius: 0.5rem;
-        }
-
-        .contact-info {
-            white-space: initial;
-            background: #f8f5f0;
-            color: #bbb4a1;
-            font-weight: 400;
-            font-size: 1.2rem;
-            line-height: 1.3;
-            padding: 0.7rem;
-            position: absolute;
-            top: -0.01rem;
-            left: 0;
-            border-radius: 0.5rem 0.5rem 0rem 0rem;
-            width: 100.3%;
-            text-align: center;
-
-            img {
-                width: 1.15rem;
-                margin-right: 0.15rem;
-                position: relative;
-                top: 0.1rem;
-            }
-        }
-
-        > p {
-            margin-top: 0;
-            margin-bottom: 6px;
-            font-weight: 700;
-
-            &.desactive {
-                color: #b6ada1;
-            }
-
-            &.contact-par {
-                max-width: 67vw;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-        }
-
-        > div {
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            z-index: 5;
-
-            .contact-help {
-                font-style: italic;
-                font-size: 1.3rem;
-                display: inline-flex;
-                max-width: 40vw;
-
-                @media (min-width: 320px) {
-                    max-width: 43vw;
-                }
-
-                @media (min-width: 340px) {
-                    max-width: 45vw;
-                }
-
-                @media (min-width: 360px) {
-                    max-width: 47vw;
-                }
-
-                @media (min-width: 440px) {
-                    max-width: 25rem;
-                }
-
-                span {
-                    display: inline-block;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                }
-            }
-
-            .vs-radio {
-                width: 12px;
-                height: 12px;
-                min-width: 12px;
-                min-height: 12px;
-            }
-            .vs-radio-content {
-                .vs-radio__effect::after {
-                    width: 10px;
-                    height: 10px;
-                    min-width: 10px;
-                    min-height: 10px;
-                }
-
-                &.active .vs-radio__effect::after {
-                    border: 4px solid $orange;
-                    width: 12px;
-                    height: 12px;
-                    min-width: 12px;
-                    min-height: 12px;
-                }
-
-                &.disabled {
-                    color: #d4cbb8;
-                    font-weight: 400;
-                    opacity: 1 !important;
-
-                    .vs-radio {
-                        opacity: 0.3;
-                    }
-                }
             }
         }
     }

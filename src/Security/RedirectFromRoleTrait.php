@@ -31,6 +31,12 @@ trait RedirectFromRoleTrait
             );
         }
 
+        if (in_array('ROLE_FFMKR_ADMIN', $user->getRoles())) {
+            return new RedirectResponse(
+                $this->urlGenerator->generate('app_ffmkr_admin_dashboard')
+            );
+        }
+
         return new RedirectResponse($this->urlGenerator->generate('app_home'));
     }
 }

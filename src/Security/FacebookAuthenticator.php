@@ -15,7 +15,7 @@ class FacebookAuthenticator extends AbstractSocialAuthenticator
 {
     protected $serviceName = 'facebook';
 
-    public function getUserFromResourceOwner(ResourceOwnerInterface $facebookUser, NotificationService $notificationService, string $userType, object $data): ?User
+    public function getUserFromResourceOwner(ResourceOwnerInterface $facebookUser, NotificationService $notificationService, string $userType): ?User
     {
         if (!($facebookUser instanceof FacebookUser)) {
             throw new \RuntimeException('Expecting FacebookClient as the first parameter');
@@ -54,20 +54,6 @@ class FacebookAuthenticator extends AbstractSocialAuthenticator
                  ->setAvatarUrl($facebookUser->getPictureUrl())
                  ->setIsVerified(true);
             ;
-
-            if ('patient' === $userType && $data->doctorId !== 0) {
-                $patientDoctor = $doctorRepository->findOneBy(['id' => $data->doctorId]);
-                
-                $user->setAddRequestDoctor(true);
-                
-                $user->setDoctor($patientDoctor);
-
-                $notificationService->createSelectDoctorNotification($user, $patientDoctor);
-            }
-
-            if ('doctor' === $userType && $data->doctorNumRppsAmeli !== 'nc') {
-                $user->setNumRppsAmeli($data->doctorNumRppsAmeli);
-            }
 
             $this->em->persist($user);
         }

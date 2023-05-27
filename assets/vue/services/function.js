@@ -14,6 +14,15 @@ export default {
     }, []);
   },
 
+  getLibrariesFromAllVideos(videos) {
+    return videos.reduce((r, video) => {
+      if (!r.filter(vl=>vl.reference===video.videoLibrary.reference).length) {
+        r.push(video.videoLibrary);
+      }
+      return r;
+    }, []);
+  },
+
   getTagsFromAll(tagsFromExercises) {
     return tagsFromExercises.reduce((r, exercise) => {
       exercise.forEach((tag) => {
@@ -251,7 +260,7 @@ export default {
     }
   },
 
-  getSearch(data, search, exclude) {
+  getSearch(data, search, exclude, target) {
     if (search === void 0) {
       search = '';
     }
@@ -266,6 +275,9 @@ export default {
       let searchFields = ["firstname", "lastname", "email", "title", "name", "worksheet", "patient", "doctor"];
       if ('doctor' === exclude) {
         searchFields = ["firstname", "lastname", "email", "title", "name", "worksheet", "patient"];
+      }
+      if ('ffmkr_adhesion' === target) {
+        searchFields = ["numcli", "lastname", "email"];
       }
 
       const objFilteredBySearchField = Object.keys(obj).reduce((r, key) => {
@@ -329,6 +341,11 @@ export default {
     });
 
     function compare(a, b) {
+      if ('numcli' === sortKey) {
+        a[sortKey] = parseInt(a[sortKey]);
+        b[sortKey] = parseInt(b[sortKey]);
+      }
+
       let sortKeyA = sortKey;
       let sortKeyB = sortKey;
       let sortKeySplitA = sortKey.split('.');

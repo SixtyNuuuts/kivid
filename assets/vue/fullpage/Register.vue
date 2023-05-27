@@ -1,67 +1,29 @@
 <template>
     <div class="container fullpage">
         <vs-button
-            v-if="activeStep != 1"
-            @click="
-                activeStep != previousStep
-                    ? (activeStep = previousStep)
-                    : activeStep == 3
-                    ? (activeStep = 2)
-                    : (activeStep = 1)
-            "
+            v-if="activeStep != userChoice[firstStepName].step && !this.registerType"
+            @click="previousStep != activeStep ? activeStep = previousStep : userChoice[firstStepName].step"
             class="btn-prev"
             circle
             floating
         >
             <i class="kiv-arrow-left icon-31"></i>
         </vs-button>
-        <div id="register-steps">
-            <div
-                class="step"
-                :class="{ active: activeStep == 1 }"
-                @click="setActiveStep(1)"
-            >
-                1
-            </div>
-            <div
-                class="step"
-                :class="{
-                    active: activeStep == 2,
-                    desactive: activeStep == 3 && userType == 'doctor',
-                }"
-                @click="setActiveStep(2)"
-                :disabled="!userType"
-            >
-                2
-            </div>
-            <div
-                class="step"
-                :class="{ active: activeStep == 3 }"
-                @click="setActiveStep(3)"
-                :disabled="userHasDoctor === null"
-            >
-                3
-            </div>
-        </div>
         <div id="logo">
             <img src="../../img/logo-kivid-gradient.svg" alt="Logo Kivid" />
             <h1>Kivid</h1>
         </div>
         <transition name="fade" mode="out-in">
             <UserTypeChoice
-                v-if="activeStep == 1"
-                @userTypeChoice="setUserTypeChoice"
-            />
-            <UserHasDoctorChoice
-                v-if="activeStep == 2"
-                @userHasDoctorChoice="setUserHasDoctorChoice"
+                v-if="activeStep == userChoice.userType.step"
+                @userTypeChoice="setUserChoice"
             />
             <RegisterForm
-                v-if="activeStep == 3"
-                :userType="userType"
-                :userHasDoctor="userHasDoctor"
+                v-if="activeStep == userChoice.userIsRegistered.step"
+                :userType="userChoice.userType.value"
                 :csrfTokenRegister="csrfTokenRegister"
-                :csrfTokenContact="csrfTokenContact"
+                :registerType="registerType"
+                @userIsRegisteredChoice="setUserChoice"
             />
         </transition>
     </div>
@@ -70,43 +32,37 @@
 <script>
 import Vue from "vue";
 import UserTypeChoice from "./register/UserTypeChoice.vue";
-import UserHasDoctorChoice from "./register/UserHasDoctorChoice.vue";
 import RegisterForm from "./register/RegisterForm.vue";
 
 export default {
     data() {
         return {
             csrfTokenRegister: null,
-            csrfTokenContact: null,
+            registerType: null,
+            firstStepName: 'userType',
+            lastStepName: 'userIsRegistered',
             activeStep: 1,
             previousStep: 1,
-            userType: null,
-            userHasDoctor: null,
+            userChoice: {
+                userType : { step: 1, value: null },
+                userIsRegistered : { step: 2, value: null },
+            },
         };
     },
     components: {
         UserTypeChoice,
-        UserHasDoctorChoice,
         RegisterForm,
     },
     methods: {
-        setUserTypeChoice(userType) {
-            this.userType = userType;
+        setUserChoice(choice) {
+            this.userChoice[choice.type].value = choice.value;
             this.previousStep = this.activeStep;
-            this.activeStep = userType == "patient" ? 2 : 3;
-        },
-        setUserHasDoctorChoice(userHasDoctor) {
-            this.userHasDoctor = userHasDoctor;
-            this.previousStep = this.activeStep;
-            this.activeStep = 3;
+            if(this.activeStep == this.userChoice[this.lastStepName].step && this.userChoice[this.lastStepName].value)
+                document.location.href = `/connexion`;
+            else
+                this.activeStep = this.activeStep+1;
         },
         setActiveStep(num) {
-            if (num == 2 && !this.userType) {
-                return false;
-            }
-            if (num == 3 && this.userHasDoctor === null) {
-                return false;
-            }
             this.activeStep = num;
         },
     },
@@ -119,7 +75,11 @@ export default {
         const data = JSON.parse(document.getElementById("vueData").innerHTML);
 
         this.csrfTokenRegister = data.csrfTokenRegister;
-        this.csrfTokenContact = data.csrfTokenContact;
+        this.registerType = data.registerType;
+
+        if(this.registerType === 'ffmkr') {
+            this.setUserChoice({type: 'userType', value: 'doctor'});
+        }
     },
 };
 </script>
@@ -128,7 +88,7 @@ export default {
 @import "../../scss/variables";
 
 .container.fullpage {
-    justify-content: flex-start;
+    justify-content: center;
 
     .vs-button.btn-prev {
         opacity: 0;
@@ -142,70 +102,12 @@ export default {
         }
     }
 
-    #register-steps {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        width: 100%;
-        margin-top: 5rem;
-        position: relative;
-        max-width: 17rem;
-        margin-bottom: 4.5rem;
-
-        @media (min-width: 1250px) {
-            margin-top: 3rem;
-        }
-
-        &::after {
-            content: "";
-            display: block;
-            height: 1px;
-            width: 100%;
-            background-color: $orange;
-            position: absolute;
-            top: 50%;
-            z-index: -1;
-        }
-
-        .step {
-            border-radius: 50%;
-            border: 1px solid $orange;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: 600;
-            color: $orange;
-            background-color: #faf8f4;
-            width: 3.2rem;
-            height: 3.2rem;
-            font-size: 1.1rem;
-            transition: all 0.5s;
-            cursor: pointer;
-            user-select: none;
-
-            &.active {
-                color: #faf8f4;
-                background-color: $orange;
-            }
-
-            &.desactive {
-                border: 1px solid rgba(255, 104, 56, 0.25);
-                color: rgba(255, 104, 56, 0.25);
-                pointer-events: none;
-            }
-
-            &[disabled] {
-                opacity: 1 !important;
-                cursor: initial;
-            }
-        }
-    }
-
     #logo {
         height: 19.8rem;
         width: 14rem;
         margin-left: 0.2rem;
-        margin-bottom: 5.4rem;
+        margin-bottom: 4.3rem;
+        margin-top: 0.3rem;
 
         h1 {
             color: $orange;
