@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <DoctorChoice
-            v-if="!patient.doctor && !patientHasNoDoctorChoice && !doctorView"
+            v-if="!patient.addRequestDoctor && !doctorView"
             :patient="patient"
             :csrfTokenSelectDoctor="csrfTokenSelectDoctor"
             :csrfTokenContact="csrfTokenContact"
@@ -115,7 +115,7 @@
                                     ></div>
                                     <vs-avatar
                                         v-if="
-                                            patient.addRequestDoctor &&
+                                            patient.addRequestDoctor && patient.doctor &&
                                             !loadingDoctor
                                         "
                                         class="avatar"
@@ -155,7 +155,7 @@
                                     </div>
                                     <div
                                         v-if="
-                                            patient.addRequestDoctor &&
+                                            patient.addRequestDoctor && patient.doctor &&
                                             !loadingDoctor
                                         "
                                     >
@@ -208,7 +208,11 @@
                                     <div v-if="!patient.doctor">
                                         <p class="p">En attente</p>
                                         <p class="subp">Un de nos praticiens va prendre contact avec vous
-                                           pour&nbsp;élaborer le traitement approprié
+                                           pour&nbsp;élaborer le traitement approprié.
+                                        </p>
+                                        <p class="subp">
+                                            Vous avez une question ?
+                                            <a @click="rederictToHelpSupport">contactez-nous</a>
                                         </p>
                                     </div>
                                 </div>
@@ -344,6 +348,7 @@ export default {
         },
         setPatientHasNoDoctorChoice(patientHasNoDoctorChoice) {
             this.patientHasNoDoctorChoice = patientHasNoDoctorChoice;
+            this.valideChangeDoctor();
         },
         closeModalChangeDoctor() {
             this.modalChangeDoctor = false;
@@ -414,6 +419,9 @@ export default {
         rederictToDashboard() {
             document.location.href = `/doctor/${this.currentUser.id}/dashboard`;
         },
+        rederictToHelpSupport() {
+            document.location.href = `/support`;
+        },
         setDoctorSelected(doctorSelected) {
             this.doctorSelected = doctorSelected;
         },
@@ -423,21 +431,24 @@ export default {
             this.axios
                 .post(`/patient/${this.patient.id}/select/doctor`, {
                     _token: this.csrfTokenSelectDoctor,
-                    doctorId: this.doctorSelected.id,
+                    doctorId: this.doctorSelected?.id??null,
                 })
                 .then((response) => {
-                    f.openSuccessNotification(
-                        "Choix du praticien enregistré",
-                        response.data
-                    );
-
                     this.patient.addRequestDoctor = true;
 
-                    this.patient.doctor = this.doctorSelected;
+                    if(response.data != 'patient-without-doctor')
+                    {
+                        f.openSuccessNotification(
+                            "Choix du praticien enregistré",
+                            response.data
+                        );
 
-                    this.modalChangeDoctor = false;
+                        this.patient.doctor = this.doctorSelected;
 
-                    this.loadingChangeDoctor = false;
+                        this.modalChangeDoctor = false;
+
+                        this.loadingChangeDoctor = false;
+                    }
                 })
                 .catch((error) => {
                     const errorMess =
@@ -696,11 +707,20 @@ export default {
     }
     .p {
         margin-bottom: 0.4rem;
+        font-weight: bold;
+        font-size: 1.5rem;
     }
     .subp {
         font-size: 1.4rem;
         max-width: 28rem;
         margin-top: 0rem;
+        margin-bottom: 0.125rem;
+
+        a {
+            text-decoration: underline;
+            color: #a4a29f;
+            cursor: pointer;
+        }
     }
     .change-doctor-modal {
         position: fixed;

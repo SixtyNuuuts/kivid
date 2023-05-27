@@ -1,0 +1,19 @@
+{% extends 'email/emailBase.html.twig' %}
+
+{% block content %}
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td class="h1 pb25" style="color:#dcd4c1; font-family:'Muli', Arial,sans-serif; font-size:25px; line-height:32px; text-align:center; padding-bottom:20px;">
+                {{ patient }}
+                n'a pas de praticien !
+            </td>
+        </tr>
+        <tr>
+            <td
+                class="text-center pb25" style="color:#0c2956; font-family:'Muli', Arial,sans-serif; font-size:16px; line-height:26px; text-align:center;">
+                <p>{{ patient }} vient de s'inscrire sur Kivid, mais n'a pas sélectionné de praticien, vous pouvez le contacter sur cet email :</p>
+                <p style="font-weight:bold;">{{ contactEmail }}</p>
+            </td>
+        </tr>
+    </table>
+{% endblock %}
