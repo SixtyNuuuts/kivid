@@ -114,7 +114,7 @@ export default {
             csrfTokenRemoveWorksheet: null,
             loadingAllWorksheets: false,
             loadingDoctorWorksheets: false,
-            allWorksheets: [],
+            // allWorksheets: [],
             doctorWorksheets: [],
             tagsFromExercises: [],
             activeTab: 1,
@@ -130,7 +130,8 @@ export default {
     computed: {
         getWorksheetTemplates() {
             return this.sortByCreatedAt(
-                this.allWorksheets.filter((w) => !w.patient)
+                // this.allWorksheets.filter((w) => !w.patient)
+                this.doctorWorksheets.filter((w) => !w.patient)
             );
         },
         getDoctorPrescriptions() {
@@ -275,6 +276,11 @@ export default {
                         totalCompletedWorksheetSessions: null,
                     };
                 });
+
+                this.tagsFromExercises = f.generateTagsFromExercises(
+                    this.doctorWorksheets
+                );
+
                 this.loadingDoctorWorksheets = false;
             })
             .catch((error) => {
@@ -286,27 +292,27 @@ export default {
                 console.error(errorMess);
             });
 
-        this.loadingAllWorksheets = true;
+        // this.loadingAllWorksheets = true;
 
-        this.axios
-            .get(`/doctor/${this.doctor.id}/get/all/worksheets`)
-            .then((response) => {
-                this.allWorksheets = response.data;
+        // this.axios
+        //     .get(`/doctor/${this.doctor.id}/get/all/worksheets`)
+        //     .then((response) => {
+        //         this.allWorksheets = response.data;
 
-                this.tagsFromExercises = f.generateTagsFromExercises(
-                    this.allWorksheets
-                );
+        //         this.tagsFromExercises = f.generateTagsFromExercises(
+        //             this.allWorksheets
+        //         );
 
-                this.loadingAllWorksheets = false;
-            })
-            .catch((error) => {
-                const errorMess =
-                    "object" === typeof error.response.data
-                        ? error.response.data.detail
-                        : error.response.data;
+        //         this.loadingAllWorksheets = false;
+        //     })
+        //     .catch((error) => {
+        //         const errorMess =
+        //             "object" === typeof error.response.data
+        //                 ? error.response.data.detail
+        //                 : error.response.data;
 
-                console.error(errorMess);
-            });
+        //         console.error(errorMess);
+        //     });
     },
     beforeDestroy() {
         window.removeEventListener("resize", this.onResize);

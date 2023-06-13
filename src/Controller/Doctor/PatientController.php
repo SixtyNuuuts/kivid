@@ -58,7 +58,7 @@ class PatientController extends AbstractController
     public function getAllPatients(Doctor $doctor): JsonResponse
     {
         return $this->json(
-            $this->patientRepository->findAll(),
+            $this->patientRepository->findPatientsCreatedLastFourWeeks(),
             200,
             [],
             ['groups' => 'patient_read']

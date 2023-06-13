@@ -60,7 +60,7 @@
                             @keyup="page = 1"
                             label-placeholder="Filtrer par nom de fiche et/ou créateur"
                         />
-                        <div class="view-all-templates">
+                        <!-- <div class="view-all-templates">
                             <span
                                 >Voir les fiches <br />
                                 des autres prat.</span
@@ -69,7 +69,7 @@
                                 @click="page = 1"
                                 v-model="viewAllTemplates"
                             />
-                        </div>
+                        </div> -->
                     </div>
                     <div>
                         <div class="kiv-select tags">
@@ -1187,7 +1187,7 @@ export default {
 
             @media (min-width: 576px) {
                 width: 50%;
-                margin-right: 1.4rem;
+                // margin-right: 1.4rem;
             }
         }
 

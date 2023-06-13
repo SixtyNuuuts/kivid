@@ -141,7 +141,7 @@
                                             {{ patient.email }}
                                         </div>
                                         <div
-                                            v-if="patient.worksheets.length"
+                                            v-if="'worksheets' in patient && patient.worksheets.length"
                                             class="prescriptions"
                                         >
                                             <h4>
