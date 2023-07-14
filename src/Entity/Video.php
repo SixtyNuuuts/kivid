@@ -34,7 +34,7 @@ class Video
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"worksheet_read", "video_read", "public_worksheet_read"})
+     * @Groups({"worksheet_read", "video_read", "dashboard_worksheet_read", "public_worksheet_read"})
      */
     private $thumbnailUrl;
 

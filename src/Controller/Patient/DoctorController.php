@@ -57,11 +57,10 @@ class DoctorController extends AbstractController
         if ($request->isMethod('post')) {
             $data = json_decode($request->getContent());
 
-            if ($this->isCsrfTokenValid('select_doctor' . $patient->getId(), $data->_token)) {
-                $patient->setAddRequestDoctor(true);
-                
+            if ($this->isCsrfTokenValid('select_doctor' . $patient->getId(), $data->_token)) {                
                 if(!$data->doctorId)
                 {
+                    $patient->setAddRequestDoctor(false);
                     $this->notificationService->createPatientWithoutDoctorNotification($patient);
                     $this->em->flush();
 
@@ -71,6 +70,8 @@ class DoctorController extends AbstractController
                     );    
                 }
                 
+                $patient->setAddRequestDoctor(true);
+
                 $doctor = $this->doctorRepository->findOneBy(['id' => $data->doctorId]);
                 if(!$doctor instanceof Doctor)
                 {

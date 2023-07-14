@@ -35,7 +35,22 @@ class WorksheetSessionRepository extends ServiceEntityRepository
         ;
     }
 
-    public function counOldWorksheetSessions(Worksheet $worksheet): int
+    public function findCurrentWorksheetSessionByWorksheetId(int $worksheetId): ?WorksheetSession
+    {
+        $now = new \DateTime();
+
+        return $this->createQueryBuilder('ws')
+            ->join('ws.worksheet', 'w')
+            ->where('ws.startAt <= :now')
+            ->andWhere('ws.endAt >= :now')
+            ->andWhere('w.id = :worksheetId')
+            ->setParameter('now', $now)
+            ->setParameter('worksheetId', $worksheetId)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    public function countOldWorksheetSessions(Worksheet $worksheet): int
     {
         $now = new \DateTime();
 
@@ -61,6 +76,17 @@ class WorksheetSessionRepository extends ServiceEntityRepository
         ;
     }
 
+    public function countWorksheetSessionsByWorksheetId(int $worksheetId): int
+    {
+        return $this->createQueryBuilder('ws')
+            ->select('count(ws.id)')
+            ->join('ws.worksheet', 'w')
+            ->where('w.id = :worksheetId')
+            ->setParameter('worksheetId', $worksheetId)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+    
     public function countCompletedWorksheetSessions(Worksheet $worksheet): int
     {
         return $this->createQueryBuilder('ws')
@@ -71,5 +97,17 @@ class WorksheetSessionRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleScalarResult();
         ;
+    }
+
+    public function countCompletedWorksheetSessionsByWorksheetId(int $worksheetId): int
+    {
+        return $this->createQueryBuilder('ws')
+            ->select('count(ws.id)')
+            ->join('ws.worksheet', 'w')
+            ->where('w.id = :worksheetId')
+            ->andWhere('ws.isCompleted = true')
+            ->setParameter('worksheetId', $worksheetId)
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 }

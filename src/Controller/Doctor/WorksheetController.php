@@ -72,12 +72,12 @@ class WorksheetController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/get/worksheets", name="app_doctor_get_worksheets", methods={"GET"})
+     * @Route("/{id}/get/worksheets/{maxresult}/{firstresult}", name="app_doctor_get_worksheets", methods={"GET"})
      * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
-    public function getWorksheets(Doctor $doctor): JsonResponse
+    public function getWorksheets(Doctor $doctor, ?int $maxresult = null, ?int $firstresult = null): JsonResponse
     {
-        $worksheets = $this->worksheetRepository->findBy(['doctor' => $doctor]);
+        $worksheets = $this->worksheetRepository->findByDoctor($doctor, $maxresult, $firstresult);
 
         return $this->json(
             $worksheets,

@@ -1,5 +1,5 @@
 <template>
-    <section
+    <!-- <section
         id="my-patients"
         class="kiv-block"
         :class="{ reduced: !$parent.myPatientsContent }"
@@ -495,7 +495,7 @@
                 </vs-button>
             </div>
         </vs-dialog>
-    </section>
+    </section> -->
 </template>
 
 <script>

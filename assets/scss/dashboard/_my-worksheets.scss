@@ -1,6 +1,19 @@
 #my-worksheets {
     grid-area: myworksheets;
 
+    .only-desktop {
+        display: none;
+        @media (min-width: 800px) {
+            display: block;
+        }
+    }
+
+    .only-mobile {
+        @media (min-width: 800px) {
+            display: none;
+        }
+    }
+
     .worksheet-list {
         > div:not(.not-found) {
             display: grid;
@@ -340,6 +353,125 @@
             }
         }
     }
+
+    .primary-actions {
+        margin-bottom: 0.9rem;
+        
+        @media (max-width: 799px) {
+            flex-wrap: wrap;
+            align-items: flex-start;
+    
+            .search
+            {
+                width: calc(100% - 5.3rem);
+                margin-right: 0 !important;
+
+                .vs-input-parent {
+                    margin-right: 0!important;
+                }
+
+                &.search-worksheet
+                {
+                    margin-bottom: 1.2rem;
+                }
+            }
+    
+            .btn-primary-action.add
+            {
+                margin-top: 0.6rem !important;
+                width: 4.1rem;
+            } 
+
+            .kiv-select.tags
+            {
+                margin-right: 0!important;
+            }
+        }
+    }
+    @media (min-width: 580px) {
+        .primary-actions {
+            margin-bottom: 1.6rem;
+            margin-top: 1rem;
+        }
+    }
+    @media (min-width: 800px) {
+        .primary-actions {
+            margin-bottom: 1.5rem;
+            margin-top: 0;
+        }
+    }
+    @media (max-width: 799px) {
+        .primary-actions {
+            flex-direction: row;
+
+            .search {
+                margin-right: 1.2rem;
+                position: relative;
+                top: 0.2rem;
+            }
+        }
+        &.kiv-block {
+            background: transparent;
+            border-radius: 0;
+            box-shadow: none;
+            padding: 0;
+            position: initial;
+            padding-top: 0 !important;
+
+            .tabs {
+                position: fixed !important;
+                top: auto !important;
+                left: 0 !important;
+                right: 0 !important;
+                bottom: 0 !important;
+                background: $white;
+                z-index: 999 !important;
+                box-shadow: 0px 1.2rem 3rem rgba(56, 41,13, 0.55);
+                padding-bottom: 1.5rem;
+
+                > div {
+                    padding-bottom: 3.7rem !important;
+
+                    h2 {
+                        top: 0 !important;
+                        white-space: nowrap !important;
+                        &::before {
+                            top: -0.1812rem !important;
+                        }
+                    }
+                }
+            }    
+        }
+
+        &.s-prescriptions .worksheet-list.wl-doctor > div:not(.not-found) > div,
+        &.s-worksheet-templates .worksheet-list.wl-doctor > div:not(.not-found) > div {
+            background: #fff;
+            border-radius: 1rem;
+            box-shadow: 0.6px 0.4rem 0.4rem rgb(140 136 130 / 13%);
+            padding-top: 1.5rem !important;
+            padding: 1.7rem;
+            padding-bottom: 1.2rem;
+            opacity: 1;
+            &.active-effect {
+                animation: mymove 2s infinite;
+            }
+            &.active {
+                cursor: pointer;
+                > * {
+                    user-select: none;
+                    pointer-events: none;
+                }
+            }
+            &.selected {
+                border-left: 5px solid $orange;
+            }
+            @keyframes mymove {
+                50% {
+                    box-shadow: 0rem 0.1rem 1rem 0rem rgba(255, 107, 38, 0.5)!important;
+                }
+            }        
+        }
+    }
 }
 
 #my-worksheets.s-worksheet-templates,
@@ -492,6 +624,10 @@
     .worksheet-list.wl-doctor > div:not(.not-found) {
         grid-template-columns: 1fr;
         grid-gap: 1.2rem;
+
+        @media (max-width: 799px) {
+            grid-gap: 1.5rem;
+        }
 
         > div {
             min-height: initial;

@@ -39,13 +39,13 @@ class PatientController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/get/patients", name="app_doctor_get_patients", methods={"GET"})
+     * @Route("/{id}/get/patients/{maxresult}/{firstresult}", name="app_doctor_get_patients", methods={"GET"})
      * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
-    public function getPatients(Doctor $doctor): JsonResponse
+    public function getPatients(Doctor $doctor, ?int $maxresult = null, ?int $firstresult = null): JsonResponse
     {
         return $this->json(
-            $this->patientRepository->findBy(['doctor' => $doctor]),
+            $this->patientRepository->findByDoctor($doctor, $maxresult, $firstresult),
             200,
             [],
             ['groups' => 'patient_read']
@@ -133,7 +133,7 @@ class PatientController extends AbstractController
             if ($this->isCsrfTokenValid('add_patient' . $doctor->getId(), $data->_token)) {
                 $patient = $this->patientRepository->findOneBy(['id' => $data->patientId]);
 
-                if (null !== $patient->getAddRequestDoctor()) {
+                if ($patient->getAddRequestDoctor()) {
                     return $this->json(
                         "Vous ne pouvez pas ajouter 
                         <strong>{$this->userService->getUserName($patient)}</strong> 

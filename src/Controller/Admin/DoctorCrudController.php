@@ -53,6 +53,7 @@ class DoctorCrudController extends AbstractCrudController
             AssociationField::new('worksheets', 'Fiche(s)')->onlyOnIndex(),
             // BooleanField::new('giveFreeAccessPrescri', 'Donner l\'accès gratuit à ses prescriptions ?')->onlyOnForms(),
             BooleanField::new('giveAccessPublicWorksheetGeneration', 'Donner l\'accès à la génération de fiches publiques ?')->onlyOnForms(),
+            BooleanField::new('giveAccessAddFreePatient', 'Donner l\'accès à l\'ajout des patients sans praticien ?')->onlyOnForms(),
         ];
     }
 }
