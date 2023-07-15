@@ -74,7 +74,7 @@
                 }
             }
 
-            > div {
+            > div:not(.worksheet-container) {
                 background: #faf8f4;
                 border-radius: 0.5rem;
                 padding: 2rem;
@@ -444,7 +444,7 @@
         }
 
         &.s-prescriptions .worksheet-list.wl-doctor > div:not(.not-found) > div,
-        &.s-worksheet-templates .worksheet-list.wl-doctor > div:not(.not-found) > div {
+        &.s-worksheet-templates .worksheet-list.wl-doctor .worksheet-container .worksheet {
             background: #fff;
             border-radius: 1rem;
             box-shadow: 0.6px 0.4rem 0.4rem rgb(140 136 130 / 13%);

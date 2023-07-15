@@ -212,441 +212,269 @@
                             <div
                                 v-for="(worksheet, i) in getWorksheetTemplates"
                                 :key="i"
+                                class="worksheet-container"
                             >
-                                <div class="toggle-zone" @click="toggleCurrentOpenWorksheet(worksheet.id)"></div>
-                                <div class="worksheet-header">
-                                    <h3 class="worksheet-title">
-                                        {{ worksheet.title }}
-                                    </h3>
-                                    <TagPartOfBody
-                                        :partOfBody="worksheet.partOfBody"
-                                    />
-                                </div>
-                                <div class="worksheet-content-wt">
-                                    <div class="worksheet-details worksheet-details-short" v-if="currentOpenWorksheet != worksheet.id">
-                                        <div
-                                            class="
-                                                worksheet-exercises-count
-                                            "
-                                        >
-                                            <i
-                                                class="kiv-exercise icon-7"
-                                            ></i>
-                                            <span class="space">{{
-                                                worksheet.exercises.length
-                                            }}</span>
-                                        </div>
-                                        <div class="worksheet-timing">
-                                            <i
-                                                class="kiv-calendar icon-10"
-                                            ></i>
-                                            <span class="space"
-                                                >{{
-                                                    worksheet.perDay
-                                                }}</span
-                                            >
-                                            / 
-                                            <span
-                                                >{{
-                                                    worksheet.perWeek
-                                                }}</span
-                                            >
-                                        </div>
-                                        <div class="worksheet-period">
-                                            <i
-                                                class="kiv-clock icon-11"
-                                            ></i>
-                                            <span class="space"
-                                                >{{
-                                                    worksheet.duration
-                                                }}
-                                                </span>
-                                        </div>
+                                <div 
+                                    class="worksheet"
+                                    :class="{'prescri-process-choice':$parent.prescriProcess}"
+                                >
+                                    <div class="toggle-zone" @click="toggleCurrentOpenWorksheet(worksheet.id)"></div>
+                                    <div class="worksheet-header">
+                                        <h3 class="worksheet-title">
+                                            {{ worksheet.title }}
+                                        </h3>
+                                        <TagPartOfBody
+                                            :partOfBody="worksheet.partOfBody"
+                                        />
                                     </div>
-                                    <div class="worksheet-details" v-else>
-                                        <div
-                                            class="
-                                                worksheet-exercises-count
-                                            "
-                                        >
-                                            <i
-                                                class="kiv-exercise icon-7"
-                                            ></i>
-                                            <span class="space">{{
-                                                worksheet.exercises.length
-                                            }}</span>
-                                            <span class="space">exercice</span><span
-                                                v-if="
-                                                    worksheet.exercises
-                                                        .length > 1
+                                    <div class="worksheet-content-wt">
+                                        <div class="worksheet-details worksheet-details-short" v-if="currentOpenWorksheet != worksheet.id">
+                                            <div
+                                                class="
+                                                    worksheet-exercises-count
                                                 "
-                                                >s</span
                                             >
-                                        </div>
-                                        <div class="worksheet-timing">
-                                            <i
-                                                class="kiv-calendar icon-10"
-                                            ></i>
-                                            <span class="space"
-                                                >{{
-                                                    worksheet.perDay
-                                                }}x</span
-                                            >
-                                            <span class="space">par jour -</span>
-                                            
-                                            <span class="space"
-                                                >{{
-                                                    worksheet.perWeek
-                                                }}x</span
-                                            >
-                                            <span class="space">par semaine</span>
-                                        </div>
-                                        <div class="worksheet-period">
-                                            <i
-                                                class="kiv-clock icon-11"
-                                            ></i>
-                                            <span class="space">Période :</span>
-                                            <span class="space"
-                                                >{{
-                                                    worksheet.duration
-                                                }}
-                                                sem.</span>
-                                        </div>
-                                    </div>
-                                    <transition name="height3">
-                                        <div v-if="currentOpenWorksheet == worksheet.id" class="worksheet-exercises-container">
-                                            <div class="worksheet-exercises">
-                                                <div 
-                                                    v-for="(exercise, i) in worksheet.exercises"
-                                                    :key="i"
-                                                    class="worksheet-exercise"
-                                                >
-                                                    <div
-                                                        class="worksheet-exercise-thumbnail"
-                                                    >
-                                                        <img :src="exercise.video.thumbnailUrl">
-                                                    </div>
-                                                    <div class="worksheet-exercise-details">
-                                                        <div class="series-reps">
-                                                            <i class="kiv-reps icon-19"></i>
-                                                            <span>{{ exercise.numberOfSeries }}</span>
-                                                                x <span class="no-space">{{ exercise.numberOfRepetitions }}</span>
-                                                        </div>
-                                                        <div v-if="exercise.option" class="option">
-                                                            - Option : <span>{{ exercise.option }}</span>
-                                                        </div>
-                                                        <div v-if="exercise.hold" class="hold">
-                                                            - Tenir : <span>{{ exercise.hold }}s</span>
-                                                        </div>
-                                                        <div v-if="exercise.tempo" class="tempo">
-                                                            - Tempo : <span>{{ exercise.tempo }}</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                <i
+                                                    class="kiv-exercise icon-7"
+                                                ></i>
+                                                <span class="space">{{
+                                                    worksheet.exercises.length
+                                                }}</span>
                                             </div>
-                                            <div class="bloc-footer">
-                                                <div class="tags">
-                                                    <div
-                                                        class="tag-chip"
-                                                        v-for="(
-                                                            tag, i
-                                                        ) in worksheet.exercisesTags"
-                                                        :key="i"
-                                                    >
-                                                        {{ tag }}
-                                                    </div>
-                                                </div>
-                                                <div class="buttons-container">
-                                            <vs-tooltip>
-                                                <vs-button
-                                                    @click="
-                                                        redirectToWorksheetPage(
-                                                            worksheet.id
-                                                        )
-                                                    "
-                                                    class="btn-action"
-                                                    circle
-                                                    floating
+                                            <div class="worksheet-timing">
+                                                <i
+                                                    class="kiv-calendar icon-10"
+                                                ></i>
+                                                <span class="space"
+                                                    >{{
+                                                        worksheet.perDay
+                                                    }}</span
                                                 >
-                                                    <i class="fas fa-eye"></i>
-                                                </vs-button>
-                                                <template #tooltip>
-                                                    Voir
-                                                </template>
-                                            </vs-tooltip>
-                                            <vs-tooltip
-                                                v-if="
-                                                    worksheet.doctor.id ===
-                                                    doctor.id
-                                                "
-                                            >
-                                                <vs-button
-                                                    @click="
-                                                        redirectToEditPage(
-                                                            worksheet.id
-                                                        )
-                                                    "
-                                                    class="btn-action"
-                                                    circle
-                                                    floating
+                                                / 
+                                                <span
+                                                    >{{
+                                                        worksheet.perWeek
+                                                    }}</span
                                                 >
-                                                    <i class="fas fa-pen"></i>
-                                                </vs-button>
-                                                <template #tooltip>
-                                                    Modifier
-                                                </template>
-                                            </vs-tooltip>
-                                            <vs-tooltip>
-                                                <vs-button
-                                                    :loading="
-                                                        btnLoadingCopyWorksheet ===
-                                                        worksheet.id
-                                                    "
-                                                    @click="
-                                                        redirectToCreatePage(
-                                                            worksheet.id
-                                                        )
-                                                    "
-                                                    circle
-                                                    floating
-                                                >
-                                                    <i class="fas fa-plus-circle"></i>
-                                                </vs-button>
-                                                <template #tooltip>
-                                                    Copier
-                                                </template>
-                                            </vs-tooltip>
-                                            <vs-tooltip
-                                                v-if="
-                                                    worksheet.doctor.id ===
-                                                    doctor.id
-                                                "
-                                            >
-                                                <vs-button
-                                                    @click="
-                                                        removeWorksheet(
-                                                            worksheet
-                                                        )
-                                                    "
-                                                    class="btn-action"
-                                                    circle
-                                                    floating
-                                                >
-                                                    <i class="fas fa-trash"></i>
-                                                </vs-button>
-                                                <template #tooltip>
-                                                    Supprimer
-                                                </template>
-                                            </vs-tooltip>
-                                            <vs-tooltip
-                                                v-if="doctor.giveAccessPublicWorksheetGeneration"
-                                            >
-                                                <vs-button
-                                                    v-if="!worksheet.accessPublicSlug"
-                                                    :loading="btnLoadingCreatePublicAccess===worksheet.id"
-                                                    @click="createPublicAccess(worksheet)"
-                                                    circle
-                                                    floating
-                                                >
-                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24px" height="24px"><path d="M 3 3 L 3 21 L 21 21 L 21 12 L 19 12 L 19 19 L 5 19 L 5 5 L 12 5 L 12 3 L 3 3 z M 14 3 L 14 5 L 17.585938 5 L 8.2929688 14.292969 L 9.7070312 15.707031 L 19 6.4140625 L 19 10 L 21 10 L 21 3 L 14 3 z"/></svg>
-                                                </vs-button>
-                                                <template #tooltip>
-                                                    Créer un accès public
-                                                </template>
-                                            </vs-tooltip>
-
-                                                                                        <!-- :disabled="$parent.prescriProcess" -->
-
-                                                                                                    <!-- <div
-                                                        class="btn-prescription-action"
-                                                        :class="{
-                                                            active: prescriProcess,
-                                                            'active-effect': prescriProcess&&!$parent.prescriProcessWorksheetSelected,
-                                                            selected:
-                                                                $parent.prescriProcessWorksheetSelected &&
-                                                                $parent
-                                                                    .prescriProcessWorksheetSelected
-                                                                    .id === worksheet.id,
-                                                        }"
-                                                    >
-                                                        <vs-button
-                                                            :loading="
-                                                                btnLoadingWorksheetPrescriProcessRedirect ===
-                                                                worksheet.id
-                                                            "
-                                                            @click="
-                                                                prescriProcessWorksheetChoice(
-                                                                    worksheet
-                                                                )
-                                                            "
-                                                            class="w-100"
-                                                        >
-                                                            <transition name="fade">
-                                                                <span
-                                                                    v-if="
-                                                                        (!prescriProcess &&
-                                                                            !$parent.prescriProcessWorksheetSelected) ||
-                                                                        ($parent.prescriProcessWorksheetSelected &&
-                                                                            $parent
-                                                                                .prescriProcessWorksheetSelected
-                                                                                .id !=
-                                                                                worksheet.id)
-                                                                    "
-                                                                    ><i
-                                                                        class="
-                                                                            fas
-                                                                            fa-folder-plus
-                                                                        "
-                                                                    ></i
-                                                                    >Prescrire</span
-                                                                >
-                                                                <span
-                                                                    v-if="
-                                                                        prescriProcess &&
-                                                                        !$parent.prescriProcessWorksheetSelected
-                                                                    "
-                                                                    ><i
-                                                                        class="
-                                                                            fas
-                                                                            fa-folder-plus
-                                                                        "
-                                                                    ></i
-                                                                    >Sélectionner</span
-                                                                >
-                                                                <span
-                                                                    v-if="
-                                                                        $parent.prescriProcessWorksheetSelected &&
-                                                                        $parent
-                                                                            .prescriProcessWorksheetSelected
-                                                                            .id === worksheet.id
-                                                                    "
-                                                                    ><i
-                                                                        class="
-                                                                            fas
-                                                                            fa-check-circle
-                                                                        "
-                                                                    ></i
-                                                                    >Sélectionné</span
-                                                                >
-                                                            </transition>
-                                                        </vs-button>
-                                                    </div> -->
                                             </div>
-                                            <div v-if="worksheet.accessPublicSlug" class="public-worksheet-url">
-                                                <span class="label">accès public</span>
-                                                <span class="link" @click="copyToClipboard(`${publicWorksheetBaseUrl}/${worksheet.accessPublicSlug}`, worksheet.id)">
-                                                        {{ `${publicWorksheetBaseUrl}/${worksheet.accessPublicSlug}` }}
-                                                        <transition name="fade">
-                                                            <span v-if="popUpCopyActive===worksheet.id" class="popUp-copy-active">Lien copié dans le presse-papier</span>
-                                                        </transition>
+                                            <div class="worksheet-period">
+                                                <i
+                                                    class="kiv-clock icon-11"
+                                                ></i>
+                                                <span class="space"
+                                                    >{{
+                                                        worksheet.duration
+                                                    }}
                                                     </span>
-                                                    <vs-button
-                                                        :loading="btnLoadingCreatePublicAccess===worksheet.id"
-                                                        @click="deletePublicAccess(worksheet)"
-                                                    >
-                                                    <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 72 72" width="64px" height="64px"><path d="M 32.5 9 C 28.364 9 25 12.364 25 16.5 L 25 18 L 17 18 C 14.791 18 13 19.791 13 22 C 13 24.209 14.791 26 17 26 L 17.232422 26 L 18.671875 51.916016 C 18.923875 56.449016 22.67875 60 27.21875 60 L 44.78125 60 C 49.32125 60 53.076125 56.449016 53.328125 51.916016 L 54.767578 26 L 55 26 C 57.209 26 59 24.209 59 22 C 59 19.791 57.209 18 55 18 L 47 18 L 47 16.5 C 47 12.364 43.636 9 39.5 9 L 32.5 9 z M 32.5 16 L 39.5 16 C 39.775 16 40 16.224 40 16.5 L 40 18 L 32 18 L 32 16.5 C 32 16.224 32.225 16 32.5 16 z M 36 28 C 37.104 28 38 28.896 38 30 L 38 47.923828 C 38 49.028828 37.104 49.923828 36 49.923828 C 34.896 49.923828 34 49.027828 34 47.923828 L 34 30 C 34 28.896 34.896 28 36 28 z M 27.392578 28.001953 C 28.459578 27.979953 29.421937 28.827641 29.460938 29.931641 L 30.085938 47.931641 C 30.123938 49.035641 29.258297 49.959047 28.154297 49.998047 C 28.131297 49.999047 28.108937 50 28.085938 50 C 27.012938 50 26.125891 49.148359 26.087891 48.068359 L 25.462891 30.068359 C 25.424891 28.964359 26.288578 28.040953 27.392578 28.001953 z M 44.607422 28.001953 C 45.711422 28.039953 46.575109 28.964359 46.537109 30.068359 L 45.912109 48.068359 C 45.874109 49.148359 44.986063 50 43.914062 50 C 43.891062 50 43.868703 49.999047 43.845703 49.998047 C 42.741703 49.960047 41.876063 49.035641 41.914062 47.931641 L 42.539062 29.931641 C 42.577062 28.827641 43.518422 27.979953 44.607422 28.001953 z"/></svg>                                            </vs-button>
-                                                </div>
                                             </div>
                                         </div>
-                                    </transition>
-                                </div>
-
-                                    <!-- <div class="btns-date">
-                                                <div class="created-at-date">
-                                                    <span
-                                                        >créé le
-                                                        {{
-                                                            formatDate(
-                                                                worksheet.createdAt
-                                                            )
-                                                        }}
-                                                        <span
-                                                            class="creator"
-                                                            v-if="
-                                                                worksheet.doctor &&
-                                                                (worksheet.doctor
-                                                                    .firstname ||
-                                                                    worksheet.doctor
-                                                                        .lastname)
-                                                            "
-                                                        >
-                                                            par
-                                                            {{
-                                                                worksheet.doctor
-                                                                    .firstname
-                                                            }}
-                                                            {{
-                                                                worksheet.doctor
-                                                                    .lastname
-                                                            }}
-                                                        </span></span
-                                                    >
-                                                    <vs-avatar
-                                                        size="22"
-                                                        class="user-avatar"
-                                                        circle
-                                                        v-if="worksheet.doctor"
-                                                    >
-                                                        <img
-                                                            :src="
-                                                                worksheet.doctor
-                                                                    .avatarUrl
-                                                                    ? worksheet
-                                                                        .doctor
-                                                                        .avatarUrl
-                                                                    : '/img/avatar-default.svg'
-                                                            "
-                                                            :alt="`Avatar de ${worksheet.doctor.firstname} ${worksheet.doctor.lastname}`"
-                                                        />
-                                                    </vs-avatar>
-                                                </div>
-                                                <div class="buttons">
-                                                    <vs-button
+                                        <div class="worksheet-details" v-else>
+                                            <div
+                                                class="
+                                                    worksheet-exercises-count
+                                                "
+                                            >
+                                                <i
+                                                    class="kiv-exercise icon-7"
+                                                ></i>
+                                                <span class="space">{{
+                                                    worksheet.exercises.length
+                                                }}</span>
+                                                <span class="space">exercice</span><span
+                                                    v-if="
+                                                        worksheet.exercises
+                                                            .length > 1
+                                                    "
+                                                    >s</span
+                                                >
+                                            </div>
+                                            <div class="worksheet-timing">
+                                                <i
+                                                    class="kiv-calendar icon-10"
+                                                ></i>
+                                                <span class="space"
+                                                    >{{
+                                                        worksheet.perDay
+                                                    }}x</span
+                                                >
+                                                <span class="space">par jour -</span>
+                                                
+                                                <span class="space"
+                                                    >{{
+                                                        worksheet.perWeek
+                                                    }}x</span
+                                                >
+                                                <span class="space">par semaine</span>
+                                            </div>
+                                            <div class="worksheet-period">
+                                                <i
+                                                    class="kiv-clock icon-11"
+                                                ></i>
+                                                <span class="space">Période :</span>
+                                                <span class="space"
+                                                    >{{
+                                                        worksheet.duration
+                                                    }}
+                                                    sem.</span>
+                                            </div>
+                                        </div>
+                                        <transition name="height3">
+                                            <div v-if="currentOpenWorksheet == worksheet.id" class="worksheet-details-footer">
+                                                <div class="worksheet-exercises-container">
+                                                    <div class="worksheet-exercises"
                                                         @click="
                                                             redirectToWorksheetPage(
                                                                 worksheet.id
                                                             )
                                                         "
-                                                        class="btn-action"
-                                                        circle
-                                                        floating
                                                     >
-                                                        <i class="fas fa-eye"></i>
-                                                    </vs-button>
-                                                    <vs-button
-                                                        v-if="
-                                                            worksheet.doctor.id ===
-                                                            doctor.id
-                                                        "
-                                                        @click="
-                                                            redirectToEditPage(
-                                                                worksheet.id
-                                                            )
-                                                        "
-                                                        class="btn-action"
-                                                        circle
-                                                        floating
-                                                    >
-                                                        <i class="fas fa-pen"></i>
-                                                    </vs-button>
-                                                    <vs-button
-                                                        v-if="
-                                                            worksheet.doctor.id ===
-                                                            doctor.id
-                                                        "
-                                                        @click="
-                                                            removeWorksheet(
-                                                                worksheet
-                                                            )
-                                                        "
-                                                        class="btn-action"
-                                                        circle
-                                                        floating
-                                                    >
-                                                        <i class="fas fa-trash"></i>
-                                                    </vs-button>
+                                                        <div 
+                                                            v-for="(exercise, i) in worksheet.exercises"
+                                                            :key="i"
+                                                            class="worksheet-exercise"
+                                                        >
+                                                            <div
+                                                                class="worksheet-exercise-thumbnail"
+                                                            >
+                                                                <img :src="exercise.video.thumbnailUrl">
+                                                            </div>
+                                                            <div class="worksheet-exercise-details">
+                                                                <div class="series-reps">
+                                                                    <i class="kiv-reps icon-19"></i>
+                                                                    <span>{{ exercise.numberOfSeries }}</span>
+                                                                        x <span class="no-space">{{ exercise.numberOfRepetitions }}</span>
+                                                                </div>
+                                                                <div v-if="exercise.option" class="option">
+                                                                    - Option : <span>{{ exercise.option }}</span>
+                                                                </div>
+                                                                <div v-if="exercise.hold" class="hold">
+                                                                    - Tenir : <span>{{ exercise.hold }}s</span>
+                                                                </div>
+                                                                <div v-if="exercise.tempo" class="tempo">
+                                                                    - Tempo : <span>{{ exercise.tempo }}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="worksheet-exercise-other">
+                                                        <div class="tags">
+                                                            <div
+                                                                class="tag-chip"
+                                                                v-for="(
+                                                                    tag, i
+                                                                ) in worksheet.exercisesTags"
+                                                                :key="i"
+                                                            >
+                                                                {{ tag }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div> -->
+                                                <div class="buttons-container" :class="{disabled:$parent.prescriProcess}">
+                                                    <vs-tooltip
+                                                        v-if="
+                                                            worksheet.doctor.id ===
+                                                            doctor.id
+                                                        "
+                                                    >
+                                                        <vs-button
+                                                            @click="
+                                                                redirectToEditPage(
+                                                                    worksheet.id
+                                                                )
+                                                            "
+                                                            class="btn-action"
+                                                            circle
+                                                        >
+                                                            <i class="fas fa-pen"></i>
+                                                        </vs-button>
+                                                        <template #tooltip>
+                                                            Modifier
+                                                        </template>
+                                                    </vs-tooltip>
+                                                    <vs-tooltip>
+                                                        <vs-button
+                                                            :loading="
+                                                                btnLoadingCopyWorksheet ===
+                                                                worksheet.id
+                                                            "
+                                                            @click="
+                                                                redirectToCreatePage(
+                                                                    worksheet.id
+                                                                )
+                                                            "
+                                                            circle
+                                                        >
+                                                            <i class="fas fa-plus-circle"></i>
+                                                        </vs-button>
+                                                        <template #tooltip>
+                                                            Copier
+                                                        </template>
+                                                    </vs-tooltip>
+                                                    <vs-tooltip
+                                                        v-if="
+                                                            worksheet.doctor.id ===
+                                                            doctor.id
+                                                        "
+                                                    >
+                                                        <vs-button
+                                                            @click="
+                                                                removeWorksheet(
+                                                                    worksheet
+                                                                )
+                                                            "
+                                                            class="btn-action"
+                                                            circle
+                                                        >
+                                                            <i class="fas fa-trash"></i>
+                                                        </vs-button>
+                                                        <template #tooltip>
+                                                            Supprimer
+                                                        </template>
+                                                    </vs-tooltip>
+                                                    <vs-tooltip
+                                                        v-if="doctor.giveAccessPublicWorksheetGeneration"
+                                                    >
+                                                        <vs-button
+                                                            v-if="!worksheet.accessPublicSlug"
+                                                            :loading="btnLoadingCreatePublicAccess===worksheet.id"
+                                                            @click="createPublicAccess(worksheet)"
+                                                            circle
+                                                        >
+                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24px" height="24px"><path d="M 3 3 L 3 21 L 21 21 L 21 12 L 19 12 L 19 19 L 5 19 L 5 5 L 12 5 L 12 3 L 3 3 z M 14 3 L 14 5 L 17.585938 5 L 8.2929688 14.292969 L 9.7070312 15.707031 L 19 6.4140625 L 19 10 L 21 10 L 21 3 L 14 3 z"/></svg>
+                                                        </vs-button>
+                                                        <template #tooltip>
+                                                            Créer un accès public
+                                                        </template>
+                                                    </vs-tooltip>
+                                                    <div v-if="worksheet.accessPublicSlug" class="public-worksheet-url">
+                                                        <span class="label">accès public</span>
+                                                        <span class="link" @click="copyToClipboard(`${publicWorksheetBaseUrl}/${worksheet.accessPublicSlug}`, worksheet.id)">
+                                                                {{ `${publicWorksheetBaseUrl}/${worksheet.accessPublicSlug}` }}
+                                                                <transition name="fade">
+                                                                    <span v-if="popUpCopyActive===worksheet.id" class="popUp-copy-active">Lien copié dans le presse-papier</span>
+                                                                </transition>
+                                                            </span>
+                                                            <vs-button
+                                                                :loading="btnLoadingCreatePublicAccess===worksheet.id"
+                                                                @click="deletePublicAccess(worksheet)"
+                                                            >
+                                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" width="50px" height="50px"><path d="M 9.15625 6.3125 L 6.3125 9.15625 L 22.15625 25 L 6.21875 40.96875 L 9.03125 43.78125 L 25 27.84375 L 40.9375 43.78125 L 43.78125 40.9375 L 27.84375 25 L 43.6875 9.15625 L 40.84375 6.3125 L 25 22.15625 Z"></path></svg>
+                                                            </vs-button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </transition>
+                                    </div>
+                                </div>
+                                <transition name="fade">
+                                    <div v-if="$parent.prescriProcess" class="worksheet-choice-container">
+                                        <vs-checkbox
+                                            :class="{ active: true }"
+                                        >
+                                        </vs-checkbox>
+                                    </div>
+                                </transition>
                             </div>
                         </div>
                         <div
@@ -1466,6 +1294,7 @@ body .btn-create-action .vs-button
     .worksheet-exercises-container
     {
         position: relative;
+        // padding-right: 0 !important;
 
         &::after
         {
@@ -1474,13 +1303,13 @@ body .btn-create-action .vs-button
             background: linear-gradient(
                 90deg,
                 rgba(250, 250, 252, 0) 0%,
-                rgba(38, 37, 34, 0.17) 100%,
+                rgba(38, 37, 34, 0.1) 100%,
             );
             width: 0.7rem;
             height: 13.2rem;
             position: absolute;
             top: 0;
-            right: 0;
+            right: 1.3rem;
             z-index: 5;
 
             @media (min-width: 800px) {
@@ -1500,6 +1329,7 @@ body .btn-create-action .vs-button
         padding: 1.2rem;
         background-color: #fAf8f4;
         border-radius: 0.5rem;
+        cursor: pointer;
 
         @media (max-width: 799px) {
             &::-webkit-scrollbar {
@@ -1568,26 +1398,26 @@ body .btn-create-action .vs-button
         
     }
 
-    .bloc-footer
+    .worksheet-exercise-other
     {
         display: flex;
-        margin-top: 1.5rem;
+        margin-top: 0.5rem;
         margin-bottom: -0.3rem;
         flex-direction: column;
-        align-items: center;
+        align-items: flex-start;
         width: 100%;
         position: relative;
         
-        @media (min-width: 550px) {
-            margin-top: 1.4rem;
-            margin-bottom: 0;
-            align-items: flex-start;
-        }
+        // @media (min-width: 550px) {
+        //     margin-top: 1.4rem;
+        //     margin-bottom: 0;
+        //     align-items: flex-start;
+        // }
 
-        @media (min-width: 780px) {
-            flex-direction: row;
-            align-items: center;
-        }
+        // @media (min-width: 780px) {
+        //     flex-direction: row;
+        //     align-items: center;
+        // }
 
         &::after
         {
@@ -1595,13 +1425,13 @@ body .btn-create-action .vs-button
             display: block;
             background: linear-gradient(
                 90deg,
-                rgba(250, 250, 252, 0) 0%,
-                white 100%
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 1) 100%,
             );
-            width: 3.7rem;
-            height: 2.2rem;
+            width: 1rem;
+            height: 1.2rem;
             position: absolute;
-            bottom: 0;
+            top: 0.5rem;
             right: 0;
             z-index: 5;
 
@@ -1609,38 +1439,81 @@ body .btn-create-action .vs-button
                 display: none;
             }
         }
+    }
 
-        .buttons-container
+    .buttons-container
+    {
+        display: flex;
+        /* background-color: #f2efe8; */
+        width: 100%;
+        justify-content: center;
+        /* box-shadow: inset 0rem 0.4rem 1rem -0.5rem #c1b79d; */
+        position: relative;
+        top: 0.9rem;
+        padding: 0.5rem;
+        padding-bottom: 1.2rem;
+        padding-top: 0.2rem;
+        
+        > .vs-tooltip-content .vs-button
         {
-            display: flex;
-            
-            .vs-button
+            margin: 0 0.7rem !important;
+            border-radius: 50% !important;
+            transform: none !important;
+            background: transparent !important;
+            box-shadow: 0rem 0.3rem 0.8rem 0rem #ded6bfba;
+            border: 0.0625rem solid #cbd5f4;
+            width: 2.5rem !important;
+            height: 2.5rem !important;
+            min-width: 2.5rem !important;
+            min-height: 2.5rem !important;
+            max-height: 2.5rem !important;
+            transition: 0.25s;
+
+            .vs-button__content
             {
-                margin: 0 0.8rem !important;
+                white-space: nowrap !important;
+                padding: 0.5rem !important;
                 border-radius: 50% !important;
 
-                .vs-button__content
-                {
-                    width: 3rem !important;
-                    height: 3rem !important;
-                    min-width: 3rem !important;
-                    min-height: 3rem !important;
-                    max-height: 3rem !important;
-                    white-space: nowrap !important;
-                    background: #fb8b68 !important;
-                    padding: 0.5rem !important;
-                    border-radius: 50% !important;
+                i {
+                    margin-right: 0;
+                    font-size: 0.955rem;
+                    color: $black;
+                    transition: 0.25s;
+                }
 
-                    i {
-                        margin-right: 0;
-                    }
-
-                    svg {
-                        fill: #fff;
-                    }
+                svg {
+                    fill:  $black;
+                    transition: 0.25s;
                 }
             }
+
+            &:hover 
+            {
+                background: #fb8b68 !important;
+                border: 0.0625rem solid #fb8b68;
+
+                i {
+                    color: #fff;
+                }
+
+                svg {
+                    fill: #fff;
+                }
+
+            }
         }
+
+        &.disabled {
+            display: none;
+        }
+    }
+
+    .worksheet-choice-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding-left: 1.4rem;
     }
 
     .btn-prescription-action,
@@ -1670,40 +1543,40 @@ body .btn-create-action .vs-button
         }
     }
 
-    .big-buttons {
-        display: flex;
+    // .big-buttons {
+    //     display: flex;
 
-        .btn-prescription-action {
-            position: relative;
-            top: -0.1rem;
-        }
+    //     .btn-prescription-action {
+    //         position: relative;
+    //         top: -0.1rem;
+    //     }
 
-        .btn-create-action {
-            width: 8.8rem;
-            margin-right: 1.7rem;
+    //     .btn-create-action {
+    //         width: 8.8rem;
+    //         margin-right: 1.7rem;
 
-            @media (max-width: 449px) {
-                margin-right: 1.2rem;
-            }
+    //         @media (max-width: 449px) {
+    //             margin-right: 1.2rem;
+    //         }
 
-            .vs-button {
-                background: $black;
-                color: $white;
-                letter-spacing: 0.005rem;
-                font-weight: 500;
-                font-size: 1.3rem;
+    //         .vs-button {
+    //             background: $black;
+    //             color: $white;
+    //             letter-spacing: 0.005rem;
+    //             font-weight: 500;
+    //             font-size: 1.3rem;
 
-                .vs-button__loading {
-                    background: rgba($black, 0.7);
-                }
+    //             .vs-button__loading {
+    //                 background: rgba($black, 0.7);
+    //             }
 
-                i {
-                    margin-right: 0.7rem;
-                    font-size: 1.4rem;
-                }
-            }
-        }
-    }
+    //             i {
+    //                 margin-right: 0.7rem;
+    //                 font-size: 1.4rem;
+    //             }
+    //         }
+    //     }
+    // }
 
     // .btn-create-public-access {
     //     display: flex;
@@ -1779,28 +1652,33 @@ body .btn-create-action .vs-button
 
     .public-worksheet-url
     {             
-        border: 0.0625rem solid $orange;
-        height: 3.2rem;
+        // border: 0.0625rem solid $orange;
+        height: 2.3rem;
         border-radius: 0.5rem;
-        padding: 1.8rem 1.1rem;
-        padding-top: 0.5rem;
+        padding: 1.5rem 0.6rem;
+        padding-top: 0.6rem;
         padding-bottom: 0.5rem;
         position: relative;
+        top: 0.2rem;
         display: flex;
         align-items: center;
-        width: 100%;
+        max-width: 58%;
+        margin-left: 0.7rem;
+        box-shadow: 0rem 0.3rem 0.8rem 0rem #ded6bfba;
+        border: 0.0625rem solid #cbd5f4;
+        background-color: #ffffff;
 
         .label 
         {
             position: absolute;
-            top: -0.6rem;
+            top: -0.55rem;
             left: 1.0625rem;
             text-transform: uppercase;
-            color: $orange;
-            background-color: #faf8f4;
+            color: #222e54;
+            background-color: #ffffff;
             padding: 0.0625rem 0.25rem;
             padding-top: 0.25rem;
-            font-size: 0.6875rem;
+            font-size: 0.6rem;
             border-radius: 0.3rem;
             -webkit-user-select: none;
             -moz-user-select: none;
@@ -1814,19 +1692,19 @@ body .btn-create-action .vs-button
         {
             display: flex;
             align-items: center;
-            color: $black;
+            color: #222e54;
             margin-right: 0.4rem;
-            font-size: 1.2rem;
-            max-width: 93.5%;
+            font-size: 0.95rem;
             display: block;
             overflow: hidden;
             text-overflow: ellipsis;
             cursor: pointer;
             position: relative;
+            white-space: nowrap;
 
             svg
             {
-                width: 1.5rem;
+                width: 1.1rem;
                 height: 1.3rem;
                 margin-right: 0.2rem;
                 position: relative;
@@ -1842,10 +1720,10 @@ body .btn-create-action .vs-button
                 display: block;
                 width: 100%;
                 height: 100%;
-                background-color: $black;
+                background-color: #222e54;
                 color: #fff;
-                padding: 0.2rem 0.5rem;
-                font-size: 1rem;
+                padding: 0.1rem 0.3rem;
+                font-size: 0.85rem;
                 border-radius: 0.3rem;
                 box-shadow: 0rem 0rem 0.4rem rgba(228, 221, 204, 0.9);
             }
@@ -1853,27 +1731,36 @@ body .btn-create-action .vs-button
 
         .vs-button
         {
-            width: 1.8rem;
-            height: 1.8rem;
+            width: 1.5rem;
+            height: 1.5rem;
             border-radius: 50%;
             position: relative;
-            left: 0.4rem;
+            left: 0.1rem;
             top: -0.1rem;
             flex: none;
-            
+            background-color: #222e54;
+            box-shadow: none !important;
+            transform: none !important;
             svg
             {
                 width: 1.3rem;
                 height: 1.3rem;
                 top: -0.02rem;
+                fill: #fff;
+            }
+
+            i
+            {
+                font-size: 0.8rem;
+                color: #fff;
             }
 
             .vs-button__content {
-                padding: 0;
+                padding: 0.25rem;
                 padding-top: 0;
                 position: relative;
-                left: 0.25rem;
-                top: 0.015rem;              
+                left: 0;
+                top: 0.1rem;            
             }
         }
     }
@@ -1955,8 +1842,9 @@ body .btn-create-action .vs-button
             background: $orange;
             border-radius: 1rem;
             color: $white;
-            padding: 0.2rem 0.7rem;
-            font-size: 0.9rem;
+            padding: 0.1rem 0.5rem;
+            font-size: 0.8rem;
+            letter-spacing: 0.02rem;
             white-space: nowrap;
             margin: 0.2rem 0.3rem;
 
@@ -1966,18 +1854,35 @@ body .btn-create-action .vs-button
         }
     }
 
-    .worksheet-list.wl-doctor > div:not(.not-found) {
-        > div {
+    .worksheet-list.wl-doctor .worksheet-container {
+        // overflow: hidden;
+        display: flex;
+
+        .worksheet {
+            flex-grow: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
             position: relative;
-            padding-top: 1.2rem !important;
-            padding: 1.3rem  !important;
+            // padding-top: 1.2rem !important;
+            padding: 1.3rem 0 !important;
             padding-bottom: 0.9rem !important;
-            cursor: pointer;
             // @media (min-width: 550px) {
             // }
+            width: 90vw;
+            transition: 0.25s;
+            overflow: hidden;
+
+            &.prescri-process-choice {
+                width: 82vw!important;
+            }
+
+            & > *:not(.worksheet-content-wt),
+            .worksheet-content-wt > *:not(.worksheet-details-footer),
+            .worksheet-details-footer > *:not(.buttons-container)
+            {
+                padding: 0 1.3rem;
+            }
 
             .toggle-zone
             {
@@ -1987,6 +1892,7 @@ body .btn-create-action .vs-button
                 width: 100%;
                 height: 5rem;
                 z-index: 2;
+                cursor: pointer;
             }
 
             .worksheet-header {
@@ -2011,6 +1917,7 @@ body .btn-create-action .vs-button
                 }
 
                 .vs-button--size-mini.tag.part-of-body {
+                    position: absolute;
                     right: 1rem;
                     top: 0.75rem;
                     background: #faf8f4 !important;
@@ -2086,92 +1993,7 @@ body .btn-create-action .vs-button
                         margin-bottom: 0.8rem;
                     }
                 }
-
-                // .btns-date {
-                //     display: flex;
-                //     flex-direction: row-reverse;
-                //     width: 106%;
-                //     align-items: center;
-                //     position: absolute;
-                //     top: 1.1rem;
-                //     bottom: auto;
-                //     right: -1.2rem;
-                //     padding: 0 1.6rem;
-                //     justify-content: space-between;
-
-                //     @media (min-width: 370px) {
-                //         width: 104.4%;
-                //     }
-
-                //     @media (min-width: 550px) {
-                //         flex-direction: column;
-                //         margin-top: 0rem;
-                //         align-items: flex-end;
-                //         padding: 0;
-                //         top: auto;
-                //         bottom: 2.1rem;
-                //         right: 1.8rem;
-                //     }
-                // }
             }
-
-            // .worksheet-content > div .btns-date {
-            //     .created-at-date {
-            //         margin-bottom: 0;
-            //         margin-right: 0.7rem;
-            //         position: relative;
-            //         top: 0;
-
-            //         @media (max-width: 550px) {
-            //             font-size: 0.95rem;
-
-            //             &:first-child:last-child {
-            //                 margin: auto;
-            //             }
-            //         }
-
-            //         @media (min-width: 550px) {
-            //             top: -0.9rem;
-            //             margin-right: 0rem;
-            //         }
-
-            //         @media (min-width: 700px) {
-            //             top: -0.7rem;
-            //         }
-
-            //         .user-avatar {
-            //             display: none;
-
-            //             @media (min-width: 430px) {
-            //                 display: block;
-            //             }
-            //         }
-
-            //         > span {
-            //             display: flex;
-            //             flex-direction: column;
-            //             align-items: flex-end;
-
-            //             .creator {
-            //                 display: block;
-            //                 max-width: 8rem;
-            //                 white-space: nowrap;
-            //                 overflow: hidden;
-            //                 text-overflow: ellipsis;
-
-            //                 @media (min-width: 500px) {
-            //                     max-width: 12rem;
-            //                 }
-            //             }
-            //         }
-            //     }
-
-            //     .buttons {
-            //         @media (min-width: 550px) {
-            //             margin-top: 0.8rem;
-            //         }
-            //     }
-            // }
         }
     }
 }
