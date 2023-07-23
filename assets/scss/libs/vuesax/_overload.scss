@@ -60,7 +60,7 @@
         }
     }
 
-    &:not(:disabled):not(.secondary):not(.part-of-body) {
+    &:not(:disabled):not(.secondary):not(.part-of-body):not(.active-effect) {
         box-shadow: 0rem 0.4rem 1.4rem 0rem rgba(251, 139, 104, 0.5);
     }
 

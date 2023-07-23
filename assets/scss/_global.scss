@@ -222,7 +222,7 @@ body {
             background: $white;
             font-size: 1.4rem;
             color: $orange;
-            box-shadow: 0rem 0.4rem 1.4rem 0rem rgba(255, 107, 38, 0.43);
+            box-shadow: 0.6px 0.4rem 0.4rem rgba(140, 136, 130, 0.13);
             border-radius: 0.5rem;
 
             i {
@@ -239,6 +239,12 @@ body {
                 }        
             }
         }
+
+        &.active-effect {
+            .vs-button {
+                animation: mymove 2s infinite;
+            }
+        }
     }
 
     .btn-prescription-action {
@@ -248,7 +254,7 @@ body {
 
     @keyframes mymove {
         50% {
-            box-shadow: 0rem 0.4rem 2rem 0rem rgba(255, 107, 38, 0.9)!important;
+            box-shadow: 0rem 0.4rem 2rem 0rem rgba(255, 107, 38, 0.7);
         }
     }
 

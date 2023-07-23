@@ -17,13 +17,13 @@ class Video
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"worksheet_read", "video_read", "public_worksheet_read"})
+     * @Groups({"worksheet_read", "worksheet_doctor_read", "video_read", "public_worksheet_read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"worksheet_read", "video_read", "public_worksheet_read"})
+     * @Groups({"worksheet_read", "worksheet_doctor_read", "video_read", "public_worksheet_read"})
      */
     private $name;
 
@@ -34,7 +34,7 @@ class Video
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"worksheet_read", "video_read", "dashboard_worksheet_read", "public_worksheet_read"})
+     * @Groups({"worksheet_read", "worksheet_doctor_read", "video_read", "dashboard_worksheet_read", "public_worksheet_read"})
      */
     private $thumbnailUrl;
 
@@ -51,19 +51,19 @@ class Video
 
     /**
      * @ORM\ManyToMany(targetEntity=Option::class, inversedBy="videos")
-     * @Groups({"video_read", "worksheet_read"})
+     * @Groups({"video_read", "worksheet_doctor_read", "worksheet_read"})
      */
     private $options;
 
     /**
     * @ORM\ManyToMany(targetEntity=PartOfBody::class, inversedBy="videos")
-    * @Groups({"video_read", "dashboard_worksheet_read", "worksheet_read"})
+    * @Groups({"video_read", "dashboard_worksheet_read", "worksheet_doctor_read", "worksheet_read"})
     */
     private $partOfBodys;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"worksheet_read", "video_read", "public_worksheet_read"})
+     * @Groups({"worksheet_read", "worksheet_doctor_read", "video_read", "public_worksheet_read"})
      */
     private $youtubeId;
 

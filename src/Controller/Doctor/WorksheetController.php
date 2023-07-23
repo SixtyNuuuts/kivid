@@ -72,6 +72,23 @@ class WorksheetController extends AbstractController
     }
 
     /**
+     * @Route("/{id}/get/worksheets-group", name="app_doctor_get_worksheets_groupe", methods={"POST"})
+     * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
+     */
+    public function getWorksheetsGroup(Doctor $doctor, Request $request): JsonResponse
+    {
+        $data = json_decode($request->getContent());
+        $worksheets = $this->worksheetRepository->findOneBy(['id' => $data->worksheetsIds]);
+
+        return $this->json(
+            $worksheets,
+            200,
+            [],
+            ['groups' => 'worksheet_doctor_read']
+        );
+    }
+
+    /**
      * @Route("/{id}/get/worksheets/{maxresult}/{firstresult}", name="app_doctor_get_worksheets", methods={"GET"})
      * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
@@ -211,7 +228,7 @@ class WorksheetController extends AbstractController
     public function worksheetAction(
         Doctor $doctor,
         string $action,
-        int $worksheetId = null,
+        string $worksheetId = null,
         int $patientId = null
     ): Response {
         $patient = $this->patientRepository->findOneBy(['id' => $patientId]);

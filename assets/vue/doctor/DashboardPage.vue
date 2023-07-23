@@ -142,7 +142,7 @@ export default {
             prescriProcessPatient: false,
             prescriProcessPatientSelected: null,
             prescriProcessWorksheet: false,
-            prescriProcessWorksheetSelected: null,
+            prescriProcessWorksheetsSelected: null,
             btnLoadingPatientPrescriProcessRedirect: null,
             btnLoadingWorksheetPrescriProcessRedirect: null,
         };
@@ -156,12 +156,12 @@ export default {
         },
     },
     methods: {
-        setPrescriProcessWorksheetChoice(worksheet) {
+        setPrescriProcessWorksheetChoice(worksheetsIds) {
             if (!this.prescriProcess) {
                 this.startPrescriProcess();
             }
 
-            this.prescriProcessWorksheetSelected = worksheet;
+            this.prescriProcessWorksheetsSelected = encodeURIComponent(JSON.stringify(worksheetsIds));
 
             this.prescriProcessWorksheet = false;
             if (!this.prescriProcessPatientSelected) {
@@ -178,17 +178,12 @@ export default {
                 this.activeTab = 1;
                 this.prescriProcessPatient = true;
             } else {
-                const prescriProcessWorksheetSelectedId = this
-                    .prescriProcessWorksheetSelected.id
-                    ? this.prescriProcessWorksheetSelected.id
-                    : 0;
-
                 this.btnLoadingPatientPrescriProcessRedirect =
                     this.prescriProcessPatientSelected.id;
                 this.btnLoadingWorksheetPrescriProcessRedirect =
-                    prescriProcessWorksheetSelectedId;
+                    true;
 
-                document.location.href = `/doctor/${this.doctor.id}/fiche/creation/${prescriProcessWorksheetSelectedId}/${this.prescriProcessPatientSelected.id}`;
+                document.location.href = `/doctor/${this.doctor.id}/fiche/creation/${this.prescriProcessWorksheetsSelected}/${this.prescriProcessPatientSelected.id}`;
             }
         },
         setPrescriProcessPatientChoice(patient) {
@@ -199,7 +194,7 @@ export default {
             this.prescriProcessPatientSelected = patient;
 
             this.prescriProcessPatient = false;
-            if (!this.prescriProcessWorksheetSelected) {
+            if (!this.prescriProcessWorksheetsSelected) {
                 const id = "my-worksheets";
                 const yOffset = -100;
                 const element = document.getElementById(id);
@@ -213,17 +208,12 @@ export default {
                 this.activeTab = 2;
                 this.prescriProcessWorksheet = true;
             } else {
-                const prescriProcessWorksheetSelectedId = this
-                    .prescriProcessWorksheetSelected.id
-                    ? this.prescriProcessWorksheetSelected.id
-                    : 0;
-
                 this.btnLoadingPatientPrescriProcessRedirect =
                     this.prescriProcessPatientSelected.id;
                 this.btnLoadingWorksheetPrescriProcessRedirect =
-                    prescriProcessWorksheetSelectedId;
+                    true;
 
-                document.location.href = `/doctor/${this.doctor.id}/fiche/creation/${prescriProcessWorksheetSelectedId}/${this.prescriProcessPatientSelected.id}`;
+                document.location.href = `/doctor/${this.doctor.id}/fiche/creation/${this.prescriProcessWorksheetsSelected}/${this.prescriProcessPatientSelected.id}`;
             }
         },
         startPrescriProcess(target=null) {
@@ -240,7 +230,7 @@ export default {
             this.prescriProcess = false;
             this.prescriProcessWorksheet = false;
             this.prescriProcessPatient = false;
-            this.prescriProcessWorksheetSelected = null;
+            this.prescriProcessWorksheetsSelected = null;
             this.prescriProcessPatientSelected = null;
             this.btnLoadingPatientPrescriProcessRedirect = null;
             this.btnLoadingWorksheetPrescriProcessRedirect = null;

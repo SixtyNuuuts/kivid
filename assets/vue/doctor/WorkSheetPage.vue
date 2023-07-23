@@ -1,213 +1,229 @@
 <template>
     <div class="container" id="worksheet">
-        <header>
-            <div v-if="loading" class="loading-block">
-                <div class="title">
-                    <i class="kiv-arrow-left icon-31"></i>
-                    <div class="loading-gray h1"></div>
-                </div>
-                <div class="loading-gray part-of-body"></div>
+        <div v-if="loading" class="loading-block">
+            <div class="title">
+                <i class="kiv-arrow-left icon-31"></i>
+                <div class="loading-gray h1"></div>
             </div>
-            <div v-else>
-                <div v-if="patient" class="prescri-for-patient-content">
-                    <i
-                        class="kiv-arrow-left icon-31"
-                        @click="rederictToDashboard()"
-                    ></i>
-                    <div class="prescri-for-patient">
-                        <div class="label">prescription <span>pour</span></div>
-                        <vs-avatar size="26" class="user-avatar" circle>
-                            <img
-                                :src="
-                                    patient.avatarUrl
-                                        ? patient.avatarUrl
-                                        : '/img/avatar-default.svg'
-                                "
-                                :alt="`Avatar de ${patient.firstname} ${patient.lastname}`"
-                            />
-                        </vs-avatar>
-                        <div class="user-name">
-                            <div>
-                                {{ getUserName(patient) }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div v-if="'voir' === action" class="title-view">
-                    <div class="title">
-                        <i
-                            class="kiv-arrow-left icon-31"
-                            :class="{ hidden: patient }"
-                            @click="rederictToDashboard()"
-                        ></i>
-                        <h1>{{ getWorksheet.title }}</h1>
-                    </div>
-                    <TagPartOfBody
-                        v-if="getWorksheet.partOfBody"
-                        :partOfBody="getWorksheet.partOfBody"
-                    />
-                </div>
-                <div v-else class="title">
-                    <i
-                        class="kiv-arrow-left icon-31"
-                        :class="{ hidden: patient }"
-                        @click="rederictToDashboard()"
-                    ></i>
-                    <vs-input
-                        v-model="worksheet.title"
-                        label-placeholder="Titre de la fiche"
-                        type="text"
-                        @keyup="titleIsEmptyMessage = null"
-                    >
-                        <template v-if="titleIsEmptyMessage" #message-danger>
-                            {{ titleIsEmptyMessage }}
-                        </template>
-                    </vs-input>
-                </div>
-
-                <div v-if="'voir' !== action" class="worksheet-params">
-                    <div
-                        class="worksheet-details"
-                        :class="{
-                            disabled:
-                                'edition' === action &&
-                                checkIfWorksheetSessionsExist,
-                        }"
-                    >
-                        <div
-                            v-if="
-                                'edition' === action &&
-                                checkIfWorksheetSessionsExist
+            <div class="loading-gray part-of-body"></div>
+        </div>
+        <div v-else>
+            <div v-if="patient" class="prescri-for-patient-content">
+                <i
+                    class="kiv-arrow-left icon-31"
+                    @click="rederictToDashboard()"
+                ></i>
+                <div class="prescri-for-patient">
+                    <div class="label">prescription <span>pour</span></div>
+                    <vs-avatar size="26" class="user-avatar" circle>
+                        <img
+                            :src="
+                                patient.avatarUrl
+                                    ? patient.avatarUrl
+                                    : '/img/avatar-default.svg'
                             "
-                            class="avert-sessions-start"
-                        >
-                            <i class="kiv-info icon-17"></i>
-                            <p>
-                                Vous ne pouvez plus modifier la durée de la
-                                prescription car le patient a déjà démarré ses
-                                sessions.
-                            </p>
-                        </div>
-                        <div class="worksheet-timing-perweek">
-                            <i class="kiv-calendar icon-10"></i>
-                            <vs-input
-                                v-model="worksheet.perWeek"
-                                id="perWeek"
-                                label-placeholder="X par sem. (max: 7)"
-                                type="number"
-                                @blur="
-                                    checkIfDurationValueIsEmptyOrNull(
-                                        worksheet.perWeek,
-                                        $event
-                                    )
-                                "
-                                min="1"
-                                max="7"
-                            >
-                            </vs-input>
-                        </div>
-                        <div class="worksheet-timing-perday">
-                            <i class="kiv-calendar icon-10"></i>
-                            <vs-input
-                                v-model="worksheet.perDay"
-                                id="perDay"
-                                label-placeholder="X par jour (max: 3)"
-                                type="number"
-                                @blur="
-                                    checkIfDurationValueIsEmptyOrNull(
-                                        worksheet.perDay,
-                                        $event
-                                    )
-                                "
-                                min="1"
-                                max="3"
-                            >
-                            </vs-input>
-                        </div>
-                        <div class="worksheet-period">
-                            <i class="kiv-clock icon-11"></i>
-                            <vs-input
-                                v-model="worksheet.duration"
-                                id="duration"
-                                label-placeholder="Durée en sem. (max: 52)"
-                                type="number"
-                                @blur="
-                                    checkIfDurationValueIsEmptyOrNull(
-                                        worksheet.duration,
-                                        $event
-                                    )
-                                "
-                                min="1"
-                                max="52"
-                            >
-                            </vs-input>
-                        </div>
-                    </div>
-                    <div class="select-filter-block">
-                        <SelectPartOfBody
-                            :partOfBody="worksheet.partOfBody"
-                            @partOfBodySelected="setPartOfBody"
-                            @partOfBodyReset="resetPoB"
+                            :alt="`Avatar de ${patient.firstname} ${patient.lastname}`"
                         />
-                        <div v-if="partOfBodyIsEmptyMessage" class="error-mess">
-                            {{ partOfBodyIsEmptyMessage }}
+                    </vs-avatar>
+                    <div class="user-name">
+                        <div>
+                            {{ getUserName(patient) }}
                         </div>
                     </div>
                 </div>
             </div>
-        </header>
-        <main>
-            <section
-                id="exercises-playlist"
-                :class="{ 'no-mt': 'voir' === action }"
+            <div
+              v-for="(worksheet, i) in getWorksheets"
+              :key="i"
             >
-                <ExercisesPlaylist
-                    :doctor="doctor"
-                    :loading="loading"
-                    :action="action"
-                    :worksheet="getWorksheet"
-                    :exercises="getExercises"
-                    :loadingVideos="loadingVideos"
-                    :videos="videos"
-                    :csrfTokenRemoveExercise="csrfTokenRemoveExercise"
-                    :csrfTokenSaveFFMKRRequestToken="csrfTokenSaveFFMKRRequestToken"
-                />
-            </section>
-        </main>
-        <div
-            class="btn-valid"
-            :class="{
-                disabled:
-                    btnLoadingValidEditWorksheet ||
-                    btnLoadingValidCreateWorksheet ||
-                    loading,
-            }"
-        >
-            <vs-button
-                v-if="'edition' === action"
-                @click="validEdit"
-                :loading="btnLoadingValidEditWorksheet"
-            >
-                <i class="fas fa-check-circle"></i>
-                Valider les modifications
-            </vs-button>
-            <vs-button
-                v-if="'creation' === action && !patient"
-                @click="validCreate"
-                :loading="btnLoadingValidCreateWorksheet"
-            >
-                <i class="fas fa-check-circle"></i>
-                Créer la fiche
-            </vs-button>
-            <vs-button
-                v-if="'creation' === action && patient"
-                @click="validCreate"
-                :loading="btnLoadingValidCreateWorksheet"
-            >
-                <i class="fas fa-check-circle"></i>
-                Créer la prescription
-            </vs-button>
+                <div class="tab-worksheet" @click="toggleCurrentOpenWorksheet(worksheet.id)">
+                    <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" width="24px" height="24px">    <path d="M19,3H5C3.895,3,3,3.895,3,5v14c0,1.105,0.895,2,2,2h10l6-6V5C21,3.895,20.105,3,19,3z M19,14h-5v5H5V5h14V14z"/></svg>
+                    {{ worksheet.title == "" ? 'Création de fiche' : worksheet.title }}
+                </div>
+                <transition name="height">
+                    <div v-show="currentOpenWorksheet == worksheet.id">
+                        <header>
+                            <div>
+                                <div v-if="'voir' === action" class="title-view">
+                                    <div class="title">
+                                        <i
+                                            class="kiv-arrow-left icon-31"
+                                            :class="{ hidden: patient }"
+                                            @click="rederictToDashboard()"
+                                        ></i>
+                                        <h1>{{ worksheet.title }}</h1>
+                                    </div>
+                                    <TagPartOfBody
+                                        v-if="worksheet.partOfBody"
+                                        :partOfBody="worksheet.partOfBody"
+                                    />
+                                </div>
+                                <div v-else class="title">
+                                    <i
+                                        class="kiv-arrow-left icon-31"
+                                        :class="{ hidden: patient }"
+                                        @click="rederictToDashboard()"
+                                    ></i>
+                                    <vs-input
+                                        v-model="worksheet.title"
+                                        label-placeholder="Titre de la fiche"
+                                        type="text"
+                                        @keyup="worksheet.titleIsEmptyMessage = null"
+                                    >
+                                        <template v-if="worksheet.titleIsEmptyMessage" #message-danger>
+                                            {{ worksheet.titleIsEmptyMessage }}
+                                        </template>
+                                    </vs-input>
+                                </div>
+                                <div v-if="'voir' !== action" class="worksheet-params">
+                                    <div
+                                        class="worksheet-details"
+                                        :class="{
+                                            disabled:
+                                                'edition' === action &&
+                                                worksheet.checkIfWorksheetSessionsExist,
+                                        }"
+                                    >
+                                        <div
+                                            v-if="
+                                                'edition' === action &&
+                                                worksheet.checkIfWorksheetSessionsExist
+                                            "
+                                            class="avert-sessions-start"
+                                        >
+                                            <i class="kiv-info icon-17"></i>
+                                            <p>
+                                                Vous ne pouvez plus modifier la durée de la
+                                                prescription car le patient a déjà démarré ses
+                                                sessions.
+                                            </p>
+                                        </div>
+                                        <div class="worksheet-timing-perweek">
+                                            <i class="kiv-calendar icon-10"></i>
+                                            <vs-input
+                                                v-model="worksheet.perWeek"
+                                                id="perWeek"
+                                                label-placeholder="X par sem. (max: 7)"
+                                                type="number"
+                                                @blur="
+                                                    checkIfDurationValueIsEmptyOrNull(
+                                                        worksheet.perWeek,
+                                                        $event,
+                                                        worksheet
+                                                    )
+                                                "
+                                                min="1"
+                                                max="7"
+                                            >
+                                            </vs-input>
+                                        </div>
+                                        <div class="worksheet-timing-perday">
+                                            <i class="kiv-calendar icon-10"></i>
+                                            <vs-input
+                                                v-model="worksheet.perDay"
+                                                id="perDay"
+                                                label-placeholder="X par jour (max: 3)"
+                                                type="number"
+                                                @blur="
+                                                    checkIfDurationValueIsEmptyOrNull(
+                                                        worksheet.perDay,
+                                                        $event,
+                                                        worksheet
+                                                    )
+                                                "
+                                                min="1"
+                                                max="3"
+                                            >
+                                            </vs-input>
+                                        </div>
+                                        <div class="worksheet-period">
+                                            <i class="kiv-clock icon-11"></i>
+                                            <vs-input
+                                                v-model="worksheet.duration"
+                                                id="duration"
+                                                label-placeholder="Durée en sem. (max: 52)"
+                                                type="number"
+                                                @blur="
+                                                    checkIfDurationValueIsEmptyOrNull(
+                                                        worksheet.duration,
+                                                        $event,
+                                                        worksheet
+                                                    )
+                                                "
+                                                min="1"
+                                                max="52"
+                                            >
+                                            </vs-input>
+                                        </div>
+                                    </div>
+                                    <div class="select-filter-block">
+                                        <SelectPartOfBody
+                                            :partOfBody="worksheet.partOfBody"
+                                            @partOfBodySelected="setPartOfBody($event, worksheet)"
+                                            @partOfBodyReset="resetPoB($event, worksheet)"
+                                        />
+                                        <div v-if="worksheet.partOfBodyIsEmptyMessage" class="error-mess">
+                                            {{ worksheet.partOfBodyIsEmptyMessage }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </header>
+                        <main>
+                            <section
+                                id="exercises-playlist"
+                                :class="{ 'no-mt': 'voir' === action }"
+                            >
+                                <ExercisesPlaylist
+                                    :doctor="doctor"
+                                    :loading="loading"
+                                    :action="action"
+                                    :worksheet="worksheet"
+                                    :exercises="worksheet.exercises"
+                                    :loadingVideos="loadingVideos"
+                                    :videos="videos"
+                                    :csrfTokenRemoveExercise="csrfTokenRemoveExercise"
+                                    :csrfTokenSaveFFMKRRequestToken="csrfTokenSaveFFMKRRequestToken"
+                                />
+                            </section>
+                        </main>
+                    </div>
+                </transition>
+                <div
+                    class="btn-valid"
+                    :class="{
+                        disabled:
+                            btnLoadingValidEditWorksheet ||
+                            btnLoadingValidCreateWorksheet ||
+                            loading,
+                    }"
+                >
+                    <vs-button
+                        v-if="'edition' === action"
+                        @click="validEdit"
+                        :loading="btnLoadingValidEditWorksheet"
+                    >
+                        <i class="fas fa-check-circle"></i>
+                        Valider les modifications
+                    </vs-button>
+                    <vs-button
+                        v-if="'creation' === action && !patient"
+                        @click="validCreate"
+                        :loading="btnLoadingValidCreateWorksheet"
+                    > 
+                        <i class="fas fa-check-circle"></i>
+                        Créer la fiche
+                    </vs-button>
+                    <vs-button
+                        v-if="'creation' === action && patient"
+                        @click="validCreate"
+                        :loading="btnLoadingValidCreateWorksheet"
+                    >
+                        <i class="fas fa-check-circle"></i>
+                        Créer la prescription
+                    </vs-button>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -229,15 +245,21 @@ export default {
         return {
             doctor: null,
             action: null,
-            worksheetId: null,
-            worksheet: {
-                partOfBody: null,
-                duration: 1,
-                perDay: 1,
-                perWeek: 1,
-                title: "",
-            },
-            exercises: [],
+            worksheetsIds: null,
+            worksheets: [
+                {
+                    id: 0,
+                    partOfBody: null,
+                    duration: 1,
+                    perDay: 1,
+                    perWeek: 1,
+                    title: "",
+                    partOfBodyIsEmptyMessage: null,
+                    titleIsEmptyMessage: null,
+                    exercises: [],
+                    checkIfWorksheetSessionsExist: null,
+                }
+            ],
             patient: null,
             loadingVideos: false,
             videos: [],
@@ -253,90 +275,88 @@ export default {
             },
             btnLoadingValidEditWorksheet: false,
             btnLoadingValidCreateWorksheet: false,
-            checkIfWorksheetSessionsExist: null,
-            titleIsEmptyMessage: null,
-            partOfBodyIsEmptyMessage: null,
+            currentOpenWorksheet: null
         };
     },
     computed: {
-        getWorksheet() {
-            return this.worksheet;
-        },
-        getExercises() {
-            return this.exercises;
+        getWorksheets() {
+            return this.worksheets;
         },
     },
     methods: {
-        setPartOfBody(partOfBody) {
-            this.worksheet.partOfBody = partOfBody;
-            this.partOfBodyIsEmptyMessage = "";
+        setPartOfBody(partOfBody, worksheet) {
+            worksheet.partOfBody = partOfBody;
+            worksheet.partOfBodyIsEmptyMessage = "";
         },
-        resetPoB() {
-            this.worksheet.partOfBody = null;
+        resetPoB(partOfBody, worksheet) {
+            worksheet.partOfBody = null;
         },
         rederictToDashboard() {
             document.location.href = `/doctor/${this.doctor.id}/dashboard`;
         },
-        checkIfDurationValueIsEmptyOrNull(durationValue, event) {
+        toggleCurrentOpenWorksheet(worksheetId) {
+            this.currentOpenWorksheet = this.currentOpenWorksheet != worksheetId ? worksheetId : null;
+        },
+        checkIfDurationValueIsEmptyOrNull(durationValue, event, worksheet) {
             const durationType = event.target.id;
 
             if ("vs-input--duration" === durationType) {
                 if ("" === durationValue || null === durationValue) {
-                    this.worksheet.duration = 1;
+                    worksheet.duration = 1;
                 }
                 if (durationValue < 1) {
-                    this.worksheet.duration = 1;
+                    worksheet.duration = 1;
                 }
                 if (durationValue > this.maxDuration.duration) {
-                    this.worksheet.duration = this.maxDuration.duration;
+                    worksheet.duration = this.maxDuration.duration;
                 }
             }
 
             if ("vs-input--perDay" === durationType) {
                 if ("" === durationValue || null === durationValue) {
-                    this.worksheet.perDay = 1;
+                    worksheet.perDay = 1;
                 }
                 if (durationValue < 1) {
-                    this.worksheet.perDay = 1;
+                    worksheet.perDay = 1;
                 }
                 if (durationValue > this.maxDuration.perDay) {
-                    this.worksheet.perDay = this.maxDuration.perDay;
+                    worksheet.perDay = this.maxDuration.perDay;
                 }
             }
 
             if ("vs-input--perWeek" === durationType) {
                 if ("" === durationValue || null === durationValue) {
-                    this.worksheet.perWeek = 1;
+                    worksheet.perWeek = 1;
                 }
                 if (durationValue < 1) {
-                    this.worksheet.perWeek = 1;
+                    worksheet.perWeek = 1;
                 }
                 if (durationValue > this.maxDuration.perWeek) {
-                    this.worksheet.perWeek = this.maxDuration.perWeek;
+                    worksheet.perWeek = this.maxDuration.perWeek;
                 }
             }
         },
-        checkIfEmpty() {
+        checkIfEmpty(worksheet) {
             let check = true;
 
-            if (!this.worksheet.partOfBody) {
-                this.partOfBodyIsEmptyMessage =
+            if (!worksheet.partOfBody) {
+                worksheet.partOfBodyIsEmptyMessage =
                     "Vous devez choisir une partie du corps";
                 check = false;
                 f.openErrorNotification(
                     "Erreur",
-                    this.partOfBodyIsEmptyMessage + " pour la fiche."
+                    worksheet.partOfBodyIsEmptyMessage + " pour la fiche."
                 );
             }
 
-            if (this.worksheet.title === "" || this.worksheet.title === null) {
-                this.titleIsEmptyMessage =
+            if (worksheet.title === "" || worksheet.title === null) {
+                worksheet.titleIsEmptyMessage =
                     "Vous devez entrer un titre pour la fiche.";
                 check = false;
-                f.openErrorNotification("Erreur", this.titleIsEmptyMessage);
+                f.openErrorNotification("Erreur", worksheet.titleIsEmptyMessage);
             }
 
-            if (!this.exercises.length) {
+            if (!worksheet.exercises.length) {
                 check = false;
                 f.openErrorNotification(
                     "Erreur",
@@ -346,22 +366,22 @@ export default {
 
             return check;
         },
-        validEdit() {
+        validEdit(worksheet) {
             this.btnLoadingValidEditWorksheet = true;
 
-            const isNotEmpty = this.checkIfEmpty();
+            const isNotEmpty = this.checkIfEmpty(worksheet);
 
             if (isNotEmpty) {
                 this.axios
                     .post(`/doctor/${this.doctor.id}/edit/worksheet`, {
                         _token: this.csrfTokenEditWorksheet,
-                        worksheetId: this.worksheet.id,
-                        title: this.worksheet.title,
-                        partOfBodyId: this.worksheet.partOfBody.id,
-                        duration: this.worksheet.duration,
-                        perWeek: this.worksheet.perWeek,
-                        perDay: this.worksheet.perDay,
-                        exercises: this.exercises,
+                        worksheetId: worksheet.id,
+                        title: worksheet.title,
+                        partOfBodyId: worksheet.partOfBody.id,
+                        duration: worksheet.duration,
+                        perWeek: worksheet.perWeek,
+                        perDay: worksheet.perDay,
+                        exercises: worksheet.exercises,
                     })
                     .then((response) => {
                         if (this.patient) {
@@ -400,109 +420,109 @@ export default {
                 this.btnLoadingValidEditWorksheet = false;
             }
         },
-        validCreate() {
+        validCreate(worksheets) {
             this.btnLoadingValidCreateWorksheet = true;
 
-            const isNotEmpty = this.checkIfEmpty();
+            const isNotEmpty = this.checkIfEmpty(worksheet);
 
-            if (isNotEmpty) {
-                this.axios
-                    .post(`/doctor/${this.doctor.id}/create/worksheet`, {
-                        _token: this.csrfTokenCreateWorksheet,
-                        worksheetId: this.worksheet.id,
-                        patientId: this.patient ? this.patient.id : null,
-                        title: this.worksheet.title,
-                        partOfBodyId: this.worksheet.partOfBody.id,
-                        duration: this.worksheet.duration,
-                        perWeek: this.worksheet.perWeek,
-                        perDay: this.worksheet.perDay,
-                        exercises: this.exercises,
-                    })
-                    .then((response) => {
-                        if (this.patient) {
-                            if (!this.worksheet.id) {
-                                // création du modèle de fiche (identique sans le patient)
-                                this.axios
-                                    .post(
-                                        `/doctor/${this.doctor.id}/create/worksheet`,
-                                        {
-                                            _token: this
-                                                .csrfTokenCreateWorksheet,
-                                            worksheetId: this.worksheet.id,
-                                            patientId: null,
-                                            title: this.worksheet.title,
-                                            partOfBodyId:
-                                                this.worksheet.partOfBody.id,
-                                            duration: this.worksheet.duration,
-                                            perWeek: this.worksheet.perWeek,
-                                            perDay: this.worksheet.perDay,
-                                            exercises: this.exercises,
-                                        }
-                                    )
-                                    .then((response) => {
-                                        f.openSuccessNotification(
-                                            "Création de la prescription",
-                                            `La fiche <strong> ${
-                                                this.worksheet.title
-                                            }</strong> 
-                                            a été prescrite à <strong>
-                                            ${this.getUserName(
-                                                this.patient
-                                            )}</strong>`
-                                        );
-                                        this.btnLoadingValidCreateWorksheet = false;
-                                        setTimeout(() => {
-                                            document.location.href = `/doctor/${this.doctor.id}/dashboard`;
-                                        }, 2000);
-                                    })
-                                    .catch((error) => {
-                                        const errorMess =
-                                            "object" ===
-                                            typeof error.response.data
-                                                ? error.response.data.detail
-                                                : error.response.data;
-                                        this.btnLoadingValidCreateWorksheet = false;
-                                        f.openErrorNotification(
-                                            "Erreur",
-                                            errorMess
-                                        );
-                                    });
-                            } else {
-                                f.openSuccessNotification(
-                                    "Création de la prescription",
-                                    `La fiche <strong> ${
-                                        this.worksheet.title
-                                    }</strong> 
-                                    a été prescrite à <strong>
-                                    ${this.getUserName(this.patient)}</strong>`
-                                );
-                                this.btnLoadingValidCreateWorksheet = false;
-                                setTimeout(() => {
-                                    document.location.href = `/doctor/${this.doctor.id}/dashboard`;
-                                }, 2000);
-                            }
-                        } else {
-                            f.openSuccessNotification(
-                                "Création de la fiche",
-                                response.data
-                            );
-                            this.btnLoadingValidCreateWorksheet = false;
-                            setTimeout(() => {
-                                document.location.href = `/doctor/${this.doctor.id}/dashboard/?tab=ws`;
-                            }, 2000);
-                        }
-                    })
-                    .catch((error) => {
-                        const errorMess =
-                            "object" === typeof error.response.data
-                                ? error.response.data.detail
-                                : error.response.data;
-                        this.btnLoadingValidCreateWorksheet = false;
-                        f.openErrorNotification("Erreur", errorMess);
-                    });
-            } else {
-                this.btnLoadingValidCreateWorksheet = false;
-            }
+            // if (isNotEmpty) {
+            //     this.axios
+            //         .post(`/doctor/${this.doctor.id}/create/worksheet`, {
+            //             _token: this.csrfTokenCreateWorksheet,
+            //             worksheetId: this.worksheet.id,
+            //             patientId: this.patient ? this.patient.id : null,
+            //             title: worksheet.title,
+            //             partOfBodyId: worksheet.partOfBody.id,
+            //             duration: worksheet.duration,
+            //             perWeek: worksheet.perWeek,
+            //             perDay: worksheet.perDay,
+            //             exercises: worksheet.exercises,
+            //         })
+            //         .then((response) => {
+            //             if (this.patient) {
+            //                 if (!this.worksheet.id) {
+            //                     // création du modèle de fiche (identique sans le patient)
+            //                     this.axios
+            //                         .post(
+            //                             `/doctor/${this.doctor.id}/create/worksheet`,
+            //                             {
+            //                                 _token: this
+            //                                     .csrfTokenCreateWorksheet,
+            //                                 worksheetId: this.worksheet.id,
+            //                                 patientId: null,
+            //                                 title: this.worksheet.title,
+            //                                 partOfBodyId:
+            //                                     this.worksheet.partOfBody.id,
+            //                                 duration: this.worksheet.duration,
+            //                                 perWeek: this.worksheet.perWeek,
+            //                                 perDay: this.worksheet.perDay,
+            //                                 exercises: this.exercises,
+            //                             }
+            //                         )
+            //                         .then((response) => {
+            //                             f.openSuccessNotification(
+            //                                 "Création de la prescription",
+            //                                 `La fiche <strong> ${
+            //                                     this.worksheet.title
+            //                                 }</strong> 
+            //                                 a été prescrite à <strong>
+            //                                 ${this.getUserName(
+            //                                     this.patient
+            //                                 )}</strong>`
+            //                             );
+            //                             this.btnLoadingValidCreateWorksheet = false;
+            //                             setTimeout(() => {
+            //                                 document.location.href = `/doctor/${this.doctor.id}/dashboard`;
+            //                             }, 2000);
+            //                         })
+            //                         .catch((error) => {
+            //                             const errorMess =
+            //                                 "object" ===
+            //                                 typeof error.response.data
+            //                                     ? error.response.data.detail
+            //                                     : error.response.data;
+            //                             this.btnLoadingValidCreateWorksheet = false;
+            //                             f.openErrorNotification(
+            //                                 "Erreur",
+            //                                 errorMess
+            //                             );
+            //                         });
+            //                 } else {
+            //                     f.openSuccessNotification(
+            //                         "Création de la prescription",
+            //                         `La fiche <strong> ${
+            //                             this.worksheet.title
+            //                         }</strong> 
+            //                         a été prescrite à <strong>
+            //                         ${this.getUserName(this.patient)}</strong>`
+            //                     );
+            //                     this.btnLoadingValidCreateWorksheet = false;
+            //                     setTimeout(() => {
+            //                         document.location.href = `/doctor/${this.doctor.id}/dashboard`;
+            //                     }, 2000);
+            //                 }
+            //             } else {
+            //                 f.openSuccessNotification(
+            //                     "Création de la fiche",
+            //                     response.data
+            //                 );
+            //                 this.btnLoadingValidCreateWorksheet = false;
+            //                 setTimeout(() => {
+            //                     document.location.href = `/doctor/${this.doctor.id}/dashboard/?tab=ws`;
+            //                 }, 2000);
+            //             }
+            //         })
+            //         .catch((error) => {
+            //             const errorMess =
+            //                 "object" === typeof error.response.data
+            //                     ? error.response.data.detail
+            //                     : error.response.data;
+            //             this.btnLoadingValidCreateWorksheet = false;
+            //             f.openErrorNotification("Erreur", errorMess);
+            //         });
+            // } else {
+            //     this.btnLoadingValidCreateWorksheet = false;
+            // }
         },
         getUserName(user) {
             return f.getUserName(user);
@@ -514,7 +534,7 @@ export default {
         const data = JSON.parse(document.getElementById("vueData").innerHTML);
 
         this.doctor = data.doctor;
-        this.worksheetId = data.worksheetId;
+        this.worksheetsIds = JSON.parse(data.worksheetId);
         this.action = data.action;
         this.patient = data.patient;
         this.csrfTokenCreateWorksheet = data.csrfTokenCreateWorksheet;
@@ -522,28 +542,32 @@ export default {
         this.csrfTokenRemoveExercise = data.csrfTokenRemoveExercise;
         this.csrfTokenSaveFFMKRRequestToken= data.csrfTokenSaveFFMKRRequestToken;
 
+        if(!Array.isArray(this.worksheetsIds))
+            this.worksheetsIds = [this.worksheetsIds];
+            
+        const 
+            worksheetsIdsFiltered = this.worksheetsIds.filter(wId=>(wId!=0&&wId!=null)),
+            worksheetsCreationCount = this.worksheetsIds.length - worksheetsIdsFiltered.length
+        ; 
+
         this.loading = true;
-
-        if (this.worksheetId != 0) {
+        if (worksheetsIdsFiltered.length) {
             this.axios
-                .get(
-                    `/doctor/${this.doctor.id}/get/worksheet/${this.worksheetId}`
-                )
+                .post(`/doctor/${this.doctor.id}/get/worksheets-group`, {
+                    worksheetsIds: worksheetsIdsFiltered,
+                })
                 .then((response) => {
-                    this.worksheet = response.data;
+                    this.worksheets = Array.from({ length: worksheetsCreationCount }, () => ({ ...JSON.parse(JSON.stringify(this.worksheets[0])) }));
 
+                    let existingWorksheets = Array.isArray(response.data) ? response.data : [response.data];
                     if (this.action === "creation" && !this.patient) {
-                        this.worksheet.title = `Copie de ${this.worksheet.title}`;
+                        this.existingWorksheets = existingWorksheets.map(worksheet => ({
+                            ...worksheet,
+                            title: `Copie de ${worksheet.title}`
+                        }));
                     }
-
-                    this.axios
-                        .get(
-                            `/doctor/${this.doctor.id}/get/exercises/${this.worksheetId}`
-                        )
-                        .then((response) => {
-                            this.exercises = response.data;
-
-                            this.exercises = this.exercises.map((exercise) => {
+                    existingWorksheets.forEach(worksheet => {
+                            worksheet.exercises = worksheet.exercises.map((exercise) => {
                                 return {
                                     ...exercise,
                                     option: exercise.option
@@ -558,13 +582,14 @@ export default {
                                     holdActive: exercise.hold ? true : false,
                                 };
                             });
+
                             if ("edition" === this.action) {
                                 this.axios
                                     .get(
-                                        `/doctor/${this.doctor.id}/check/worksheet-sessions-exist/${this.worksheetId}`
+                                        `/doctor/${this.doctor.id}/check/worksheet-sessions-exist/${worksheet.id}`
                                     )
                                     .then((response) => {
-                                        this.checkIfWorksheetSessionsExist =
+                                        worksheet.checkIfWorksheetSessionsExist =
                                             response.data;
 
                                         this.loading = false;
@@ -581,15 +606,9 @@ export default {
                             } else {
                                 this.loading = false;
                             }
-                        })
-                        .catch((error) => {
-                            const errorMess =
-                                "object" === typeof error.response.data
-                                    ? error.response.data.detail
-                                    : error.response.data;
-
-                            console.error(errorMess);
-                        });
+                    });
+                
+                    this.worksheets = [...this.worksheets, ...existingWorksheets];
                 })
                 .catch((error) => {
                     const errorMess =
@@ -630,6 +649,55 @@ export default {
 @import "../../scss/variables";
 
 #worksheet {
+    padding: 0rem 0;
+
+    .tab-worksheet
+    {
+        padding: 1rem;
+        background-color: #e7dfcd;
+        cursor: pointer;
+        color: #afa17e;
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+
+        svg {
+            width: 2rem;
+            height: 2rem;
+            fill: #fff;
+            margin-right: 0.5rem;
+        }
+    }
+
+    .loading-block {
+        min-height: 6rem;
+        flex-direction: row;
+        justify-content: flex-start;
+
+        .title {
+            width: 13%;
+
+            i {
+                color: $gray-middle !important;
+            }
+
+            .h1 {
+                height: 3.5rem;
+                width: 18rem;
+                margin: 0;
+                border-radius: 0.5rem;
+            }
+        }
+
+        .part-of-body {
+            height: 2.7rem;
+            width: 9rem;
+            margin-top: 0.5rem;
+            margin-left: 2rem;
+            border-radius: 0.4rem;
+        }
+    }
+
     .prescri-for-patient-content {
         i {
             font-size: 1.6rem;
@@ -716,35 +784,6 @@ export default {
             display: flex;
             align-items: flex-start;
             flex-direction: column;
-
-            &.loading-block {
-                min-height: 6rem;
-                flex-direction: row;
-                justify-content: flex-start;
-
-                .title {
-                    width: 13%;
-
-                    i {
-                        color: $gray-middle !important;
-                    }
-
-                    .h1 {
-                        height: 3.5rem;
-                        width: 18rem;
-                        margin: 0;
-                        border-radius: 0.5rem;
-                    }
-                }
-
-                .part-of-body {
-                    height: 2.7rem;
-                    width: 9rem;
-                    margin-top: 0.5rem;
-                    margin-left: 2rem;
-                    border-radius: 0.4rem;
-                }
-            }
 
             .vs-input-parent {
                 width: 100%;

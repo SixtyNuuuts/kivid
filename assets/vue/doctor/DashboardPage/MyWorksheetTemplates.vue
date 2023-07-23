@@ -51,6 +51,29 @@
                 </p>
             </div>
         </transition>
+        <transition name="fade">
+            <div
+                v-if="prescriProcess && getWorksheetTemplates.length"
+                class="prescri-process-buttons"
+            >   
+                <button
+                    @click="prescriProcessWorksheetChoice(prescriProcessWorksheetsChoice)"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 48 48" width="96px" height="96px"><path d="M 12.5 4 C 10.019 4 8 6.019 8 8.5 L 8 39.5 C 8 41.981 10.019 44 12.5 44 L 25.640625 44 C 24.785625 43.111 24.055516 42.103 23.478516 41 L 12.5 41 C 11.673 41 11 40.327 11 39.5 L 11 8.5 C 11 7.673 11.673 7 12.5 7 L 24 7 L 24 15.5 C 24 17.981 26.019 20 28.5 20 L 37 20 L 37 22.169922 C 38.045 22.331922 39.053 22.606906 40 23.003906 L 40 18.5 C 40 18.0855 39.831922 17.710828 39.560547 17.439453 L 26.560547 4.4394531 C 26.289172 4.1680781 25.9145 4 25.5 4 L 12.5 4 z M 27 9.1210938 L 34.878906 17 L 28.5 17 C 27.673 17 27 16.327 27 15.5 L 27 9.1210938 z M 35 24 C 28.925 24 24 28.925 24 35 C 24 41.075 28.925 46 35 46 C 41.075 46 46 41.075 46 35 C 46 28.925 41.075 24 35 24 z M 35 27 C 35.552 27 36 27.448 36 28 L 36 34 L 42 34 C 42.552 34 43 34.448 43 35 C 43 35.552 42.552 36 42 36 L 36 36 L 36 42 C 36 42.552 35.552 43 35 43 C 34.448 43 34 42.552 34 42 L 34 36 L 28 36 C 27.448 36 27 35.552 27 35 C 27 34.448 27.448 34 28 34 L 34 34 L 34 28 C 34 27.448 34.448 27 35 27 z"/></svg>
+                    
+                    <span>
+                        <span class="m-r big">Modifier</span>
+                        puis Prescrire
+                    </span>
+                </button>
+                <button                     
+                    @click="prescriProcessWorksheetChoice(prescriProcessWorksheetsChoice)"
+                    class="prescri-direct">
+                    <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 48 48" width="96px" height="96px"><path d="M 12.5 4 C 10.019 4 8 6.019 8 8.5 L 8 39.5 C 8 41.981 10.019 44 12.5 44 L 25.640625 44 C 24.785625 43.111 24.055516 42.103 23.478516 41 L 12.5 41 C 11.673 41 11 40.327 11 39.5 L 11 8.5 C 11 7.673 11.673 7 12.5 7 L 24 7 L 24 15.5 C 24 17.981 26.019 20 28.5 20 L 37 20 L 37 22.169922 C 38.045 22.331922 39.053 22.606906 40 23.003906 L 40 18.5 C 40 18.0855 39.831922 17.710828 39.560547 17.439453 L 26.560547 4.4394531 C 26.289172 4.1680781 25.9145 4 25.5 4 L 12.5 4 z M 27 9.1210938 L 34.878906 17 L 28.5 17 C 27.673 17 27 16.327 27 15.5 L 27 9.1210938 z M 35 24 C 28.925 24 24 28.925 24 35 C 24 41.075 28.925 46 35 46 C 41.075 46 46 41.075 46 35 C 46 28.925 41.075 24 35 24 z M 35 27 C 35.552 27 36 27.448 36 28 L 36 34 L 42 34 C 42.552 34 43 34.448 43 35 C 43 35.552 42.552 36 42 36 L 36 36 L 36 42 C 36 42.552 35.552 43 35 43 C 34.448 43 34 42.552 34 42 L 34 36 L 28 36 C 27.448 36 27 35.552 27 35 C 27 34.448 27.448 34 28 34 L 34 34 L 34 28 C 34 27.448 34.448 27 35 27 z"/></svg>
+                    <span class="big">Prescrire</span>
+                </button>
+            </div>
+        </transition>
         <transition name="height">
             <div v-if="$parent.myWorksheetTemplatesContent">
                 <div class="primary-actions p-a-w">
@@ -117,6 +140,8 @@
                                 </vs-button>
                                 <template #tooltip> Créer une fiche </template>
                             </vs-tooltip>
+                        </transition>
+                        <transition name="fade" mode="out-in">
                             <div
                                 v-if="$parent.prescriProcess"
                                 class="btn-prescription-action"
@@ -135,9 +160,7 @@
                                         0
                                     "
                                     @click="
-                                        prescriProcessWorksheetChoice({
-                                            id: null,
-                                        })
+                                        prescriProcessWorksheetsChoice.push(null)
                                     "
                                     class="w-100 only-desktop"
                                 >
@@ -171,9 +194,7 @@
                                             0
                                         "
                                         @click="
-                                            prescriProcessWorksheetChoice({
-                                                id: null,
-                                            })
+                                            prescriProcessWorksheetsChoice.push(null)
                                         "
                                         class="btn-action add only-mobile prescri-process-create"
                                         circle
@@ -188,6 +209,20 @@
                                 </vs-tooltip>
                             </div>
                         </transition>
+                         <span>{{ prescriProcessWorksheetsChoice.filter(w=>w==null).length }}</span>
+                            <vs-button
+                            :loading="
+                                btnLoadingWorksheetPrescriProcessRedirect ===
+                                0
+                            "
+                            @click="
+                                prescriProcessWorksheetsChoice.splice(prescriProcessWorksheetsChoice.indexOf(null), 1)
+                            "
+                            circle
+                            floating
+                        >
+                        -
+                        </vs-button>
                     </div>
                     <div class="btn-prescri-main" :class="{'cancel-prescri-process':prescriProcess}">
                         <vs-button
@@ -470,7 +505,11 @@
                                 <transition name="fade">
                                     <div v-if="$parent.prescriProcess" class="worksheet-choice-container">
                                         <vs-checkbox
-                                            :class="{ active: true }"
+                                            :val="worksheet.id"
+                                            v-model="prescriProcessWorksheetsChoice"
+                                            :class="{
+                                                'active-effect': prescriProcess&&!$parent.prescriProcessWorksheetSelected,
+                                            }"
                                         >
                                         </vs-checkbox>
                                     </div>
@@ -928,7 +967,8 @@ export default {
             btnLoadingCopyWorksheet: null,
             btnLoadingCreatePublicAccess: null,
             popUpCopyActive: null,
-            currentOpenWorksheet: null
+            currentOpenWorksheet: null,
+            prescriProcessWorksheetsChoice: []
         };
     },
     computed: {
@@ -961,8 +1001,8 @@ export default {
             this.inputChips.focus();
             this.inputChips.blur();
         },
-        prescriProcessWorksheetChoice(worksheet) {
-            this.$emit("prescriProcessWorksheetChoice", worksheet);
+        prescriProcessWorksheetChoice(worksheets) {
+            this.$emit("prescriProcessWorksheetChoice", worksheets);
         },
         redirectToEditPage(worksheetId) {
             document.location.href = `/doctor/${this.doctor.id}/fiche/edition/${worksheetId}`;
@@ -1513,7 +1553,33 @@ body .btn-create-action .vs-button
         display: flex;
         justify-content: center;
         align-items: center;
-        padding-left: 1.4rem;
+        padding: 0.8rem;
+        background-color: #f2efe8;
+        border-radius: 0 1rem 1rem 0;
+        position: relative;
+        left: -0.375rem;
+        z-index: 1;
+        height: 100.4%;
+
+        .vs-checkbox-content
+        {
+            margin-left: 0.1rem;
+
+            &.active-effect {
+                .vs-checkbox-con {
+                    animation: mymove 2s infinite;
+                }
+            }
+
+            .vs-checkbox-mask::before {
+                border: 1px solid #ffdbcf !important;
+                
+                &:hover 
+                {
+                    border: 1px solid #ffdbcf !important;
+                }
+            }
+        }
     }
 
     .btn-prescription-action,
@@ -1731,8 +1797,8 @@ body .btn-create-action .vs-button
 
         .vs-button
         {
-            width: 1.5rem;
-            height: 1.5rem;
+            width: 1.2rem;
+            height: 1.2rem;
             border-radius: 50%;
             position: relative;
             left: 0.1rem;
@@ -1759,7 +1825,7 @@ body .btn-create-action .vs-button
                 padding: 0.25rem;
                 padding-top: 0;
                 position: relative;
-                left: 0;
+                left: -0.023rem;
                 top: 0.1rem;            
             }
         }
@@ -1864,14 +1930,23 @@ body .btn-create-action .vs-button
             flex-direction: column;
             align-items: center;
             position: relative;
-            // padding-top: 1.2rem !important;
             padding: 1.3rem 0 !important;
             padding-bottom: 0.9rem !important;
-            // @media (min-width: 550px) {
-            // }
             width: 90vw;
             transition: 0.25s;
             overflow: hidden;
+
+            @media (min-width: 1100px) {
+                width: 58.2vw;
+            }
+
+            @media (min-width: 1390px) {
+                width: 60vw;
+            }
+
+            @media (min-width: 1610px) {
+                width: 61.3vw;
+            }
 
             &.prescri-process-choice {
                 width: 82vw!important;
@@ -1957,10 +2032,33 @@ body .btn-create-action .vs-button
                     flex-direction: row;
                     white-space: nowrap;
 
-
                     &:not(.worksheet-details-short)
                     {
                         margin-top: 0.6rem;
+                        position: relative;
+                        
+                        &::after
+                        {
+                            content: '';
+                            display: block;
+                            background: linear-gradient(
+                                90deg,
+                                rgba(255, 255, 255, 0) 0%,
+                                rgba(255, 255, 255, 1) 60%,
+                                rgba(255, 255, 255, 1) 100%,
+                            );
+                            width: 2.2rem;
+                            height: 1.2rem;
+                            position: absolute;
+                            top: -0.2rem;
+                            right: 0.3rem;
+                            z-index: 5;
+
+
+                            @media (min-width: 800px) {
+                                display: none;
+                            }
+                        }
                     }
 
                     > * 
@@ -1992,6 +2090,97 @@ body .btn-create-action .vs-button
                     {
                         margin-bottom: 0.8rem;
                     }
+                }
+            }
+        }
+    }
+
+    .prescri-process-buttons
+    {
+
+        @media (max-width: 799px)
+        {
+            position: fixed;
+            top: auto;
+            left: 0;
+            right: 0;
+            bottom: 14.5rem;
+            z-index: 442;
+            width: 100%;
+            /* min-height: 7.4875rem; */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 5.6125rem;
+
+            button
+            {
+                background-color: #fb8b68;
+                outline: none;
+                appearance: none;
+                border: none;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 50%;
+                color: white;
+                padding: 0.9rem;
+                font-size: 1.4rem;
+                height: 100%;
+                box-shadow: 0.6px 0.4rem 2rem #b7512f;
+
+                &.prescri-direct
+                {
+                    background-color: #fff;
+                    color: #fb8b68;
+                    svg
+                    {
+                        fill: #fb8b68;
+                        top: -0.2rem;
+                    }
+
+                    &:hover, &:focus
+                    {
+                        background-color: #f7f7f7;
+                    }
+                }
+                
+                > span 
+                {
+                    display: flex;
+                    flex-direction: column;
+                }
+
+                span 
+                {
+                    font-weight: bold;
+                    line-height: 0.9;
+
+                    &.big
+                    {
+                        font-size: 2.2rem;
+                    }
+
+                    &.m-r
+                    {
+                        display: inline-block;
+                        margin-right: 0.5rem;
+                    }
+                }
+
+                svg
+                {
+                    fill: #fff;
+                    width: 3.6rem;
+                    height: 4rem;
+                    margin-right: 0.8rem;
+                    position: relative;
+                    top: -0.2rem;
+                }
+
+                &:hover, &:focus
+                {
+                    background-color: #ed7b58;
                 }
             }
         }

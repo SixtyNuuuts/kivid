@@ -23,7 +23,7 @@ class Option
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"video_read", "worksheet_read"})
+     * @Groups({"video_read", "worksheet_doctor_read", "worksheet_read"})
      */
     private $name;
 

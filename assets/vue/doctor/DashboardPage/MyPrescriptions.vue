@@ -45,7 +45,11 @@
                         </div>
                     </div>
                     <div>
-                        <div class="btn-primary-action add" :class="{'btn-create-action':$parent.prescriProcess}">
+                        <div class="btn-primary-action add" 
+                            :class="{'btn-create-action':$parent.prescriProcess,
+                                                        active: prescriProcess,
+                                'active-effect': prescriProcess&&!$parent.prescriProcessPatientSelected,
+                            }">
                             <vs-tooltip>
                                 <vs-button
                                     @click="modalAddPatient = true"
