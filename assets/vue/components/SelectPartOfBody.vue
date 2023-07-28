@@ -1,5 +1,5 @@
 <template>
-    <div v-click-outside="hideSelectBox" class="select-filter">
+    <div v-click-outside="hideSelectBox" class="select-filter" :class="{active:selectBox,partofbodyselected:getPartOfBodySelected}">
         <div v-show="!loadingPartsOfBody">
             <div
                 v-show="getPartOfBodySelected"
@@ -65,7 +65,7 @@
             <input
                 v-show="!getPartOfBodySelected"
                 v-model="filter"
-                @click="selectBox = true"
+                @click="toggleSelectBox"
                 @keyup="selectBoxWithThrottle"
                 id="partofbody-choice-select"
                 :class="{ 'b-r-b-zero': selectBox }"
@@ -240,7 +240,6 @@ export default {
             if (!this.selectBoxThrottle) {
                 this.selectBoxThrottle = true;
                 this.selectBox = true;
-                console.log("selectBox");
 
                 setTimeout(() => {
                     this.selectBoxThrottle = false;

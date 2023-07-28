@@ -78,7 +78,7 @@ class WorksheetController extends AbstractController
     public function getWorksheetsGroup(Doctor $doctor, Request $request): JsonResponse
     {
         $data = json_decode($request->getContent());
-        $worksheets = $this->worksheetRepository->findOneBy(['id' => $data->worksheetsIds]);
+        $worksheets = $this->worksheetRepository->findBy(['id' => $data->worksheetsIds]);
 
         return $this->json(
             $worksheets,
@@ -279,6 +279,83 @@ class WorksheetController extends AbstractController
 
                 return $this->json(
                     "La fiche a bien été créée",
+                    200,
+                );
+            }
+        }
+
+        return $this->json(
+            "Une erreur s'est produite lors de la création de la fiche",
+            500,
+        );
+    }
+
+    /**
+     * @Route("/{id}/create/worksheets", name="app_doctor_create_worksheets", methods={"POST"})
+     * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
+     */
+    public function createWorksheets(Request $request, Doctor $doctor): JsonResponse
+    {
+        if ($request->isMethod('post')) {
+            $data = json_decode($request->getContent());
+
+            if ($this->isCsrfTokenValid('create_worksheet' . $doctor->getId(), $data->_token)) {
+                $patient = $this->patientRepository->findOneBy(['id' => $data->patientId]);
+                
+                foreach ($data->worksheets as $worksheetData) {
+                    $partOfBody = $this->partOfBodyRepository->findOneBy(['id' => $worksheetData->partOfBody->id]);
+
+                    $worksheet = new Worksheet();
+    
+                    $worksheet->setTitle($worksheetData->title)
+                              ->setPartOfBody($partOfBody)
+                              ->setDuration($worksheetData->duration)
+                              ->setPerWeek($worksheetData->perWeek)
+                              ->setPerDay($worksheetData->perDay)
+                              ->setPatient($patient)
+                              ->setDoctor($doctor)
+                    ;
+    
+                    foreach ($worksheetData->exercises as $exerciseData) {
+                        $this->generateExercise($exerciseData, $worksheet);
+                    }
+
+                    // Si en mode prescription : Création du modèle de fiche (identique sans le patient)
+                    if($patient && !$worksheetData->id)
+                    {
+                        $worksheetCopy = clone $worksheet;
+                        $worksheetCopy->setPatient(null);
+                        $this->em->persist($worksheetCopy);
+                    }
+    
+                    // if($patient && !$worksheetData->id)
+                    // {
+                    //     $worksheetCopy = new Worksheet();
+                    //     $worksheetCopy->setTitle($worksheet->getTitle())
+                    //                 ->setPartOfBody($worksheet->getPartOfBody())
+                    //                 ->setDuration($worksheet->getDuration())
+                    //                 ->setPerWeek($worksheet->getPerWeek())
+                    //                 ->setPerDay($worksheet->getPerDay())
+                    //                 ->setPatient(null)
+                    //                 ->setDoctor($worksheet->getDoctor());
+                    
+                    //     foreach ($worksheetData->exercises as $exerciseData) {
+                    //         $this->generateExercise($exerciseData, $worksheetCopy);
+                    //     }
+                        
+                    //     $this->em->persist($worksheetCopy);
+                    // }
+                    $this->em->persist($worksheet);
+                }
+
+                // if ($patient) {
+                //     $this->notificationService->createPrescriptionNotification($worksheet, $patient);
+                // }
+
+                $this->em->flush();
+
+                return $this->json(
+                    sizeof($data->worksheets) > 1? "Les fiches ont bien été créées"  : "La fiche a bien été créée",
                     200,
                 );
             }

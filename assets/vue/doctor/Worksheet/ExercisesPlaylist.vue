@@ -1,7 +1,9 @@
 <template>
     <div>
-        <div class="exercises-list">
-            <div v-if="loading">
+        <div class="exercises-list-container">
+            <!-- <h1>{{ getActiveExercise && 'video' in getActiveExercise ? getActiveExercise.video.name : '' }}</h1> -->
+             <h2>{{ `${getExercises.length} exercice${getExercises.length>1?'s':''}` }}</h2>
+             <div v-if="loading">
                 <div class="exercise loading-block">
                     <div class="loading-gray thumbnail-wrapper"></div>
                     <div class="content">
@@ -60,13 +62,15 @@
                     </div>
                 </div>
             </div>
-            <div v-else>
+            <div v-else class="exercises-list" @touchmove="setActiveExercise">
                 <div
                     v-for="(exercise, i) in getExercises"
                     :key="i"
                     class="exercise"
+                    :class="{ active: exercise.isActive }"
+                    :id="`exercise-${exercise.position}`"
                 >
-                    <div class="thumbnail-wrapper">
+                    <div class="exercise-position">
                         <div v-if="'voir' !== action" class="btns-arrow">
                             <vs-button
                                 v-if="exercise.position != 0"
@@ -76,6 +80,7 @@
                             >
                                 <i class="fas fa-sort-up"></i>
                             </vs-button>
+                            <div>{{ exercise.position + 1 }}</div>
                             <vs-button
                                 v-if="
                                     exercise.position != getExercises.length - 1
@@ -87,6 +92,20 @@
                                 <i class="fas fa-sort-down"></i>
                             </vs-button>
                         </div>
+                    </div>
+                    <div class="input-h2">
+                        <h2>
+                            <span>{{ exercise.video.name }}</span>
+                        </h2>
+                        <button
+                            v-if="'voir' !== action"
+                            class="remove-exercise"
+                            @click="removeExercise(exercise)"
+                        >
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                    <div class="thumbnail-wrapper">
                         <div class="btn-playlist">
                             <vs-button @click="openVideoPlayer(exercise)">
                                 <span> Voir</span>
@@ -100,7 +119,7 @@
                         ></div>
                     </div>
                     <div class="content">
-                        <div class="input-h2">
+                        <!-- <div class="input-h2 input-h2-desktop">
                             <h2>
                                 <span>{{ exercise.video.name }}</span>
                             </h2>
@@ -111,7 +130,7 @@
                             >
                                 <i class="fas fa-trash"></i>
                             </button>
-                        </div>
+                        </div> -->
                         <div v-if="'voir' !== action" class="details">
                             <div class="series-reps">
                                 <div class="series">
@@ -395,6 +414,8 @@ export default {
             modalConfirmRemoveExercise: false,
             removeExerciseDetails: { video: {} },
             btnLoadingValidRemoveExercise: false,
+            visibleItemIndex: 0,
+            setActiveExerciseTimeout: null
         };
     },
     computed: {
@@ -404,11 +425,63 @@ export default {
         getExercises() {
             return f.sortByPosition(this.exercises);
         },
+        getActiveExercise() {
+            return this.getExercises.filter(e=>e.isActive)[0];
+        },
         getTheLastExercise() {
             return this.getExercises[this.getExercises.length - 1];
         },
     },
+    mounted() {
+        this.setActiveExercise();
+        window.addEventListener('resize', this.setActiveExercise);
+    },
+    beforeDestroy() {
+        window.removeEventListener('resize', this.setActiveExercise);
+    },
     methods: {
+        setActiveExercise(e,context=null) {
+            const container = document.querySelector('.exercises-list');
+            const exercises = document.querySelectorAll('.exercise');
+            const containerRect = container.getBoundingClientRect();
+
+            let maxVisibleArea = 0;
+            let maxVisibleIndex = 0;
+
+            exercises.forEach((exercise, index) => {
+                const exerciseRect = exercise.getBoundingClientRect();
+                const visibleArea = this.calculateVisibleArea(containerRect, exerciseRect);
+                if (visibleArea > maxVisibleArea) {
+                    maxVisibleArea = visibleArea;
+                    maxVisibleIndex = index;
+                }
+            });
+
+            this.getExercises.forEach((exercice, index) => {
+                exercice.isActive = index === maxVisibleIndex;
+            });
+
+            clearTimeout(this.setActiveExerciseTimeout);
+            if(!context)
+            {
+                this.setActiveExerciseTimeout = setTimeout(() => {
+                    this.setActiveExercise(e,'secondhit')
+                }, 1000);
+            }
+
+            this.visibleItemIndex = maxVisibleIndex;
+        },
+        calculateVisibleArea(containerRect, itemRect) {
+            const intersectionLeft = Math.max(containerRect.left, itemRect.left);
+            const intersectionRight = Math.min(containerRect.right, itemRect.right);
+            const intersectionWidth = intersectionRight - intersectionLeft;
+
+            if (intersectionWidth <= 0) {
+                return 0;
+            }
+
+            return (intersectionWidth / itemRect.width) * 100;
+        },
         checkValue(bool, exercise, type) {
             if (false === bool) {
                 exercise[type] = "";
@@ -469,6 +542,8 @@ export default {
                 if (prevExercise) {
                     prevExercise.position = oldPosition;
                 }
+
+                this.scrollToExercise(exercise);
             }
         },
         downPosition(exercise) {
@@ -484,6 +559,20 @@ export default {
                 if (nextExercise) {
                     nextExercise.position = oldPosition;
                 }
+
+                this.scrollToExercise(exercise);
+            }
+        },
+        scrollToExercise(exercise) {
+            const container = document.querySelector('.exercises-list');
+            const exerciseCible = document.getElementById(`exercise-${exercise.position}`);
+            if (exerciseCible&&container) 
+            {
+                console.log(exerciseCible,container);
+                container.scrollTo({
+                    left: exerciseCible.offsetLeft,
+                    behavior: 'smooth',
+                });
             }
         },
         removeExercise(exercise) {
@@ -515,8 +604,6 @@ export default {
                         exerciseId: this.removeExerciseDetails.id,
                     })
                     .then((response) => {
-                        console.log(response.data);
-
                         this.exercises.splice(
                             this.exercises.indexOf(this.removeExerciseDetails),
                             1
@@ -571,8 +658,14 @@ export default {
 <style lang="scss">
 @import "../../../scss/variables";
 
-.exercises-list {
+.exercises-list-container {
     width: 100%;
+
+    .exercises-list {
+        overflow-x: scroll;
+        display: flex;
+
+    }
 
     .vs-input-parent {
         width: 100%;
@@ -609,7 +702,21 @@ export default {
         flex-direction: column;
         margin-bottom: 1.5rem;
         padding-bottom: 1.5rem;
+        flex: none;
+        width: 31rem;
+        margin-left: 2.5rem;
+        background: #fff;
+        border-radius: 1rem;
+        box-shadow: 0.6px 0.4rem 0.4rem rgba(140, 136, 130, 0.13);
+        padding-top: 1.5rem !important;
+        padding: 1.7rem;
+        padding-bottom: 1.2rem;
 
+        &.active
+        {
+            background-color: red;
+        }
+        
         @media (min-width: 768px) {
             margin-bottom: 2rem;
             padding-bottom: 2rem;
@@ -753,6 +860,102 @@ export default {
             }
         }
 
+        .input-h2 {
+            margin-bottom: 2rem;
+            position: relative;
+
+            // &.input-h2-mobile
+            // {
+            //     @media (min-width: 992px) {
+            //         display: none;
+            //     }
+            // }
+
+            // &.input-h2-desktop
+            // {
+            //     display: none;
+
+            //     @media (min-width: 992px) {
+            //         display: block;
+            //     }
+            // }
+
+            h2 {
+                position: relative;
+                margin-bottom: 0.3rem;
+                margin-left: 2rem;
+                max-width: 80%;
+
+                @media (min-width: 992px) {
+                    max-width: 18vw;
+                }
+
+                @media (min-width: 1040px) {
+                    max-width: 22vw;
+                }
+
+                @media (min-width: 1100px) {
+                    max-width: 27vw;
+                }
+
+                @media (min-width: 1370px) {
+                    max-width: 41vw;
+                }
+
+                @media (min-width: 1450px) {
+                    max-width: 43vw;
+                }
+
+                span {
+                    display: block;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+
+                &::before {
+                    content: "";
+                    display: block;
+                    width: 0.3rem;
+                    height: 2.2rem;
+                    background: $orange;
+                    position: absolute;
+                    left: -2rem;
+                    top: 0.2rem;
+                    border-radius: 0.3rem;
+                }
+            }
+
+            .remove-exercise {
+                position: absolute;
+                top: -0.2rem;
+                right: 0.6rem;
+                width: 3rem;
+                height: 3rem;
+                border-radius: 50%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                border: 1px solid #d6ccb9;
+                color: #d6ccb9;
+                cursor: pointer;
+                transition: all 0.2s;
+                background: transparent;
+
+                i {
+                    font-size: 1.2rem;
+                    position: relative;
+                    left: 0;
+                }
+
+                &:hover {
+                    border: 1px solid $gray-dark;
+                    color: $gray-dark;
+                }
+            }
+        }
+
+
         .content {
             flex-grow: 1;
             height: 100%;
@@ -763,85 +966,6 @@ export default {
 
             @media (min-width: 992px) {
                 width: 50%;
-            }
-
-            .input-h2 {
-                margin-bottom: 2rem;
-                position: relative;
-
-                h2 {
-                    position: relative;
-                    margin-bottom: 0.3rem;
-                    margin-left: 2rem;
-                    max-width: 80%;
-
-                    @media (min-width: 992px) {
-                        max-width: 18vw;
-                    }
-
-                    @media (min-width: 1040px) {
-                        max-width: 22vw;
-                    }
-
-                    @media (min-width: 1100px) {
-                        max-width: 27vw;
-                    }
-
-                    @media (min-width: 1370px) {
-                        max-width: 41vw;
-                    }
-
-                    @media (min-width: 1450px) {
-                        max-width: 43vw;
-                    }
-
-                    span {
-                        display: block;
-                        white-space: nowrap;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                    }
-
-                    &::before {
-                        content: "";
-                        display: block;
-                        width: 0.3rem;
-                        height: 2.2rem;
-                        background: $orange;
-                        position: absolute;
-                        left: -2rem;
-                        top: 0.2rem;
-                        border-radius: 0.3rem;
-                    }
-                }
-
-                .remove-exercise {
-                    position: absolute;
-                    top: -0.2rem;
-                    right: 0.6rem;
-                    width: 3rem;
-                    height: 3rem;
-                    border-radius: 50%;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    border: 1px solid #d6ccb9;
-                    color: #d6ccb9;
-                    cursor: pointer;
-                    transition: all 0.2s;
-                    background: transparent;
-
-                    i {
-                        font-size: 1.2rem;
-                        position: relative;
-                        left: 0;
-                    }
-
-                    &:hover {
-                        border: 1px solid $gray-dark;
-                        color: $gray-dark;
-                    }
-                }
             }
 
             .details {

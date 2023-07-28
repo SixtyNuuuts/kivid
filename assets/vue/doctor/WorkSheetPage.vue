@@ -9,10 +9,10 @@
         </div>
         <div v-else>
             <div v-if="patient" class="prescri-for-patient-content">
-                <i
+                <!-- <i
                     class="kiv-arrow-left icon-31"
                     @click="rederictToDashboard()"
-                ></i>
+                ></i> -->
                 <div class="prescri-for-patient">
                     <div class="label">prescription <span>pour</span></div>
                     <vs-avatar size="26" class="user-avatar" circle>
@@ -36,44 +36,56 @@
               v-for="(worksheet, i) in getWorksheets"
               :key="i"
             >
-                <div class="tab-worksheet" @click="toggleCurrentOpenWorksheet(worksheet.id)">
+                <div v-if="getWorksheets.length > 1" class="tab-worksheet-header" @click="toggleCurrentOpenWorksheet(worksheet.id)">
                     <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" width="24px" height="24px">    <path d="M19,3H5C3.895,3,3,3.895,3,5v14c0,1.105,0.895,2,2,2h10l6-6V5C21,3.895,20.105,3,19,3z M19,14h-5v5H5V5h14V14z"/></svg>
                     {{ worksheet.title == "" ? 'Création de fiche' : worksheet.title }}
                 </div>
                 <transition name="height">
-                    <div v-show="currentOpenWorksheet == worksheet.id">
+                    <div class="tab-worksheet-content" v-show="currentOpenWorksheet == worksheet.id">
                         <header>
                             <div>
-                                <div v-if="'voir' === action" class="title-view">
-                                    <div class="title">
-                                        <i
+                                <div>
+                                    <div v-if="'voir' === action" class="title-view">
+                                        <div class="title">
+                                            <!-- <i
+                                                class="kiv-arrow-left icon-31"
+                                                :class="{ hidden: patient }"
+                                                @click="rederictToDashboard()"
+                                            ></i> -->
+                                            <h1>{{ worksheet.title }}</h1>
+                                        </div>
+                                        <TagPartOfBody
+                                            v-if="worksheet.partOfBody"
+                                            :partOfBody="worksheet.partOfBody"
+                                        />
+                                    </div>
+                                    <div v-else class="title">
+                                        <!-- <i
                                             class="kiv-arrow-left icon-31"
                                             :class="{ hidden: patient }"
                                             @click="rederictToDashboard()"
-                                        ></i>
-                                        <h1>{{ worksheet.title }}</h1>
+                                        ></i> -->
+                                        <vs-input
+                                            v-model="worksheet.title"
+                                            label-placeholder="Titre de la fiche"
+                                            type="text"
+                                            @keyup="worksheet.titleIsEmptyMessage = null"
+                                        >
+                                            <template v-if="worksheet.titleIsEmptyMessage" #message-danger>
+                                                {{ worksheet.titleIsEmptyMessage }}
+                                            </template>
+                                        </vs-input>
                                     </div>
-                                    <TagPartOfBody
-                                        v-if="worksheet.partOfBody"
-                                        :partOfBody="worksheet.partOfBody"
-                                    />
-                                </div>
-                                <div v-else class="title">
-                                    <i
-                                        class="kiv-arrow-left icon-31"
-                                        :class="{ hidden: patient }"
-                                        @click="rederictToDashboard()"
-                                    ></i>
-                                    <vs-input
-                                        v-model="worksheet.title"
-                                        label-placeholder="Titre de la fiche"
-                                        type="text"
-                                        @keyup="worksheet.titleIsEmptyMessage = null"
-                                    >
-                                        <template v-if="worksheet.titleIsEmptyMessage" #message-danger>
-                                            {{ worksheet.titleIsEmptyMessage }}
-                                        </template>
-                                    </vs-input>
+                                    <div class="select-filter-block">
+                                        <SelectPartOfBody
+                                            :partOfBody="worksheet.partOfBody"
+                                            @partOfBodySelected="setPartOfBody($event, worksheet)"
+                                            @partOfBodyReset="resetPoB($event, worksheet)"
+                                        />
+                                        <div v-if="worksheet.partOfBodyIsEmptyMessage" class="error-mess">
+                                            {{ worksheet.partOfBodyIsEmptyMessage }}
+                                        </div>
+                                    </div>
                                 </div>
                                 <div v-if="'voir' !== action" class="worksheet-params">
                                     <div
@@ -154,16 +166,6 @@
                                                 max="52"
                                             >
                                             </vs-input>
-                                        </div>
-                                    </div>
-                                    <div class="select-filter-block">
-                                        <SelectPartOfBody
-                                            :partOfBody="worksheet.partOfBody"
-                                            @partOfBodySelected="setPartOfBody($event, worksheet)"
-                                            @partOfBodyReset="resetPoB($event, worksheet)"
-                                        />
-                                        <div v-if="worksheet.partOfBodyIsEmptyMessage" class="error-mess">
-                                            {{ worksheet.partOfBodyIsEmptyMessage }}
                                         </div>
                                     </div>
                                 </div>
@@ -275,7 +277,7 @@ export default {
             },
             btnLoadingValidEditWorksheet: false,
             btnLoadingValidCreateWorksheet: false,
-            currentOpenWorksheet: null
+            currentOpenWorksheet: null,
         };
     },
     computed: {
@@ -337,12 +339,12 @@ export default {
             }
         },
         checkIfEmpty(worksheet) {
-            let check = true;
+            let check = false;
 
             if (!worksheet.partOfBody) {
                 worksheet.partOfBodyIsEmptyMessage =
                     "Vous devez choisir une partie du corps";
-                check = false;
+                check = true;
                 f.openErrorNotification(
                     "Erreur",
                     worksheet.partOfBodyIsEmptyMessage + " pour la fiche."
@@ -352,12 +354,12 @@ export default {
             if (worksheet.title === "" || worksheet.title === null) {
                 worksheet.titleIsEmptyMessage =
                     "Vous devez entrer un titre pour la fiche.";
-                check = false;
+                check = true;
                 f.openErrorNotification("Erreur", worksheet.titleIsEmptyMessage);
             }
 
             if (!worksheet.exercises.length) {
-                check = false;
+                check = true;
                 f.openErrorNotification(
                     "Erreur",
                     "La fiche ne peut pas être vide, vous devez ajouter des vidéos."
@@ -366,10 +368,13 @@ export default {
 
             return check;
         },
-        validEdit(worksheet) {
+        validEdit() {
             this.btnLoadingValidEditWorksheet = true;
 
-            const isNotEmpty = this.checkIfEmpty(worksheet);
+            const 
+                worksheet = this.worksheets[0],
+                isNotEmpty = !this.checkIfEmpty(worksheet)
+            ;
 
             if (isNotEmpty) {
                 this.axios
@@ -420,109 +425,60 @@ export default {
                 this.btnLoadingValidEditWorksheet = false;
             }
         },
-        validCreate(worksheets) {
+        validCreate() {
             this.btnLoadingValidCreateWorksheet = true;
 
-            const isNotEmpty = this.checkIfEmpty(worksheet);
+            let allNotEmpty = true;
+            this.worksheets.forEach(worksheet => {
+                if (this.checkIfEmpty(worksheet)) {
+                    allNotEmpty = false;
+                }
+            }); 
 
-            // if (isNotEmpty) {
-            //     this.axios
-            //         .post(`/doctor/${this.doctor.id}/create/worksheet`, {
-            //             _token: this.csrfTokenCreateWorksheet,
-            //             worksheetId: this.worksheet.id,
-            //             patientId: this.patient ? this.patient.id : null,
-            //             title: worksheet.title,
-            //             partOfBodyId: worksheet.partOfBody.id,
-            //             duration: worksheet.duration,
-            //             perWeek: worksheet.perWeek,
-            //             perDay: worksheet.perDay,
-            //             exercises: worksheet.exercises,
-            //         })
-            //         .then((response) => {
-            //             if (this.patient) {
-            //                 if (!this.worksheet.id) {
-            //                     // création du modèle de fiche (identique sans le patient)
-            //                     this.axios
-            //                         .post(
-            //                             `/doctor/${this.doctor.id}/create/worksheet`,
-            //                             {
-            //                                 _token: this
-            //                                     .csrfTokenCreateWorksheet,
-            //                                 worksheetId: this.worksheet.id,
-            //                                 patientId: null,
-            //                                 title: this.worksheet.title,
-            //                                 partOfBodyId:
-            //                                     this.worksheet.partOfBody.id,
-            //                                 duration: this.worksheet.duration,
-            //                                 perWeek: this.worksheet.perWeek,
-            //                                 perDay: this.worksheet.perDay,
-            //                                 exercises: this.exercises,
-            //                             }
-            //                         )
-            //                         .then((response) => {
-            //                             f.openSuccessNotification(
-            //                                 "Création de la prescription",
-            //                                 `La fiche <strong> ${
-            //                                     this.worksheet.title
-            //                                 }</strong> 
-            //                                 a été prescrite à <strong>
-            //                                 ${this.getUserName(
-            //                                     this.patient
-            //                                 )}</strong>`
-            //                             );
-            //                             this.btnLoadingValidCreateWorksheet = false;
-            //                             setTimeout(() => {
-            //                                 document.location.href = `/doctor/${this.doctor.id}/dashboard`;
-            //                             }, 2000);
-            //                         })
-            //                         .catch((error) => {
-            //                             const errorMess =
-            //                                 "object" ===
-            //                                 typeof error.response.data
-            //                                     ? error.response.data.detail
-            //                                     : error.response.data;
-            //                             this.btnLoadingValidCreateWorksheet = false;
-            //                             f.openErrorNotification(
-            //                                 "Erreur",
-            //                                 errorMess
-            //                             );
-            //                         });
-            //                 } else {
-            //                     f.openSuccessNotification(
-            //                         "Création de la prescription",
-            //                         `La fiche <strong> ${
-            //                             this.worksheet.title
-            //                         }</strong> 
-            //                         a été prescrite à <strong>
-            //                         ${this.getUserName(this.patient)}</strong>`
-            //                     );
-            //                     this.btnLoadingValidCreateWorksheet = false;
-            //                     setTimeout(() => {
-            //                         document.location.href = `/doctor/${this.doctor.id}/dashboard`;
-            //                     }, 2000);
-            //                 }
-            //             } else {
-            //                 f.openSuccessNotification(
-            //                     "Création de la fiche",
-            //                     response.data
-            //                 );
-            //                 this.btnLoadingValidCreateWorksheet = false;
-            //                 setTimeout(() => {
-            //                     document.location.href = `/doctor/${this.doctor.id}/dashboard/?tab=ws`;
-            //                 }, 2000);
-            //             }
-            //         })
-            //         .catch((error) => {
-            //             const errorMess =
-            //                 "object" === typeof error.response.data
-            //                     ? error.response.data.detail
-            //                     : error.response.data;
-            //             this.btnLoadingValidCreateWorksheet = false;
-            //             f.openErrorNotification("Erreur", errorMess);
-            //         });
-            // } else {
-            //     this.btnLoadingValidCreateWorksheet = false;
-            // }
+            if (allNotEmpty) {
+                this.axios
+                    .post(`/doctor/${this.doctor.id}/create/worksheets`, {
+                        _token: this.csrfTokenCreateWorksheet,
+                        patientId: this.patient ? this.patient.id : null,
+                        worksheets: this.worksheets,
+                    })
+                    .then((response) => {
+                        if (this.patient) {
+                            f.openSuccessNotification(
+                                "Création de la prescription",
+                                // `La fiche <strong> ${
+                                //     this.worksheet.title
+                                // }</strong> 
+                                // a été prescrite à <strong>
+                                // ${this.getUserName(this.patient)}</strong>`
+                                response.data
+                            );
+                            this.btnLoadingValidCreateWorksheet = false;
+                            setTimeout(() => {
+                                document.location.href = `/doctor/${this.doctor.id}/dashboard`;
+                            }, 2000);
+                        } else {
+                            f.openSuccessNotification(
+                                "Création de la fiche",
+                                response.data
+                            );
+                            this.btnLoadingValidCreateWorksheet = false;
+                            setTimeout(() => {
+                                document.location.href = `/doctor/${this.doctor.id}/dashboard/?tab=ws`;
+                            }, 2000);
+                        }
+                    })
+                    .catch((error) => {
+                        const errorMess =
+                            "object" === typeof error.response.data
+                                ? error.response.data.detail
+                                : error.response.data;
+                        this.btnLoadingValidCreateWorksheet = false;
+                        f.openErrorNotification("Erreur", errorMess);
+                    });
+            } else {
+                this.btnLoadingValidCreateWorksheet = false;
+            }
         },
         getUserName(user) {
             return f.getUserName(user);
@@ -543,7 +499,10 @@ export default {
         this.csrfTokenSaveFFMKRRequestToken= data.csrfTokenSaveFFMKRRequestToken;
 
         if(!Array.isArray(this.worksheetsIds))
+        {
+            this.currentOpenWorksheet = this.worksheetsIds;
             this.worksheetsIds = [this.worksheetsIds];
+        }
             
         const 
             worksheetsIdsFiltered = this.worksheetsIds.filter(wId=>(wId!=0&&wId!=null)),
@@ -580,6 +539,7 @@ export default {
                                         : false,
                                     tempoActive: exercise.tempo ? true : false,
                                     holdActive: exercise.hold ? true : false,
+                                    isActive: false
                                 };
                             });
 
@@ -651,7 +611,7 @@ export default {
 #worksheet {
     padding: 0rem 0;
 
-    .tab-worksheet
+    .tab-worksheet-header
     {
         padding: 1rem;
         background-color: #e7dfcd;
@@ -666,6 +626,29 @@ export default {
             height: 2rem;
             fill: #fff;
             margin-right: 0.5rem;
+        }
+    }
+
+    .tab-worksheet-content
+    {
+        header
+        {
+            padding: 1.5rem;
+            padding-top: 2rem;
+        }
+
+        main
+        {
+            #exercises-playlist
+            {
+                .exercises-list-container
+                {
+                    > *:not(.exercises-list)
+                    {
+                        padding: 1.5rem;
+                    }
+                }
+            }
         }
     }
 
@@ -785,17 +768,25 @@ export default {
             align-items: flex-start;
             flex-direction: column;
 
+            > div:first-child
+            {
+                width: 100%;
+                display: flex;
+            }
+
             .vs-input-parent {
                 width: 100%;
 
                 .vs-input-content {
                     .vs-input {
                         background: $white;
-                        padding-bottom: 1.5rem;
+                        padding: 1.2rem 1.7rem;
+                        padding-bottom: 1.05rem;
 
                         &:focus,
                         &:hover {
                             background: $white;
+
                         }
                     }
 
@@ -869,7 +860,7 @@ export default {
             .title {
                 display: flex;
                 align-items: center;
-                margin-bottom: 3rem;
+                margin-bottom: 2.2rem;
                 position: relative;
                 top: 0.3rem;
                 width: 100%;
@@ -881,7 +872,7 @@ export default {
 
                 .vs-input-content {
                     .vs-input {
-                        font-size: 2.9rem;
+                        font-size: 2.1rem;
                         font-weight: 700;
 
                         @media (min-width: 768px) {
@@ -917,7 +908,7 @@ export default {
                 .worksheet-details {
                     width: 100%;
                     display: flex;
-                    flex-direction: column;
+                    flex-direction: row;
                     align-items: center;
                     justify-content: space-between;
                     position: relative;
@@ -1024,27 +1015,151 @@ export default {
                             }
                         }
                     }
+                } 
+            }
+
+            .select-filter
+            {
+                
+                > div:first-child
+                {
+                    transition: 0.25s;
+                    width: 14.0625rem;
+                    position: relative;
+                    top: 0.3rem;
+                    margin-left: 1rem;
                 }
 
-                .select-filter-block {
-                    max-width: initial;
-                    margin-left: 0;
-                    width: 100%;
+                .part-of-body 
+                {
+                    margin-top: 0;
+                    background: #fff;
+                }
 
-                    @media (min-width: 768px) {
-                        max-width: 23rem;
-                        margin-left: 2.5rem;
+                #partofbody-choice-select
+                {
+                    position: relative;
+                    top: -0.02rem;
+                }
+
+                &:not(.active)
+                {
+                    transition: 0.25s;
+
+                    > div:first-child
+                    {
+                        transition: 0.25s;
+                        width: 5.4rem;
+                        position: relative;
                     }
 
-                    .part-of-body {
-                        margin-top: 0;
-                        margin-left: 0;
+                    &:not(.partofbodyselected)
+                    {
+                        > div:first-child
+                        {
+                            transition: 0.25s;
+                            width: 5.4rem;
+                            position: relative;
+
+                            &::after
+                            {
+                                content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48' width='40px' height='40px'%3E%3Cpath fill='%23ffb74d' d='M31,46c-0.611-0.306-1.316-0.517-2-0.664V36h-4v3.02c0,0.27,0.01,0.55,0.02,0.83	c0.05,0.71,0.18,1.12,0.37,2.09l0.07,0.35L26,45c0,0-1,1-1,2s0.448,1,1,1h7C33,46.343,33,47,31,46z'/%3E%3Cpath fill='%23ffb74d' d='M19,45.336c-0.684,0.147-1.389,0.359-2,0.664c-2,1-2,0.343-2,2h7c0.552,0,1,0,1-1s-1-2-1-2l0.54-2.71	l0.07-0.35c0.02-0.1,0.04-0.19,0.06-0.27c0.17-0.8,0.27-1.21,0.31-1.87C23,39.54,23,39.28,23,39.02V36h-4V45.336z'/%3E%3Cpath fill='%23ff9800' d='M23,36v3.02c0,0.26,0,0.52-0.02,0.78c-0.04,0.66-0.14,1.07-0.31,1.87c-0.02,0.08-0.04,0.17-0.06,0.27	l-0.07,0.35C22,40,22,39,21,39c-1.1,0-1.78,0.08-2-1v-2H23z'/%3E%3Cpath fill='%23ff9800' d='M29,36v2c-0.22,1.08-0.9,1-2,1c-1,0-1,1-1.54,3.29l-0.07-0.35c-0.19-0.97-0.32-1.38-0.37-2.09	C25.01,39.57,25,39.29,25,39.02V36H29z'/%3E%3Cpath fill='%23ffb74d' d='M37.504,26.687l-1.647-1.306c-0.052-0.041-0.112-0.065-0.175-0.08l-1.74-5.221l-1.238-4.949	C32.961,14.587,33,13.834,33,13c0-1.8-1.25-3-2.5-3c-0.167,0-0.334,0.023-0.5,0.047V10l-4-1h-4l-4,1v0.047	C17.834,10.023,17.667,10,17.5,10c-1.25,0-2.5,1.2-2.5,3c0,0.834,0.039,1.587,0.296,2.131l-1.238,4.949l-1.74,5.221	c-0.063,0.014-0.124,0.039-0.175,0.08l-1.647,1.306c-0.203,0.161-0.242,0.473-0.087,0.697c0.11,0.159,0.288,0.23,0.456,0.2	c0.068-0.012,0.135-0.041,0.194-0.088l0.55-0.436c-0.838,2.579-0.631,3.072,0.232,3.398c0.879,0.332,2.168,1.649,3.294-2.612	c0.172-0.654,0.178-1.232,0.068-1.713l1.719-5.159c0.012-0.036,0.023-0.073,0.032-0.11l1.247-4.986l0.668,2.902l0.01,0.05l0.29,1.05	l0.35,1.32c0.31,1.17,0.28,2.41-0.11,3.57c-0.27,0.82-0.46,1.66-0.57,2.52l-0.31,2.55C18.18,31.93,18.59,33.92,19,36	c0.03,0.13,0.05,0.27,0.08,0.4C19.26,37.29,20,38,20.9,38c1.19,0,1.99-0.81,2.1-2l1-10l1,10c0.11,1.19,0.91,2,2.1,2	c0.9,0,1.64-0.71,1.82-1.6c0.03-0.13,0.05-0.27,0.08-0.4c0.41-2.08,0.82-4.07,0.47-6.16l-0.31-2.55c-0.11-0.86-0.3-1.7-0.57-2.52	l-0.02-0.06c-0.37-1.12-0.42-2.32-0.13-3.46l0.37-1.45c0-0.01,0-0.01,0-0.01L29,19.02l0.06-0.25l0.73-2.928l1.255,5.021	c0.009,0.037,0.02,0.074,0.032,0.11l1.719,5.159c-0.11,0.481-0.104,1.059,0.068,1.713c1.126,4.261,2.415,2.944,3.294,2.612	c0.863-0.326,1.07-0.819,0.232-3.398l0.55,0.436c0.059,0.047,0.126,0.076,0.194,0.088c0.168,0.03,0.346-0.041,0.456-0.2	C37.746,27.16,37.707,26.848,37.504,26.687z'/%3E%3Cpath fill='%23ff9800' d='M22,5h4v4c0,1.105-0.895,2-2,2l0,0c-1.105,0-2-0.895-2-2V5z'/%3E%3Cpath fill='%23ffb74d' d='M21,4c0-3,1-4,3-4s3,1,3,4c0,1.5-1,5-3,5S21,5.5,21,4z'/%3E%3Cpath fill='%23ff9800' d='M23,17l-1.09,0.27c-0.94,0.24-2.22,0.81-3.03,1.56l-0.01-0.05l-0.73-3.17L18,15l1.41,1.41	C19.79,16.79,20.3,17,20.83,17H23z'/%3E%3Cpath fill='%23ff9800' d='M30,15l-0.17,0.68l-0.77,3.09L29,19.02c-0.91-0.7-2.34-1.61-2.91-1.75L25,17h2.17	c0.53,0,1.04-0.21,1.42-0.59L30,15z'/%3E%3C/svg%3E");
+                                position: absolute;
+                                top: 0.3rem;
+                                left: 0.7rem;
+                                pointer-events: none;
+                                user-select: none;
+                            }
+                        }                        
                     }
 
-                    .error-mess {
-                        color: $red;
-                        margin-top: 0.7rem;
-                        font-size: 1.2rem;
+                    #partofbody-choice-select,
+                    .partofbody-selected
+                    {
+                        transition: 0.25s;
+                        padding: 1rem!important;
+                        width: 5.5rem;
+                        height: 5.4rem;
+                        border-radius: 50%;
+                        min-height: initial;
+                        position: relative;
+                        top: -0.3rem;
+
+                        &::placeholder
+                        {
+                            transition: 0.25s;
+                            color: #fff;
+                            opacity: 0;
+                        }
+
+                        .text
+                        {
+                            display: none;
+                        }
+
+                        img {
+                            margin-right: 0;
+
+                            &.icon-pied {
+                                top: -0.1rem;
+                                height: 2.4rem;
+                            }
+
+                            &.icon-jambe {
+                                top: 0rem;
+                                height: 2.75rem;
+                            }
+
+                            &.icon-bras {
+                                top: -0.1rem;
+                                height: 2.6rem;
+                            }
+
+                            &.icon-main {
+                                top: -0.1rem;
+                                height: 2.6rem;
+                            }
+
+                            &.icon-epaule {
+                                top: -0.1rem;
+                                height: 2.6rem;
+                            }
+
+                            &.icon-dos {
+                                top: -0.1rem;
+                                height: 2.6rem;
+                            }
+
+                            &.icon-cervicales {
+                                top: -0.1rem;
+                                height: 2.6rem;
+                            }
+
+                            &.icon-lombaires {
+                                top: 0rem;
+                                height: 2.7rem;
+                            }
+
+                            &.icon-thoracique {
+                                top: -0.1rem;
+                                height: 2.6rem;
+                            }
+                        }
+
+                    }
+
+                    .part-of-body 
+                    {
+                        transition: 0.25s;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                    }
+
+                    .arrow-toggle-box
+                    {
+                        transition: 0.25s;
+                        opacity: 0;
                     }
                 }
             }
