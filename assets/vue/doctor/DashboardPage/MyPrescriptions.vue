@@ -16,7 +16,7 @@
             <div @click="activeTab(1)">
                 <h2><span>Mes Patients</span></h2>
             </div>
-            <div class="inactive" @click="activeTab(2)">
+            <div class="inactive" :class="{disabled:this.$parent.prescriProcess&&this.$parent.prescriProcessPatient}" @click="activeTab(2)">
                 <h2><span>Mes fiches</span></h2>
             </div>
         </div>
@@ -996,6 +996,12 @@ export default {
 
 <style lang="scss">
 @import "../../../scss/variables";
+#my-worksheets.s-prescriptions .tabs > div.inactive.disabled
+{
+    opacity: 0.2;
+    pointer-events: none;
+    transition: 0.25s;
+}
 
 @media (max-width: 580px) {
     .vs-dialog-content {

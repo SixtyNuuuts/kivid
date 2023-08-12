@@ -14,11 +14,11 @@
             :class="{ 'doctor-view': doctorView }"
         >
             <div>
-                <i
+                <!-- <i
                     v-if="doctorView"
                     class="kiv-arrow-left icon-31"
                     @click="rederictToDashboard()"
-                ></i>
+                ></i> -->
                 <h1>
                     <span v-if="!doctorView">
                         Bienvenue sur votre dashboard !
@@ -29,28 +29,9 @@
                             />
                         </i>
                     </span>
-                    <span v-if="doctorView">
-                        Dashboard de
-                        <span v-if="patient.firstname || patient.lastname">
-                            {{ patient.firstname }}
-                            {{ patient.lastname }}
-                        </span>
-                        <span v-else>
-                            {{ patient.email }}
-                        </span>
-                    </span>
-                </h1>
-            </div>
-            <main>
-                <section
-                    v-if="doctorView"
-                    class="kiv-block mobile-view"
-                    id="patient"
-                >
-                    <h2>Le patient</h2>
-                    <div v-if="myDoctorContent" class="patient-details">
-                        <div class="patient-avatar">
-                            <vs-avatar class="avatar" circle size="116">
+                    <span v-if="doctorView" class="h1-doctor-view">
+                        <span class="patient-avatar">
+                            <vs-avatar class="avatar" circle size="65">
                                 <img
                                     :src="
                                         patient.avatarUrl
@@ -60,19 +41,21 @@
                                     :alt="`Avatar de ${patient.firstname} ${patient.lastname}`"
                                 />
                             </vs-avatar>
-                        </div>
-                        <div class="patient-infos">
-                            <div>
-                                <p class="name">
-                                    {{ getUserName(patient) }}
-                                </p>
-                                <p v-if="patient.birthdate" class="birthdate">
-                                    {{ getAge(patient.birthdate) }} ans
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
+                        </span>
+                        <span>
+                            Dashboard de
+                            <span class="patient-name" v-if="patient.firstname || patient.lastname">
+                                {{ patient.firstname }}
+                                {{ patient.lastname }}
+                            </span>
+                            <span class="patient-name" v-else>
+                                {{ patient.email }}
+                            </span>
+                        </span>
+                    </span>
+                </h1>
+            </div>
+            <main>
                 <MyScores
                     :patient="patient"
                     :doctorView="doctorView"
@@ -85,6 +68,7 @@
                     :doctor="currentUser"
                     :patientWorksheets="patientWorksheets"
                     :loadingPatientWorksheets="loadingPatientWorksheets"
+                    :csrfTokenRemoveWorksheet="csrfTokenRemoveWorksheet"
                 />
                 <aside>
                     <MyDashboardNotifications
@@ -327,6 +311,7 @@ export default {
             csrfTokenSelectDoctor: null,
             csrfTokenAcceptDoctor: null,
             csrfTokenDeclineDoctor: null,
+            csrfTokenRemoveWorksheet: null,
             myDBNotificationsContent: true,
             myScoresContent: true,
             myDoctorContent: true,
@@ -477,6 +462,7 @@ export default {
         this.csrfTokenAcceptDoctor = data.csrfTokenAcceptDoctor;
         this.csrfTokenContact = data.csrfTokenContact;
         this.csrfTokenDeclineDoctor = data.csrfTokenDeclineDoctor;
+        this.csrfTokenRemoveWorksheet = data.csrfTokenRemoveWorksheet;
         this.csrfTokenSelectDoctor = data.csrfTokenSelectDoctor;
         this.doctorSelected = this.patient.doctor;
 
@@ -622,8 +608,66 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@media (max-width: 991px) {
+    body .container 
+    {
+        padding: 2rem;
+    }
+}
+
 #dashboard.db-patient {
     &.doctor-view {
+        h1 {
+            margin-bottom: 1rem !important;
+            .h1-doctor-view
+            {
+                font-size: 2.7rem;
+                display: flex;
+                align-items: center;
+
+                > *:not(:last-child) {
+                    margin-right: 1.5rem;
+                }
+
+                > span:not(.patient-avatar)
+                {
+                    display: flex;
+                    flex-direction: column;
+                    margin-top: 0.5rem;
+                }
+
+                .patient-name
+                {
+                    white-space: nowrap;
+                    display: inline-block;
+                    max-width: 72vw;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    // font-size: 3.2rem;
+                }
+
+                @media (min-width: 992px) {
+                    .patient-avatar {
+                        display: none;
+                    }
+
+                    > span:not(.patient-avatar)
+                    {
+                        display: flex;
+                        flex-direction: row;
+                        margin-bottom: 1.5rem;
+                        margin-left: 0.5rem;
+                        font-size: 3.2rem;
+
+                        .patient-name
+                        {
+                            max-width: initial;
+                            margin-left: 0.75rem;
+                        }
+                    }
+                }
+            }
+        }
         > div:first-child {
             display: flex;
             margin-top: 0.5rem;
@@ -647,7 +691,6 @@ export default {
                 margin-bottom: 2rem;
             }
         }
-
         main {
             #patient {
                 grid-template-areas: patient;

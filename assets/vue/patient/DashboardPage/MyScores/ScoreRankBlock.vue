@@ -127,7 +127,11 @@ export default {
     text-align: center;
     position: relative;
     padding: 2rem 1rem;
-    min-height: 21rem;
+    min-width: 11.9rem;
+
+    @media (max-width: 991px) {
+        min-height: initial;
+    }
 
     @media (min-width: 576px) {
         padding: 2rem;
@@ -176,6 +180,11 @@ export default {
             img {
                 width: 27%;
                 margin: 0 0.5rem;
+
+                @media (max-width: 991px) {
+                    width: 39%;
+                    max-width: 3.9rem;
+                }
             }
         }
     }
@@ -189,6 +198,11 @@ export default {
             img {
                 width: 27%;
                 margin: 0 0.5rem;
+
+                @media (max-width: 991px) {
+                    width: 39%;
+                    max-width: 3.9rem;
+                }
             }
         }
     }
@@ -202,6 +216,11 @@ export default {
             img {
                 width: 27%;
                 margin: 0 0.5rem;
+
+                @media (max-width: 991px) {
+                    width: 39%;
+                    max-width: 3.9rem;
+                }
             }
         }
 
@@ -219,8 +238,18 @@ export default {
             img {
                 width: 27%;
                 margin: 0 0.5rem;
+
+                @media (max-width: 991px) {
+                    width: 41%;
+                    max-width: 4.2rem;
+                }
             }
         }
+
+        .rank-label {
+            justify-content: flex-start;
+        }
+
     }
 
     &.confirme {
@@ -232,6 +261,11 @@ export default {
             img {
                 width: 27%;
                 margin: 0 0.5rem;
+
+                @media (max-width: 991px) {
+                    width: 39%;
+                    max-width: 3.7rem;
+                }
             }
         }
     }
@@ -299,6 +333,11 @@ export default {
         .rank-label {
             width: 90%;
             height: 2.55rem;
+
+            &::after
+            {
+                display: none;
+            }
         }
 
         .rank-result {
@@ -309,6 +348,11 @@ export default {
     h4 {
         line-height: 1.1;
         margin-bottom: 2rem;
+
+        @media (max-width: 991px) {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+        }
     }
 
     i.rank-img {
@@ -318,6 +362,10 @@ export default {
         width: 100%;
         max-width: 18rem;
         margin-bottom: 2rem;
+
+        @media (max-width: 991px) {
+            margin-bottom: 1.3rem;
+        }
 
         img {
             width: 23%;
@@ -339,7 +387,40 @@ export default {
         margin: 0;
         margin-bottom: 2rem;
 
-        @media (min-width: 450px) {
+        @media (max-width: 991px) {
+            margin: auto;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+            overflow: hidden;
+            justify-content: center;
+            text-overflow: ellipsis;
+            max-width: 8.9rem;
+            position: relative;
+
+            &::after
+            {
+                content: '';
+                display: block;
+                background: linear-gradient(
+                    90deg,
+                    rgba(250, 250, 252, 0) 0%,
+                    white 65%,
+                    white 100%
+                );
+                width: 1rem;
+                height: 100%;
+                position: absolute;
+                top: 0;
+                right: 0;
+                z-index: 5;
+
+                @media (min-width: 800px) {
+                    display: none;
+                }
+            }
+        }
+
+        @media (min-width: 992px) {
             font-size: 1.4rem;
         }
     }
@@ -349,7 +430,11 @@ export default {
         font-weight: 700;
         margin: 0;
 
-        @media (min-width: 450px) {
+        @media (max-width: 991px) {
+            line-height: 1.2;
+        }
+
+        @media (min-width: 992px) {
             font-size: 1.3rem;
         }
     }

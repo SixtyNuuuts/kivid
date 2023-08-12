@@ -207,22 +207,24 @@
                                     </vs-button>
                                     <template #tooltip> Créer une fiche </template>
                                 </vs-tooltip>
+                                <div v-if="prescriProcessWorksheetsChoice.filter(w=>w==null).length" class="new-fiche-controls">
+                                    <span>{{ prescriProcessWorksheetsChoice.filter(w=>w==null).length }}</span>
+                                    <vs-button
+                                        :loading="
+                                            btnLoadingWorksheetPrescriProcessRedirect ===
+                                            0
+                                        "
+                                        @click="
+                                            prescriProcessWorksheetsChoice.splice(prescriProcessWorksheetsChoice.indexOf(null), 1)
+                                        "
+                                        circle
+                                        floating
+                                    >
+                                    -
+                                    </vs-button>
+                                </div>
                             </div>
                         </transition>
-                         <span>{{ prescriProcessWorksheetsChoice.filter(w=>w==null).length }}</span>
-                            <vs-button
-                            :loading="
-                                btnLoadingWorksheetPrescriProcessRedirect ===
-                                0
-                            "
-                            @click="
-                                prescriProcessWorksheetsChoice.splice(prescriProcessWorksheetsChoice.indexOf(null), 1)
-                            "
-                            circle
-                            floating
-                        >
-                        -
-                        </vs-button>
                     </div>
                     <div class="btn-prescri-main" :class="{'cancel-prescri-process':prescriProcess}">
                         <vs-button
@@ -1002,7 +1004,10 @@ export default {
             this.inputChips.blur();
         },
         prescriProcessWorksheetChoice(worksheets) {
-            this.$emit("prescriProcessWorksheetChoice", worksheets);
+            if(this.$parent.prescriProcessPatientSelected)
+                this.$emit("prescriProcessWorksheetChoice", worksheets);
+            else
+                this.activeTab(1); 
         },
         redirectToEditPage(worksheetId) {
             document.location.href = `/doctor/${this.doctor.id}/fiche/edition/${worksheetId}`;
@@ -1559,7 +1564,7 @@ body .btn-create-action .vs-button
         position: relative;
         left: -0.375rem;
         z-index: 1;
-        height: 100.4%;
+        height: calc(100% + 0.28rem);
 
         .vs-checkbox-content
         {
@@ -2104,14 +2109,14 @@ body .btn-create-action .vs-button
             top: auto;
             left: 0;
             right: 0;
-            bottom: 14.5rem;
-            z-index: 442;
+            bottom: 0;
+            z-index: 5555;
             width: 100%;
             /* min-height: 7.4875rem; */
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 5.6125rem;
+            height: 7.2125rem;
 
             button
             {
@@ -2128,6 +2133,7 @@ body .btn-create-action .vs-button
                 font-size: 1.4rem;
                 height: 100%;
                 box-shadow: 0.6px 0.4rem 2rem #b7512f;
+                padding-bottom: 1.2rem;
 
                 &.prescri-direct
                 {
@@ -2182,6 +2188,54 @@ body .btn-create-action .vs-button
                 {
                     background-color: #ed7b58;
                 }
+            }
+        }
+    }
+
+    .new-fiche-controls
+    {
+        position: absolute;
+        top: -0.6rem;
+        right: -1.3rem;
+        height: 5.1rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+
+        > span:first-child
+        {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #ff6838;
+            border-radius: 50%;
+            width: 1.9rem;
+            height: 1.9rem;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .vs-button
+        {
+            background: #c1b79d;
+            font-size: 1.4rem;
+            color: #fff;
+            border-radius: 50%;
+            box-shadow: 0rem 0.2rem 0.8rem 0rem rgba(255, 255, 255, 0.15);
+            width: 1.9rem;
+            height: 1.9rem;
+
+            .vs-button__content 
+            {
+                padding: 0.3rem !important;
+                padding-top: 0 !important;
+                font-size: 2.2rem;
+            }
+
+            &:hover
+            {
+                box-shadow: 0rem 0.2rem 0.8rem 0rem rgba(255, 255, 255, 0.15) !important;
+                transform: none !important;
             }
         }
     }

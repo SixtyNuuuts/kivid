@@ -1164,6 +1164,10 @@ body.no-scrollbar::-webkit-scrollbar {
     padding: 4rem 2rem;
     min-height: 30rem;
 
+    @media (max-width: 991px) {
+        min-height: initial;
+    }    
+
     p {
         margin: 0;
         display: flex;

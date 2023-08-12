@@ -145,6 +145,7 @@ export default {
             prescriProcessWorksheetsSelected: null,
             btnLoadingPatientPrescriProcessRedirect: null,
             btnLoadingWorksheetPrescriProcessRedirect: null,
+            prescriProcessStartOrigin: 'patient'
         };
     },
     computed: {
@@ -218,13 +219,19 @@ export default {
         },
         startPrescriProcess(target=null) {
             this.prescriProcess = true;
-            if(target && target === 'patient')
-                this.prescriProcessPatient = true;
-            else
-                this.prescriProcessWorksheet = true;
+            this.prescriProcessPatient = true;
+            this.activeTab = 1;
             this.myWorksheetTemplatesContent = true;
             this.myPatientsContent = true;
-            this.activeTab = target && target === 'patient' ? 1 : 2;
+            this.prescriProcessStartOrigin = target;
+            // this.prescriProcess = true;
+            // if(target && target === 'patient')
+            //     this.prescriProcessPatient = true;
+            // else
+            //     this.prescriProcessWorksheet = true;
+            // this.myWorksheetTemplatesContent = true;
+            // this.myPatientsContent = true;
+            // this.activeTab = target && target === 'patient' ? 1 : 2;
         },
         stopPrescriProcess() {
             this.prescriProcess = false;
@@ -234,6 +241,10 @@ export default {
             this.prescriProcessPatientSelected = null;
             this.btnLoadingPatientPrescriProcessRedirect = null;
             this.btnLoadingWorksheetPrescriProcessRedirect = null;
+            if(this.prescriProcessStartOrigin === 'worksheet')
+                this.activeTab = 2;
+            else if(this.prescriProcessStartOrigin === 'patient')
+                this.activeTab = 1;
         },
         sortByCreatedAt(array) {
             array.sort(function (a, b) {
