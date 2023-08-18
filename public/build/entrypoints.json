@@ -7,7 +7,7 @@
       ],
       "css": [
         "/build/108.fc93ce1c.css",
-        "/build/app.f6f247f4.css"
+        "/build/app.2a9bae1c.css"
       ]
     },
     "navbar": {
@@ -17,7 +17,7 @@
         "/build/navbar.38db8c4b.js"
       ],
       "css": [
-        "/build/navbar.e03d050c.css"
+        "/build/navbar.9b118b15.css"
       ]
     },
     "settings-page": {
@@ -94,19 +94,12 @@
         "/build/runtime.d0ec15ab.js",
         "/build/429.ecc3ba87.js",
         "/build/247.3f1777ea.js",
-        "/build/879.db9feee4.js",
-        "/build/900.013f7323.js",
-<<<<<<< HEAD
-        "/build/doctor-dashboard-page.282e2a06.js"
+        "/build/587.ea5902b6.js",
+        "/build/480.d73e7fe5.js",
+        "/build/doctor-dashboard-page.be25c241.js"
       ],
       "css": [
-        "/build/doctor-dashboard-page.ef94f4a9.css"
-=======
-        "/build/doctor-dashboard-page.ce3af533.js"
-      ],
-      "css": [
-        "/build/doctor-dashboard-page.f63dd563.css"
->>>>>>> kine-new-dashboard
+        "/build/doctor-dashboard-page.e857e732.css"
       ]
     },
     "doctor-worksheet-page": {
@@ -114,16 +107,12 @@
         "/build/runtime.d0ec15ab.js",
         "/build/429.ecc3ba87.js",
         "/build/274.57a26017.js",
-        "/build/879.db9feee4.js",
-        "/build/900.013f7323.js",
-<<<<<<< HEAD
-        "/build/doctor-worksheet-page.a8e262bd.js"
-=======
-        "/build/doctor-worksheet-page.9f8ef382.js"
->>>>>>> kine-new-dashboard
+        "/build/587.ea5902b6.js",
+        "/build/480.d73e7fe5.js",
+        "/build/doctor-worksheet-page.521045c8.js"
       ],
       "css": [
-        "/build/doctor-worksheet-page.29927792.css"
+        "/build/doctor-worksheet-page.ca3fd1cb.css"
       ]
     },
     "patient-dashboard-page": {
@@ -131,18 +120,11 @@
         "/build/runtime.d0ec15ab.js",
         "/build/429.ecc3ba87.js",
         "/build/725.d49aa1d8.js",
-        "/build/900.013f7323.js",
-<<<<<<< HEAD
-        "/build/patient-dashboard-page.3e4754cf.js"
+        "/build/480.d73e7fe5.js",
+        "/build/patient-dashboard-page.bb83e1dd.js"
       ],
       "css": [
-        "/build/patient-dashboard-page.9725155c.css"
-=======
-        "/build/patient-dashboard-page.a95f30df.js"
-      ],
-      "css": [
-        "/build/patient-dashboard-page.80f0ed03.css"
->>>>>>> kine-new-dashboard
+        "/build/patient-dashboard-page.a8c232c6.css"
       ]
     },
     "patient-read-worksheet-page": {
@@ -152,12 +134,11 @@
         "/build/247.3f1777ea.js",
         "/build/274.57a26017.js",
         "/build/949.4fd1511a.js",
-        "/build/900.013f7323.js",
-        "/build/patient-read-worksheet-page.9606270b.js"
-<<<<<<< HEAD
+        "/build/480.d73e7fe5.js",
+        "/build/patient-read-worksheet-page.aeeb76e1.js"
       ],
       "css": [
-        "/build/patient-read-worksheet-page.f1bb0cf9.css"
+        "/build/patient-read-worksheet-page.24f97eb3.css"
       ]
     },
     "public-read-worksheet-page": {
@@ -165,27 +146,11 @@
         "/build/runtime.d0ec15ab.js",
         "/build/429.ecc3ba87.js",
         "/build/274.57a26017.js",
-        "/build/900.013f7323.js",
-        "/build/public-read-worksheet-page.5b60b8c1.js"
+        "/build/480.d73e7fe5.js",
+        "/build/public-read-worksheet-page.0ec7708f.js"
       ],
       "css": [
-=======
-      ],
-      "css": [
-        "/build/patient-read-worksheet-page.f1bb0cf9.css"
-      ]
-    },
-    "public-read-worksheet-page": {
-      "js": [
-        "/build/runtime.d0ec15ab.js",
-        "/build/429.ecc3ba87.js",
-        "/build/274.57a26017.js",
-        "/build/900.013f7323.js",
-        "/build/public-read-worksheet-page.190fe5d1.js"
-      ],
-      "css": [
->>>>>>> kine-new-dashboard
-        "/build/public-read-worksheet-page.d6a579d0.css"
+        "/build/public-read-worksheet-page.1fe9b72c.css"
       ]
     },
     "ffmkr-admin-dashboard-page": {
