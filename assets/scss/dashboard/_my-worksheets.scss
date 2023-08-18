@@ -482,7 +482,29 @@
                     }
                 }        
             }
-        }    
+        }
+        &.s-prescriptions .worksheet-list.wl-doctor > div:not(.not-found) > div,
+        &.s-worksheet-templates .worksheet-list.wl-doctor .worksheet-container .worksheet {
+            opacity: 1;
+            &.active-effect {
+                animation: mymove 2s infinite;
+            }
+            &.active {
+                cursor: pointer;
+                > * {
+                    user-select: none;
+                    pointer-events: none;
+                }
+            }
+            &.selected {
+                border-left: 5px solid $orange;
+            }
+            @keyframes mymove {
+                50% {
+                    box-shadow: 0rem 0.1rem 1.5rem 0rem rgba(255, 107, 38, 0.3);
+                }
+            }        
+        }
     }
 }
 

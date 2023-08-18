@@ -59,7 +59,7 @@ class Worksheet
 
     /**
      * @ORM\OneToMany(targetEntity=Commentary::class, mappedBy="worksheet")
-     * @Groups({"dashboard_worksheet_read"})
+     * @Groups({"dashboard_worksheet_read", "patient_read"})
      */
     private $commentaries;
 

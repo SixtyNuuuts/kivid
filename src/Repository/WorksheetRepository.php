@@ -31,6 +31,18 @@ class WorksheetRepository extends ServiceEntityRepository
                 ->getQuery()->getResult();
     }
 
+    public function findByDoctorPatientNull(Doctor $doctor, ?int $maxresult, ?int $firstresult)
+    {
+        return $this->createQueryBuilder('w')
+                ->where('w.doctor = :doctor')
+                ->andWhere('w.patient IS NULL')
+                ->setParameter(':doctor', $doctor)
+                ->setMaxResults($maxresult)
+                ->setFirstResult($firstresult)
+                ->orderBy('w.createdAt', 'DESC')
+                ->getQuery()->getResult();
+    }
+
     public function findDoctorWorksheets(Doctor $doctor)
     {
         $q = $this->getEntityManager()->createQuery(

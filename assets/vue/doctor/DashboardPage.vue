@@ -128,6 +128,7 @@ export default {
             csrfTokenRemovePatient: null,
             csrfTokenCreatePatient: null,
             csrfTokenRemoveWorksheet: null,
+            csrfTokenCreateWorksheet: null,
             loadingDoctorFirstsWorksheets: false,
             loadingDoctorAllWorksheets: false,
             loadingDoctorFirstsPatients: false,
@@ -144,7 +145,7 @@ export default {
             prescriProcessWorksheet: false,
             prescriProcessWorksheetsSelected: null,
             btnLoadingPatientPrescriProcessRedirect: null,
-            btnLoadingWorksheetPrescriProcessRedirect: null,
+            btnLoadingWorksheetPrescriProcessRedirect: false,
             prescriProcessStartOrigin: 'patient'
         };
     },
@@ -157,34 +158,61 @@ export default {
         },
     },
     methods: {
-        setPrescriProcessWorksheetChoice(worksheetsIds) {
+        setPrescriProcessWorksheetChoice(worksheetsData) {
             if (!this.prescriProcess) {
                 this.startPrescriProcess();
             }
 
-            this.prescriProcessWorksheetsSelected = encodeURIComponent(JSON.stringify(worksheetsIds));
+            this.prescriProcessWorksheetsSelected = encodeURIComponent(JSON.stringify(worksheetsData.worksheetsIds));
 
             this.prescriProcessWorksheet = false;
-            if (!this.prescriProcessPatientSelected) {
-                const id = "my-worksheets";
-                const yOffset = -100;
-                const element = document.getElementById(id);
-                const y =
-                    element.getBoundingClientRect().top +
-                    window.pageYOffset +
-                    yOffset;
-
-                window.scrollTo({ top: y, behavior: "smooth" });
-
-                this.activeTab = 1;
-                this.prescriProcessPatient = true;
-            } else {
+            
+            if(worksheetsData.worksheetsIds.length&&this.prescriProcessPatientSelected)
+            {
                 this.btnLoadingPatientPrescriProcessRedirect =
                     this.prescriProcessPatientSelected.id;
                 this.btnLoadingWorksheetPrescriProcessRedirect =
-                    true;
+                    false;
 
-                document.location.href = `/doctor/${this.doctor.id}/fiche/creation/${this.prescriProcessWorksheetsSelected}/${this.prescriProcessPatientSelected.id}`;
+                if(worksheetsData.prescriptionType==='direct')
+                {
+                    this.btnLoadingWorksheetPrescriProcessRedirect = true;
+                    this.axios
+                        .post(`/doctor/${this.doctor.id}/create/worksheets`, {
+                            _token: this.csrfTokenCreateWorksheet,
+                            patientId: this.prescriProcessPatientSelected ? this.prescriProcessPatientSelected.id : null,
+                            worksheetsIds: worksheetsData.worksheetsIds,
+                        })
+                        .then((response) => {
+                            f.openSuccessNotification(
+                                "Création de la prescription",
+                                // `La fiche <strong> ${
+                                //     this.worksheet.title
+                                // }</strong> 
+                                // a été prescrite à <strong>
+                                // ${this.getUserName(this.patient)}</strong>`
+                                response.data
+                            );
+                            this.btnLoadingWorksheetPrescriProcessRedirect = false;
+                            this.btnLoadingValidCreateWorksheet = false;
+                            setTimeout(() => {
+                                document.location.href = `/doctor/${this.doctor.id}/dashboard`;
+                            }, 2000);
+                        })
+                        .catch((error) => {
+                            const errorMess =
+                                "object" === typeof error.response.data
+                                    ? error.response.data.detail
+                                    : error.response.data;
+                            this.btnLoadingWorksheetPrescriProcessRedirect = false;
+                            this.btnLoadingValidCreateWorksheet = false;
+                            f.openErrorNotification("Erreur", errorMess);
+                        });
+                }
+                else
+                {
+                    document.location.href = `/doctor/${this.doctor.id}/fiche/creation/${this.prescriProcessWorksheetsSelected}/${this.prescriProcessPatientSelected.id}`;
+                }
             }
         },
         setPrescriProcessPatientChoice(patient) {
@@ -196,15 +224,15 @@ export default {
 
             this.prescriProcessPatient = false;
             if (!this.prescriProcessWorksheetsSelected) {
-                const id = "my-worksheets";
-                const yOffset = -100;
-                const element = document.getElementById(id);
-                const y =
-                    element.getBoundingClientRect().top +
-                    window.pageYOffset +
-                    yOffset;
+                // const id = "my-worksheets";
+                // const yOffset = -100;
+                // const element = document.getElementById(id);
+                // const y =
+                //     element.getBoundingClientRect().top +
+                //     window.pageYOffset +
+                //     yOffset;
 
-                window.scrollTo({ top: y, behavior: "smooth" });
+                // window.scrollTo({ top: y, behavior: "smooth" });
 
                 this.activeTab = 2;
                 this.prescriProcessWorksheet = true;
@@ -212,7 +240,7 @@ export default {
                 this.btnLoadingPatientPrescriProcessRedirect =
                     this.prescriProcessPatientSelected.id;
                 this.btnLoadingWorksheetPrescriProcessRedirect =
-                    true;
+                    false;
 
                 document.location.href = `/doctor/${this.doctor.id}/fiche/creation/${this.prescriProcessWorksheetsSelected}/${this.prescriProcessPatientSelected.id}`;
             }
@@ -240,7 +268,7 @@ export default {
             this.prescriProcessWorksheetsSelected = null;
             this.prescriProcessPatientSelected = null;
             this.btnLoadingPatientPrescriProcessRedirect = null;
-            this.btnLoadingWorksheetPrescriProcessRedirect = null;
+            this.btnLoadingWorksheetPrescriProcessRedirect = false;
             if(this.prescriProcessStartOrigin === 'worksheet')
                 this.activeTab = 2;
             else if(this.prescriProcessStartOrigin === 'patient')
@@ -273,6 +301,7 @@ export default {
         this.csrfTokenRemovePatient = data.csrfTokenRemovePatient;
         this.csrfTokenCreatePatient = data.csrfTokenCreatePatient;
         this.csrfTokenRemoveWorksheet = data.csrfTokenRemoveWorksheet;
+        this.csrfTokenCreateWorksheet = data.csrfTokenCreateWorksheet;
 
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
@@ -352,7 +381,7 @@ export default {
         this.loadingDoctorAllWorksheets = true;
 
         this.axios
-            .get(`/doctor/${this.doctor.id}/get/worksheets/6/0`)
+            .get(`/doctor/${this.doctor.id}/get/worksheets/10/0`)
             .then((response) => {
                 this.doctorWorksheets = response.data;
 
@@ -360,16 +389,28 @@ export default {
                     this.doctorWorksheets
                 );
 
+                this.doctorWorksheets.forEach((w) => {
+                    if (w.exercises) {
+                        f.sortByPosition(w.exercises);
+                    }
+                });
+
                 this.loadingDoctorFirstsWorksheets = false;
 
                 this.axios
-                    .get(`/doctor/${this.doctor.id}/get/worksheets/999999/6`)
+                    .get(`/doctor/${this.doctor.id}/get/worksheets/999999/10`)
                     .then((response) => {
                         this.doctorWorksheets = [...this.doctorWorksheets,...response.data];
 
                         this.tagsFromExercises = f.generateTagsFromExercises(
                             this.doctorWorksheets
                         );
+
+                        this.doctorWorksheets.forEach((w) => {
+                            if (w.exercises) {
+                                f.sortByPosition(w.exercises);
+                            }
+                        });
 
                         this.loadingDoctorAllWorksheets = false;
                     })

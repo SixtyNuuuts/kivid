@@ -70,7 +70,7 @@ class Exercise
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"worksheet_read", "worksheet_doctor_read", "public_worksheet_read"})
+     * @Groups({"worksheet_read", "worksheet_doctor_read", "dashboard_worksheet_read", "public_worksheet_read"})
      */
     private $position;
 

@@ -2,7 +2,7 @@
     <section
         id="my-worksheets"
         class="kiv-block"
-        :class="{ reduced: !$parent.myWorksheetsContent }"
+        :class="{ reduced: !$parent.myWorksheetsContent, 'doctor-view' : doctorView }"
     >
         <button
             class="toggle-content"
@@ -42,6 +42,12 @@
                                             worksheet.exerciseStats.length > 0),
                                 }"
                             />
+                        </div>
+                        <div v-if="worksheet.commentaries && worksheet.commentaries.length" class="worksheet-commentaries">
+                            <i class="far fa-comment-alt"></i>
+                            <div class="count-commentaries">
+                                {{ worksheet.commentaries.length}}
+                            </div>
                         </div>
                         <div
                             class="worksheet-progress-line"
@@ -194,7 +200,6 @@
                             </p>
                             <vs-button
                                 v-if="!doctorView"
-                                :disabled="redirectInProgress === worksheet.id"
                                 @click="redirectToWorksheetPage(worksheet.id)"
                                 class="btn-consult"
                             >
@@ -202,7 +207,6 @@
                             </vs-button>
                             <vs-button
                                 v-if="doctorView"
-                                :disabled="redirectInProgress === worksheet.id"
                                 @click="redirectToDoctorView(worksheet.id)"
                                 class="btn-consult"
                             >
@@ -245,9 +249,6 @@
                             </div>
                             <div class="buttons" v-if="!doctorView">
                                 <vs-button
-                                    :disabled="
-                                        redirectInProgress === worksheet.id
-                                    "
                                     @click="
                                         redirectToWorksheetPage(worksheet.id)
                                     "
@@ -444,7 +445,6 @@ export default {
     },
     data() {
         return {
-            redirectInProgress: null,
             modalConfirmRemoveWorksheet: false,
             removeWorksheetDetails: {},
             btnLoadingValidRemoveWorksheet: false,
@@ -463,20 +463,15 @@ export default {
             return array;
         },
         redirectToWorksheetPage(worksheetId) {
-            this.redirectInProgress = worksheetId;
-
             document.location.href = `/patient/${this.patient.id}/fiche/${worksheetId}`;
         },
-        // redirectToDoctorView(worksheetId) {
-        //     this.redirectInProgress = worksheetId;
-
-        //     document.location.href = `/doctor/${this.doctor.id}/voir/${worksheetId}/${this.patient.id}/?ref=dashp`;
-        // },
+        redirectToDoctorView(worksheetId) {
+            document.location.href = `/doctor/${this.doctor.id}/voir/${worksheetId}/${this.patient.id}/?ref=dashp`;
+        },
         doctorViewRedirectToEditPage(worksheetId) {
             document.location.href = `/doctor/${this.doctor.id}/fiche/edition/${worksheetId}/${this.patient.id}`;
         },
         doctorViewRedirectToWorksheetPage(worksheetId) {
-            this.redirectInProgress = worksheetId;
             document.location.href = `/doctor/${this.doctor.id}/voir/${worksheetId}/${this.patient.id}/?ref=dashp`;
             // if (hasSessions) {
             //     document.location.href = `/doctor/${this.doctor.id}/voir/${worksheetId}/${this.patient.id}`;
@@ -549,6 +544,71 @@ export default {
                     font-size: 1.05rem;
                 }
             }
+        }
+    }
+}
+
+#my-worksheets.doctor-view .worksheet-list > div:not(.not-found) > div:not(.worksheet-container)
+{
+    position: relative;
+    overflow: visible;
+
+    .worksheet-commentaries
+    {
+        position: absolute;
+        top: -0.3rem;
+        right: -0.4rem;
+        padding: 0.5rem;
+        border-radius: 50%;
+        width: 2.7rem;
+        height: 2.7rem;
+        color: #fff;
+        font-size: 1.4rem;
+
+        &::before 
+        {
+            content: "";
+            width: 1.9rem;
+            height: 1.6rem;
+            background-color: #fb8b68;
+            position: absolute;
+            bottom: 0.6rem;
+            right: 0.6rem;
+            border-radius: 0.5rem;       
+        }
+
+        // &::after 
+        // {
+        //     content: "";
+        //     width: 0.3rem;
+        //     height: 0.3rem;
+        //     background-color: #fb8b68;
+        //     position: absolute;
+        //     bottom: 0.4rem;
+        //     right: 1.5rem;        
+        // }
+
+        .fa-comment-alt
+        {
+            font-size: 2rem;
+            position: relative;
+            top: 0rem;
+            left: -0.35rem;
+            color: #fb8b68;
+        }
+
+        .count-commentaries
+        {
+            position: absolute;
+            top: 0.61rem;
+            right: 0.6rem;
+            width: 1.8rem;
+            height: 1.3rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.8rem;
+            background-color: #fb8b68;
         }
     }
 }

@@ -331,11 +331,19 @@
                 </div>
             </div>
             <div class="add-videos" v-if="'voir' !== action">
-                <div class="btn-add-videos">
-                    <vs-button @click="openVideoLibrary()">
-                        <i class="fab fa-youtube"></i> Ajouter des vidéos
+                <vs-tooltip v-if="!$parent.prescriProcess">
+                    <vs-button
+                        @click="openVideoLibrary()"
+                        circle
+                        floating
+                    >
+                        <plus-icon
+                            size="3x"
+                            class="custom-class"
+                        ></plus-icon>
                     </vs-button>
-                </div>
+                    <template #tooltip> Ajouter des vidéos </template>
+                </vs-tooltip>
             </div>
         </div>
         <transition name="fade">
@@ -400,11 +408,13 @@ import VideoPlayer from "./ExercisesPlaylist/VideoPlayer.vue";
 import VideoLibrary from "./ExercisesPlaylist/VideoLibrary.vue";
 import f from "../../services/function";
 import ClickOutside from "vue-click-outside";
+import { PlusIcon } from "vue-feather-icons";
 
 export default {
     components: {
         VideoPlayer,
         VideoLibrary,
+        PlusIcon,
     },
     props: {
         doctor: Object,
@@ -527,6 +537,8 @@ export default {
 
                 this.exercises.push(exercise);
             });
+
+            this.$emit("videos-selection", true);
 
             this.$nextTick(() => {
                 this.scrollToExercise(this.exercises[this.exercises.length-1]);
@@ -717,7 +729,15 @@ export default {
     .exercises-list {
         overflow-x: scroll;
         display: flex;
+        
+        @media (max-width: 799px) {
+            &::-webkit-scrollbar {
+                display: none;
+            }
 
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* Internet Explorer et Edge */
+        }
     }
 
     .vs-input-parent {
@@ -949,8 +969,8 @@ export default {
                 position: relative;
                 margin-bottom: 0.6rem;
                 margin-left: 3.5rem;
-                max-width: 80%;
-                font-size: 1.6rem;
+                max-width: 75.9%;
+                font-size: 1.4rem;
 
                 // @media (min-width: 992px) {
                 //     max-width: 18vw;
@@ -1379,7 +1399,7 @@ export default {
         .exercise-position
         {
             position: absolute;
-            top: 1.3125rem;
+            top: 1.15rem;
             left: 1.6rem;
             display: flex;
             justify-content: center;
@@ -1434,6 +1454,7 @@ export default {
                     {
                         margin-right: 0;
                         font-size: 1.7rem;
+                        color: #fff;
                     }
                 }
 
@@ -1445,8 +1466,8 @@ export default {
                 left: 0.65rem;
                 width: 4rem;
                 height: 4rem;
-                background-color: $orange;
-                color: #fff;
+                // background-color: $orange;
+                // color: #fff;
 
                 .vs-button
                 {
@@ -1454,6 +1475,14 @@ export default {
                     pointer-events: initial;
                     width: initial;
                     z-index: 1;
+
+                    .vs-button__content
+                    {
+                        i 
+                        {
+                            color: #d8d1c0;
+                        }
+                    }
                 }
 
             }
@@ -1468,7 +1497,17 @@ export default {
         align-items: center;
         background: $white;
         border-radius: 1rem;
-        padding: 4rem;
+        padding: 1.4rem !important;
+        margin: 0 1.5rem;
+
+        .vs-button
+        {
+            font-size: 0.9rem;
+            .vs-button__content
+            {
+                padding: 1rem !important;
+            }
+        }
 
         .icon-add-videos {
             width: 5rem;
@@ -1506,4 +1545,16 @@ export default {
         }
     }
 }
+
+@media (max-width: 991px) {
+    .footer
+    {
+        min-height: 6.4rem;
+        > *
+        {
+            display: none !important;
+        }
+    }
+}
+
 </style>

@@ -58,6 +58,7 @@
             >   
                 <button
                     @click="prescriProcessWorksheetChoice(prescriProcessWorksheetsChoice)"
+                    :class="{'disabled-custom':!prescriProcessWorksheetsChoice.length}"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 48 48" width="96px" height="96px"><path d="M 12.5 4 C 10.019 4 8 6.019 8 8.5 L 8 39.5 C 8 41.981 10.019 44 12.5 44 L 25.640625 44 C 24.785625 43.111 24.055516 42.103 23.478516 41 L 12.5 41 C 11.673 41 11 40.327 11 39.5 L 11 8.5 C 11 7.673 11.673 7 12.5 7 L 24 7 L 24 15.5 C 24 17.981 26.019 20 28.5 20 L 37 20 L 37 22.169922 C 38.045 22.331922 39.053 22.606906 40 23.003906 L 40 18.5 C 40 18.0855 39.831922 17.710828 39.560547 17.439453 L 26.560547 4.4394531 C 26.289172 4.1680781 25.9145 4 25.5 4 L 12.5 4 z M 27 9.1210938 L 34.878906 17 L 28.5 17 C 27.673 17 27 16.327 27 15.5 L 27 9.1210938 z M 35 24 C 28.925 24 24 28.925 24 35 C 24 41.075 28.925 46 35 46 C 41.075 46 46 41.075 46 35 C 46 28.925 41.075 24 35 24 z M 35 27 C 35.552 27 36 27.448 36 28 L 36 34 L 42 34 C 42.552 34 43 34.448 43 35 C 43 35.552 42.552 36 42 36 L 36 36 L 36 42 C 36 42.552 35.552 43 35 43 C 34.448 43 34 42.552 34 42 L 34 36 L 28 36 C 27.448 36 27 35.552 27 35 C 27 34.448 27.448 34 28 34 L 34 34 L 34 28 C 34 27.448 34.448 27 35 27 z"/></svg>
                     
@@ -66,9 +67,11 @@
                         puis Prescrire
                     </span>
                 </button>
-                <button                     
-                    @click="prescriProcessWorksheetChoice(prescriProcessWorksheetsChoice)"
-                    class="prescri-direct">
+                <button
+                    @click="prescriProcessWorksheetChoice(prescriProcessWorksheetsChoice,'direct')"
+                    class="prescri-direct"
+                    :class="{'disabled-custom':!prescriProcessWorksheetsChoice.length||prescriProcessWorksheetsChoice.filter(w=>w==null).length||btnLoadingWorksheetPrescriProcessRedirect}"                  
+                >
                     <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 48 48" width="96px" height="96px"><path d="M 12.5 4 C 10.019 4 8 6.019 8 8.5 L 8 39.5 C 8 41.981 10.019 44 12.5 44 L 25.640625 44 C 24.785625 43.111 24.055516 42.103 23.478516 41 L 12.5 41 C 11.673 41 11 40.327 11 39.5 L 11 8.5 C 11 7.673 11.673 7 12.5 7 L 24 7 L 24 15.5 C 24 17.981 26.019 20 28.5 20 L 37 20 L 37 22.169922 C 38.045 22.331922 39.053 22.606906 40 23.003906 L 40 18.5 C 40 18.0855 39.831922 17.710828 39.560547 17.439453 L 26.560547 4.4394531 C 26.289172 4.1680781 25.9145 4 25.5 4 L 12.5 4 z M 27 9.1210938 L 34.878906 17 L 28.5 17 C 27.673 17 27 16.327 27 15.5 L 27 9.1210938 z M 35 24 C 28.925 24 24 28.925 24 35 C 24 41.075 28.925 46 35 46 C 41.075 46 46 41.075 46 35 C 46 28.925 41.075 24 35 24 z M 35 27 C 35.552 27 36 27.448 36 28 L 36 34 L 42 34 C 42.552 34 43 34.448 43 35 C 43 35.552 42.552 36 42 36 L 36 36 L 36 42 C 36 42.552 35.552 43 35 43 C 34.448 43 34 42.552 34 42 L 34 36 L 28 36 C 27.448 36 27 35.552 27 35 C 27 34.448 27.448 34 28 34 L 34 34 L 34 28 C 34 27.448 34.448 27 35 27 z"/></svg>
                     <span class="big">Prescrire</span>
                 </button>
@@ -128,7 +131,6 @@
                             <vs-tooltip v-if="!$parent.prescriProcess">
                                 <vs-button
                                     @click="redirectToCreatePage(0)"
-                                    :loading="btnLoadingAddWorksheet"
                                     class="btn-action add"
                                     circle
                                     floating
@@ -155,10 +157,6 @@
                                 }"
                             >
                                 <vs-button
-                                    :loading="
-                                        btnLoadingWorksheetPrescriProcessRedirect ===
-                                        0
-                                    "
                                     @click="
                                         prescriProcessWorksheetsChoice.push(null)
                                     "
@@ -189,12 +187,8 @@
                                 </vs-button>
                                 <vs-tooltip>
                                     <vs-button
-                                        :loading="
-                                            btnLoadingWorksheetPrescriProcessRedirect ===
-                                            0
-                                        "
                                         @click="
-                                            prescriProcessWorksheetsChoice.push(null)
+                                            prescriProcessWorksheetsChoice.filter(w=>w==null).length < 10 ? prescriProcessWorksheetsChoice.push(null) : false
                                         "
                                         class="btn-action add only-mobile prescri-process-create"
                                         circle
@@ -210,10 +204,6 @@
                                 <div v-if="prescriProcessWorksheetsChoice.filter(w=>w==null).length" class="new-fiche-controls">
                                     <span>{{ prescriProcessWorksheetsChoice.filter(w=>w==null).length }}</span>
                                     <vs-button
-                                        :loading="
-                                            btnLoadingWorksheetPrescriProcessRedirect ===
-                                            0
-                                        "
                                         @click="
                                             prescriProcessWorksheetsChoice.splice(prescriProcessWorksheetsChoice.indexOf(null), 1)
                                         "
@@ -358,13 +348,7 @@
                                         <transition name="height3">
                                             <div v-if="currentOpenWorksheet == worksheet.id" class="worksheet-details-footer">
                                                 <div class="worksheet-exercises-container">
-                                                    <div class="worksheet-exercises"
-                                                        @click="
-                                                            redirectToWorksheetPage(
-                                                                worksheet.id
-                                                            )
-                                                        "
-                                                    >
+                                                    <div class="worksheet-exercises">
                                                         <div 
                                                             v-for="(exercise, i) in worksheet.exercises"
                                                             :key="i"
@@ -408,6 +392,27 @@
                                                     </div>
                                                 </div>
                                                 <div class="buttons-container" :class="{disabled:$parent.prescriProcess}">
+                                                    <!-- <vs-tooltip
+                                                        v-if="
+                                                            worksheet.doctor.id ===
+                                                            doctor.id
+                                                        "
+                                                    >
+                                                        <vs-button
+                                                            @click="
+                                                                redirectToWorksheetPage(
+                                                                    worksheet.id
+                                                                )
+                                                            "
+                                                            class="btn-action"
+                                                            circle
+                                                        >
+                                                            <i class="fas fa-eye"></i>
+                                                        </vs-button>
+                                                        <template #tooltip>
+                                                            Voir
+                                                        </template>
+                                                    </vs-tooltip> -->
                                                     <vs-tooltip
                                                         v-if="
                                                             worksheet.doctor.id ===
@@ -441,8 +446,9 @@
                                                                 )
                                                             "
                                                             circle
+                                                            class="btn-copy"
                                                         >
-                                                            <i class="fas fa-plus-circle"></i>
+                                                            <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 64 64" width="64px" height="64px"><path d="M 14 10.5 A 3.5 3.5 0 0 0 10.5 14 L 10.5 39.560547 A 3.5 3.5 0 0 0 14 43.060547 L 17.439453 43.060547 A 1.5 1.5 0 0 0 17.439453 40.060547 L 14 40.060547 A 0.5 0.5 0 0 1 13.5 39.560547 L 13.5 14 A 0.51 0.51 0 0 1 14 13.5 L 39.560547 13.5 A 0.5 0.5 0 0 1 40.060547 14 L 40.060547 17.439453 A 1.5 1.5 0 0 0 43.060547 17.439453 L 43.060547 14 A 3.5 3.5 0 0 0 39.560547 10.5 L 14 10.5 z M 24.439453 20.939453 C 22.500453 20.939453 20.939453 22.500453 20.939453 24.439453 L 20.939453 50 C 20.939453 51.939 22.500453 53.5 24.439453 53.5 L 50 53.5 C 51.939 53.5 53.5 51.939 53.5 50 L 53.5 24.439453 C 53.5 22.500453 51.939 20.939453 50 20.939453 L 24.439453 20.939453 z"/></svg>
                                                         </vs-button>
                                                         <template #tooltip>
                                                             Copier
@@ -948,7 +954,7 @@ export default {
         loadingDoctorAllWorksheets: Boolean,
         tagsFromExercises: Array,
         prescriProcess: Boolean,
-        btnLoadingWorksheetPrescriProcessRedirect: Number,
+        btnLoadingWorksheetPrescriProcessRedirect: Boolean,
         csrfTokenRemoveWorksheet: String,
     },
     components: {
@@ -960,7 +966,7 @@ export default {
             selectedTags: [],
             search: "",
             page: 1,
-            max: 6,
+            max: 10,
             viewAllTemplates: false,
             modalConfirmRemoveWorksheet: false,
             removeWorksheetDetails: {},
@@ -1003,11 +1009,11 @@ export default {
             this.inputChips.focus();
             this.inputChips.blur();
         },
-        prescriProcessWorksheetChoice(worksheets) {
-            if(this.$parent.prescriProcessPatientSelected)
-                this.$emit("prescriProcessWorksheetChoice", worksheets);
-            else
-                this.activeTab(1); 
+        prescriProcessWorksheetChoice(worksheetsIds,prescriptionType=null) {
+            if(this.$parent.prescriProcessPatientSelected&&(!prescriptionType||(prescriptionType==='direct'&&!worksheetsIds.filter(w=>w==null).length)))
+                this.$emit("prescriProcessWorksheetChoice", {worksheetsIds,prescriptionType});
+            // else
+            //     this.activeTab(1); 
         },
         redirectToEditPage(worksheetId) {
             document.location.href = `/doctor/${this.doctor.id}/fiche/edition/${worksheetId}`;
@@ -1022,9 +1028,9 @@ export default {
 
             document.location.href = `/doctor/${this.doctor.id}/fiche/creation/${worksheetId}`;
         },
-        redirectToWorksheetPage(worksheetId) {
-            document.location.href = `/doctor/${this.doctor.id}/fiche/voir/${worksheetId}`;
-        },
+        // redirectToWorksheetPage(worksheetId) {
+        //     document.location.href = `/doctor/${this.doctor.id}/voir/${worksheetId}/${this.patient.id}`;
+        // },
         toggleCurrentOpenWorksheet(worksheetId) {
             this.currentOpenWorksheet = this.currentOpenWorksheet != worksheetId ? worksheetId : null;
         },
@@ -1073,8 +1079,8 @@ export default {
                         "Suppression de la fiche",
                         response.data
                     );
-                    this.$parent.allWorksheets.splice(
-                        this.$parent.allWorksheets.indexOf(
+                    this.$parent.doctorWorksheets.splice(
+                        this.$parent.doctorWorksheets.indexOf(
                             this.removeWorksheetDetails
                         ),
                         1
@@ -1083,6 +1089,7 @@ export default {
                     this.modalConfirmRemoveWorksheet = false;
                 })
                 .catch((error) => {
+                    console.log(error);
                     const errorMess =
                         "object" === typeof error.response.data
                             ? error.response.data.detail
@@ -1271,10 +1278,10 @@ body .btn-create-action .vs-button
         > :first-child {
             margin-right: 0;
 
-            @media (min-width: 576px) {
+            // @media (min-width: 576px) {
                 // width: 50%;
                 // margin-right: 1.4rem;
-            }
+            // }
         }
 
         > :last-child {
@@ -1397,10 +1404,12 @@ body .btn-create-action .vs-button
 
             .worksheet-exercise-thumbnail
             {
-
+                height: 100%;
+                max-height: 9.5rem;
+                margin-bottom: 0.6rem;
                 img
                 {
-                    object-fit: contain;
+                    object-fit: cover;
                     width: 100%;
                     height: 100%; 
                 }
@@ -1504,9 +1513,11 @@ body .btn-create-action .vs-button
             margin: 0 0.7rem !important;
             border-radius: 50% !important;
             transform: none !important;
-            background: transparent !important;
+            // background: transparent !important;
             box-shadow: 0rem 0.3rem 0.8rem 0rem #ded6bfba;
-            border: 0.0625rem solid #cbd5f4;
+            // border: 0.0625rem solid #cbd5f4;
+            background: #fb8b68 !important;
+            border: 0.0625rem solid #fb8b68;
             width: 2.5rem !important;
             height: 2.5rem !important;
             min-width: 2.5rem !important;
@@ -1523,13 +1534,21 @@ body .btn-create-action .vs-button
                 i {
                     margin-right: 0;
                     font-size: 0.955rem;
-                    color: $black;
+                    color: #fff;
                     transition: 0.25s;
                 }
 
                 svg {
-                    fill:  $black;
+                    fill:  #fff;
                     transition: 0.25s;
+                }
+            }
+
+            &.btn-copy
+            {
+                .vs-button__content
+                {
+                    padding: 0.38rem !important;
                 }
             }
 
@@ -1736,7 +1755,7 @@ body .btn-create-action .vs-button
         max-width: 58%;
         margin-left: 0.7rem;
         box-shadow: 0rem 0.3rem 0.8rem 0rem #ded6bfba;
-        border: 0.0625rem solid #cbd5f4;
+        border: 0.0625rem solid #fb8b68;
         background-color: #ffffff;
 
         .label 
@@ -1809,7 +1828,7 @@ body .btn-create-action .vs-button
             left: 0.1rem;
             top: -0.1rem;
             flex: none;
-            background-color: #222e54;
+            background-color: #fb8b68;
             box-shadow: none !important;
             transform: none !important;
             svg
@@ -1910,9 +1929,9 @@ body .btn-create-action .vs-button
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            background: $orange;
+            background: #faf8f4;
             border-radius: 1rem;
-            color: $white;
+            color: #9b9894;
             padding: 0.1rem 0.5rem;
             font-size: 0.8rem;
             letter-spacing: 0.02rem;
@@ -1942,19 +1961,24 @@ body .btn-create-action .vs-button
             overflow: hidden;
 
             @media (min-width: 1100px) {
-                width: 58.2vw;
+                // width: 58.2vw;
+                width: initial;
             }
 
-            @media (min-width: 1390px) {
-                width: 60vw;
-            }
+            // @media (min-width: 1390px) {
+            //     width: 60vw;
+            // }
 
-            @media (min-width: 1610px) {
-                width: 61.3vw;
-            }
+            // @media (min-width: 1610px) {
+            //     width: 61.3vw;
+            // }
 
             &.prescri-process-choice {
                 width: 82vw!important;
+
+                @media (min-width: 1100px) {
+                    width: initial!important;
+                }
             }
 
             & > *:not(.worksheet-content-wt),
@@ -2056,7 +2080,7 @@ body .btn-create-action .vs-button
                             height: 1.2rem;
                             position: absolute;
                             top: -0.2rem;
-                            right: 0.3rem;
+                            right: 0.4rem;
                             z-index: 5;
 
 
@@ -2103,8 +2127,8 @@ body .btn-create-action .vs-button
     .prescri-process-buttons
     {
 
-        @media (max-width: 799px)
-        {
+        // @media (max-width: 799px)
+        // {
             position: fixed;
             top: auto;
             left: 0;
@@ -2134,6 +2158,15 @@ body .btn-create-action .vs-button
                 height: 100%;
                 box-shadow: 0.6px 0.4rem 2rem #b7512f;
                 padding-bottom: 1.2rem;
+
+                &.disabled-custom
+                {
+                    pointer-events: none;
+                    > * 
+                    {
+                        opacity: 0.3;
+                    }
+                }
 
                 &.prescri-direct
                 {
@@ -2189,7 +2222,8 @@ body .btn-create-action .vs-button
                     background-color: #ed7b58;
                 }
             }
-        }
+            
+        // }
     }
 
     .new-fiche-controls
@@ -2217,9 +2251,9 @@ body .btn-create-action .vs-button
 
         .vs-button
         {
-            background: #c1b79d;
+            background: #fff;
             font-size: 1.4rem;
-            color: #fff;
+            color: #ff6838;
             border-radius: 50%;
             box-shadow: 0rem 0.2rem 0.8rem 0rem rgba(255, 255, 255, 0.15);
             width: 1.9rem;

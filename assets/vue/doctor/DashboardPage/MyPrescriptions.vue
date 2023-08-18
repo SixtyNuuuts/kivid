@@ -223,83 +223,15 @@
                                                                 width: worksheet.worksheetTotalProgression > 3 ? `${worksheet.worksheetTotalProgression}%` : `${0}%`,
                                                             }"
                                                         ></div>
-                                                        <!-- <div class="progressbar-label">
-                                                            <div
-                                                                v-if="
-                                                                    loadingsGetSessions.includes(
-                                                                        worksheet.id
-                                                                    )
-                                                                "
-                                                                class="loading-gray session-nb"
-                                                            ></div>
-                                                            <p
-                                                                v-else
-                                                                class="session-nb"
-                                                                :class="{
-                                                                    completed:
-                                                                        100 <=
-                                                                        worksheet.worksheetTotalProgression,
-                                                                }"
-                                                            >
-                                                                <span
-                                                                    v-if="
-                                                                        worksheet.totalWorksheetSessions >
-                                                                            0 &&
-                                                                        worksheet.currentWorksheetSession &&
-                                                                        worksheet.totalCompletedWorksheetSessions !=
-                                                                            worksheet.totalWorksheetSessions
-                                                                    "
-                                                                >
-                                                                    Session n°<span
-                                                                        v-if="
-                                                                            worksheet.currentWorksheetSession
-                                                                        "
-                                                                        >{{
-                                                                            worksheet
-                                                                                .currentWorksheetSession
-                                                                                .execOrder
-                                                                        }}</span
-                                                                    ><span v-else>{{
-                                                                        worksheet.totalWorksheetSessions
-                                                                    }}</span
-                                                                    >/{{
-                                                                        worksheet.totalWorksheetSessions
-                                                                    }}
-                                                                </span>
-                                                                <span
-                                                                    v-if="
-                                                                        0 ===
-                                                                        worksheet.totalWorksheetSessions
-                                                                    "
-                                                                >
-                                                                    Non démarrée
-                                                                </span>
-                                                                <span
-                                                                    v-if="
-                                                                        null ===
-                                                                        worksheet.totalWorksheetSessions
-                                                                    "
-                                                                >
-                                                                    NB Sessions
-                                                                </span>
-                                                                <span
-                                                                    v-if="
-                                                                        (worksheet.totalWorksheetSessions >
-                                                                            0 &&
-                                                                            !worksheet.currentWorksheetSession) ||
-                                                                        (worksheet.totalWorksheetSessions >
-                                                                            0 &&
-                                                                            worksheet.totalCompletedWorksheetSessions ===
-                                                                                worksheet.totalWorksheetSessions)
-                                                                    "
-                                                                >
-                                                                    Traitement terminé
-                                                                </span>
-                                                            </p>
-                                                        </div> -->
                                                     </div>
+                                                    <!-- <div v-if="worksheet.commentaries && worksheet.commentaries.length" class="worksheet-commentaries">
+                                                        <i class="far fa-comment-alt"></i>
+                                                        <div class="count-commentaries">
+                                                            {{ worksheet.commentaries.length}}
+                                                        </div>
+                                                    </div> -->
                                                 </li>
-                                                <div
+                                                <!-- <div
                                                     class="btn-prescription-action"
                                                     :class="{
                                                         active: prescriProcess,
@@ -358,7 +290,7 @@
                                                             >
                                                         </transition>
                                                     </vs-button>
-                                                </div>
+                                                </div> -->
                                             </ul>
                                         </div>
                                     </div>
@@ -370,33 +302,6 @@
                                     </button>
                                 </div>
                             </div>
-<!-- 
-                                    <div v-if="worksheet.commentaries.length">
-                                        <vs-button
-                                            @click="
-                                                redirectToWorksheetPage(
-                                                    worksheet.id,
-                                                    worksheet.patient.id,
-                                                    true
-                                                )
-                                            "
-                                            class="btn-action commentaries"
-                                            circle
-                                            floating
-                                        >
-                                            <i class="far fa-comment-alt"></i>
-                                            <div class="count-commentaries">
-                                                {{
-                                                    worksheet.commentaries
-                                                        .length
-                                                }}
-                                            </div>
-                                        </vs-button>
-                                    </div> -->
-
-                                <!-- </div> -->
-                                
-                            <!-- </div> -->
                         </div>
                     </div>
                     <div
@@ -852,12 +757,8 @@ export default {
         redirectToEditPage(worksheetId, patientId) {
             document.location.href = `/doctor/${this.doctor.id}/fiche/edition/${worksheetId}/${patientId}`;
         },
-        redirectToWorksheetPage(worksheetId, patientId, hasSessions) {
-            if (hasSessions) {
-                document.location.href = `/doctor/${this.doctor.id}/voir/${worksheetId}/${patientId}`;
-            } else {
-                document.location.href = `/doctor/${this.doctor.id}/fiche/voir/${worksheetId}/${patientId}`;
-            }
+        redirectToWorksheetPage(worksheetId) {
+            document.location.href = `/doctor/${this.doctor.id}/fiche/voir/${worksheetId}`;
         },
         redirectToPatientDashboard(patientId) {
             document.location.href = `/doctor/${this.doctor.id}/voir/patient/${patientId}`;
@@ -1059,13 +960,13 @@ body .kiv-block .prescri-process-dialog::after {
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding-top: 4.2rem;
+            padding-top: 1.9rem;
 
-            @media (min-width: 500px) {
-                align-items: flex-start;
-                padding-top: 1.5rem;
-                padding-bottom: 0.9rem;
-            }
+            // @media (min-width: 500px) {
+            //     align-items: flex-start;
+            //     padding-top: 1.5rem;
+            //     padding-bottom: 0.9rem;
+            // }
 
             .patient-details {
                 width: 100%;
@@ -1076,14 +977,14 @@ body .kiv-block .prescri-process-dialog::after {
                 margin-bottom: 0;
                 position: relative;
 
-                @media (max-width: 499px) {
-                    align-items: flex-start;
-                }
+                // @media (max-width: 499px) {
+                //     align-items: flex-start;
+                // }
 
-                @media (min-width: 500px) {
-                    flex-direction: row;
-                    // margin-bottom: 1.8rem;
-                }
+                // @media (min-width: 500px) {
+                //     flex-direction: row;
+                //     // margin-bottom: 1.8rem;
+                // }
 
                 > div {
                     display: flex;
@@ -1188,8 +1089,87 @@ body .kiv-block .prescri-process-dialog::after {
                                 position: relative;
 
                                 @media (min-width: 800px) {
-                                    max-width: 83rem;
+                                    width: calc(100% + 2.8rem);
                                 }
+                                @media (min-width: 820px) {
+                                    width: calc(110% - 2.8rem);
+                                }
+                                @media (min-width: 1020px) {
+                                    width: calc(110.4% - 2.8rem);
+                                }
+                                @media (min-width: 1020px) {
+                                    width: calc(109% - 2.8rem);
+                                }
+                                @media (min-width: 1200px) {
+                                    width: calc(109.4% - 2.8rem);
+                                }
+                                @media (min-width: 1300px) {
+                                    width: calc(109.6% - 2.8rem);
+                                }
+                                @media (min-width: 1400px) {
+                                    width: calc(109.8% - 2.8rem);
+                                }
+                                @media (min-width: 1450px) {
+                                    width: calc(110% - 2.8rem);
+                                }
+                                @media (min-width: 1550px) {
+                                    width: calc(110.2% - 2.8rem);
+                                }
+                                @media (min-width: 1650px) {
+                                    width: calc(110.5% - 2.8rem);
+                                }
+                                @media (min-width: 1750px) {
+                                    width: calc(110.7% - 2.8rem);
+                                }
+                                @media (min-width: 1850px) {
+                                    width: calc(110.9% - 2.8rem);
+                                }
+                                @media (min-width: 1950px) {
+                                    width: calc(111.1% - 2.8rem);
+                                }
+
+                                // @media (min-width: 870px) {
+                                //     width: calc(120% - 2.8rem);
+                                // }
+                                // @media (min-width: 920px) {
+                                //     width: calc(130% - 2.8rem);
+                                // }
+                                // @media (min-width: 990px) {
+                                //     width: calc(104% - 2.8rem);
+                                // }
+                                // @media (min-width: 1050px) {
+                                //     width: calc(105% - 2.8rem);
+                                // }
+                                // @media (min-width: 1100px) {
+                                //     width: calc(100% - 2.8rem);
+                                // }
+                                // @media (min-width: 1120px) {
+                                //     width: calc(101% - 2.8rem);
+                                // }
+                                // @media (min-width: 1175px) {
+                                //     width: calc(101% - 2.8rem);
+                                // }
+                                // @media (min-width: 1235px) {
+                                //     width: calc(101% - 2.8rem);
+                                // }
+                                // @media (min-width: 1285px) {
+                                //     width: calc(101% - 2.8rem);
+                                // }
+                                // @media (min-width: 1370px) {
+                                //     width: calc(101% - 2.8rem);
+                                // }
+                                // @media (min-width: 1400px) {
+                                //     width: calc(101% - 2.8rem);
+                                // }
+                                // @media (min-width: 1440px) {
+                                //     width: calc(101% - 2.8rem);
+                                // }
+                                // @media (min-width: 1580px) {
+                                //     width: calc(101% - 2.8rem);
+                                // }
+                                // @media (min-width: 1620px) {
+                                //     width: calc(101% - 2.8rem);
+                                // }
 
                                 &.multiples
                                 {
@@ -1211,7 +1191,12 @@ body .kiv-block .prescri-process-dialog::after {
                                         z-index: 5;
 
                                         @media (min-width: 800px) {
-                                            display: none;
+                                            background: linear-gradient(
+                                                90deg,
+                                                rgba(250, 250, 252, 0) 0%,
+                                                #faf8f4 65%,
+                                                #faf8f4 100%
+                                            );
                                         }
                                     }
 
@@ -1259,61 +1244,60 @@ body .kiv-block .prescri-process-dialog::after {
                                         scrollbar-width: none; /* Pour Firefox */
                                     // }
                                     @media (min-width: 800px) {
-                                        display: inline-flex;
-                                        overflow-x: visible;
                                         min-height: 2.749rem;
-                                        max-width: calc(98% - 5.3rem);
+                                        width: 100%;
+                                        // max-width: calc(98% - 5.3rem);
                                     }
-                                    @media (min-width: 820px) {
-                                        max-width: calc(99% - 5.3rem);
-                                    }
-                                    @media (min-width: 870px) {
-                                        max-width: calc(100% - 5.3rem);
-                                    }
+                                    // @media (min-width: 820px) {
+                                    //     max-width: calc(99% - 5.3rem);
+                                    // }
+                                    // @media (min-width: 870px) {
+                                    //     max-width: calc(100% - 5.3rem);
+                                    // }
 
-                                    @media (min-width: 920px) {
-                                        max-width: calc(101% - 5.3rem);
-                                    }
-                                    @media (min-width: 990px) {
-                                        max-width: calc(102% - 5.3rem);
-                                    }
-                                    @media (min-width: 1050px) {
-                                        max-width: calc(103% - 5.3rem);
-                                    }
-                                    @media (min-width: 1100px) {
-                                        max-width: calc(95.2% - 5.3rem);
-                                    }
-                                    @media (min-width: 1120px) {
-                                        max-width: calc(96.2% - 5.3rem);
-                                    }
-                                    @media (min-width: 1175px) {
-                                        max-width: calc(97.2% - 5.3rem);
-                                    }
-                                    @media (min-width: 1235px) {
-                                        max-width: calc(98.2% - 5.3rem);
-                                    }
-                                    @media (min-width: 1285px) {
-                                        max-width: calc(99.2% - 5.3rem);
-                                    }
-                                    @media (min-width: 1370px) {
-                                        max-width: calc(100.2% - 5.3rem);
-                                    }
-                                    @media (min-width: 1400px) {
-                                        max-width: calc(101.2% - 5.3rem);
-                                    }
-                                    @media (min-width: 1440px) {
-                                        max-width: calc(102.2% - 5.3rem);
-                                    }
-                                    @media (min-width: 1580px) {
-                                        max-width: calc(103% - 5.3rem);
-                                    }
-                                    @media (min-width: 1620px) {
-                                        max-width: calc(104% - 5.3rem);
-                                    }
+                                    // @media (min-width: 920px) {
+                                    //     max-width: calc(101% - 5.3rem);
+                                    // }
+                                    // @media (min-width: 990px) {
+                                    //     max-width: calc(102% - 5.3rem);
+                                    // }
+                                    // @media (min-width: 1050px) {
+                                    //     max-width: calc(103% - 5.3rem);
+                                    // }
+                                    // @media (min-width: 1100px) {
+                                    //     max-width: calc(95.2% - 5.3rem);
+                                    // }
+                                    // @media (min-width: 1120px) {
+                                    //     max-width: calc(96.2% - 5.3rem);
+                                    // }
+                                    // @media (min-width: 1175px) {
+                                    //     max-width: calc(97.2% - 5.3rem);
+                                    // }
+                                    // @media (min-width: 1235px) {
+                                    //     max-width: calc(98.2% - 5.3rem);
+                                    // }
+                                    // @media (min-width: 1285px) {
+                                    //     max-width: calc(99.2% - 5.3rem);
+                                    // }
+                                    // @media (min-width: 1370px) {
+                                    //     max-width: calc(100.2% - 5.3rem);
+                                    // }
+                                    // @media (min-width: 1400px) {
+                                    //     max-width: calc(101.2% - 5.3rem);
+                                    // }
+                                    // @media (min-width: 1440px) {
+                                    //     max-width: calc(102.2% - 5.3rem);
+                                    // }
+                                    // @media (min-width: 1580px) {
+                                    //     max-width: calc(103% - 5.3rem);
+                                    // }
+                                    // @media (min-width: 1620px) {
+                                    //     max-width: calc(104% - 5.3rem);
+                                    // }
 
-                                    @media (min-width: 1000px) {
-                                        padding-bottom: 0.6rem;
-                                    }
+                                    // @media (min-width: 1000px) {
+                                    //     padding-bottom: 0.6rem;
+                                    // }
 
                                     &::-webkit-scrollbar {
                                         // width: 4px;
@@ -1630,13 +1614,13 @@ body .kiv-block .prescri-process-dialog::after {
                         //     width: initial;
                         // }
 
-                        @media (min-width: 1100px) {
-                            margin-right: 0;
-                        }
+                        // @media (min-width: 1100px) {
+                        //     margin-right: 0;
+                        // }
 
-                        @media (min-width: 1400px) {
-                            margin-right: 0.8rem;
-                        }
+                        // @media (min-width: 1400px) {
+                        //     margin-right: 0.8rem;
+                        // }
 
                         .vs-button {
                             background: $white;
@@ -1657,15 +1641,15 @@ body .kiv-block .prescri-process-dialog::after {
                                     rgba(255, 104, 56, 0.43);
                             }
 
-                            @media (min-width: 800px) {
-                                margin-top: 0;
-                                margin-bottom: 0;
-                            }
+                            // @media (min-width: 800px) {
+                            //     margin-top: 0;
+                            //     margin-bottom: 0;
+                            // }
 
-                            @media (min-width: 950px) {
-                                flex-direction: row;
-                                margin-bottom: 1.1rem;
-                            }
+                            // @media (min-width: 950px) {
+                            //     flex-direction: row;
+                            //     margin-bottom: 1.1rem;
+                            // }
 
                             i {
                                 font-size: 1.5rem;
@@ -1696,9 +1680,9 @@ body .kiv-block .prescri-process-dialog::after {
                     transition: all 0.2s;
                     background: transparent;
 
-                    // @media (min-width: 800px) {
-                    //     border: 1px solid #d6cfbe;
-                    // }
+                    @media (min-width: 800px) {
+                        border: 1px solid #d6cfbe;
+                    }
 
                     i {
                         font-size: 0.7rem;
@@ -1708,23 +1692,23 @@ body .kiv-block .prescri-process-dialog::after {
 
                     svg {
                         fill: #e4e4e4;
-                        // @media (min-width: 800px) {
-                        //     fill: #d6cfbe
-                        // }
+                        @media (min-width: 800px) {
+                            fill: #d6cfbe
+                        }
                         &:hover {
                             fill: #c5c0bc;
-                            // @media (min-width: 800px) {
-                            //     fill: $gray-dark
-                            // }
+                            @media (min-width: 800px) {
+                                fill: $gray-dark
+                            }
                         }
                     }
 
                     &:hover {
                         border: 1px solid #c5c0bc;
                         // color: $gray-dark;
-                        // @media (min-width: 800px) {
-                        //     border: 1px solid $gray-dark;
-                        // }
+                        @media (min-width: 800px) {
+                            border: 1px solid $gray-dark;
+                        }
                     }
                 }
             }
@@ -1825,18 +1809,18 @@ body .kiv-block .prescri-process-dialog::after {
                     }
                 }
 
-                @media (min-width: 768px) {
-                    margin-top: 1rem;
-                }
+                // @media (min-width: 768px) {
+                //     margin-top: 1rem;
+                // }
 
-                @media (min-width: 1070px) {
-                    white-space: nowrap;
-                    flex-direction: row;
-                    i {
-                        margin-right: 0.6rem;
-                        margin-bottom: 0rem;
-                    }
-                }
+                // @media (min-width: 1070px) {
+                //     white-space: nowrap;
+                //     flex-direction: row;
+                //     i {
+                //         margin-right: 0.6rem;
+                //         margin-bottom: 0rem;
+                //     }
+                // }
 
                 .vs-button.btn-rmv-prescri {
                     font-size: 1.1rem;
@@ -1847,10 +1831,10 @@ body .kiv-block .prescri-process-dialog::after {
                     margin-top: 0.5rem;
                     margin-left: 0;
 
-                    @media (min-width: 1070px) {
-                        margin-top: 0;
-                        margin-left: 1.5rem;
-                    }
+                    // @media (min-width: 1070px) {
+                    //     margin-top: 0;
+                    //     margin-left: 1.5rem;
+                    // }
 
                     &:hover {
                         background: $white;

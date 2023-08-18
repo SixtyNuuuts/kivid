@@ -627,7 +627,7 @@ export default {
     
     @media (max-width: 720px) 
     {
-        &::after
+        &:not(.reduced)::after
         {
             content: '';
             display: block;
