@@ -23,6 +23,7 @@
 		"csrfTokenAddPatient": {{ csrf_token('add_patient' ~ doctor.id)|serialize('json')|raw }},
 		"csrfTokenRemovePatient": {{ csrf_token('remove_patient' ~ doctor.id)|serialize('json')|raw }},
 		"csrfTokenRemoveWorksheet": {{ csrf_token('remove_worksheet' ~ doctor.id)|serialize('json')|raw }},
-		"csrfTokenCreatePatient": {{ csrf_token('create_patient' ~ doctor.id)|serialize('json')|raw }}
+		"csrfTokenCreatePatient": {{ csrf_token('create_patient' ~ doctor.id)|serialize('json')|raw }},
+		"csrfTokenCreateWorksheet": {{ csrf_token('create_worksheet' ~ doctor.id)|serialize('json')|raw }}
 	}
 {% endblock %}

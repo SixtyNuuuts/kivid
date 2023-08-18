@@ -1,5 +1,5 @@
 <template>
-    <section
+    <!-- <section
         id="my-patients"
         class="kiv-block"
         :class="{ reduced: !$parent.myPatientsContent }"
@@ -141,7 +141,7 @@
                                             {{ patient.email }}
                                         </div>
                                         <div
-                                            v-if="patient.worksheets.length"
+                                            v-if="'worksheets' in patient && patient.worksheets.length"
                                             class="prescriptions"
                                         >
                                             <h4>
@@ -495,7 +495,7 @@
                 </vs-button>
             </div>
         </vs-dialog>
-    </section>
+    </section> -->
 </template>
 
 <script>

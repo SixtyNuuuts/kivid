@@ -69,7 +69,7 @@ class FFMKRAdhesionRepository extends ServiceEntityRepository
         $orderBy =  $sortColumnName && $sortColumnStatus? 'ORDER BY a.'.$sortColumnName.' '.$sortColumnStatus : 'ORDER BY a.numcli DESC';
         
         return 
-            $this->em->createQuery('SELECT a.numcli, a.firstname, a.lastname, a.email, a.numRpps, a.dateOf, a.requestToken, a.kividStatus FROM App\Entity\FFMKRAdhesion a  WHERE a.numcli NOT LIKE \'NUMCLITEMP%\' '.($searchWhere??'').''.$orderBy.'')
+            $this->em->createQuery('SELECT a.numcli, a.firstname, a.lastname, a.email, a.numRpps, a.dateOf, a.requestToken, a.kividStatus FROM App\Entity\FFMKRAdhesion a WHERE a.numcli NOT LIKE \'NUMCLITEMP%\' '.($searchWhere??'').''.$orderBy.'')
             ->setMaxResults($maxresult)
             ->setFirstResult($firstresult)
             ->getResult()

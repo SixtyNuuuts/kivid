@@ -200,6 +200,24 @@ class NotificationService
         $this->mailer->send($email);
     }
 
+    public function createPatientWithoutDoctorNotification(
+        Patient $patient
+    ): void {
+
+        $email = (new TemplatedEmail())
+        ->from(new Address($patient->getEmail(), "{$patient->getFirstname()} {$patient->getLastname()}}"))
+        ->to('ponsoda.fabrice@gmail.com')
+        ->subject('Ce nouveau patient n\'a pas de praticien !')
+        ->htmlTemplate('/doctor/patient_without_doctor_email.html.twig')
+        ->context([
+            'patient' => "{$patient->getFirstname()} {$patient->getLastname()}",
+            'contactEmail' => $patient->getEmail(),
+        ])
+        ;
+
+        $this->mailer->send($email);
+    }
+
     public function createAddPatientNotification(
         Doctor $doctor,
         Patient $patient

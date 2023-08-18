@@ -29,7 +29,6 @@
                         <p class="unit">Points</p>
                     </div>
                 </div>
-
                 <div class="score-line">
                     <div
                         class="progressbar-base"
@@ -148,7 +147,7 @@
                             >
                                 Stable
                             </span>
-                            <span v-if="!getSensitivityVariation">
+                            <span class="sensitivity-soon" v-if="!getSensitivityVariation">
                                 Bientôt !
                             </span>
                         </h3>
@@ -280,7 +279,7 @@ export default {
             options: {
                 color: "#FF6332",
                 "empty-color": "#ffc6b5",
-                size: 130,
+                size: 100,
                 thickness: 5,
                 "empty-thickness": 3,
                 "line-mode": "out 5",
@@ -624,35 +623,79 @@ export default {
 
 #my-scores {
     grid-area: myscores;
+    position: relative;
+    
+    @media (max-width: 720px) 
+    {
+        &:not(.reduced)::after
+        {
+            content: '';
+            display: block;
+            background: linear-gradient(
+                90deg,
+                rgba(250, 250, 252, 0) 0%,
+                rgba(38, 37, 34, 0.1) 100%,
+            );
+            width: 0.7rem;
+            height: 16.4rem;
+            position: absolute;
+            top: 5.9rem;
+            right: 2rem;
+            z-index: 5;
+        }
+    }
 
     .content {
-        display: grid;
-        grid-gap: 1rem;
-        grid-template-columns: 46%;
-        grid-template-areas:
-            "scorecircle       scorerangblock"
-            "exerciseblock     exerciseblock"
-            "sensitivityblock  sensitivityblock"
-            "technicalblock    technicalblock";
+        display: flex;
 
-        @media (min-width: 576px) {
-            grid-gap: 2rem;
-            grid-template-columns: 46%;
-            grid-template-areas:
-                "scoreline      scoreline"
-                "exerciseblock  sensitivityblock"
-                "technicalblock  scorerangblock";
+        @media (max-width: 991px) {
+            max-height: 16.3rem;
+            overflow: hidden;
+            overflow-x: scroll;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+
+            &::-webkit-scrollbar {
+                display: none;
+            }
+
+            > *
+            {
+                margin-right: 1.2rem;
+                flex-grow: 1;
+            }
         }
 
-        @media (min-width: 768px) {
-            grid-gap: 1.5rem;
-            grid-template-columns: repeat(4, 1fr);
-            grid-template-areas:
-                "scoreline      scoreline         scoreline       scoreline"
-                "exerciseblock  sensitivityblock  technicalblock  scorerangblock";
-        }
+
+        // display: grid;
+        // grid-gap: 1rem;
+        // grid-template-columns: 46%;
+        // grid-template-areas:
+        //     "scorecircle       scorerangblock"
+        //     "exerciseblock     exerciseblock"
+        //     "sensitivityblock  sensitivityblock"
+        //     "technicalblock    technicalblock";
+
+        // @media (min-width: 576px) {
+        //     grid-gap: 2rem;
+        //     grid-template-columns: 46%;
+        //     grid-template-areas:
+        //         "scoreline      scoreline"
+        //         "exerciseblock  sensitivityblock"
+        //         "technicalblock  scorerangblock";
+        // }
+
+        // @media (min-width: 768px) {
+        //     grid-gap: 1.5rem;
+        //     grid-template-columns: repeat(4, 1fr);
+        //     grid-template-areas:
+        //         "scoreline      scoreline         scoreline       scoreline"
+        //         "exerciseblock  sensitivityblock  technicalblock  scorerangblock";
+        // }
 
         @media (min-width: 992px) {
+            max-height: initial;
+            display: grid;
             grid-gap: 2rem;
             grid-template-columns: 46%;
             grid-template-areas:
@@ -675,13 +718,12 @@ export default {
             border-radius: 0.5rem;
             color: $sanguine;
             position: relative;
-            width: 100%;
-            height: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
+            min-width: 13.4rem;
 
-            @media (min-width: 576px) {
+            @media (min-width: 992px) {
                 display: none;
             }
 
@@ -715,7 +757,7 @@ export default {
             padding: 2rem 0;
             display: none;
 
-            @media (min-width: 576px) {
+            @media (min-width: 992px) {
                 display: block;
             }
 
@@ -897,20 +939,26 @@ export default {
             background: $gray-light;
             border-radius: 0.5rem;
             padding: 2rem;
-            min-height: 19rem;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             overflow: hidden;
+
+            @media (max-width: 991px) {
+                flex: none;
+                min-width: 10.8rem;
+                width: 15vw;
+                padding: 1.5rem 2rem;
+            }
 
             .loading-block-h3 {
                 height: 2.1rem;
                 border-radius: 0.4rem;
             }
 
-            @media (min-width: 576px) {
-                min-height: initial;
-            }
+            // @media (min-width: 576px) {
+            //     min-height: initial;
+            // }
 
             &:first-child {
                 margin-left: 0;
@@ -931,16 +979,30 @@ export default {
                 align-items: center;
                 border-radius: 50%;
                 margin-bottom: 2.3rem;
+                @media (max-width: 991px) {
+                    margin-bottom: 1.3rem;
+                }
             }
 
             .stat-label {
                 flex-grow: 1;
                 margin-bottom: 2.3rem;
+
+                @media (max-width: 991px) {
+                    font-size: 1.4rem;
+                    line-height: 1;
+                    margin-bottom: 1rem;
+                }
             }
 
             .stat-result {
                 display: flex;
                 flex-wrap: wrap;
+
+                @media (max-width: 991px) {
+                    position: relative;
+                    top: -0.9rem;
+                }
 
                 h3,
                 .loading-block-h3 {
@@ -1075,6 +1137,20 @@ export default {
                             max-width: 9.3vw;
                         }
                     }
+
+                    @media (max-width: 991px) {
+                        span:not(.sensitivity-smiley):not(.sensitivity-soon)
+                        {
+                            display: none;
+                        }
+                    }
+                }
+
+                @media (max-width: 991px) {
+                    .stat-variation
+                    {
+                        display: none;
+                    }
                 }
 
                 .sensitivity-smiley {
@@ -1107,6 +1183,28 @@ export default {
                 h3::before,
                 .loading-block-h3::before {
                     background: $tournesol;
+                }
+
+                h3 {
+                    @media (max-width: 991px) {
+                        span
+                        {
+                            font-size: 1.5rem;
+                        }
+                    }
+                }
+
+                @media (max-width: 991px) {
+                    .stat-variation
+                    {
+                        font-size: 1.5rem;
+                    }
+
+                    .stat-result {
+                        position: relative;
+                        top: 0.9rem;
+                        min-height: 3.9375rem;
+                    }
                 }
             }
         }

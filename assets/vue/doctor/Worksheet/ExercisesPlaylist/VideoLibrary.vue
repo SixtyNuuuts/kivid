@@ -345,7 +345,7 @@ export default {
             selectedTags: [],
             selectedPoB: null,
             selectedVideos: [],
-            selectedVideoLibraries: ['kivid','ffmkr'],
+            selectedVideoLibraries: ['kivid','ffmkr','chevreul'],
             modalAddVideo: false,
             modalViewVideo: false,
             selectedViewVideo: false,

@@ -157,7 +157,7 @@
                 </div>
                 <div class="text-request-subscription">
                     <p>
-                        Cette fiche est offerte par Kivid, n'hésitez pas à vous inscrire pour en découvrir d'autres !
+                        Cette fiche a été générée par Kivid, n'hésitez pas à vous inscrire pour en découvrir d'autres !
                     </p>
                 </div>
                 <div class="btn-request-subscription">

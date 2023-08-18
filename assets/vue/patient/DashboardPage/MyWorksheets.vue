@@ -2,7 +2,7 @@
     <section
         id="my-worksheets"
         class="kiv-block"
-        :class="{ reduced: !$parent.myWorksheetsContent }"
+        :class="{ reduced: !$parent.myWorksheetsContent, 'doctor-view' : doctorView }"
     >
         <button
             class="toggle-content"
@@ -32,6 +32,7 @@
                             </h3>
                             <TagPartOfBody
                                 :partOfBody="worksheet.partOfBody"
+                                class="btn-light"
                                 :class="{
                                     completed:
                                         (worksheet.currentWorksheetSession &&
@@ -41,6 +42,12 @@
                                             worksheet.exerciseStats.length > 0),
                                 }"
                             />
+                        </div>
+                        <div v-if="worksheet.commentaries && worksheet.commentaries.length" class="worksheet-commentaries">
+                            <i class="far fa-comment-alt"></i>
+                            <div class="count-commentaries">
+                                {{ worksheet.commentaries.length}}
+                            </div>
                         </div>
                         <div
                             class="worksheet-progress-line"
@@ -193,7 +200,6 @@
                             </p>
                             <vs-button
                                 v-if="!doctorView"
-                                :disabled="redirectInProgress === worksheet.id"
                                 @click="redirectToWorksheetPage(worksheet.id)"
                                 class="btn-consult"
                             >
@@ -201,7 +207,6 @@
                             </vs-button>
                             <vs-button
                                 v-if="doctorView"
-                                :disabled="redirectInProgress === worksheet.id"
                                 @click="redirectToDoctorView(worksheet.id)"
                                 class="btn-consult"
                             >
@@ -242,12 +247,8 @@
                                     >
                                 </div>
                             </div>
-                            <div class="buttons">
+                            <div class="buttons" v-if="!doctorView">
                                 <vs-button
-                                    v-if="!doctorView"
-                                    :disabled="
-                                        redirectInProgress === worksheet.id
-                                    "
                                     @click="
                                         redirectToWorksheetPage(worksheet.id)
                                     "
@@ -257,20 +258,55 @@
                                 >
                                     Go !
                                 </vs-button>
+                            </div>
+                            <div class="buttons buttons-doctor-view" v-else>
                                 <vs-button
-                                    v-if="doctorView"
-                                    :disabled="
-                                        redirectInProgress === worksheet.id ||
-                                        (!worksheet.currentWorksheetSession &&
-                                            worksheet.exerciseStats.length ===
-                                                0)
+                                    v-if="
+                                        worksheet.totalWorksheetSessions >
+                                        0
                                     "
-                                    @click="redirectToDoctorView(worksheet.id)"
-                                    class="btn-go"
+                                    @click="
+                                        doctorViewRedirectToWorksheetPage(worksheet.id,true)
+                                    "
+                                    class="btn-action"
                                     circle
                                     floating
                                 >
-                                    Voir
+                                    <i class="fas fa-eye"></i>
+                                </vs-button>
+                                <vs-button
+                                    v-if="
+                                        worksheet.totalWorksheetSessions ===
+                                        0
+                                    "
+                                    @click="
+                                        doctorViewRedirectToWorksheetPage(worksheet.id,false)
+                                    "
+                                    class="btn-action"
+                                    circle
+                                    floating
+                                >
+                                    <i class="fas fa-eye"></i>
+                                </vs-button>
+                                <vs-button
+                                    @click="
+                                        doctorViewRedirectToEditPage(worksheet.id)
+                                    "
+                                    class="btn-action"
+                                    circle
+                                    floating
+                                >
+                                    <i class="fas fa-pen"></i>
+                                </vs-button>
+                                <vs-button
+                                    @click="
+                                        doctorViewRemoveWorksheet(worksheet)
+                                    "
+                                    class="btn-action"
+                                    circle
+                                    floating
+                                >
+                                    <i class="fas fa-trash"></i>
                                 </vs-button>
                             </div>
                         </div>
@@ -349,6 +385,45 @@
                 </div>
             </div>
         </transition>
+        <vs-dialog v-model="modalConfirmRemoveWorksheet">
+            <p class="modal-confirm-text">Confirmer la suppression de</p>
+
+            <div class="modal-confirm-detail remove-item">
+                <div class="modal-confirm-icon remove-item">
+                    <i class="fas fa-trash"></i>
+                </div>
+                <p>
+                    <span>
+                        {{ removeWorksheetDetails.title }}
+                    </span>
+                </p>
+            </div>
+            <p class="alert">
+                <i class="fas fa-exclamation-triangle"></i>
+                Attention : cela supprimera également le
+                <strong>
+                    suivi et statistiques du patient pour cette fiche</strong
+                >, action&nbsp;irrémédiable.
+            </p>
+
+            <div class="modal-confirm-buttons">
+                <vs-button
+                    class="secondary"
+                    @click="modalConfirmRemoveWorksheet = false"
+                >
+                    Annuler
+                </vs-button>
+                <vs-button
+                    @click="validRemoveWorksheet"
+                    :loading="btnLoadingValidRemoveWorksheet"
+                    :class="{
+                        disabled: btnLoadingValidRemoveWorksheet,
+                    }"
+                >
+                    Confirmer
+                </vs-button>
+            </div>
+        </vs-dialog>
     </section>
 </template>
 
@@ -363,13 +438,16 @@ export default {
         loadingPatientWorksheets: Boolean,
         doctorView: Boolean,
         doctor: Object,
+        csrfTokenRemoveWorksheet: String,
     },
     components: {
         TagPartOfBody,
     },
     data() {
         return {
-            redirectInProgress: null,
+            modalConfirmRemoveWorksheet: false,
+            removeWorksheetDetails: {},
+            btnLoadingValidRemoveWorksheet: false,
         };
     },
     computed: {
@@ -385,15 +463,153 @@ export default {
             return array;
         },
         redirectToWorksheetPage(worksheetId) {
-            this.redirectInProgress = worksheetId;
-
             document.location.href = `/patient/${this.patient.id}/fiche/${worksheetId}`;
         },
         redirectToDoctorView(worksheetId) {
-            this.redirectInProgress = worksheetId;
-
             document.location.href = `/doctor/${this.doctor.id}/voir/${worksheetId}/${this.patient.id}/?ref=dashp`;
+        },
+        doctorViewRedirectToEditPage(worksheetId) {
+            document.location.href = `/doctor/${this.doctor.id}/fiche/edition/${worksheetId}/${this.patient.id}`;
+        },
+        doctorViewRedirectToWorksheetPage(worksheetId) {
+            document.location.href = `/doctor/${this.doctor.id}/voir/${worksheetId}/${this.patient.id}/?ref=dashp`;
+            // if (hasSessions) {
+            //     document.location.href = `/doctor/${this.doctor.id}/voir/${worksheetId}/${this.patient.id}`;
+            // } else {
+            //     document.location.href = `/doctor/${this.doctor.id}/fiche/voir/${worksheetId}/${this.patient.id}`;
+            // }
+        },
+        doctorViewRemoveWorksheet(worksheet) {
+            this.removeWorksheetDetails = worksheet;
+
+            return (this.modalConfirmRemoveWorksheet =
+                !this.modalConfirmRemoveWorksheet);
+        },
+        validRemoveWorksheet() {
+            this.btnLoadingValidRemoveWorksheet = true;
+
+            this.axios
+                .post(`/doctor/${this.doctor.id}/remove/worksheet`, {
+                    _token: this.csrfTokenRemoveWorksheet,
+                    worksheetId: this.removeWorksheetDetails.id,
+                })
+                .then((response) => {
+                    f.openSuccessNotification(
+                        "Suppression de la prescription",
+                        response.data
+                    );
+                    this.$parent.patientWorksheets.splice(
+                        this.$parent.patientWorksheets.indexOf(
+                            this.removeWorksheetDetails
+                        ),
+                        1
+                    );
+                    this.btnLoadingValidRemoveWorksheet = false;
+                    this.modalConfirmRemoveWorksheet = false;
+                })
+                .catch((error) => {
+                    const errorMess =
+                        "object" === typeof error.response.data
+                            ? error.response.data.detail
+                            : error.response.data;
+
+                    f.openErrorNotification("Erreur", errorMess);
+                    this.btnLoadingValidRemoveWorksheet = false;
+                    this.modalConfirmRemoveWorksheet = false;
+                });
         },
     },
 };
 </script>
+
+<style lang="scss" scoped>
+@media (max-width: 991px) {
+    #my-worksheets .worksheet-list > div:not(.not-found) > div:not(.worksheet-container) .buttons
+    {
+        flex-direction: column;
+
+        .btn-action {
+            margin: 0.3rem;
+            width: 2.5rem;
+            height: 2.5rem;
+            min-width: 2.5rem;
+            min-height: 2.5rem;
+            max-height: 2.5rem;
+
+            i {
+                font-size: 1.1rem;
+
+                &.fa-trash
+                {
+                    font-size: 1.05rem;
+                }
+            }
+        }
+    }
+}
+
+#my-worksheets.doctor-view .worksheet-list > div:not(.not-found) > div:not(.worksheet-container)
+{
+    position: relative;
+    overflow: visible;
+
+    .worksheet-commentaries
+    {
+        position: absolute;
+        top: -0.3rem;
+        right: -0.4rem;
+        padding: 0.5rem;
+        border-radius: 50%;
+        width: 2.7rem;
+        height: 2.7rem;
+        color: #fff;
+        font-size: 1.4rem;
+
+        &::before 
+        {
+            content: "";
+            width: 1.9rem;
+            height: 1.6rem;
+            background-color: #fb8b68;
+            position: absolute;
+            bottom: 0.6rem;
+            right: 0.6rem;
+            border-radius: 0.5rem;       
+        }
+
+        // &::after 
+        // {
+        //     content: "";
+        //     width: 0.3rem;
+        //     height: 0.3rem;
+        //     background-color: #fb8b68;
+        //     position: absolute;
+        //     bottom: 0.4rem;
+        //     right: 1.5rem;        
+        // }
+
+        .fa-comment-alt
+        {
+            font-size: 2rem;
+            position: relative;
+            top: 0rem;
+            left: -0.35rem;
+            color: #fb8b68;
+        }
+
+        .count-commentaries
+        {
+            position: absolute;
+            top: 0.61rem;
+            right: 0.6rem;
+            width: 1.8rem;
+            height: 1.3rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.8rem;
+            background-color: #fb8b68;
+        }
+    }
+}
+</style>

@@ -72,16 +72,22 @@ class Doctor extends User
     private $giveFreeAccessPrescri;
 
     /**
+    * @ORM\Column(type="boolean", nullable=true)
+    * @Groups({"doctor_read"})
+    */
+    private $giveAccessPublicWorksheetGeneration;
+
+    /**
+    * @ORM\Column(type="boolean", nullable=true)
+    * @Groups({"doctor_read"})
+    */
+    private $giveAccessAddFreePatient;
+
+    /**
      * @ORM\OneToOne(targetEntity=FFMKRAdhesion::class, inversedBy="doctor", cascade={"persist", "remove"})
      * @Groups({"doctor_read"})
      */
     private $FFMKRAdhesion;
-    
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"doctor_read"})
-     */
-    private $giveAccessPublicWorksheetGeneration;
 
     public function __construct()
     {
@@ -284,18 +290,6 @@ class Doctor extends User
         return $this;
     }
 
-    public function getFFMKRAdhesion(): ?FFMKRAdhesion
-    {
-        return $this->FFMKRAdhesion;
-    }
-
-    public function setFFMKRAdhesion(?FFMKRAdhesion $FFMKRAdhesion): self
-    {
-        $this->FFMKRAdhesion = $FFMKRAdhesion;
-
-        return $this;
-    }
-      
     public function isGiveAccessPublicWorksheetGeneration(): ?bool
     {
         return $this->giveAccessPublicWorksheetGeneration;
@@ -305,6 +299,30 @@ class Doctor extends User
     {
         $this->giveAccessPublicWorksheetGeneration = $giveAccessPublicWorksheetGeneration;
 
+        return $this;
+    }
+
+    public function isGiveAccessAddFreePatient(): ?bool
+    {
+        return $this->giveAccessAddFreePatient;
+    }
+
+    public function setGiveAccessAddFreePatient(?bool $giveAccessAddFreePatient): self
+    {
+        $this->giveAccessAddFreePatient = $giveAccessAddFreePatient;
+
+        return $this;
+    }
+
+    public function getFFMKRAdhesion(): ?FFMKRAdhesion
+    {
+        return $this->FFMKRAdhesion;
+    }
+
+    public function setFFMKRAdhesion(?FFMKRAdhesion $FFMKRAdhesion): self
+    {
+        $this->FFMKRAdhesion = $FFMKRAdhesion;
+        
         return $this;
     }
 }

@@ -2,17 +2,18 @@
 
 namespace App\Controller\Patient;
 
-use App\Service\UserService;
+use App\Entity\Doctor;
 use App\Entity\Patient;
+use App\Service\UserService;
 use App\Repository\DoctorRepository;
-use App\Repository\NotificationRepository;
 use App\Service\NotificationService;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Repository\NotificationRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
  * @Route("/patient")
@@ -56,11 +57,30 @@ class DoctorController extends AbstractController
         if ($request->isMethod('post')) {
             $data = json_decode($request->getContent());
 
-            if ($this->isCsrfTokenValid('select_doctor' . $patient->getId(), $data->_token)) {
-                $doctor = $this->doctorRepository->findOneBy(['id' => $data->doctorId]);
+            if ($this->isCsrfTokenValid('select_doctor' . $patient->getId(), $data->_token)) {                
+                if(!$data->doctorId)
+                {
+                    $patient->setAddRequestDoctor(false);
+                    $this->notificationService->createPatientWithoutDoctorNotification($patient);
+                    $this->em->flush();
 
+                    return $this->json(
+                        'patient-without-doctor',
+                        200
+                    );    
+                }
+                
                 $patient->setAddRequestDoctor(true);
 
+                $doctor = $this->doctorRepository->findOneBy(['id' => $data->doctorId]);
+                if(!$doctor instanceof Doctor)
+                {
+                    return $this->json(
+                        "Une erreur s'est produite lors de l'ajout du praticien",
+                        500
+                    );            
+                }
+                
                 $patient->setDoctor($doctor);
 
                 $this->notificationService->createSelectDoctorNotification($patient, $doctor);

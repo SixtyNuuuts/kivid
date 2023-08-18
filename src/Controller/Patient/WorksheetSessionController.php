@@ -67,7 +67,7 @@ class WorksheetSessionController extends AbstractController
 
         $currentWorksheetSession = $this->worksheetSessionRepository->findCurrentWorksheetSession($worksheet);
         
-        $countOldWorksheetSessions = $this->worksheetSessionRepository->counOldWorksheetSessions($worksheet);
+        $countOldWorksheetSessions = $this->worksheetSessionRepository->countOldWorksheetSessions($worksheet);
 
         if ($currentWorksheetSession && $param === 'time-left-before-next') {
             $now = new \DateTime();
@@ -146,6 +146,28 @@ class WorksheetSessionController extends AbstractController
                 'currentWorksheetSession' => $currentWorksheetSession,
                 'notifTimeLeft' => $notifTimeLeft,
                 'countOldWorksheetSessions' => $countOldWorksheetSessions,
+            ],
+            200,
+            [],
+            ['groups' => 'session_read']
+        );
+    }
+
+    /**
+     * @Route("/{id}/get/worksheet-progression/{worksheetId}",
+     * name="app_get_worksheet_progression", methods={"GET"})
+     * @isGranted("IS_OWNER_OR_OWNERDOC", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
+     */
+    public function getWorksheetProgression(int $worksheetId): JsonResponse {
+        $currentWorksheetSession = $this->worksheetSessionRepository->findCurrentWorksheetSessionByWorksheetId($worksheetId);
+        $countWorksheetSessions = $this->worksheetSessionRepository->countWorksheetSessionsByWorksheetId($worksheetId);
+        $countCompletedWorksheetSessions = $this->worksheetSessionRepository->countCompletedWorksheetSessionsByWorksheetId($worksheetId);
+        
+        return $this->json(
+            [
+                'currentWorksheetSession' => $currentWorksheetSession,
+                'countWorksheetSessions' => $countWorksheetSessions,
+                'countCompletedWorksheetSessions' => $countCompletedWorksheetSessions,
             ],
             200,
             [],

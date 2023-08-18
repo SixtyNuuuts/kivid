@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <DoctorChoice
-            v-if="!patient.doctor && !patientHasNoDoctorChoice && !doctorView"
+            v-if="!patient.addRequestDoctor && !doctorView"
             :patient="patient"
             :csrfTokenSelectDoctor="csrfTokenSelectDoctor"
             :csrfTokenContact="csrfTokenContact"
@@ -14,11 +14,11 @@
             :class="{ 'doctor-view': doctorView }"
         >
             <div>
-                <i
+                <!-- <i
                     v-if="doctorView"
                     class="kiv-arrow-left icon-31"
                     @click="rederictToDashboard()"
-                ></i>
+                ></i> -->
                 <h1>
                     <span v-if="!doctorView">
                         Bienvenue sur votre dashboard !
@@ -29,28 +29,9 @@
                             />
                         </i>
                     </span>
-                    <span v-if="doctorView">
-                        Dashboard de
-                        <span v-if="patient.firstname || patient.lastname">
-                            {{ patient.firstname }}
-                            {{ patient.lastname }}
-                        </span>
-                        <span v-else>
-                            {{ patient.email }}
-                        </span>
-                    </span>
-                </h1>
-            </div>
-            <main>
-                <section
-                    v-if="doctorView"
-                    class="kiv-block mobile-view"
-                    id="patient"
-                >
-                    <h2>Le patient</h2>
-                    <div v-if="myDoctorContent" class="patient-details">
-                        <div class="patient-avatar">
-                            <vs-avatar class="avatar" circle size="116">
+                    <span v-if="doctorView" class="h1-doctor-view">
+                        <span class="patient-avatar">
+                            <vs-avatar class="avatar" circle size="65">
                                 <img
                                     :src="
                                         patient.avatarUrl
@@ -60,19 +41,21 @@
                                     :alt="`Avatar de ${patient.firstname} ${patient.lastname}`"
                                 />
                             </vs-avatar>
-                        </div>
-                        <div class="patient-infos">
-                            <div>
-                                <p class="name">
-                                    {{ getUserName(patient) }}
-                                </p>
-                                <p v-if="patient.birthdate" class="birthdate">
-                                    {{ getAge(patient.birthdate) }} ans
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
+                        </span>
+                        <span>
+                            Dashboard de
+                            <span class="patient-name" v-if="patient.firstname || patient.lastname">
+                                {{ patient.firstname }}
+                                {{ patient.lastname }}
+                            </span>
+                            <span class="patient-name" v-else>
+                                {{ patient.email }}
+                            </span>
+                        </span>
+                    </span>
+                </h1>
+            </div>
+            <main>
                 <MyScores
                     :patient="patient"
                     :doctorView="doctorView"
@@ -85,6 +68,7 @@
                     :doctor="currentUser"
                     :patientWorksheets="patientWorksheets"
                     :loadingPatientWorksheets="loadingPatientWorksheets"
+                    :csrfTokenRemoveWorksheet="csrfTokenRemoveWorksheet"
                 />
                 <aside>
                     <MyDashboardNotifications
@@ -115,7 +99,7 @@
                                     ></div>
                                     <vs-avatar
                                         v-if="
-                                            patient.addRequestDoctor &&
+                                            patient.addRequestDoctor && patient.doctor &&
                                             !loadingDoctor
                                         "
                                         class="avatar"
@@ -155,7 +139,7 @@
                                     </div>
                                     <div
                                         v-if="
-                                            patient.addRequestDoctor &&
+                                            patient.addRequestDoctor && patient.doctor &&
                                             !loadingDoctor
                                         "
                                     >
@@ -208,7 +192,11 @@
                                     <div v-if="!patient.doctor">
                                         <p class="p">En attente</p>
                                         <p class="subp">Un de nos praticiens va prendre contact avec vous
-                                           pour&nbsp;élaborer le traitement approprié
+                                           pour&nbsp;élaborer le traitement approprié.
+                                        </p>
+                                        <p class="subp">
+                                            Vous avez une question ?
+                                            <a @click="rederictToHelpSupport">contactez-nous</a>
                                         </p>
                                     </div>
                                 </div>
@@ -323,6 +311,7 @@ export default {
             csrfTokenSelectDoctor: null,
             csrfTokenAcceptDoctor: null,
             csrfTokenDeclineDoctor: null,
+            csrfTokenRemoveWorksheet: null,
             myDBNotificationsContent: true,
             myScoresContent: true,
             myDoctorContent: true,
@@ -344,6 +333,7 @@ export default {
         },
         setPatientHasNoDoctorChoice(patientHasNoDoctorChoice) {
             this.patientHasNoDoctorChoice = patientHasNoDoctorChoice;
+            this.valideChangeDoctor();
         },
         closeModalChangeDoctor() {
             this.modalChangeDoctor = false;
@@ -414,6 +404,9 @@ export default {
         rederictToDashboard() {
             document.location.href = `/doctor/${this.currentUser.id}/dashboard`;
         },
+        rederictToHelpSupport() {
+            document.location.href = `/support`;
+        },
         setDoctorSelected(doctorSelected) {
             this.doctorSelected = doctorSelected;
         },
@@ -423,21 +416,24 @@ export default {
             this.axios
                 .post(`/patient/${this.patient.id}/select/doctor`, {
                     _token: this.csrfTokenSelectDoctor,
-                    doctorId: this.doctorSelected.id,
+                    doctorId: this.doctorSelected?.id??null,
                 })
                 .then((response) => {
-                    f.openSuccessNotification(
-                        "Choix du praticien enregistré",
-                        response.data
-                    );
-
                     this.patient.addRequestDoctor = true;
 
-                    this.patient.doctor = this.doctorSelected;
+                    if(response.data != 'patient-without-doctor')
+                    {
+                        f.openSuccessNotification(
+                            "Choix du praticien enregistré",
+                            response.data
+                        );
 
-                    this.modalChangeDoctor = false;
+                        this.patient.doctor = this.doctorSelected;
 
-                    this.loadingChangeDoctor = false;
+                        this.modalChangeDoctor = false;
+
+                        this.loadingChangeDoctor = false;
+                    }
                 })
                 .catch((error) => {
                     const errorMess =
@@ -466,6 +462,7 @@ export default {
         this.csrfTokenAcceptDoctor = data.csrfTokenAcceptDoctor;
         this.csrfTokenContact = data.csrfTokenContact;
         this.csrfTokenDeclineDoctor = data.csrfTokenDeclineDoctor;
+        this.csrfTokenRemoveWorksheet = data.csrfTokenRemoveWorksheet;
         this.csrfTokenSelectDoctor = data.csrfTokenSelectDoctor;
         this.doctorSelected = this.patient.doctor;
 
@@ -611,8 +608,66 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@media (max-width: 991px) {
+    body .container 
+    {
+        padding: 2rem;
+    }
+}
+
 #dashboard.db-patient {
     &.doctor-view {
+        h1 {
+            margin-bottom: 1rem !important;
+            .h1-doctor-view
+            {
+                font-size: 2.7rem;
+                display: flex;
+                align-items: center;
+
+                > *:not(:last-child) {
+                    margin-right: 1.5rem;
+                }
+
+                > span:not(.patient-avatar)
+                {
+                    display: flex;
+                    flex-direction: column;
+                    margin-top: 0.5rem;
+                }
+
+                .patient-name
+                {
+                    white-space: nowrap;
+                    display: inline-block;
+                    max-width: 72vw;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    // font-size: 3.2rem;
+                }
+
+                @media (min-width: 992px) {
+                    .patient-avatar {
+                        display: none;
+                    }
+
+                    > span:not(.patient-avatar)
+                    {
+                        display: flex;
+                        flex-direction: row;
+                        margin-bottom: 1.5rem;
+                        margin-left: 0.5rem;
+                        font-size: 3.2rem;
+
+                        .patient-name
+                        {
+                            max-width: initial;
+                            margin-left: 0.75rem;
+                        }
+                    }
+                }
+            }
+        }
         > div:first-child {
             display: flex;
             margin-top: 0.5rem;
@@ -636,7 +691,6 @@ export default {
                 margin-bottom: 2rem;
             }
         }
-
         main {
             #patient {
                 grid-template-areas: patient;
@@ -696,11 +750,20 @@ export default {
     }
     .p {
         margin-bottom: 0.4rem;
+        font-weight: bold;
+        font-size: 1.5rem;
     }
     .subp {
         font-size: 1.4rem;
         max-width: 28rem;
         margin-top: 0rem;
+        margin-bottom: 0.125rem;
+
+        a {
+            text-decoration: underline;
+            color: #a4a29f;
+            cursor: pointer;
+        }
     }
     .change-doctor-modal {
         position: fixed;
