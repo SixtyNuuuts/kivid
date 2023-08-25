@@ -194,8 +194,8 @@
         }
 
         &.completed {
-            background: #def1df;
-            color: $green;
+            background: #def1df !important;
+            color: $green !important;
 
             i.kiv-completed {
                 opacity: 1;

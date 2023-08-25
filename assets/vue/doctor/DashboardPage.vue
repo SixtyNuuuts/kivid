@@ -492,12 +492,15 @@ export default {
 
         &.with-notifs {
             grid-template-areas:
-                "mydashboardnotif"
                 "myworksheets"
-                "aside";
+                "aside"
+                "mydashboardnotif";
+
+            grid-gap: 0.9rem;
 
             @media (min-width: 1100px) {
                 grid-template-areas: "myworksheets  myworksheets aside";
+                grid-gap: 2rem;
             }
         }
 
@@ -515,6 +518,17 @@ export default {
             .mobile-view {
                 display: none !important;
             }
+        }
+    }
+}
+
+@media (max-width: 991px) {
+    .footer
+    {
+        min-height: 6.4rem;
+        > *
+        {
+            display: none !important;
         }
     }
 }

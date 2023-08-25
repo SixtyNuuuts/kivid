@@ -77,23 +77,83 @@ export default {
     {
         position: absolute;
         right: 0.1rem !important;
-        top: -0.35rem !important;
+        top: 0.25rem !important;
+
+        @media (max-width: 991px) 
+        {
+            top: -0.35rem !important;
+        }
 
         .vs-button--size-mini.tag.part-of-body
         {
             background: #ffffff;
-            border-radius: 50%;
-            width: 3.1rem;
-            height: 3.1rem;
-
-            img {
-                margin-right: 0;
-            }
-
-            .text 
+            
+            @media (max-width: 991px) 
             {
-                display: none;
+                border-radius: 50%;
+                width: 3.1rem;
+                height: 3.1rem;
+
+                img {
+                    margin-right: 0;
+                }
+
+                .text 
+                {
+                    display: none;
+                }
             }
-    }
+        }
+
+        &.btn-light-plus
+        {
+            .vs-button--size-mini.tag.part-of-body
+            {
+                @media (max-width: 991px) 
+                {
+                    width: 3.5rem;
+                    height: 3.5rem;
+                }
+            }
+        }
+
+        &.btn-light-full-page
+        {
+            @media (min-width: 992px) 
+            {
+                top: -0.35rem !important;
+            }
+
+            .vs-button--size-mini.tag.part-of-body
+            {                
+                @media (min-width: 992px) 
+                {
+                    border-radius: 50%;
+                    width: 3.1rem;
+                    height: 3.1rem;
+
+                    img {
+                        margin-right: 0;
+                    }
+
+                    .text 
+                    {
+                        display: none;
+                    }
+                }
+            }
+
+            &.btn-light-plus
+            {
+                .vs-button--size-mini.tag.part-of-body
+                {
+                    @media (min-width: 992px) 
+                    {
+                        width: 3.5rem;
+                        height: 3.5rem;
+                    }
+                }
+            }
+        }
     }
 </style>

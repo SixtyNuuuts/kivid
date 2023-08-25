@@ -187,6 +187,38 @@ body {
                 width: 3.2rem;
             }
 
+            .btn-action-text
+            {
+                @media (max-width: 799px) 
+                {
+                    display: none;
+                }
+            }
+
+            @media (min-width: 799px) {
+                width: initial;
+                height: initial;
+                min-width: initial;
+                min-height: initial;
+                max-height: initial;
+                border-radius: 0.6rem;
+                margin-left: 2.1rem;
+                box-shadow: -0.05rem 0.3rem 1.4rem rgba(216, 194, 153, 0.37) !important;
+                background: #ffffff;
+                color: #fb8b68;
+                border: 1px solid #fbefeb;
+
+                .vs-button__content {
+                    padding: 1.6rem !important;
+                    height: 4.5rem;
+                }
+
+                svg {
+                    fill: #fb8b68;
+                    width: 3rem;
+                    margin-right: 0.6rem;
+                }    
+            }
         }
 
         &.cancel-prescri-process
@@ -206,12 +238,41 @@ body {
                 svg {
                     width: 2.1rem;
                 }
+
+                @media (min-width: 799px) {
+                    // width: initial;
+                    // height: initial;
+                    // min-width: initial;
+                    // min-height: initial;
+                    // max-height: initial;
+                    // border-radius: 0.6rem;
+                    // margin-left: 2.1rem;
+                    // box-shadow: -0.05rem 0.3rem 1.4rem #fb8b68 !important;
+                    // background: #fb8b68;
+                    // color: #ffffff;
+                    // border: 1px solid transparent;
+                    display: none;
+    
+                    .vs-button__content {
+                        padding: 1.6rem !important;
+                        height: 4.5rem;
+                    }
+    
+                    svg {
+                        fill: #ffffff;
+                        width: 2.5rem;
+                        margin-right: 0.6rem;
+                    }    
+                }    
             }
         }
 
-        // @media (min-width: 800px) {
-        //     display: none;
-        // }
+        @media (min-width: 799px) {
+            width: initial !important;
+            position: relative;
+            bottom: -0.2rem;
+            right: 0;
+        }
     }
 
     .btn-prescription-action,

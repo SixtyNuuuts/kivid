@@ -32,7 +32,7 @@
                             </h3>
                             <TagPartOfBody
                                 :partOfBody="worksheet.partOfBody"
-                                class="btn-light"
+                                class="btn-light btn-light-full-page"
                                 :class="{
                                     completed:
                                         (worksheet.currentWorksheetSession &&
