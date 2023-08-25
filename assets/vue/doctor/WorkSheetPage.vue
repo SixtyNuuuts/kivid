@@ -23,7 +23,7 @@
                     class="kiv-arrow-left icon-31"
                     @click="rederictToDashboard()"
                 ></i> -->
-                <div class="prescri-for-patient">
+                <div class="prescri-for-patient" :class="{'multiple-contexte':getWorksheets.length>1}">
                     <div class="label">
                         <span v-if="getWorksheets.length > 1">{{ getWorksheets.length }} prescriptions</span>
                         <span v-else>prescription</span>
@@ -589,8 +589,8 @@ export default {
             this.modalConfirmRemoveWorksheet = false;
         },
         worksheetTitleGeneration(worksheetTitle, worksheetId) {
-            console.log(worksheetId);
-            return worksheetTitle == "" ? `Création ${parseInt(String(worksheetId).slice(3))+1} ...` : worksheetTitle;
+            worksheetId = String(worksheetId);
+            return worksheetTitle == "" && worksheetId.startsWith('new') ? `Création ${parseInt(worksheetId.slice(3))+1} ...` : worksheetTitle;
         }
     },
     created() {
@@ -750,6 +750,10 @@ export default {
         border-top: 1px solid #ffffff;
         border-bottom: 0px solid transparent;
 
+        @media (min-width: 500px) {
+            padding: 1.4rem 3.4rem;
+        }
+
         &.active
         {
             background-color: #fff;
@@ -888,6 +892,14 @@ export default {
         {
             padding: 1.5rem;
             padding-top: 2rem;
+
+            @media (min-width: 500px) {
+                padding: 1.5rem 3.4rem;
+            }
+
+            @media (min-width: 799px) {
+                padding: 2.5rem 3.4rem;
+            }
         }
 
         &.multiple-contexte
@@ -897,6 +909,15 @@ export default {
             header {
                 padding-top: 1rem;
                 padding: 1.4rem;
+
+                @media (min-width: 500px) {
+                    padding: 1.5rem 3.4rem;
+                }
+
+                @media (min-width: 799px) {
+                    padding: 2.5rem 3.4rem;
+                }
+
             }
 
             .exercises-list-container .add-videos {
@@ -917,6 +938,10 @@ export default {
                         color: #c1b79d;
                         font-weight: normal;
                         margin-bottom: 0.7rem;
+
+                        @media (min-width: 500px) {
+                            padding: 0 3.5rem;
+                        }
                     }
                 }
 
@@ -943,9 +968,8 @@ export default {
             margin-bottom: 1rem;
 
             &.title {
-                width: 71%;
-                height: 3.9rem;
-                margin: auto;
+               width: 100%;
+                height: 4.8rem;
                 margin-bottom: 2.1rem;
             }
         }
@@ -970,11 +994,27 @@ export default {
             border-radius: 2.5rem;
             font-weight: 600;
             margin-bottom: 1.5rem;
-            margin-left: 3.4rem;
+            margin-left: 1.4rem;
             margin-top: 2.5rem;
-            margin-right: 3.4rem;
+            margin-right: 1.4rem;
             min-width: 18.3rem;
             position: relative;
+
+            @media (min-width: 500px) {
+                margin-left: 3.4rem;
+                margin-right: 3.4rem;
+                margin-top: 3.6rem;
+                margin-bottom: 2rem;
+            }
+
+            @media (min-width: 799px) {
+                margin-top: 4rem;
+            }
+
+            &:not(.multiple-contexte)
+            {
+                margin-bottom: 0.3rem;
+            }
 
             .label {
                 position: absolute;
@@ -1167,7 +1207,8 @@ export default {
                 {
                     .vs-input-content {
                         .vs-input {
-                            box-shadow: 0rem 0.4rem 1.4rem 0rem #ffc4c1;
+                            box-shadow: 0rem 0.4rem 1.4rem 0rem #f69e99;
+                            border: 0.1rem solid #ff564b;
                         }
                     }
                 }
@@ -1348,8 +1389,12 @@ export default {
                     margin-top: 0;
                     background: #fff;
                     box-shadow: 0rem 0.4rem 1.4rem 0rem #e7dfcdd1;
-                    border: none;
                     margin-left: 0;
+
+                    &.partofbody-selected
+                    {
+                        border: 1px solid #e2d4b3;
+                    }
 
                     .text 
                     {
@@ -1364,6 +1409,7 @@ export default {
                     min-height: 3.9rem;
                     padding: 1.04rem 1.7rem;
                     box-shadow: 0rem 0.4rem 1.4rem 0rem #e7dfcdd1;
+                    border: 1px solid #e2d4b3;
                 }
 
                 .arrow-toggle-box
@@ -1383,7 +1429,9 @@ export default {
 
                 .select-box 
                 {
-                    top: 3.9rem;
+                    top: 4.2rem;
+                    left: 0.1rem;
+                    width: 99.8%;
                 } 
 
                 &:not(.active)
@@ -1531,7 +1579,8 @@ export default {
                             top: 0.08rem;
                             min-height: 3.9rem;
                             padding: 1.04rem 1.7rem;
-                            box-shadow: 0rem 0.4rem 1.4rem 0rem #ffbab7;
+                            box-shadow: 0rem 0.4rem 1.4rem 0rem #f69e99;
+                            border: 0.1rem solid #ff564b;
                         }
 
                         &:not(.active):not(.partofbodyselected) > div:first-child::after 
@@ -1596,6 +1645,17 @@ export default {
                 margin-right: 0.7rem;
                 font-size: 1.4rem;
             }
+        }
+    }
+}
+
+@media (max-width: 991px) {
+    .footer
+    {
+        min-height: 6.4rem;
+        > *
+        {
+            display: none !important;
         }
     }
 }

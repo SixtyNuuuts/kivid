@@ -63,7 +63,7 @@
                 </div>
             </div>
             <!-- <div v-else class="exercises-list" :id="`exercises-list-${worksheetIndex}`" @touchmove="setActiveExercise"> -->
-            <div v-else class="exercises-list" :id="`exercises-list-${worksheetIndex}`">
+            <div v-else class="exercises-list" :id="`exercises-list-${worksheetIndex}`" :class="{'scroll-snap':!exercisePositionActiveId}">
                 <div
                     v-for="exercise in getExercises"
                     :key="exercise.id"
@@ -81,7 +81,7 @@
                         >
                             <i class="fas fa-sort-up"></i>
                         </vs-button>
-                        <div>{{ exercise.position + 1 }}</div>
+                        <div class="num-position">{{ exercise.position + 1 }}</div>
                         <vs-button
                             v-if="
                                 exercise.position != getExercises.length - 1
@@ -99,7 +99,7 @@
                             <span>{{ exercise.video.name }}</span>
                         </h2>
                         <button
-                            v-if="'voir' !== action"
+                            v-if="'voir' !== action && exercisePositionActiveId!=exercise.id"
                             class="remove-exercise"
                             @click="removeExercise(exercise)"
                         >
@@ -445,7 +445,6 @@ export default {
             removeExerciseDetails: { video: {} },
             btnLoadingValidRemoveExercise: false,
             visibleItemIndex: 0,
-            // setActiveExerciseTimeout: null,
             exercisePositionActiveId: null
         };
     },
@@ -463,45 +462,7 @@ export default {
             return this.getExercises[this.getExercises.length - 1];
         },
     },
-    mounted() {
-        // this.setActiveExercise();
-        // window.addEventListener('resize', this.setActiveExercise);
-    },
-    beforeDestroy() {
-        // window.removeEventListener('resize', this.setActiveExercise);
-    },
     methods: {
-        // setActiveExercise(e,context=null) {
-        //     const container = document.getElementById(`exercises-list-${this.worksheetIndex}`);
-        //     const exercises = container.querySelectorAll('.exercise');
-        //     const containerRect = container.getBoundingClientRect();
-
-        //     let maxVisibleArea = 0;
-        //     let maxVisibleIndex = 0;
-
-        //     exercises.forEach((exercise, index) => {
-        //         const exerciseRect = exercise.getBoundingClientRect();
-        //         const visibleArea = this.calculateVisibleArea(containerRect, exerciseRect);
-        //         if (visibleArea > maxVisibleArea) {
-        //             maxVisibleArea = visibleArea;
-        //             maxVisibleIndex = index;
-        //         }
-        //     });
-
-        //     this.getExercises.forEach((exercice, index) => {
-        //         exercice.isActive = index === maxVisibleIndex;
-        //     });
-
-        //     clearTimeout(this.setActiveExerciseTimeout);
-        //     if(!context)
-        //     {
-        //         this.setActiveExerciseTimeout = setTimeout(() => {
-        //             this.setActiveExercise(e,'secondhit')
-        //         }, 1000);
-        //     }
-
-        //     this.visibleItemIndex = maxVisibleIndex;
-        // },
         calculateVisibleArea(containerRect, itemRect) {
             const intersectionLeft = Math.max(containerRect.left, itemRect.left);
             const intersectionRight = Math.min(containerRect.right, itemRect.right);
@@ -522,7 +483,7 @@ export default {
             const is = this.getExercises.length;
             videos.forEach((v, i) => {
                 const exercise = {
-                    id: `new${this.worksheetIndex}${i}`,
+                    id: `new${this.worksheetIndex}${i}${Date.now().toString()}`,
                     position: is + i,
                     numberOfRepetitions: 10,
                     numberOfSeries: 3,
@@ -541,7 +502,12 @@ export default {
             this.$emit("videos-selection", true);
 
             this.$nextTick(() => {
+                const container = document.getElementById(`exercises-list-${this.worksheetIndex}`);
+                container.classList.remove('scroll-snap');
                 this.scrollToExercise(this.exercises[this.exercises.length-1]);
+                setTimeout(() => {
+                    container.classList.add('scroll-snap');
+                }, 1000);
             });
         },
         checkIfValueIsEmptyOrNull(exercise) {
@@ -605,8 +571,12 @@ export default {
             const exerciseCible = document.getElementById(`exercise-${this.worksheetIndex}-${exercise.position}`);
             if (exerciseCible&&container) 
             {
+                const containerWidth = container.offsetWidth;
+                const exerciseWidth = exerciseCible.offsetWidth;
+                const scrollToCenter = exerciseCible.offsetLeft + (exerciseWidth / 2) - (containerWidth / 2);
+
                 container.scrollTo({
-                    left: exerciseCible.offsetLeft,
+                    left: scrollToCenter,
                     behavior: 'smooth',
                 });
             }
@@ -721,6 +691,7 @@ export default {
     border: none;
     background: #fff;
     box-shadow: 0rem 0.4rem 1.4rem 0rem #e7dfcdd1;
+    border: 1px solid #e2d4b3;
 }
 
 .exercises-list-container {
@@ -729,7 +700,17 @@ export default {
     .exercises-list {
         overflow-x: scroll;
         display: flex;
-        
+
+        &.scroll-snap
+        {
+            scroll-behavior: smooth;
+            scroll-snap-type: x mandatory;
+
+            .exercise {
+                scroll-snap-align: center;
+            }
+        }
+
         @media (max-width: 799px) {
             &::-webkit-scrollbar {
                 display: none;
@@ -765,7 +746,7 @@ export default {
 
             .vs-input__label--hidden.vs-input__label--placeholder {
                 font-size: 1.1rem;
-                top: -0.65rem;
+                top: -0.6rem;
                 left: 0.3rem;
             }
         }
@@ -798,17 +779,24 @@ export default {
             transform: scale(0.97);
             box-shadow: 0.0375rem 0.2rem 0.5rem rgba(166, 146, 115, 0.13);
             margin-left: 1rem;
+
+            &:first-child
+            {
+                @media (min-width: 500px) {
+                    margin-left: 3rem;
+                }
+
+            }
+
+            &:last-child
+            {
+                @media (min-width: 500px) {
+                    margin-right: 3rem;
+                }
+
+            }
         }
         
-        @media (min-width: 768px) {
-            margin-bottom: 2rem;
-            padding-bottom: 2rem;
-        }
-
-        @media (min-width: 992px) {
-            flex-direction: row;
-        }
-
         &.loading-block {
             .loading-gray {
                 border-radius: 0.4rem;
@@ -858,52 +846,10 @@ export default {
 
         .thumbnail-wrapper {
             height: 13.3rem;
-            // background-color: $gray-dark;
             border-radius: 0.8rem;
-            // margin-right: 0;
-            // margin-bottom: 1.6rem;
             position: relative;
             overflow: hidden;
             cursor: pointer;
-
-            // .btns-arrow {
-            //     position: absolute;
-            //     top: 1rem;
-            //     left: 1rem;
-
-            //     .vs-button {
-            //         width: 3rem;
-            //         height: 3rem;
-            //         box-shadow: 0px 0rem 1.5rem rgba(173, 100, 74, 0.88);
-
-            //         &:first-child {
-            //             margin-bottom: 0.7rem;
-            //         }
-
-            //         i {
-            //             font-size: 2.4rem;
-            //             margin-right: 0;
-
-            //             &.fa-sort-up {
-            //                 top: 0.4rem;
-            //             }
-
-            //             &.fa-sort-down {
-            //                 top: -0.4rem;
-            //             }
-            //         }
-            //     }
-            // }
-
-            // @media (min-width: 992px) {
-            //     height: 35vw;
-            //     margin-right: 2.3rem;
-            //     margin-bottom: 0;
-            //     max-width: 67rem;
-            //     max-height: 38rem;
-            //     min-width: 67rem;
-            //     min-height: 38rem;
-            // }
 
             .video-link
             {
@@ -930,18 +876,10 @@ export default {
             }
 
             .thumbnail {
-            //     position: absolute;
-            //     top: 0;
-            //     left: 0;
-            //     right: 0;
-            //     width: 100%;
                 height: 100%;
                 background-repeat: no-repeat;
                 background-size: cover;
                 background-position: center center;
-            //     transform: scale(1);
-            //     transition: all 1s;
-            //     opacity: 0.9;
             }
         }
 
@@ -949,48 +887,12 @@ export default {
             margin-bottom: 0.9rem;
             position: relative;
 
-            // &.input-h2-mobile
-            // {
-            //     @media (min-width: 992px) {
-            //         display: none;
-            //     }
-            // }
-
-            // &.input-h2-desktop
-            // {
-            //     display: none;
-
-            //     @media (min-width: 992px) {
-            //         display: block;
-            //     }
-            // }
-
-            h2 {
+        h2 {
                 position: relative;
                 margin-bottom: 0.6rem;
                 margin-left: 3.5rem;
                 max-width: 75.9%;
                 font-size: 1.4rem;
-
-                // @media (min-width: 992px) {
-                //     max-width: 18vw;
-                // }
-
-                // @media (min-width: 1040px) {
-                //     max-width: 22vw;
-                // }
-
-                // @media (min-width: 1100px) {
-                //     max-width: 27vw;
-                // }
-
-                // @media (min-width: 1370px) {
-                //     max-width: 41vw;
-                // }
-
-                // @media (min-width: 1450px) {
-                //     max-width: 43vw;
-                // }
 
                 span {
                     display: block;
@@ -1000,34 +902,6 @@ export default {
                 }
 
             }
-
-            // .remove-exercise {
-            //     position: absolute;
-            //     top: -0.4rem;
-            //     right: -0.4rem;
-            //     width: 2.2rem;
-            //     height: 2.2rem;
-            //     border-radius: 50%;
-            //     display: flex;
-            //     justify-content: center;
-            //     align-items: center;
-            //     border: 1px solid #d6ccb9;
-            //     color: #d6ccb9;
-            //     cursor: pointer;
-            //     transition: all 0.2s;
-            //     background: transparent;
-
-            //     i {
-            //         font-size: 1rem;
-            //         position: relative;
-            //         left: 0;
-            //     }
-
-            //     &:hover {
-            //         border: 1px solid $gray-dark;
-            //         color: $gray-dark;
-            //     }
-            // }
 
             .remove-exercise {
                 position: absolute;
@@ -1041,15 +915,10 @@ export default {
                 justify-content: center;
                 align-items: center;
                 border: 1px solid #dfd8cb;
-                // color: #d6cfbe;
                 cursor: pointer;
                 transition: all 0.2s;
                 background: transparent;
-
-                // @media (min-width: 800px) {
-                //     border: 1px solid #d6cfbe;
-                // }
-
+                
                 i {
                     font-size: 0.7rem;
                     position: relative;
@@ -1058,23 +927,13 @@ export default {
 
                 svg {
                     fill: #dfd8cb;
-                    // @media (min-width: 800px) {
-                    //     fill: #d6cfbe
-                    // }
                     &:hover {
                         fill: $gray-dark;
-                        // @media (min-width: 800px) {
-                        //     fill: $gray-dark
-                        // }
                     }
                 }
 
                 &:hover {
                     border: 1px solid $gray-dark;
-                    // color: $gray-dark;
-                    // @media (min-width: 800px) {
-                    //     border: 1px solid $gray-dark;
-                    // }
                 }
             }
         }
@@ -1083,10 +942,6 @@ export default {
             font-size: 1.3rem;
             display: flex;
             flex-direction: column;
-
-            @media (min-width: 992px) {
-                width: 50%;
-            }
 
             .details {
                 display: flex;
@@ -1172,13 +1027,11 @@ export default {
                         .vs-select.activeOptions
                         .vs-select__input {
                         color: #222e54;
-                        // border: 0.1rem solid $gray-middle;
                         border-radius: 0.5rem;
                         background: $white;
 
                         &:hover {
                             background: $white;
-                            // border: 0.1rem solid $gray-dark;
                         }
                     }
 
@@ -1219,6 +1072,7 @@ export default {
                             font-size: 1.3rem;
                             min-width: 12.2rem;
                             box-shadow: 0rem 0.4rem 1.4rem 0rem #e7dfcdd1;
+                            border: 1px solid #e2d4b3;
 
                             &:focus-visible,
                             &:focus {
@@ -1287,13 +1141,6 @@ export default {
                         color: $orange;
                     }
                     
-                    // &.hold, &.option {
-                    //     .vs-input-parent,
-                    //     .kiv-select {
-                    //         max-width: 12rem;
-                    //     }
-                    // }
-
                     .vs-input-parent,
                     .kiv-select {
                         max-width: 12rem;
@@ -1408,12 +1255,8 @@ export default {
             width: 2.8rem;
             height: 2.8rem;
             border-radius: 50%;
-            color: $orange;
-            font-size: 1.3rem;
-            font-weight: bold;
             z-index: 5;
             box-shadow: 0rem 0.2rem 0.7rem rgba(166, 146, 115, 0.23);
-            transition: 0.25s;
             cursor: pointer;
             border: 1px solid $orange;
     
@@ -1453,21 +1296,37 @@ export default {
                     i 
                     {
                         margin-right: 0;
-                        font-size: 1.7rem;
+                        font-size: 3rem;
                         color: #fff;
                     }
                 }
+            }
 
+            .num-position
+            {
+                background-color: transparent;
+                color: $orange;
+                border-radius: 50%;
+                width: 3.5rem;
+                height: 3.5rem;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: 1.3rem;
+                font-weight: bold;
+                transition: 0.25s;
             }
 
             &.active
             {
-                top: 0.535rem;
-                left: 0.65rem;
-                width: 4rem;
-                height: 4rem;
-                // background-color: $orange;
-                // color: #fff;
+                top: 1.5rem;
+                left: 5.3%;
+                width: 89.1%;
+                height: 1.9rem;
+                border: 1px solid #fff;
+                box-shadow: none;
+                border-radius: 50%;
+                transition: width 0.25s, background-color 0.25s;
 
                 .vs-button
                 {
@@ -1475,6 +1334,7 @@ export default {
                     pointer-events: initial;
                     width: initial;
                     z-index: 1;
+                    top: -0.6rem;
 
                     .vs-button__content
                     {
@@ -1484,7 +1344,14 @@ export default {
                         }
                     }
                 }
-
+                
+                .num-position
+                {
+                    background-color: #fb8b68;
+                    color: #fff;
+                    font-size: 1.4rem;
+                    box-shadow: 0rem 0.4rem 1.4rem 0rem #e7dfcdd1;
+                }
             }
 
         }
@@ -1542,17 +1409,6 @@ export default {
         }
 
         .btn-add-videos {
-        }
-    }
-}
-
-@media (max-width: 991px) {
-    .footer
-    {
-        min-height: 6.4rem;
-        > *
-        {
-            display: none !important;
         }
     }
 }

@@ -14,7 +14,7 @@
             <i class="kiv-chevron-down icon-3"></i>
         </div>
         <div class="tabs">
-            <div class="inactive" @click="activeTab(1)">
+            <div class="inactive" :class="{disabled:this.$parent.prescriProcess&&this.$parent.prescriProcessWorksheet}" @click="activeTab(1)">
                 <h2><span>Mes Patients</span></h2>
             </div>
             <div @click="activeTab(2)">
@@ -156,7 +156,7 @@
                                             .id === null,
                                 }"
                             >
-                                <vs-button
+                                <!-- <vs-button
                                     @click="
                                         prescriProcessWorksheetsChoice.push(null)
                                     "
@@ -184,13 +184,13 @@
                                         ><i class="fas fa-check-circle"></i
                                         >Sélectionné</span
                                     >
-                                </vs-button>
+                                </vs-button> -->
                                 <vs-tooltip>
                                     <vs-button
                                         @click="
                                             prescriProcessWorksheetsChoice.filter(w=>w==null).length < 10 ? prescriProcessWorksheetsChoice.push(null) : false
                                         "
-                                        class="btn-action add only-mobile prescri-process-create"
+                                        class="btn-action add prescri-process-create"
                                         circle
                                         floating
                                     >
@@ -225,6 +225,7 @@
                         >
                             <svg v-if="!prescriProcess" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 48 48" width="96px" height="96px"><path d="M 12.5 4 C 10.019 4 8 6.019 8 8.5 L 8 39.5 C 8 41.981 10.019 44 12.5 44 L 25.640625 44 C 24.785625 43.111 24.055516 42.103 23.478516 41 L 12.5 41 C 11.673 41 11 40.327 11 39.5 L 11 8.5 C 11 7.673 11.673 7 12.5 7 L 24 7 L 24 15.5 C 24 17.981 26.019 20 28.5 20 L 37 20 L 37 22.169922 C 38.045 22.331922 39.053 22.606906 40 23.003906 L 40 18.5 C 40 18.0855 39.831922 17.710828 39.560547 17.439453 L 26.560547 4.4394531 C 26.289172 4.1680781 25.9145 4 25.5 4 L 12.5 4 z M 27 9.1210938 L 34.878906 17 L 28.5 17 C 27.673 17 27 16.327 27 15.5 L 27 9.1210938 z M 35 24 C 28.925 24 24 28.925 24 35 C 24 41.075 28.925 46 35 46 C 41.075 46 46 41.075 46 35 C 46 28.925 41.075 24 35 24 z M 35 27 C 35.552 27 36 27.448 36 28 L 36 34 L 42 34 C 42.552 34 43 34.448 43 35 C 43 35.552 42.552 36 42 36 L 36 36 L 36 42 C 36 42.552 35.552 43 35 43 C 34.448 43 34 42.552 34 42 L 34 36 L 28 36 C 27.448 36 27 35.552 27 35 C 27 34.448 27.448 34 28 34 L 34 34 L 34 28 C 34 27.448 34.448 27 35 27 z"/></svg>
                             <svg v-else xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 50 50" width="50px" height="50px"><path d="M 9.15625 6.3125 L 6.3125 9.15625 L 22.15625 25 L 6.21875 40.96875 L 9.03125 43.78125 L 25 27.84375 L 40.9375 43.78125 L 43.78125 40.9375 L 27.84375 25 L 43.6875 9.15625 L 40.84375 6.3125 L 25 22.15625 Z"/></svg>
+                            <span class="btn-action-text">Prescrire</span>
                         </vs-button>
                     </div>
                 </div>
@@ -324,20 +325,20 @@
                                                         worksheet.perDay
                                                     }}x</span
                                                 >
-                                                <span class="space">par jour -</span>
+                                                <span class="space">/ jour -</span>
                                                 
                                                 <span class="space"
                                                     >{{
                                                         worksheet.perWeek
                                                     }}x</span
                                                 >
-                                                <span class="space">par semaine</span>
+                                                <span class="space">/ sem.</span>
                                             </div>
                                             <div class="worksheet-period">
                                                 <i
                                                     class="kiv-clock icon-11"
                                                 ></i>
-                                                <span class="space">Période :</span>
+                                                <span class="space">Pér. :</span>
                                                 <span class="space"
                                                     >{{
                                                         worksheet.duration
@@ -1230,7 +1231,8 @@ body .kiv-block .prescri-process-dialog.prescri-process-dialog-select-worksheet 
 }
 
 body .kiv-block .prescri-process-dialog.prescri-process-dialog-create-worksheet {
-    top: -2.8rem;
+    top: -3.2rem;
+    right: -2.1rem;
 }
 
 body .btn-create-action .vs-button 
@@ -1363,10 +1365,6 @@ body .btn-create-action .vs-button
             top: 0;
             right: 1.3rem;
             z-index: 5;
-
-            @media (min-width: 800px) {
-                display: none;
-            }
         }
     }
 
@@ -1382,6 +1380,11 @@ body .btn-create-action .vs-button
         background-color: #fAf8f4;
         border-radius: 0.5rem;
         cursor: pointer;
+
+        @media (min-width: 799px) {
+            background-color: #ece9e0;
+            height: 13.5rem;
+        }
 
         @media (max-width: 799px) {
             &::-webkit-scrollbar {
@@ -1585,6 +1588,12 @@ body .btn-create-action .vs-button
         z-index: 1;
         height: calc(100% + 0.28rem);
 
+        @media (min-width: 799px) {
+            border-radius: 0 0.5rem 0.5rem 0;
+            left: 0.025rem;
+            height: 100%;
+        }
+
         .vs-checkbox-content
         {
             margin-left: 0.1rem;
@@ -1616,7 +1625,8 @@ body .btn-create-action .vs-button
             font-size: 1.4rem;
             color: $orange;
             border-radius: 0.5rem;
-            box-shadow: 0rem 0.2rem 0.8rem 0rem rgba(255, 104, 56, 0.15);
+            // box-shadow: 0rem 0.2rem 0.8rem 0rem rgba(255, 104, 56, 0.15);
+            box-shadow: 0rem 0.4rem 1.4rem 0rem rgba(255, 104, 56, 0.5);
 
             &:hover {
                 box-shadow: 0rem 0.4rem 1.4rem 0rem rgba(255, 104, 56, 0.43);
@@ -1941,12 +1951,21 @@ body .btn-create-action .vs-button
             :last-child {
                 margin-right: 0;
             }
+
+            @media (min-width: 799px) {
+                background: #fff;
+            }
         }
     }
 
     .worksheet-list.wl-doctor .worksheet-container {
         // overflow: hidden;
         display: flex;
+
+        @media (min-width: 799px) {
+            background-color: #faf8f4;
+            border-radius: 0.5rem;
+        }
 
         .worksheet {
             flex-grow: 1;
@@ -1960,14 +1979,14 @@ body .btn-create-action .vs-button
             transition: 0.25s;
             overflow: hidden;
 
-            @media (min-width: 1100px) {
-                // width: 58.2vw;
-                width: initial;
+            @media (min-width: 799px) {
+                // width: initial;
+                width: 86vw;
             }
 
-            // @media (min-width: 1390px) {
-            //     width: 60vw;
-            // }
+            @media (min-width: 1100px) {
+                width: 58.4vw;
+            }
 
             // @media (min-width: 1610px) {
             //     width: 61.3vw;
@@ -1977,7 +1996,7 @@ body .btn-create-action .vs-button
                 width: 82vw!important;
 
                 @media (min-width: 1100px) {
-                    width: initial!important;
+                    width: 54vw !important;
                 }
             }
 
@@ -2028,6 +2047,10 @@ body .btn-create-action .vs-button
                     border-radius: 50% !important;
                     width: 2.5rem !important;
                     height: 2.5rem !important;
+
+                    @media (min-width: 799px) {
+                        background: #fff !important;
+                    }
 
                     img {
                         margin-right: 0 !important;
@@ -2243,21 +2266,37 @@ body .btn-create-action .vs-button
             align-items: center;
             background-color: #ff6838;
             border-radius: 50%;
-            width: 1.9rem;
-            height: 1.9rem;
+            width: 1.7rem;
+            height: 1.7rem;
             color: #fff;
             font-weight: bold;
+            position: relative;
+            left: -0.1rem;
+            top: -0.05rem;
+            @media (min-width: 799px) {
+                left: 0.2rem;
+                top: -0.05rem;
+            }
         }
 
         .vs-button
         {
             background: #fff;
             font-size: 1.4rem;
-            color: #ff6838;
+            color: #fb8b68;
             border-radius: 50%;
             box-shadow: 0rem 0.2rem 0.8rem 0rem rgba(255, 255, 255, 0.15);
             width: 1.9rem;
             height: 1.9rem;
+            transform: none;
+            border: 1px solid #ffebe4;
+            position: relative;
+            top: -0.1rem;
+            left: -0.2rem;
+            @media (min-width: 799px) {
+                top: 0.3rem;
+                left: 0;
+            }
 
             .vs-button__content 
             {

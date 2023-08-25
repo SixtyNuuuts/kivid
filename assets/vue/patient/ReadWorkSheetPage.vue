@@ -3,21 +3,22 @@
         <header>
             <div v-if="loading" class="loading-block">
                 <div class="title">
-                    <i class="kiv-arrow-left icon-31"></i>
+                    <!-- <i class="kiv-arrow-left icon-31"></i> -->
                     <div class="loading-gray h1"></div>
                 </div>
                 <div class="loading-gray part-of-body"></div>
             </div>
-            <div v-else>
+            <div v-else class="read-worksheet-title">
                 <div class="title">
-                    <i
+                    <!-- <i
                         class="kiv-arrow-left icon-31"
                         @click="rederictToDashboard()"
-                    ></i>
+                    ></i> -->
                     <h1>{{ getWorksheet.title }}</h1>
                 </div>
                 <TagPartOfBody
                     v-if="getWorksheet.partOfBody"
+                    class="btn-light btn-light-plus"
                     :class="{ completed: allExercisesIsCompleted }"
                     :partOfBody="getWorksheet.partOfBody"
                 />
@@ -410,6 +411,10 @@ export default {
 @import "../../scss/variables";
 
 #worksheet {
+    @media (max-width: 790px) {
+        padding-top: 1.8rem;
+    }
+
     .btn-timing-frieze-mobile {
         width: 100%;
         margin-bottom: 2.5rem;
@@ -441,5 +446,35 @@ export default {
             }
         }
     }
+
+    .read-worksheet-title
+    {
+        position: relative;
+    }
+
+    header > div .title
+    {
+        max-width: initial;
+        width: 100%;
+        margin-bottom: 2.5rem;
+
+        h1 
+        {
+            max-width: 87.6%;
+            display: -webkit-box;
+            -webkit-line-clamp: 2; /* Limite le nombre de lignes à 2 */
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 0.9;
+            padding-top: 0.4rem;
+            margin: 0;
+            white-space: initial;
+            @media (max-width: 790px) {
+                font-size: 2.4rem;
+            }
+        }
+    }
+
 }
 </style>
