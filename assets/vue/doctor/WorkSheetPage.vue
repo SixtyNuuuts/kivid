@@ -638,7 +638,7 @@ export default {
                     .then((response) => {
                         let existingWorksheets = Array.isArray(response.data) ? response.data : [response.data];
                         if (this.action === "creation" && !this.patient) {
-                            this.existingWorksheets = existingWorksheets.map(worksheet => ({
+                            existingWorksheets = existingWorksheets.map(worksheet => ({
                                 ...worksheet,
                                 title: `Copie de ${worksheet.title}`
                             }));

@@ -203,10 +203,9 @@ body {
                 max-height: initial;
                 border-radius: 0.6rem;
                 margin-left: 2.1rem;
-                box-shadow: -0.05rem 0.3rem 1.4rem rgba(216, 194, 153, 0.37) !important;
+                box-shadow: -0.05rem 0.3rem 1.4rem rgba(255, 104, 56, 0.5) !important;
                 background: #ffffff;
                 color: #fb8b68;
-                border: 1px solid #fbefeb;
 
                 .vs-button__content {
                     padding: 1.6rem !important;
@@ -443,10 +442,31 @@ body {
                 top: 1.9rem;
                 left: auto;
                 right: 3.4rem;
-                width: 12rem;
+                width: 14.5rem;
 
                 @media (min-width: 576px) {
                     top: -3.5rem;
+                }
+                @media (max-width: 799px) {
+                    > p {
+                        max-width: 83%;
+                        line-height: 1.2 !important;
+                        margin-right: 4.5rem;
+                    }
+                    z-index: 443!important;
+                }
+                @media (min-width: 405px) and (max-width: 500px){
+                    > p {
+                        max-width: 70%;
+                        line-height: 1.2 !important;
+                        margin-right: 0;
+                    }
+                }
+
+                @media (min-width: 501px) {
+                    > p {
+                        max-width: 35rem;
+                    }
                 }
             }
 

@@ -486,7 +486,7 @@
                 }
                 @keyframes mymove {
                     50% {
-                        box-shadow: 0rem 0.1rem 1.5rem 0rem rgba(255, 107, 38, 0.3);
+                        box-shadow: 0rem 0.1rem 1.5rem 0rem rgba(255, 107, 38, 0.8);
                     }
                 }        
             }
@@ -509,14 +509,14 @@
             }
             @keyframes mymove {
                 50% {
-                    box-shadow: 0rem 0.1rem 1.5rem 0rem rgba(255, 107, 38, 0.3);
+                    box-shadow: 0rem 0.1rem 1.5rem 0rem rgba(255, 107, 38, 0.8);
                 }
             }
             @media (min-width: 799px) 
             {
                 @keyframes mymove {
                     50% {
-                        box-shadow: 0rem 0.1rem 0.8rem 0rem rgba(255, 107, 38, 0.3);
+                        box-shadow: 0rem 0.1rem 1.5rem 0rem rgba(255, 107, 38, 0.8);
                     }
                 }    
             }    

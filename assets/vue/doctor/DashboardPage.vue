@@ -462,6 +462,17 @@ export default {
 
 <style lang="scss">
 #dashboard.db-doctor {
+    .not-found {
+        @media (max-width: 799px) {
+            background-color: #fff;
+        }
+    }
+    .worksheet-list.wl-doctor.empty
+    {
+        @media (max-width: 799px) {
+            min-height: 165vw;
+        }
+    }
     h1 {
         span.prescri-process {
             display: flex;
