@@ -7,7 +7,7 @@
       ],
       "css": [
         "/build/108.fc93ce1c.css",
-        "/build/app.4df1bb91.css"
+        "/build/app.393f7ab6.css"
       ]
     },
     "navbar": {
@@ -96,10 +96,10 @@
         "/build/247.3f1777ea.js",
         "/build/587.ea5902b6.js",
         "/build/480.d73e7fe5.js",
-        "/build/doctor-dashboard-page.1fb93109.js"
+        "/build/doctor-dashboard-page.76857ae4.js"
       ],
       "css": [
-        "/build/doctor-dashboard-page.17df7861.css"
+        "/build/doctor-dashboard-page.c2c64b61.css"
       ]
     },
     "doctor-worksheet-page": {
@@ -109,7 +109,7 @@
         "/build/274.57a26017.js",
         "/build/587.ea5902b6.js",
         "/build/480.d73e7fe5.js",
-        "/build/doctor-worksheet-page.aac662db.js"
+        "/build/doctor-worksheet-page.bf4f735b.js"
       ],
       "css": [
         "/build/doctor-worksheet-page.ddcc578a.css"
