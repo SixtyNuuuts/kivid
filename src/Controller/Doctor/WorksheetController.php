@@ -5,6 +5,7 @@ namespace App\Controller\Doctor;
 use App\Entity\Doctor;
 use App\Entity\Exercise;
 use App\Entity\Worksheet;
+use App\Repository\DoctorRepository;
 use App\Service\NotificationService;
 use App\Repository\VideoRepository;
 use App\Repository\PatientRepository;
@@ -95,6 +96,22 @@ class WorksheetController extends AbstractController
     public function getWorksheets(Doctor $doctor, ?int $maxresult = null, ?int $firstresult = null): JsonResponse
     {
         $worksheets = $this->worksheetRepository->findByDoctorPatientNull($doctor, $maxresult, $firstresult);
+
+        return $this->json(
+            $worksheets,
+            200,
+            [],
+            ['groups' => 'dashboard_worksheet_read']
+        );
+    }
+
+    /**
+     * @Route("/{id}/get/store-worksheets/{maxresult}/{firstresult}", name="app_doctor_get_store_worksheets", methods={"GET"})
+     */
+    public function getStoreWorksheets(Doctor $doctor, ?int $maxresult = null, ?int $firstresult = null, DoctorRepository $doctorRepository): JsonResponse
+    {
+        $doctorStoreReferent = $doctorRepository->findOneBy(['id'=>1]);
+        $worksheets = $this->worksheetRepository->findByDoctorPatientNull($doctorStoreReferent, $maxresult, $firstresult);
 
         return $this->json(
             $worksheets,

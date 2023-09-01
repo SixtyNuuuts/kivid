@@ -47,7 +47,7 @@
                 </span>
                 <p>
                     <span v-if="getWorksheetTemplates.length">Et / Ou sélectionnez</span
-                    ><span v-else>Sélectionnez</span> le nombre de prescriptions que vous souhaitez créer&nbsp;de&nbsp;zéro 
+                    ><span v-else>Sélectionnez</span> le nombre de prescriptions que vous souhaitez créer 
                     <span v-if="$parent.prescriProcessPatientSelected"> pour 
                         <strong>
                             <span
@@ -548,6 +548,7 @@
                         </div>
                         <div
                             class="not-found"
+                            :class="{'prescri-process':prescriProcess}"
                             v-if="
                                 !loadingDoctorFirstsWorksheets &&
                                 !getWorksheetTemplates.length &&
@@ -559,9 +560,8 @@
                                 <i class="fas fa-folder-minus"></i>
                                 <span v-if="!prescriProcess">Vous n'avez pas de fiche</span>
                                 <span v-else>
-                                    Pour créer une prescription, Vous&nbsp;devez&nbsp;avoir&nbsp;préalablement créé des&nbsp;modèles&nbsp;de&nbsp;fiche,<br>
-                                    mais vous pouvez également en&nbsp;créer&nbsp;de&nbsp;zéro<br> 
-                                    en utilisant le bouton "+" ci-dessus,<br>
+                                    Pour créer une prescription, Vous&nbsp;devez&nbsp;avoir préalablement créé des&nbsp;modèles&nbsp;de&nbsp;fiche,<br>
+                                    mais vous pouvez également en&nbsp;créer&nbsp;de&nbsp;zéro en utilisant le&nbsp;bouton&nbsp;"+"&nbsp;ci-dessus,<br>
                                     puis valider avec le bouton "Paramétrer&nbsp;puis&nbsp;Prescrire".
                                 </span>
                             </p>
@@ -1047,7 +1047,6 @@ export default {
             document.location.href = `/doctor/${this.doctor.id}/fiche/edition/${worksheetId}`;
         },
         redirectToCreatePage(worksheetId) {
-            console.log(worksheetId);
             if (worksheetId) {
                 this.btnLoadingCopyWorksheet = worksheetId;
             } else {
@@ -1254,8 +1253,8 @@ body .kiv-block .prescri-process-dialog.prescri-process-dialog-select-worksheet 
 }
 
 body .kiv-block .prescri-process-dialog.prescri-process-dialog-create-worksheet {
-    top: -10.8rem;
-    right: -3.4rem;
+    top: -6.8rem;
+    right: -4.9rem;
 }
 
 body .btn-create-action .vs-button 
@@ -1272,7 +1271,22 @@ body .btn-create-action .vs-button
     
     .not-found {
         > p > span {
-            max-width: 36rem;
+            @media (max-width: 710px) {
+                max-width: 35rem;
+            }
+            @media (min-width: 711px) {
+                max-width: 67rem;
+            }
+        }
+
+        &.prescri-process 
+        {
+            i {
+                @media (max-width: 710px) {
+                    margin-left: 2rem;
+                    margin-right: -1.3rem;
+                }
+            }
         }
     }
 
@@ -1379,159 +1393,6 @@ body .btn-create-action .vs-button
         }
     }
     
-    .worksheet-exercises-container
-    {
-        position: relative;
-        // padding-right: 0 !important;
-
-        &::after
-        {
-            content: '';
-            display: block;
-            background: linear-gradient(
-                90deg,
-                rgba(250, 250, 252, 0) 0%,
-                rgba(38, 37, 34, 0.07) 100%,
-            );
-            width: 0.7rem;
-            height: 13.2rem;
-            position: absolute;
-            top: 0;
-            right: 1.3rem;
-            z-index: 5;
-        }
-    }
-
-    .worksheet-exercises
-    {
-        display: flex;
-        flex-wrap: nowrap;
-        overflow: hidden;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        height: 13.2rem;
-        padding: 1.2rem;
-        background-color: #fAf8f4;
-        border-radius: 0.5rem;
-        cursor: pointer;
-
-        @media (min-width: 799px) {
-            background-color: #f6f2ea;
-            height: 13.5rem;
-        }
-
-        @media (max-width: 799px) {
-            &::-webkit-scrollbar {
-                display: none;
-            }
-
-            scrollbar-width: none; /* Firefox */
-            -ms-overflow-style: none; /* Internet Explorer et Edge */
-        }
-
-        .worksheet-exercise 
-        {
-            width: 17rem;
-            flex: none;
-
-            &:not(:last-child)
-            {
-                margin-right: 1.6rem;
-            }
-
-            .worksheet-exercise-thumbnail
-            {
-                height: 100%;
-                max-height: 9.5rem;
-                margin-bottom: 0.6rem;
-                img
-                {
-                    object-fit: cover;
-                    width: 100%;
-                    height: 100%; 
-                }
-            }
-
-            .worksheet-exercise-details
-            {
-                display: flex;
-                flex-wrap: nowrap;
-                overflow: hidden;
-                margin-top: 0.3rem;
-                color: #9b9894;
-
-                .series-reps, 
-                .option, 
-                .hold, 
-                .tempo
-                {
-                    &:not(:last-child)
-                    {
-                        margin-right: 0.3rem;
-                    }
-
-                    span:not(.no-space)
-                    {
-                        margin-left: 0.3rem;
-                    }
-
-                    i 
-                    {
-                        color: #fb8b68;
-                    }
-
-                    display: flex;
-                    flex: none;
-                }
-            }
-        }
-
-        
-    }
-
-    .worksheet-exercise-other
-    {
-        display: flex;
-        margin-top: 0.5rem;
-        margin-bottom: -0.3rem;
-        flex-direction: column;
-        align-items: flex-start;
-        width: 100%;
-        position: relative;
-        
-        // @media (min-width: 550px) {
-        //     margin-top: 1.4rem;
-        //     margin-bottom: 0;
-        //     align-items: flex-start;
-        // }
-
-        // @media (min-width: 780px) {
-        //     flex-direction: row;
-        //     align-items: center;
-        // }
-
-        &::after
-        {
-            content: '';
-            display: block;
-            background: linear-gradient(
-                90deg,
-                rgba(255, 255, 255, 0) 0%,
-                rgba(255, 255, 255, 1) 100%,
-            );
-            width: 1rem;
-            height: 1.2rem;
-            position: absolute;
-            top: 0.5rem;
-            right: 0;
-            z-index: 5;
-
-            @media (min-width: 800px) {
-                display: none;
-            }
-        }
-    }
-
     .buttons-container
     {
         display: flex;
@@ -1677,113 +1538,6 @@ body .btn-create-action .vs-button
         }
     }
 
-    // .big-buttons {
-    //     display: flex;
-
-    //     .btn-prescription-action {
-    //         position: relative;
-    //         top: -0.1rem;
-    //     }
-
-    //     .btn-create-action {
-    //         width: 8.8rem;
-    //         margin-right: 1.7rem;
-
-    //         @media (max-width: 449px) {
-    //             margin-right: 1.2rem;
-    //         }
-
-    //         .vs-button {
-    //             background: $black;
-    //             color: $white;
-    //             letter-spacing: 0.005rem;
-    //             font-weight: 500;
-    //             font-size: 1.3rem;
-
-    //             .vs-button__loading {
-    //                 background: rgba($black, 0.7);
-    //             }
-
-    //             i {
-    //                 margin-right: 0.7rem;
-    //                 font-size: 1.4rem;
-    //             }
-    //         }
-    //     }
-    // }
-
-    // .btn-create-public-access {
-    //     display: flex;
-    //     align-items: center;
-    //     margin-top: 1.6rem;
-    //     max-width: 100%;
-    //     background-color: #faf8f4;
-    //     z-index: 5;
-
-    //     @media (min-width: 550px) {
-    //         position: relative;
-    //         top: 0.3rem;
-    //         max-width: 59.2vw;
-    //     }
-        
-    //     @media (min-width: 780px) {
-    //         margin-left: 1.6rem;
-    //         margin-top: 0;
-    //         top: 0;
-    //         max-width: 32rem;
-    //     }
-
-    //     @media (min-width: 780px) {
-    //         margin-left: 1.6rem;
-    //         margin-top: 0;
-    //         top: 0;
-    //         max-width: 38vw;
-    //     }
-
-    //     @media (min-width: 1100px) {
-    //         max-width: 20vw;
-    //     }
-
-    //     @media (min-width: 1200px) {
-    //         max-width: 26.5vw;
-    //     }
-
-    //     @media (min-width: 1300px) {
-    //         max-width: 30vw;
-    //     }
-
-    //     .vs-button {
-    //         background: $orange;
-    //         color: $white;
-    //         letter-spacing: 0.005rem;
-    //         font-weight: 500;
-    //         font-size: 1.3rem;
-
-    //         .vs-button__loading {
-    //             background: rgb(158 64 34 / 61%);
-    //         }
-            
-    //         .vs-button__content {
-    //             padding: 0.7rem 1.2rem;
-    //             padding-top: 0.7rem;                
-    //         }
-
-    //         svg {
-    //             fill: #fff;
-    //             width: 1.6rem;
-    //             margin-right: 0.5rem;
-    //             height: 1.7rem;
-    //             position: relative;
-    //             top: -0.1rem;
-    //             transition: 0.25s;
-
-    //             &.supp-public-access {
-    //                 transform: rotate(180deg);    
-    //             }
-    //         }
-    //     }
-    // }
-
     .public-worksheet-url
     {             
         // border: 0.0625rem solid $orange;
@@ -1899,289 +1653,7 @@ body .btn-create-action .vs-button
         }
     }
 
-    .tags {
-        display: flex;
-        overflow-x: auto;
-        padding: 0.35rem 0;
-        position: relative;
-        -ms-overflow-style: none; /* Pour Internet Explorer et Edge */
-        scrollbar-width: none; /* Pour Firefox */
-        max-width: 100%;
-
-        &::-webkit-scrollbar {
-            display: none;
-        }
-
-        // @media (min-width: 800px) {
-        //     display: inline-flex;
-        //     overflow-x: visible;
-        //     min-height: 2.749rem;
-        //     max-width: calc(98% - 5.3rem);
-        // }
-        // @media (min-width: 820px) {
-        //     max-width: calc(99% - 5.3rem);
-        // }
-        // @media (min-width: 870px) {
-        //     max-width: calc(100% - 5.3rem);
-        // }
-
-        // @media (min-width: 920px) {
-        //     max-width: calc(101% - 5.3rem);
-        // }
-        // @media (min-width: 990px) {
-        //     max-width: calc(102% - 5.3rem);
-        // }
-        // @media (min-width: 1050px) {
-        //     max-width: calc(103% - 5.3rem);
-        // }
-        // @media (min-width: 1100px) {
-        //     max-width: calc(95.2% - 5.3rem);
-        // }
-        // @media (min-width: 1120px) {
-        //     max-width: calc(96.2% - 5.3rem);
-        // }
-        // @media (min-width: 1175px) {
-        //     max-width: calc(97.2% - 5.3rem);
-        // }
-        // @media (min-width: 1235px) {
-        //     max-width: calc(98.2% - 5.3rem);
-        // }
-        // @media (min-width: 1285px) {
-        //     max-width: calc(99.2% - 5.3rem);
-        // }
-        // @media (min-width: 1370px) {
-        //     max-width: calc(100.2% - 5.3rem);
-        // }
-        // @media (min-width: 1400px) {
-        //     max-width: calc(101.2% - 5.3rem);
-        // }
-        // @media (min-width: 1440px) {
-        //     max-width: calc(102.2% - 5.3rem);
-        // }
-        // @media (min-width: 1580px) {
-        //     max-width: calc(103% - 5.3rem);
-        // }
-        // @media (min-width: 1620px) {
-        //     max-width: calc(104% - 5.3rem);
-        // }
-
-        // @media (min-width: 1000px) {
-        //     padding-bottom: 0.6rem;
-        // }
-        
-        .tag-chip {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            background: #faf8f4;
-            border-radius: 1rem;
-            color: #9b9894;
-            padding: 0.1rem 0.5rem;
-            font-size: 0.8rem;
-            letter-spacing: 0.02rem;
-            white-space: nowrap;
-            margin: 0.2rem 0.3rem;
-
-            :last-child {
-                margin-right: 0;
-            }
-
-            @media (min-width: 799px) {
-                background: #fff;
-            }
-        }
-    }
-
-    .worksheet-list.wl-doctor .worksheet-container {
-        // overflow: hidden;
-        display: flex;
-
-        @media (min-width: 799px) {
-            background-color: #faf8f4;
-            border-radius: 0.5rem;
-        }
-
-        .worksheet {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
-            padding: 1.3rem 0 !important;
-            padding-bottom: 0.9rem !important;
-            width: 90vw;
-            transition: 0.25s;
-            overflow: hidden;
-
-            @media (min-width: 799px) {
-                // width: initial;
-                width: 86vw;
-            }
-
-            @media (min-width: 1100px) {
-                width: 58.4vw;
-            }
-
-            // @media (min-width: 1610px) {
-            //     width: 61.3vw;
-            // }
-
-            &.prescri-process-choice {
-                width: 82vw!important;
-
-                @media (min-width: 1100px) {
-                    width: 54vw !important;
-                }
-            }
-
-            & > *:not(.worksheet-content-wt),
-            .worksheet-content-wt > *:not(.worksheet-details-footer),
-            .worksheet-details-footer > *:not(.buttons-container)
-            {
-                padding: 0 1.3rem;
-            }
-
-            .toggle-zone
-            {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                height: 5rem;
-                z-index: 2;
-                cursor: pointer;
-            }
-
-            .worksheet-header {
-                justify-content: space-between;
-                width: 100%;
-                margin-bottom: 0.5rem;
-
-                .worksheet-title
-                {
-                    font-size: 1.4rem;
-                    width: 91%;
-                    line-height: 1;
-                    position: relative;
-                    top: -0.2rem;
-                    max-height: 2.8rem;
-                    overflow: hidden;
-                    white-space: initial;
-                    display: -webkit-box;
-                    -webkit-line-clamp: 2;
-                    -webkit-box-orient: vertical;
-                    text-overflow: ellipsis;
-                }
-
-                .vs-button--size-mini.tag.part-of-body {
-                    position: absolute;
-                    right: 1rem;
-                    top: 0.75rem;
-                    background: #faf8f4 !important;
-                    border-radius: 50% !important;
-                    width: 2.5rem !important;
-                    height: 2.5rem !important;
-
-                    @media (min-width: 799px) {
-                        background: #fff !important;
-                    }
-
-                    img {
-                        margin-right: 0 !important;
-                    }
-
-                    .text 
-                    {
-                        display: none;
-                    }
-                }
-            }
-
-            .worksheet-details-short
-            {
-                display: flex;
-                width: 100%;
-            }
-
-            .worksheet-content-wt {
-                width: 100%;
-
-                > div 
-                {
-                    flex-direction: column;
-                    margin-bottom: 0;
-                    width: 100%;
-                }
-
-                .worksheet-details {
-                    display: flex;
-                    flex-direction: row;
-                    white-space: nowrap;
-
-                    &:not(.worksheet-details-short)
-                    {
-                        margin-top: 0.6rem;
-                        position: relative;
-                        
-                        &::after
-                        {
-                            content: '';
-                            display: block;
-                            background: linear-gradient(
-                                90deg,
-                                rgba(255, 255, 255, 0) 0%,
-                                rgba(255, 255, 255, 1) 60%,
-                                rgba(255, 255, 255, 1) 100%,
-                            );
-                            width: 2.2rem;
-                            height: 1.2rem;
-                            position: absolute;
-                            top: -0.2rem;
-                            right: 0.4rem;
-                            z-index: 5;
-
-
-                            @media (min-width: 800px) {
-                                display: none;
-                            }
-                        }
-                    }
-
-                    > * 
-                    {
-                        margin-right: 0.8rem;
-                        display: flex;
-                        align-items: center;
-                        max-height: 0.9rem;
-                        color: $black;
-                    }
-
-                    i {
-                        position: relative;
-                        top: -0.1rem;
-                        color: #fb8b68;
-
-                        &.kiv-calendar
-                        {
-                            top: -0.14rem;
-                        }
-                    }
-
-                    span.space
-                    {
-                        margin-left: 0.3rem;
-                    }
-
-                    &:not(.worksheet-details-short)
-                    {
-                        margin-bottom: 0.8rem;
-                    }
-                }
-            }
-        }
-    }
-
-    .prescri-process-buttons
+.prescri-process-buttons
     {
             position: fixed;
             top: auto;
@@ -2308,6 +1780,8 @@ body .btn-create-action .vs-button
                 border-radius: 0 0 0.7rem 0.7rem;
                 overflow: hidden;
                 box-shadow: 0.6px 0.4rem 2rem #ffd7ca;
+                bottom: -6rem;
+                height: 6.4125rem;
             }
     }
 
@@ -2375,4 +1849,383 @@ body .btn-create-action .vs-button
         }
     }
 }
+
+.worksheet-list.wl-doctor .worksheet-container {
+    // overflow: hidden;
+    display: flex;
+
+    @media (min-width: 799px) {
+        background-color: #faf8f4;
+        border-radius: 0.5rem;
+    }
+
+    .worksheet {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        padding: 1.3rem 0 !important;
+        padding-bottom: 0.9rem !important;
+        width: 90vw;
+        transition: 0.25s;
+        overflow: hidden;
+
+        @media (min-width: 799px) {
+            // width: initial;
+            width: 86vw;
+        }
+
+        @media (min-width: 1100px) {
+            width: 58.4vw;
+        }
+
+        // @media (min-width: 1610px) {
+        //     width: 61.3vw;
+        // }
+
+        &.prescri-process-choice {
+            width: 82vw!important;
+
+            @media (min-width: 1100px) {
+                width: 54vw !important;
+            }
+        }
+
+        & > *:not(.worksheet-content-wt),
+        .worksheet-content-wt > *:not(.worksheet-details-footer),
+        .worksheet-details-footer > *:not(.buttons-container)
+        {
+            padding: 0 1.3rem;
+        }
+
+        .toggle-zone
+        {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 5rem;
+            z-index: 2;
+            cursor: pointer;
+        }
+
+        .worksheet-header {
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 0.5rem;
+
+            .worksheet-title
+            {
+                font-size: 1.4rem;
+                width: 91%;
+                line-height: 1;
+                position: relative;
+                top: -0.2rem;
+                max-height: 2.8rem;
+                overflow: hidden;
+                white-space: initial;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                text-overflow: ellipsis;
+                padding: 0.3rem 0;
+            }
+
+            .vs-button--size-mini.tag.part-of-body {
+                position: absolute;
+                right: 1rem;
+                top: 0.75rem;
+                background: #faf8f4 !important;
+                border-radius: 50% !important;
+                width: 2.5rem !important;
+                height: 2.5rem !important;
+
+                @media (min-width: 799px) {
+                    background: #fff !important;
+                }
+
+                img {
+                    margin-right: 0 !important;
+                }
+
+                .text 
+                {
+                    display: none;
+                }
+            }
+        }
+
+        .worksheet-details-short
+        {
+            display: flex;
+            width: 100%;
+        }
+
+        .worksheet-content-wt {
+            width: 100%;
+
+            > div 
+            {
+                flex-direction: column;
+                margin-bottom: 0;
+                width: 100%;
+            }
+
+            .worksheet-details {
+                display: flex;
+                flex-direction: row;
+                white-space: nowrap;
+
+                &:not(.worksheet-details-short)
+                {
+                    margin-top: 0.6rem;
+                    position: relative;
+                    
+                    &::after
+                    {
+                        content: '';
+                        display: block;
+                        background: linear-gradient(
+                            90deg,
+                            rgba(255, 255, 255, 0) 0%,
+                            rgba(255, 255, 255, 1) 60%,
+                            rgba(255, 255, 255, 1) 100%,
+                        );
+                        width: 2.2rem;
+                        height: 1.2rem;
+                        position: absolute;
+                        top: -0.2rem;
+                        right: 0.4rem;
+                        z-index: 5;
+
+
+                        @media (min-width: 800px) {
+                            display: none;
+                        }
+                    }
+                }
+
+                > * 
+                {
+                    margin-right: 0.8rem;
+                    display: flex;
+                    align-items: center;
+                    max-height: 0.9rem;
+                    color: $black;
+                }
+
+                i {
+                    position: relative;
+                    top: -0.1rem;
+                    color: #fb8b68;
+
+                    &.kiv-calendar
+                    {
+                        top: -0.14rem;
+                    }
+                }
+
+                span.space
+                {
+                    margin-left: 0.3rem;
+                }
+
+                &:not(.worksheet-details-short)
+                {
+                    margin-bottom: 0.8rem;
+                }
+            }
+        }
+    }
+}
+
+.worksheet-exercises-container
+{
+    position: relative;
+    // padding-right: 0 !important;
+
+    &::after
+    {
+        content: '';
+        display: block;
+        background: linear-gradient(
+            90deg,
+            rgba(250, 250, 252, 0) 0%,
+            rgba(38, 37, 34, 0.07) 100%,
+        );
+        width: 0.7rem;
+        height: 13.2rem;
+        position: absolute;
+        top: 0;
+        right: 1.3rem;
+        z-index: 5;
+    }
+}
+
+.worksheet-exercises
+{
+    display: flex;
+    flex-wrap: nowrap;
+    overflow: hidden;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    height: 13.2rem;
+    padding: 1.2rem;
+    background-color: #fAf8f4;
+    border-radius: 0.5rem;
+
+    @media (min-width: 799px) {
+        background-color: #f6f2ea;
+        height: 13.5rem;
+    }
+
+    @media (max-width: 799px) {
+        &::-webkit-scrollbar {
+            display: none;
+        }
+
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* Internet Explorer et Edge */
+    }
+
+    .worksheet-exercise 
+    {
+        width: 17rem;
+        flex: none;
+
+        &:not(:last-child)
+        {
+            margin-right: 1.6rem;
+        }
+
+        .worksheet-exercise-thumbnail
+        {
+            height: 100%;
+            max-height: 9.5rem;
+            margin-bottom: 0.6rem;
+            img
+            {
+                object-fit: cover;
+                width: 100%;
+                height: 100%; 
+            }
+        }
+
+        .worksheet-exercise-details
+        {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow: hidden;
+            margin-top: 0.3rem;
+            color: #9b9894;
+
+            .series-reps, 
+            .option, 
+            .hold, 
+            .tempo
+            {
+                &:not(:last-child)
+                {
+                    margin-right: 0.3rem;
+                }
+
+                span:not(.no-space)
+                {
+                    margin-left: 0.3rem;
+                }
+
+                i 
+                {
+                    color: #fb8b68;
+                }
+
+                display: flex;
+                flex: none;
+            }
+        }
+    }
+
+    
+}
+
+.worksheet-exercise-other
+{
+    display: flex;
+    margin-top: 0.5rem;
+    margin-bottom: -0.3rem;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    position: relative;
+    
+    // @media (min-width: 550px) {
+    //     margin-top: 1.4rem;
+    //     margin-bottom: 0;
+    //     align-items: flex-start;
+    // }
+
+    // @media (min-width: 780px) {
+    //     flex-direction: row;
+    //     align-items: center;
+    // }
+
+    &::after
+    {
+        content: '';
+        display: block;
+        background: linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 1) 100%,
+        );
+        width: 1rem;
+        height: 1.2rem;
+        position: absolute;
+        top: 0.5rem;
+        right: 0;
+        z-index: 5;
+
+        @media (min-width: 800px) {
+            display: none;
+        }
+    }
+}
+
+.tags {
+    display: flex;
+    overflow-x: auto;
+    padding: 0.35rem 0;
+    position: relative;
+    -ms-overflow-style: none; /* Pour Internet Explorer et Edge */
+    scrollbar-width: none; /* Pour Firefox */
+    max-width: 100%;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+    
+    .tag-chip {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: #faf8f4;
+        border-radius: 1rem;
+        color: #9b9894;
+        padding: 0.1rem 0.5rem;
+        font-size: 0.8rem;
+        letter-spacing: 0.02rem;
+        white-space: nowrap;
+        margin: 0.2rem 0.3rem;
+
+        :last-child {
+            margin-right: 0;
+        }
+
+        @media (min-width: 799px) {
+            background: #fff;
+        }
+    }
+}
+
 </style>

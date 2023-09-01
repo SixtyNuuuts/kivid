@@ -43,6 +43,12 @@ class PartOfBody
      */
     private $icon;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"video_read", "dashboard_worksheet_read", "worksheet_read", "worksheet_doctor_read", "patient_read", "public_worksheet_read"})
+     */
+    private $position;
+
     public function __construct()
     {
         $this->videos = new ArrayCollection();
@@ -143,6 +149,18 @@ class PartOfBody
     public function setIcon(?string $icon): self
     {
         $this->icon = $icon;
+
+        return $this;
+    }
+
+    public function getPosition(): ?int
+    {
+        return $this->position;
+    }
+
+    public function setPosition(?int $position): self
+    {
+        $this->position = $position;
 
         return $this;
     }

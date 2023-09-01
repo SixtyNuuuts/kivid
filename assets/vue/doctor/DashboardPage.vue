@@ -82,18 +82,8 @@
                         :doctor="doctor"
                         class="desktop-view"
                     />
-                    <MyPatients
+                    <WorksheetStore
                         :doctor="doctor"
-                        :csrfTokenAddPatient="csrfTokenAddPatient"
-                        :csrfTokenRemovePatient="csrfTokenRemovePatient"
-                        :csrfTokenCreatePatient="csrfTokenCreatePatient"
-                        :prescriProcess="prescriProcessPatient"
-                        :btnLoadingPatientPrescriProcessRedirect="
-                            btnLoadingPatientPrescriProcessRedirect
-                        "
-                        @prescriProcessPatientChoice="
-                            setPrescriProcessPatientChoice
-                        "
                     />
                 </aside>
             </main>
@@ -107,14 +97,14 @@ import f from "../services/function";
 import MyDashboardNotifications from "./DashboardPage/MyDashboardNotifications.vue";
 import MyWorksheetTemplates from "./DashboardPage/MyWorksheetTemplates.vue";
 import MyPrescriptions from "./DashboardPage/MyPrescriptions.vue";
-import MyPatients from "./DashboardPage/MyPatients.vue";
+import WorksheetStore from "./DashboardPage/WorksheetStore.vue";
 
 export default {
     components: {
         MyDashboardNotifications,
         MyWorksheetTemplates,
         MyPrescriptions,
-        MyPatients,
+        WorksheetStore,
     },
     data() {
         return {
@@ -123,7 +113,7 @@ export default {
             myDBNotificationsContent: true,
             myWorksheetTemplatesContent: true,
             myPrescriptionsContent: true,
-            myPatientsContent: true,
+            worksheetStoreContent: true,
             csrfTokenAddPatient: null,
             csrfTokenRemovePatient: null,
             csrfTokenCreatePatient: null,
@@ -250,7 +240,7 @@ export default {
             this.prescriProcessPatient = true;
             this.activeTab = 1;
             this.myWorksheetTemplatesContent = true;
-            this.myPatientsContent = true;
+            this.worksheetStoreContent = true;
             this.prescriProcessStartOrigin = target;
             // this.prescriProcess = true;
             // if(target && target === 'patient')
@@ -258,7 +248,7 @@ export default {
             // else
             //     this.prescriProcessWorksheet = true;
             // this.myWorksheetTemplatesContent = true;
-            // this.myPatientsContent = true;
+            // this.worksheetStoreContent = true;
             // this.activeTab = target && target === 'patient' ? 1 : 2;
         },
         stopPrescriProcess() {
@@ -285,7 +275,7 @@ export default {
                 this.myDBNotificationsContent = true;
                 this.myWorksheetTemplatesContent = true;
                 this.myPrescriptionsContent = true;
-                this.myPatientsContent = true;
+                this.worksheetStoreContent = true;
             }
         },
     },
@@ -389,11 +379,11 @@ export default {
                     this.doctorWorksheets
                 );
 
-                this.doctorWorksheets.forEach((w) => {
-                    if (w.exercises) {
-                        f.sortByPosition(w.exercises);
-                    }
-                });
+                // this.doctorWorksheets.forEach((w) => {
+                //     if (w.exercises) {
+                //         f.sortByPosition(w.exercises);
+                //     }
+                // });
 
                 this.loadingDoctorFirstsWorksheets = false;
 
@@ -406,11 +396,11 @@ export default {
                             this.doctorWorksheets
                         );
 
-                        this.doctorWorksheets.forEach((w) => {
-                            if (w.exercises) {
-                                f.sortByPosition(w.exercises);
-                            }
-                        });
+                        // this.doctorWorksheets.forEach((w) => {
+                        //     if (w.exercises) {
+                        //         f.sortByPosition(w.exercises);
+                        //     }
+                        // });
 
                         this.loadingDoctorAllWorksheets = false;
                     })
@@ -431,28 +421,6 @@ export default {
 
                 console.error(errorMess);
             });
-
-        // this.loadingAllWorksheets = true;
-
-        // this.axios
-        //     .get(`/doctor/${this.doctor.id}/get/all/worksheets`)
-        //     .then((response) => {
-        //         this.allWorksheets = response.data;
-
-        //         this.tagsFromExercises = f.generateTagsFromExercises(
-        //             this.allWorksheets
-        //         );
-
-        //         this.loadingAllWorksheets = false;
-        //     })
-        //     .catch((error) => {
-        //         const errorMess =
-        //             "object" === typeof error.response.data
-        //                 ? error.response.data.detail
-        //                 : error.response.data;
-
-        //         console.error(errorMess);
-        //     });
     },
     beforeDestroy() {
         window.removeEventListener("resize", this.onResize);
@@ -467,7 +435,7 @@ export default {
             background-color: #fff;
         }
     }
-    .worksheet-list.wl-doctor.empty
+    .worksheet-list.wl-doctor.wl-patients.prescri-process
     {
         @media (max-width: 799px) {
             min-height: 165vw;

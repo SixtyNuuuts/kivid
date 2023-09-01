@@ -71,7 +71,7 @@
                     :class="{ active: exercise.isActive }"
                     :id="`exercise-${worksheetIndex}-${exercise.position}`"
                 >
-                    <div class="exercise-position" v-if="'voir' !== action" @click="exercisePositionActiveId=exercise.id" :class="{ active: exercisePositionActiveId==exercise.id }" v-click-outside="resetExercisePositionActiveId">
+                    <div class="exercise-position" v-if="'voir' !== action" :class="{active: exercisePositionActiveId==exercise.id}" v-click-outside="resetExercisePositionActiveId">
                         <vs-button
                             v-if="exercise.position != 0"
                             circle
@@ -81,7 +81,7 @@
                         >
                             <i class="fas fa-sort-up"></i>
                         </vs-button>
-                        <div class="num-position">{{ exercise.position + 1 }}</div>
+                        <div class="num-position" @click="exercisePositionActiveId = exercisePositionActiveId==exercise.id ? null : exercise.id">{{ exercise.position + 1 }}</div>
                         <vs-button
                             v-if="
                                 exercise.position != getExercises.length - 1
@@ -677,7 +677,7 @@ export default {
                 if(!exercisePositionContexte)
                     this.exercisePositionActiveId = null;
             }
-        }
+        },
     },
 };
 </script>
@@ -1281,12 +1281,12 @@ export default {
 
                 &.btn-up-position
                 {
-                    left: -0.5rem;
+                    left: -0.9rem;
                 }
 
                 &.btn-down-position
                 {
-                    right: -0.5rem;
+                    right: -0.9rem;
                 }
 
                 .vs-button__content
@@ -1315,14 +1315,27 @@ export default {
                 font-size: 1.3rem;
                 font-weight: bold;
                 transition: 0.25s;
+                position: relative;
+
+                &::after {
+                    content: url("data:image/svg+xml,%3Csvg version='1.1' id='Calque_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 11.9 11.9' style='enable-background:new 0 0 11.9 11.9;' xml:space='preserve'%3E%3Cstyle type='text/css'%3E .st0%7Bfill:%23FFFFFF;%7D%0A%3C/style%3E%3Cpolygon class='st0' points='5.1,2.8 5.1,9.1 1.8,5.8 '/%3E%3Cpolygon class='st0' points='6.8,9.1 6.8,2.8 10.1,6 '/%3E%3C/svg%3E%0A");
+                    position: absolute;
+                    bottom: 0.2rem;
+                    right: -0.3rem;
+                    display: block;
+                    background-color: #fb8b68;
+                    border-radius: 50%;
+                    width: 1.1rem;
+                    height: 1.1rem;
+                }
             }
 
             &.active
             {
-                top: 1.5rem;
+                top: 1.1rem;
                 left: 5.3%;
                 width: 89.1%;
-                height: 1.9rem;
+                height: 3rem;
                 border: 1px solid #fff;
                 box-shadow: none;
                 border-radius: 50%;
@@ -1334,7 +1347,8 @@ export default {
                     pointer-events: initial;
                     width: initial;
                     z-index: 1;
-                    top: -0.6rem;
+                    top: -1.6rem;
+                    padding: 1.4rem;
 
                     .vs-button__content
                     {
@@ -1351,6 +1365,10 @@ export default {
                     color: #fff;
                     font-size: 1.4rem;
                     box-shadow: 0rem 0.4rem 1.4rem 0rem #e7dfcdd1;
+
+                    &::after {
+                        display: none;                
+                    }
                 }
             }
 

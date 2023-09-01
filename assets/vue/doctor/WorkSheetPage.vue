@@ -886,8 +886,6 @@ export default {
 
     .tab-worksheet-content
     {
-        overflow: hidden;
-
         header
         {
             padding: 1.5rem;
@@ -1429,7 +1427,7 @@ export default {
 
                 .select-box 
                 {
-                    top: 4.2rem;
+                    top: 4.1rem;
                     left: 0.1rem;
                     width: 99.8%;
                 } 

@@ -189,7 +189,7 @@ export default {
             return this.partOfBody;
         },
         partsOfBodyFiltered() {
-            return this.sortedPoBNameByAlphabet(
+            return this.sortByPosition(
                 this.partsOfBody.filter((p) =>
                     p.name
                         .normalize("NFD")
@@ -251,6 +251,12 @@ export default {
                 return a.name.localeCompare(b.name);
             });
             return array;
+        },
+        sortByPosition(array) {
+            array.sort(function (a, b) {
+            return a.position - b.position
+            })
+            return array
         },
     },
     created() {
