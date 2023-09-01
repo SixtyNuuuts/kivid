@@ -96,7 +96,7 @@
                             </vs-button>
                     </div>
                 </div>
-                <div class="worksheet-list wl-doctor" :class="{empty:!getDoctorPatients.length}">
+                <div class="worksheet-list wl-patients wl-doctor" :class="{empty:!getDoctorPatients.length,'prescri-process':prescriProcess}">
                     <div
                         v-if="
                             !loadingDoctorFirstsPatients &&
@@ -318,7 +318,7 @@
                             <i class="fas fa-user-minus"></i>
                             <span v-if="!prescriProcess">Vous n'avez pas de patient</span>
                             <span v-else>
-                                Pour créer une prescription, vous devez sélectionner un patient,<br>
+                                Pour créer une prescription, vous&nbsp;devez sélectionner un patient,<br>
                                 vous pouvez en créer un en utilisant le bouton "+" ci-dessus.<br>
                             </span>
                         </p>
@@ -951,7 +951,12 @@ body .kiv-block .prescri-process-dialog::after {
 
     .not-found {
         > p > span {
-            max-width: 22rem;
+            @media (max-width: 550px) {
+                max-width: 22rem;
+            }
+            @media (min-width: 551px) {
+                max-width: 45rem;
+            }
         }
     }
 

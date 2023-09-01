@@ -129,7 +129,16 @@ export default {
     margin-bottom: 0;
     width: 100%;
 
+    margin-top: 1.8rem;
+    margin-bottom: 0;
+
+    @media (min-width: 799px) {
+        margin-top: 2rem;
+        margin-bottom: 0;
+    }
+
     @media (min-width: 1100px) {
+        margin-top: 0;
         margin-bottom: 2rem;
     }
 
