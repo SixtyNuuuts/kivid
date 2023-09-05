@@ -541,7 +541,7 @@ export default {
                                 // }</strong> 
                                 // a été prescrite à <strong>
                                 // ${this.getUserName(this.patient)}</strong>`
-                                response.data
+                                response.data.message
                             );
                             this.btnLoadingValidCreateWorksheet = false;
                             setTimeout(() => {
@@ -550,7 +550,7 @@ export default {
                         } else {
                             f.openSuccessNotification(
                                 "Création de la fiche",
-                                response.data
+                                response.data.message
                             );
                             this.btnLoadingValidCreateWorksheet = false;
                             setTimeout(() => {
@@ -1533,6 +1533,11 @@ export default {
                             }
 
                             &.icon-thoracique {
+                                top: -0.1rem;
+                                height: 2.6rem;
+                            }
+
+                            &.icon-global {
                                 top: -0.1rem;
                                 height: 2.6rem;
                             }

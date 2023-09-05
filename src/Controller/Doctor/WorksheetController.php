@@ -319,7 +319,8 @@ class WorksheetController extends AbstractController
             if ($this->isCsrfTokenValid('create_worksheet' . $doctor->getId(), $data->_token)) {
                 $patient = $this->patientRepository->findOneBy(['id' => $data->patientId]);
                 
-                if(!empty($data->worksheetsIds)) // precription direct (sans edition, du coup on a que les ids)
+                $worksheets_for_json_response = [];
+                if(!empty($data->worksheetsIds)) // precription direct / ajout fiche store (sans edition, du coup on a que les ids)
                 {
                     $worksheets = $this->worksheetRepository->findBy(['id' => $data->worksheetsIds]);
                     foreach ($worksheets as $worksheetOrigin) {
@@ -342,6 +343,7 @@ class WorksheetController extends AbstractController
                             $this->notificationService->createPrescriptionNotification($worksheet, $patient);
                         }
 
+                        $worksheets_for_json_response[] = $worksheet;
                         $this->em->persist($worksheet);
                     }
                 }
@@ -393,14 +395,19 @@ class WorksheetController extends AbstractController
                             
                         //     $this->em->persist($worksheetCopy);
                         // }
+
+                        $worksheets_for_json_response[] = $worksheet;
                         $this->em->persist($worksheet);
                     }
 
                 $this->em->flush();
-
+    
                 return $this->json(
-                    (!empty($worksheets) ? sizeof($worksheets) > 1 : (!empty($data->worksheets) ? sizeof($data->worksheets) > 1 : false)) ? "Les prescriptions ont bien été créées"  : ($patient ? "La prescription a bien été créée" : "La fiche a bien été créée"),
+                    ['worksheets' => $worksheets_for_json_response, 'message' => (!empty($worksheets) ? sizeof($worksheets) > 1 : (!empty($data->worksheets) ? sizeof($data->worksheets) > 1 : false)) ? "Les prescriptions ont bien été créées"  : ($patient ? "La prescription a bien été créée" : "La fiche a bien été créée")]
+                    ,
                     200,
+                    [],
+                    ['groups' => 'dashboard_worksheet_read']    
                 );
             }
         }

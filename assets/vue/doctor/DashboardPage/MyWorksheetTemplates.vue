@@ -2,17 +2,7 @@
     <section
         id="my-worksheets"
         class="kiv-block s-worksheet-templates"
-        :class="{ reduced: !$parent.myWorksheetTemplatesContent }"
     >
-        <div
-            class="toggle-content tab"
-            @click="
-                $parent.myWorksheetTemplatesContent =
-                    !$parent.myWorksheetTemplatesContent
-            "
-        >
-            <i class="kiv-chevron-down icon-3"></i>
-        </div>
         <div class="tabs">
             <div class="inactive" :class="{disabled:this.$parent.prescriProcess&&this.$parent.prescriProcessWorksheet}" @click="activeTab(1)">
                 <h2><span>Mes Patients</span></h2>
@@ -47,7 +37,7 @@
                 </span>
                 <p>
                     <span v-if="getWorksheetTemplates.length">Et / Ou sélectionnez</span
-                    ><span v-else>Sélectionnez</span> le nombre de prescriptions que vous souhaitez créer 
+                    ><span v-else>Sélectionnez</span> le nombre de prescriptions que vous souhaitez créer&nbsp;de&nbsp;zéro 
                     <span v-if="$parent.prescriProcessPatientSelected"> pour 
                         <strong>
                             <span
@@ -75,13 +65,20 @@
                 <button
                     @click="prescriProcessWorksheetChoice(prescriProcessWorksheetsChoice)"
                     class="prescri-edit"
-                    :class="{'disabled-custom':!prescriProcessWorksheetsChoice.length,'j-c-z':!prescriProcessWorksheetsChoice.filter(w=>w!=null).length}"
+                    :class="{'disabled-custom':!prescriProcessWorksheetsChoice.length}"
                 >
-                    <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 48 48" width="96px" height="96px"><path d="M 12.5 4 C 10.019 4 8 6.019 8 8.5 L 8 39.5 C 8 41.981 10.019 44 12.5 44 L 25.640625 44 C 24.785625 43.111 24.055516 42.103 23.478516 41 L 12.5 41 C 11.673 41 11 40.327 11 39.5 L 11 8.5 C 11 7.673 11.673 7 12.5 7 L 24 7 L 24 15.5 C 24 17.981 26.019 20 28.5 20 L 37 20 L 37 22.169922 C 38.045 22.331922 39.053 22.606906 40 23.003906 L 40 18.5 C 40 18.0855 39.831922 17.710828 39.560547 17.439453 L 26.560547 4.4394531 C 26.289172 4.1680781 25.9145 4 25.5 4 L 12.5 4 z M 27 9.1210938 L 34.878906 17 L 28.5 17 C 27.673 17 27 16.327 27 15.5 L 27 9.1210938 z M 35 24 C 28.925 24 24 28.925 24 35 C 24 41.075 28.925 46 35 46 C 41.075 46 46 41.075 46 35 C 46 28.925 41.075 24 35 24 z M 35 27 C 35.552 27 36 27.448 36 28 L 36 34 L 42 34 C 42.552 34 43 34.448 43 35 C 43 35.552 42.552 36 42 36 L 36 36 L 36 42 C 36 42.552 35.552 43 35 43 C 34.448 43 34 42.552 34 42 L 34 36 L 28 36 C 27.448 36 27 35.552 27 35 C 27 34.448 27.448 34 28 34 L 34 34 L 34 28 C 34 27.448 34.448 27 35 27 z"/></svg>
-                    
+                    <svg version="1.1" id="Calque_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                        viewBox="0 0 96 96" style="enable-background:new 0 0 96 96;" xml:space="preserve">
+                        <g>
+                            <path class="st0" d="M70,48c-12.2,0-22,9.8-22,22s9.8,22,22,22s22-9.8,22-22S82.2,48,70,48z M72.3,62.8l6.6,6.4L66.7,81l-7.5,2.4
+                                c-1,0.3-2-0.6-1.6-1.6l2.5-7.3L72.3,62.8z M75.1,60l3-3c0.9-0.9,2.4-0.9,3.3,0l3.3,3.2c0.9,0.9,0.9,2.3,0,3.2l-3,3L75.1,60z"/>
+                            <path class="st0" d="M25,82c-1.7,0-3-1.3-3-3V17c0-1.7,1.3-3,3-3h23v17c0,5,4,9,9,9h17v4.3c2.1,0.3,4.1,0.9,6,1.7v-9
+                                c0-0.8-0.3-1.6-0.9-2.1l-26-26C52.6,8.3,51.8,8,51,8H25c-5,0-9,4-9,9v62c0,5,4,9,9,9h26.3c-1.7-1.8-3.2-3.8-4.3-6H25z M54,18.2
+                                L69.8,34H57c-1.7,0-3-1.3-3-3V18.2z"/>
+                        </g>
+                    </svg>
                     <span>
-                        <span v-if="!prescriProcessWorksheetsChoice.filter(w=>w!=null).length" class="m-r big">Paramétrer</span>
-                        <span v-else class="m-r big">Modifier</span>
+                        <span class="m-r big">Paramétrer</span>
                         <span class="medium">puis Prescrire</span>
                     </span>
                 </button>
@@ -90,7 +87,17 @@
                     class="prescri-direct"
                     :class="{'disabled-custom':!prescriProcessWorksheetsChoice.length||prescriProcessWorksheetsChoice.filter(w=>w==null).length||btnLoadingWorksheetPrescriProcessRedirect}"                  
                 >
-                    <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 48 48" width="96px" height="96px"><path d="M 12.5 4 C 10.019 4 8 6.019 8 8.5 L 8 39.5 C 8 41.981 10.019 44 12.5 44 L 25.640625 44 C 24.785625 43.111 24.055516 42.103 23.478516 41 L 12.5 41 C 11.673 41 11 40.327 11 39.5 L 11 8.5 C 11 7.673 11.673 7 12.5 7 L 24 7 L 24 15.5 C 24 17.981 26.019 20 28.5 20 L 37 20 L 37 22.169922 C 38.045 22.331922 39.053 22.606906 40 23.003906 L 40 18.5 C 40 18.0855 39.831922 17.710828 39.560547 17.439453 L 26.560547 4.4394531 C 26.289172 4.1680781 25.9145 4 25.5 4 L 12.5 4 z M 27 9.1210938 L 34.878906 17 L 28.5 17 C 27.673 17 27 16.327 27 15.5 L 27 9.1210938 z M 35 24 C 28.925 24 24 28.925 24 35 C 24 41.075 28.925 46 35 46 C 41.075 46 46 41.075 46 35 C 46 28.925 41.075 24 35 24 z M 35 27 C 35.552 27 36 27.448 36 28 L 36 34 L 42 34 C 42.552 34 43 34.448 43 35 C 43 35.552 42.552 36 42 36 L 36 36 L 36 42 C 36 42.552 35.552 43 35 43 C 34.448 43 34 42.552 34 42 L 34 36 L 28 36 C 27.448 36 27 35.552 27 35 C 27 34.448 27.448 34 28 34 L 34 34 L 34 28 C 34 27.448 34.448 27 35 27 z"/></svg>
+                    <svg version="1.1" id="Calque_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                        viewBox="0 0 96 96" style="enable-background:new 0 0 96 96;" xml:space="preserve">
+                        <g>
+                            <path class="st0" d="M70,48c-12.2,0-22,9.8-22,22s9.8,22,22,22s22-9.8,22-22S82.2,48,70,48z M70,82.6l-7,2.3l1-8.4l2.7-0.4L70,79
+                                l3.3-2.9l2.7,0.4l1,8.4L70,82.6z M79.1,66.8L76,68.2l-0.4,3.4l-3.3-0.7L70,73.4l-2.3-2.5l-3.3,0.7l-0.4-3.4l-3.1-1.4l1.7-3l-1.7-3
+                                l3.1-1.4l0.4-3.4l3.3,0.7l2.3-2.5l2.3,2.5l3.3-0.7l0.4,3.4l3.1,1.4l-1.7,3L79.1,66.8z"/>
+                            <path class="st0" d="M25,82c-1.7,0-3-1.3-3-3V17c0-1.7,1.3-3,3-3h23v17c0,5,4,9,9,9h17v4.3c2.1,0.3,4.1,0.9,6,1.7v-9
+                                c0-0.8-0.3-1.6-0.9-2.1l-26-26C52.6,8.3,51.8,8,51,8H25c-5,0-9,4-9,9v62c0,5,4,9,9,9h26.3c-1.7-1.8-3.2-3.8-4.3-6H25z M54,18.2
+                                L69.8,34H57c-1.7,0-3-1.3-3-3V18.2z"/>
+                        </g>
+                    </svg>
                     <span>
                         <span class="big">Prescrire</span>
                         directement
@@ -99,7 +106,7 @@
             </div>
         </transition>
         <transition name="height">
-            <div v-if="$parent.myWorksheetTemplatesContent">
+            <div>
                 <div class="primary-actions p-a-w" :class="{'without-tag':!getWorksheetTemplates.length}">
                     <div class="search loading-s-c search-worksheet">
                         <vs-input
@@ -244,7 +251,17 @@
                             circle
                             floating
                         >
-                            <svg v-if="!prescriProcess" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 48 48" width="96px" height="96px"><path d="M 12.5 4 C 10.019 4 8 6.019 8 8.5 L 8 39.5 C 8 41.981 10.019 44 12.5 44 L 25.640625 44 C 24.785625 43.111 24.055516 42.103 23.478516 41 L 12.5 41 C 11.673 41 11 40.327 11 39.5 L 11 8.5 C 11 7.673 11.673 7 12.5 7 L 24 7 L 24 15.5 C 24 17.981 26.019 20 28.5 20 L 37 20 L 37 22.169922 C 38.045 22.331922 39.053 22.606906 40 23.003906 L 40 18.5 C 40 18.0855 39.831922 17.710828 39.560547 17.439453 L 26.560547 4.4394531 C 26.289172 4.1680781 25.9145 4 25.5 4 L 12.5 4 z M 27 9.1210938 L 34.878906 17 L 28.5 17 C 27.673 17 27 16.327 27 15.5 L 27 9.1210938 z M 35 24 C 28.925 24 24 28.925 24 35 C 24 41.075 28.925 46 35 46 C 41.075 46 46 41.075 46 35 C 46 28.925 41.075 24 35 24 z M 35 27 C 35.552 27 36 27.448 36 28 L 36 34 L 42 34 C 42.552 34 43 34.448 43 35 C 43 35.552 42.552 36 42 36 L 36 36 L 36 42 C 36 42.552 35.552 43 35 43 C 34.448 43 34 42.552 34 42 L 34 36 L 28 36 C 27.448 36 27 35.552 27 35 C 27 34.448 27.448 34 28 34 L 34 34 L 34 28 C 34 27.448 34.448 27 35 27 z"/></svg>
+                            <svg v-if="!prescriProcess" version="1.1" id="Calque_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                viewBox="0 0 96 96" style="enable-background:new 0 0 96 96;" xml:space="preserve">
+                                <g>
+                                    <path class="st0" d="M70,48c-12.2,0-22,9.8-22,22s9.8,22,22,22s22-9.8,22-22S82.2,48,70,48z M70,82.6l-7,2.3l1-8.4l2.7-0.4L70,79
+                                        l3.3-2.9l2.7,0.4l1,8.4L70,82.6z M79.1,66.8L76,68.2l-0.4,3.4l-3.3-0.7L70,73.4l-2.3-2.5l-3.3,0.7l-0.4-3.4l-3.1-1.4l1.7-3l-1.7-3
+                                        l3.1-1.4l0.4-3.4l3.3,0.7l2.3-2.5l2.3,2.5l3.3-0.7l0.4,3.4l3.1,1.4l-1.7,3L79.1,66.8z"/>
+                                    <path class="st0" d="M25,82c-1.7,0-3-1.3-3-3V17c0-1.7,1.3-3,3-3h23v17c0,5,4,9,9,9h17v4.3c2.1,0.3,4.1,0.9,6,1.7v-9
+                                        c0-0.8-0.3-1.6-0.9-2.1l-26-26C52.6,8.3,51.8,8,51,8H25c-5,0-9,4-9,9v62c0,5,4,9,9,9h26.3c-1.7-1.8-3.2-3.8-4.3-6H25z M54,18.2
+                                        L69.8,34H57c-1.7,0-3-1.3-3-3V18.2z"/>
+                                </g>
+                            </svg>
                             <svg v-else xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 50 50" width="50px" height="50px"><path d="M 9.15625 6.3125 L 6.3125 9.15625 L 22.15625 25 L 6.21875 40.96875 L 9.03125 43.78125 L 25 27.84375 L 40.9375 43.78125 L 43.78125 40.9375 L 27.84375 25 L 43.6875 9.15625 L 40.84375 6.3125 L 25 22.15625 Z"/></svg>
                             <span class="btn-action-text">Prescrire</span>
                         </vs-button>
@@ -557,7 +574,7 @@
                             "
                         >
                             <p>
-                                <i class="fas fa-folder-minus"></i>
+                                <i class="fas fa-folder-minus" v-if="!prescriProcess"></i>
                                 <span v-if="!prescriProcess">Vous n'avez pas de fiche</span>
                                 <span v-else>
                                     Pour créer une prescription, Vous&nbsp;devez&nbsp;avoir préalablement créé des&nbsp;modèles&nbsp;de&nbsp;fiche,<br>
@@ -619,267 +636,347 @@
                             </p>          
                         </div>
                         <div v-if="loadingDoctorFirstsWorksheets">
-                            <div class="loading loading-block">
-                                <div class="worksheet-header w-85">
-                                    <div
-                                        class="loading worksheet-title w-65"
-                                    ></div>
-                                    <div class="loading part-of-body"></div>
-                                </div>
-                                <div
-                                    class="loading worksheet-progress-line"
-                                ></div>
-                                <div class="worksheet-content">
-                                    <div class="worksheet-details">
-                                        <div
-                                            class="
-                                                loading
-                                                worksheet-exercises-count
-                                                w-45
-                                            "
-                                        ></div>
-                                        <div
-                                            class="
-                                                loading
-                                                worksheet-timing
-                                                w-25
-                                            "
-                                        ></div>
-                                        <div
-                                            class="
-                                                loading
-                                                worksheet-period
-                                                w-15
-                                            "
-                                        ></div>
+                            <div class="worksheet-container loading-block">
+                                <div class="worksheet">
+                                    <div class="worksheet-header">
+                                        <h3 class="worksheet-title loading w-35">
+                                            Xxxxxxxxxxxxx xx x xxxxxxxxxx x
+                                        </h3>
+                                        <div class="vs-tooltip-content kiv-help" >
+                                            <button
+                                                class="vs-button tag part-of-body"
+                                            >
+                                                <div class="vs-button__content loading">
+                                                </div>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="worksheet-content-wt">
+                                        <div class="worksheet-details worksheet-details-short">
+                                            <div class="worksheet-exercises-count">
+                                                <i class="kiv-exercise icon-7"></i>
+                                                <span class="space loading">xxx</span>
+                                            </div>
+                                            <div class="worksheet-timing">
+                                                <i class="kiv-calendar icon-10"></i>
+                                                <span class="space loading">xxx</span>
+                                            </div>
+                                            <div class="worksheet-period">
+                                                <i class="kiv-clock icon-11"></i>
+                                                <span class="space loading">xxx</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="loading loading-block">
-                                <div class="worksheet-header w-85">
-                                    <div
-                                        class="loading worksheet-title w-45"
-                                    ></div>
-                                    <div class="loading part-of-body"></div>
-                                </div>
-                                <div
-                                    class="loading worksheet-progress-line"
-                                ></div>
-                                <div class="worksheet-content">
-                                    <div class="worksheet-details">
-                                        <div
-                                            class="
-                                                loading
-                                                worksheet-exercises-count
-                                                w-45
-                                            "
-                                        ></div>
-                                        <div
-                                            class="
-                                                loading
-                                                worksheet-timing
-                                                w-25
-                                            "
-                                        ></div>
-                                        <div
-                                            class="
-                                                loading
-                                                worksheet-period
-                                                w-15
-                                            "
-                                        ></div>
+                            <div class="worksheet-container loading-block">
+                                <div class="worksheet">
+                                    <div class="worksheet-header">
+                                        <h3 class="worksheet-title loading w-35">
+                                            Xxxxxxxxxxxxx xx x xxxxxxxxxx x
+                                        </h3>
+                                        <div class="vs-tooltip-content kiv-help" >
+                                            <button
+                                                class="vs-button tag part-of-body"
+                                            >
+                                                <div class="vs-button__content loading">
+                                                </div>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="worksheet-content-wt">
+                                        <div class="worksheet-details worksheet-details-short">
+                                            <div class="worksheet-exercises-count">
+                                                <i class="kiv-exercise icon-7"></i>
+                                                <span class="space loading">xxx</span>
+                                            </div>
+                                            <div class="worksheet-timing">
+                                                <i class="kiv-calendar icon-10"></i>
+                                                <span class="space loading">xxx</span>
+                                            </div>
+                                            <div class="worksheet-period">
+                                                <i class="kiv-clock icon-11"></i>
+                                                <span class="space loading">xxx</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="loading loading-block">
-                                <div class="worksheet-header w-85">
-                                    <div
-                                        class="loading worksheet-title w-55"
-                                    ></div>
-                                    <div class="loading part-of-body"></div>
-                                </div>
-                                <div
-                                    class="loading worksheet-progress-line"
-                                ></div>
-                                <div class="worksheet-content">
-                                    <div class="worksheet-details">
-                                        <div
-                                            class="
-                                                loading
-                                                worksheet-exercises-count
-                                                w-45
-                                            "
-                                        ></div>
-                                        <div
-                                            class="
-                                                loading
-                                                worksheet-timing
-                                                w-25
-                                            "
-                                        ></div>
-                                        <div
-                                            class="
-                                                loading
-                                                worksheet-period
-                                                w-15
-                                            "
-                                        ></div>
+                            <div class="worksheet-container loading-block">
+                                <div class="worksheet">
+                                    <div class="worksheet-header">
+                                        <h3 class="worksheet-title loading w-35">
+                                            Xxxxxxxxxxxxx xx x xxxxxxxxxx x
+                                        </h3>
+                                        <div class="vs-tooltip-content kiv-help" >
+                                            <button
+                                                class="vs-button tag part-of-body"
+                                            >
+                                                <div class="vs-button__content loading">
+                                                </div>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="worksheet-content-wt">
+                                        <div class="worksheet-details worksheet-details-short">
+                                            <div class="worksheet-exercises-count">
+                                                <i class="kiv-exercise icon-7"></i>
+                                                <span class="space loading">xxx</span>
+                                            </div>
+                                            <div class="worksheet-timing">
+                                                <i class="kiv-calendar icon-10"></i>
+                                                <span class="space loading">xxx</span>
+                                            </div>
+                                            <div class="worksheet-period">
+                                                <i class="kiv-clock icon-11"></i>
+                                                <span class="space loading">xxx</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="loading loading-block">
-                                <div class="worksheet-header w-85">
-                                    <div
-                                        class="loading worksheet-title w-45"
-                                    ></div>
-                                    <div class="loading part-of-body"></div>
-                                </div>
-                                <div
-                                    class="loading worksheet-progress-line"
-                                ></div>
-                                <div class="worksheet-content">
-                                    <div class="worksheet-details">
-                                        <div
-                                            class="
-                                                loading
-                                                worksheet-exercises-count
-                                                w-45
-                                            "
-                                        ></div>
-                                        <div
-                                            class="
-                                                loading
-                                                worksheet-timing
-                                                w-25
-                                            "
-                                        ></div>
-                                        <div
-                                            class="
-                                                loading
-                                                worksheet-period
-                                                w-15
-                                            "
-                                        ></div>
+                            <div class="worksheet-container loading-block">
+                                <div class="worksheet">
+                                    <div class="worksheet-header">
+                                        <h3 class="worksheet-title loading w-35">
+                                            Xxxxxxxxxxxxx xx x xxxxxxxxxx x
+                                        </h3>
+                                        <div class="vs-tooltip-content kiv-help" >
+                                            <button
+                                                class="vs-button tag part-of-body"
+                                            >
+                                                <div class="vs-button__content loading">
+                                                </div>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="worksheet-content-wt">
+                                        <div class="worksheet-details worksheet-details-short">
+                                            <div class="worksheet-exercises-count">
+                                                <i class="kiv-exercise icon-7"></i>
+                                                <span class="space loading">xxx</span>
+                                            </div>
+                                            <div class="worksheet-timing">
+                                                <i class="kiv-calendar icon-10"></i>
+                                                <span class="space loading">xxx</span>
+                                            </div>
+                                            <div class="worksheet-period">
+                                                <i class="kiv-clock icon-11"></i>
+                                                <span class="space loading">xxx</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="loading loading-block">
-                                <div class="worksheet-header w-85">
-                                    <div
-                                        class="loading worksheet-title w-45"
-                                    ></div>
-                                    <div class="loading part-of-body"></div>
-                                </div>
-                                <div
-                                    class="loading worksheet-progress-line"
-                                ></div>
-                                <div class="worksheet-content">
-                                    <div class="worksheet-details">
-                                        <div
-                                            class="
-                                                loading
-                                                worksheet-exercises-count
-                                                w-45
-                                            "
-                                        ></div>
-                                        <div
-                                            class="
-                                                loading
-                                                worksheet-timing
-                                                w-25
-                                            "
-                                        ></div>
-                                        <div
-                                            class="
-                                                loading
-                                                worksheet-period
-                                                w-15
-                                            "
-                                        ></div>
+                            <div class="worksheet-container loading-block">
+                                <div class="worksheet">
+                                    <div class="worksheet-header">
+                                        <h3 class="worksheet-title loading w-35">
+                                            Xxxxxxxxxxxxx xx x xxxxxxxxxx x
+                                        </h3>
+                                        <div class="vs-tooltip-content kiv-help" >
+                                            <button
+                                                class="vs-button tag part-of-body"
+                                            >
+                                                <div class="vs-button__content loading">
+                                                </div>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="worksheet-content-wt">
+                                        <div class="worksheet-details worksheet-details-short">
+                                            <div class="worksheet-exercises-count">
+                                                <i class="kiv-exercise icon-7"></i>
+                                                <span class="space loading">xxx</span>
+                                            </div>
+                                            <div class="worksheet-timing">
+                                                <i class="kiv-calendar icon-10"></i>
+                                                <span class="space loading">xxx</span>
+                                            </div>
+                                            <div class="worksheet-period">
+                                                <i class="kiv-clock icon-11"></i>
+                                                <span class="space loading">xxx</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="loading loading-block">
-                                <div class="worksheet-header w-85">
-                                    <div
-                                        class="loading worksheet-title w-45"
-                                    ></div>
-                                    <div class="loading part-of-body"></div>
-                                </div>
-                                <div
-                                    class="loading worksheet-progress-line"
-                                ></div>
-                                <div class="worksheet-content">
-                                    <div class="worksheet-details">
-                                        <div
-                                            class="
-                                                loading
-                                                worksheet-exercises-count
-                                                w-45
-                                            "
-                                        ></div>
-                                        <div
-                                            class="
-                                                loading
-                                                worksheet-timing
-                                                w-25
-                                            "
-                                        ></div>
-                                        <div
-                                            class="
-                                                loading
-                                                worksheet-period
-                                                w-15
-                                            "
-                                        ></div>
+                            <div class="worksheet-container loading-block">
+                                <div class="worksheet">
+                                    <div class="worksheet-header">
+                                        <h3 class="worksheet-title loading w-35">
+                                            Xxxxxxxxxxxxx xx x xxxxxxxxxx x
+                                        </h3>
+                                        <div class="vs-tooltip-content kiv-help" >
+                                            <button
+                                                class="vs-button tag part-of-body"
+                                            >
+                                                <div class="vs-button__content loading">
+                                                </div>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="worksheet-content-wt">
+                                        <div class="worksheet-details worksheet-details-short">
+                                            <div class="worksheet-exercises-count">
+                                                <i class="kiv-exercise icon-7"></i>
+                                                <span class="space loading">xxx</span>
+                                            </div>
+                                            <div class="worksheet-timing">
+                                                <i class="kiv-calendar icon-10"></i>
+                                                <span class="space loading">xxx</span>
+                                            </div>
+                                            <div class="worksheet-period">
+                                                <i class="kiv-clock icon-11"></i>
+                                                <span class="space loading">xxx</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="loading loading-block">
-                                <div class="worksheet-header w-85">
-                                    <div
-                                        class="loading worksheet-title w-45"
-                                    ></div>
-                                    <div class="loading part-of-body"></div>
-                                </div>
-                                <div
-                                    class="loading worksheet-progress-line"
-                                ></div>
-                                <div class="worksheet-content">
-                                    <div class="worksheet-details">
-                                        <div
-                                            class="
-                                                loading
-                                                worksheet-exercises-count
-                                                w-45
-                                            "
-                                        ></div>
-                                        <div
-                                            class="
-                                                loading
-                                                worksheet-timing
-                                                w-25
-                                            "
-                                        ></div>
-                                        <div
-                                            class="
-                                                loading
-                                                worksheet-period
-                                                w-15
-                                            "
-                                        ></div>
+                            <div class="worksheet-container loading-block">
+                                <div class="worksheet">
+                                    <div class="worksheet-header">
+                                        <h3 class="worksheet-title loading w-35">
+                                            Xxxxxxxxxxxxx xx x xxxxxxxxxx x
+                                        </h3>
+                                        <div class="vs-tooltip-content kiv-help" >
+                                            <button
+                                                class="vs-button tag part-of-body"
+                                            >
+                                                <div class="vs-button__content loading">
+                                                </div>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="worksheet-content-wt">
+                                        <div class="worksheet-details worksheet-details-short">
+                                            <div class="worksheet-exercises-count">
+                                                <i class="kiv-exercise icon-7"></i>
+                                                <span class="space loading">xxx</span>
+                                            </div>
+                                            <div class="worksheet-timing">
+                                                <i class="kiv-calendar icon-10"></i>
+                                                <span class="space loading">xxx</span>
+                                            </div>
+                                            <div class="worksheet-period">
+                                                <i class="kiv-clock icon-11"></i>
+                                                <span class="space loading">xxx</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                            <div class="worksheet-container loading-block">
+                                <div class="worksheet">
+                                    <div class="worksheet-header">
+                                        <h3 class="worksheet-title loading w-35">
+                                            Xxxxxxxxxxxxx xx x xxxxxxxxxx x
+                                        </h3>
+                                        <div class="vs-tooltip-content kiv-help" >
+                                            <button
+                                                class="vs-button tag part-of-body"
+                                            >
+                                                <div class="vs-button__content loading">
+                                                </div>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="worksheet-content-wt">
+                                        <div class="worksheet-details worksheet-details-short">
+                                            <div class="worksheet-exercises-count">
+                                                <i class="kiv-exercise icon-7"></i>
+                                                <span class="space loading">xxx</span>
+                                            </div>
+                                            <div class="worksheet-timing">
+                                                <i class="kiv-calendar icon-10"></i>
+                                                <span class="space loading">xxx</span>
+                                            </div>
+                                            <div class="worksheet-period">
+                                                <i class="kiv-clock icon-11"></i>
+                                                <span class="space loading">xxx</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="worksheet-container loading-block">
+                                <div class="worksheet">
+                                    <div class="worksheet-header">
+                                        <h3 class="worksheet-title loading w-35">
+                                            Xxxxxxxxxxxxx xx x xxxxxxxxxx x
+                                        </h3>
+                                        <div class="vs-tooltip-content kiv-help" >
+                                            <button
+                                                class="vs-button tag part-of-body"
+                                            >
+                                                <div class="vs-button__content loading">
+                                                </div>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="worksheet-content-wt">
+                                        <div class="worksheet-details worksheet-details-short">
+                                            <div class="worksheet-exercises-count">
+                                                <i class="kiv-exercise icon-7"></i>
+                                                <span class="space loading">xxx</span>
+                                            </div>
+                                            <div class="worksheet-timing">
+                                                <i class="kiv-calendar icon-10"></i>
+                                                <span class="space loading">xxx</span>
+                                            </div>
+                                            <div class="worksheet-period">
+                                                <i class="kiv-clock icon-11"></i>
+                                                <span class="space loading">xxx</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="worksheet-container loading-block">
+                                <div class="worksheet">
+                                    <div class="worksheet-header">
+                                        <h3 class="worksheet-title loading w-35">
+                                            Xxxxxxxxxxxxx xx x xxxxxxxxxx x
+                                        </h3>
+                                        <div class="vs-tooltip-content kiv-help" >
+                                            <button
+                                                class="vs-button tag part-of-body"
+                                            >
+                                                <div class="vs-button__content loading">
+                                                </div>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="worksheet-content-wt">
+                                        <div class="worksheet-details worksheet-details-short">
+                                            <div class="worksheet-exercises-count">
+                                                <i class="kiv-exercise icon-7"></i>
+                                                <span class="space loading">xxx</span>
+                                            </div>
+                                            <div class="worksheet-timing">
+                                                <i class="kiv-calendar icon-10"></i>
+                                                <span class="space loading">xxx</span>
+                                            </div>
+                                            <div class="worksheet-period">
+                                                <i class="kiv-clock icon-11"></i>
+                                                <span class="space loading">xxx</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                     </transition>
                 </div>
                 <div 
-                    class="pagination" 
+                    class="pagination"
+                    :class="{'prescri-process':prescriProcess}"
                     v-if="
                         !loadingDoctorFirstsWorksheets &&
-                        !loadingDoctorAllWorksheets &&
-                        countWorksheetTemplates > max"
+                        !loadingDoctorAllWorksheets
+                    "
                     >
                     <vs-pagination 
                         v-model="page" 
@@ -901,7 +998,10 @@
                         </vs-select>
                     </vs-pagination>
                 </div>
-                <div class="pagination" v-else>
+                <div 
+                    class="pagination" v-else
+                    :class="{'prescri-process':prescriProcess}"
+                >
                     <div class="vs-pagination-content vs-component--primary">
                         <button
                             class="vs-pagination__arrow prev"
@@ -1015,9 +1115,6 @@ export default {
                 this.max
             );
         },
-        countWorksheetTemplates() {
-            return this.getSearch(this.worksheetTemplates, this.search).length;
-        },
         getTagsFromAll() {
             return f.getTagsFromAll(this.tagsFromExercises);
         },
@@ -1025,6 +1122,11 @@ export default {
         {
             return `${window.location.protocol}//${window.location.host}/fiche`;
         }
+    },
+    watch: {
+        worksheetTemplates() {
+            this.page = 1;
+        },
     },
     methods: {
         selectTag() {
@@ -1060,19 +1162,7 @@ export default {
         },
         activeTab(num) {
             if(this.$parent.activeTab != num)
-            {
                 this.$parent.activeTab = num;
-
-                if (window.innerWidth < 576) {
-                    if (1 === num) {
-                        this.$parent.myPrescriptionsContent = true;
-                    }
-                    if (2 === num) {
-                        this.$parent.myWorksheetTemplatesContent =
-                            !this.$parent.myWorksheetTemplatesContent;
-                    }
-                }
-            }
             window.scrollTo({ top: 0, behavior: "smooth" });
         },
         removeWorksheet(worksheet) {
@@ -1246,14 +1336,48 @@ export default {
 </script>
 
 <style lang="scss">
+.loading-block.worksheet-container
+{
+    max-height: 56px;
+
+    .worksheet .worksheet-content-wt .worksheet-details i 
+    {
+        color: #f4eeec   !important;
+    }
+
+    .vs-button
+    {
+        width: 3rem !important;
+        height: 3rem !important;
+        border-radius: 50% !important;
+        position: absolute !important;
+        top: 0.3rem !important;
+        right: 0.5rem !important;
+    }
+
+    .worksheet .worksheet-header .worksheet-title {
+        width: 34% !important;
+        }   
+    .worksheet{
+        background: #fdfdfd  !important;
+        width: 100% !important;
+    }
+
+    .loading:not(.vs-button__content)
+    {
+        border-radius: 0.6rem;
+        color: transparent;
+    }
+}
+
 @import "../../../scss/variables";
 body .kiv-block .prescri-process-dialog.prescri-process-dialog-select-worksheet {
     top: -2.8rem;
-    width: 28rem;
+    width: 33rem;
 }
 
 body .kiv-block .prescri-process-dialog.prescri-process-dialog-create-worksheet {
-    top: -6.8rem;
+    top: -7.8rem;
     right: -4.9rem;
 }
 
@@ -1378,6 +1502,12 @@ body .btn-create-action .vs-button
         .vs-input-parent {
             margin-right: 1.4rem;
             width: 100%;
+        }
+    }
+
+    .pagination.prescri-process {
+        @media (min-width: 1100px) {
+            justify-content: flex-start;
         }
     }
 
@@ -1682,15 +1812,39 @@ body .btn-create-action .vs-button
                 padding: 0.9rem;
                 font-size: 1.4rem;
                 height: 100%;
-                box-shadow: 0.6px 0.4rem 2rem #b7512f;
+                box-shadow: 0rem 0.4rem 1.4rem 0rem rgba(255, 104, 56, 0.5);
                 user-select: none;
+                transition: 0.25s;
+
+                @media (min-width: 1100px) {
+                    font-size: 1.21rem;
+                    width: initial;
+                    border-radius: 0.7rem;
+                    margin-right: 2.2rem;
+                    padding: 1.7rem;
+                    
+                    &:first-child {
+                        margin-right: 1.8rem;
+                    }
+                }
 
                 &.disabled-custom
                 {
                     pointer-events: none;
+                    box-shadow: 0rem 0rem 0.6rem 0rem rgba(255, 104, 56, 0.2);
+
                     > * 
                     {
                         opacity: 0.3;
+                    }
+
+                    @media (min-width: 1100px) {
+                        opacity: 0.9;
+
+                        > * 
+                        {
+                            opacity: 0.3;
+                        }
                     }
                 }
 
@@ -1700,10 +1854,19 @@ body .btn-create-action .vs-button
                     color: #fb8b68;
                     font-size: 1.55rem;
                     letter-spacing: 0.05rem;
+                    @media (min-width: 1100px) {
+                        font-size: 1.35rem;
+                        letter-spacing: 0.06rem;
+                        padding-left: 1.65rem;
+                        padding-right: 1.9rem;
+                    }
 
                     .big
                     {
                         letter-spacing: 0;
+                        margin-bottom: -0.2rem;
+                        position: relative;
+                        top: -0.12rem;
                     }
 
                     svg
@@ -1721,16 +1884,20 @@ body .btn-create-action .vs-button
                 &.prescri-edit
                 {
 
-                    &.j-c-z
+                    .big
                     {
-                        .big
-                        {
-                            font-size: 2rem;
+                        font-size: 2rem;
+                        @media (min-width: 1100px) {
+                            font-size: 1.8rem;
                         }
-                        .medium {
-                            font-size: 1.45rem;
-                            margin-top: 0.1rem;
-                            letter-spacing: 0.08rem;
+                    }
+                    .medium {
+                        font-size: 1.45rem;
+                        margin-top: 0.1rem;
+                        letter-spacing: 0.08rem;
+                        @media (min-width: 1100px) {
+                            font-size: 1.32rem;
+                            margin-top: 0.12rem;
                         }
                     }
                 }
@@ -1750,12 +1917,18 @@ body .btn-create-action .vs-button
                     &.big
                     {
                         font-size: 2.2rem;
+                        @media (min-width: 1100px) {
+                            font-size: 2rem;
+                        }
                     }
 
                     &.m-r
                     {
                         display: inline-block;
                         margin-right: 0.5rem;
+                        @media (min-width: 1100px) {
+                            margin-bottom: 0.1rem;
+                        }
                     }
                 }
 
@@ -1778,10 +1951,9 @@ body .btn-create-action .vs-button
             @media (min-width: 1100px) {
                 position: absolute;
                 border-radius: 0 0 0.7rem 0.7rem;
-                overflow: hidden;
-                box-shadow: 0.6px 0.4rem 2rem #ffd7ca;
-                bottom: -6rem;
-                height: 6.4125rem;
+                bottom: 2rem;
+                height: 5.1125rem;
+                justify-content: flex-end;
             }
     }
 
@@ -1922,7 +2094,7 @@ body .btn-create-action .vs-button
                 line-height: 1;
                 position: relative;
                 top: -0.2rem;
-                max-height: 2.8rem;
+                max-height: 3rem;
                 overflow: hidden;
                 white-space: initial;
                 display: -webkit-box;
@@ -1932,14 +2104,24 @@ body .btn-create-action .vs-button
                 padding: 0.3rem 0;
             }
 
-            .vs-button--size-mini.tag.part-of-body {
+            .vs-tooltip-content.kiv-help
+            {
                 position: absolute;
                 right: 1rem;
                 top: 0.75rem;
+                z-index: 5;
+
+                 @media (min-width: 799px) {
+                    top: 1.5rem;
+                }
+            }
+
+            .vs-button--size-mini.tag.part-of-body {
                 background: #faf8f4 !important;
                 border-radius: 50% !important;
                 width: 2.5rem !important;
                 height: 2.5rem !important;
+                position: initial;
 
                 @media (min-width: 799px) {
                     background: #fff !important;
@@ -1979,7 +2161,7 @@ body .btn-create-action .vs-button
 
                 &:not(.worksheet-details-short)
                 {
-                    margin-top: 0.6rem;
+                    // margin-top: 0.6rem;
                     position: relative;
                     
                     &::after
@@ -2076,8 +2258,9 @@ body .btn-create-action .vs-button
     border-radius: 0.5rem;
 
     @media (min-width: 799px) {
-        background-color: #f6f2ea;
+        background-color: #fff;
         height: 13.5rem;
+        box-shadow: inset -0.74rem -0.3rem 0.9rem rgba(148, 96, 77, 0.07);
     }
 
     @media (max-width: 799px) {
@@ -2187,7 +2370,11 @@ body .btn-create-action .vs-button
         z-index: 5;
 
         @media (min-width: 800px) {
-            display: none;
+            background: linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0) 0%,
+                #faf8f4 100%,
+            );
         }
     }
 }

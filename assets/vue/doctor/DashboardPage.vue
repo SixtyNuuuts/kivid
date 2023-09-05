@@ -37,7 +37,7 @@
                     class="mobile-view"
                 />
                 <transition name="fade">
-                    <MyPrescriptions
+                    <MyPatients
                         v-if="activeTab === 1"
                         :doctor="doctor"
                         :doctorPatients="getDoctorPatients"
@@ -83,7 +83,12 @@
                         class="desktop-view"
                     />
                     <WorksheetStore
+                        :class="{'disabled-custom': activeTab === 1}"
+                        :csrfTokenCreateWorksheet="csrfTokenCreateWorksheet"
                         :doctor="doctor"
+                        :loadingDoctorFirstsWorksheets="loadingDoctorFirstsWorksheets"
+                        :loadingDoctorAllWorksheets="loadingDoctorAllWorksheets"
+                        @addWorksheetStore="addWorksheetStore"
                     />
                 </aside>
             </main>
@@ -96,24 +101,20 @@ import Vue from "vue";
 import f from "../services/function";
 import MyDashboardNotifications from "./DashboardPage/MyDashboardNotifications.vue";
 import MyWorksheetTemplates from "./DashboardPage/MyWorksheetTemplates.vue";
-import MyPrescriptions from "./DashboardPage/MyPrescriptions.vue";
+import MyPatients from "./DashboardPage/MyPatients.vue";
 import WorksheetStore from "./DashboardPage/WorksheetStore.vue";
 
 export default {
     components: {
         MyDashboardNotifications,
         MyWorksheetTemplates,
-        MyPrescriptions,
+        MyPatients,
         WorksheetStore,
     },
     data() {
         return {
             doctor: null,
             // csrfTokenAcceptDoctor: null,
-            myDBNotificationsContent: true,
-            myWorksheetTemplatesContent: true,
-            myPrescriptionsContent: true,
-            worksheetStoreContent: true,
             csrfTokenAddPatient: null,
             csrfTokenRemovePatient: null,
             csrfTokenCreatePatient: null,
@@ -181,13 +182,12 @@ export default {
                                 // }</strong> 
                                 // a été prescrite à <strong>
                                 // ${this.getUserName(this.patient)}</strong>`
-                                response.data
+                                response.data.message
                             );
                             this.btnLoadingWorksheetPrescriProcessRedirect = false;
                             this.btnLoadingValidCreateWorksheet = false;
-                            setTimeout(() => {
-                                document.location.href = `/doctor/${this.doctor.id}/dashboard`;
-                            }, 2000);
+                            this.doctorPatients.filter(p=>p.id==this.prescriProcessPatientSelected.id)[0].worksheets = [...response.data.worksheets, ...this.doctorPatients.filter(p=>p.id==this.prescriProcessPatientSelected.id)[0].worksheets]
+                            this.stopPrescriProcess(null, 1);
                         })
                         .catch((error) => {
                             const errorMess =
@@ -239,19 +239,9 @@ export default {
             this.prescriProcess = true;
             this.prescriProcessPatient = true;
             this.activeTab = 1;
-            this.myWorksheetTemplatesContent = true;
-            this.worksheetStoreContent = true;
             this.prescriProcessStartOrigin = target;
-            // this.prescriProcess = true;
-            // if(target && target === 'patient')
-            //     this.prescriProcessPatient = true;
-            // else
-            //     this.prescriProcessWorksheet = true;
-            // this.myWorksheetTemplatesContent = true;
-            // this.worksheetStoreContent = true;
-            // this.activeTab = target && target === 'patient' ? 1 : 2;
         },
-        stopPrescriProcess() {
+        stopPrescriProcess(e, activeTab=null) {
             this.prescriProcess = false;
             this.prescriProcessWorksheet = false;
             this.prescriProcessPatient = false;
@@ -259,7 +249,9 @@ export default {
             this.prescriProcessPatientSelected = null;
             this.btnLoadingPatientPrescriProcessRedirect = null;
             this.btnLoadingWorksheetPrescriProcessRedirect = false;
-            if(this.prescriProcessStartOrigin === 'worksheet')
+            if(activeTab!=null)
+                this.activeTab = activeTab;
+            else if(this.prescriProcessStartOrigin === 'worksheet')
                 this.activeTab = 2;
             else if(this.prescriProcessStartOrigin === 'patient')
                 this.activeTab = 1;
@@ -270,19 +262,18 @@ export default {
             });
             return array;
         },
-        onResize() {
-            if (window.innerWidth > 576) {
-                this.myDBNotificationsContent = true;
-                this.myWorksheetTemplatesContent = true;
-                this.myPrescriptionsContent = true;
-                this.worksheetStoreContent = true;
-            }
-        },
+        addWorksheetStore(worksheets)
+        {
+            this.doctorWorksheets = [...worksheets,...this.doctorWorksheets];
+
+            this.tagsFromExercises = f.generateTagsFromExercises(
+                this.doctorWorksheets
+            );
+        }
     },
     created() {
         Vue.prototype.$vs = this.$vs;
         document.body.classList.add("fuzzy-balls");
-        window.addEventListener("resize", this.onResize);
 
         const data = JSON.parse(document.getElementById("vueData").innerHTML);
 
@@ -422,13 +413,49 @@ export default {
                 console.error(errorMess);
             });
     },
-    beforeDestroy() {
-        window.removeEventListener("resize", this.onResize);
-    },
 };
 </script>
 
 <style lang="scss">
+
+@media (max-width: 799px)
+{
+    body .container {
+        padding: 3rem 0;
+
+        main > *:not(aside)
+        {
+            padding-left: 2rem!important;
+            padding-right: 2rem!important;
+        }
+
+        #dashboard-notifications
+        {
+            padding-left: 0!important;
+            padding-right: 0!important;
+            background-color: transparent;
+            box-shadow: none;
+
+            .notifications-list
+            {
+                background: #fff;
+                border-radius: 1rem;
+                box-shadow: 0.6px 0.4rem 0.4rem rgba(140, 136, 130, 0.13);
+                padding-top: 1.5rem !important;
+                padding: 1.7rem;
+                padding-bottom: 1.2rem;
+                margin: 0rem 2.3rem;
+            }
+        }
+
+        #dashboard-notifications h2,
+        #worksheet-store h2
+        {
+            margin-left: 4.3rem;
+        }
+    }
+}
+
 #dashboard.db-doctor {
     .not-found {
         @media (max-width: 799px) {

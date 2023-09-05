@@ -283,6 +283,11 @@
                     top: -0.1rem;
                     height: 1.7rem;
                 }
+
+                &.icon-global {
+                    top: -0.1rem;
+                    height: 2rem;
+                }
             }
         }
     }
@@ -356,6 +361,11 @@
                 }
 
                 &.icon-thoracique {
+                    top: -0.1rem;
+                    height: 1.4rem;
+                }
+
+                &.icon-global {
                     top: -0.1rem;
                     height: 1.4rem;
                 }
@@ -903,7 +913,7 @@
 
 /// AVATAR
 
-.vs-avatar {
+.vs-avatar:not(.loading) {
     background: #f6f4f0;
 
     img {
