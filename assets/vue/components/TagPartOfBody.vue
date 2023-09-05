@@ -55,6 +55,12 @@
                 alt="Icone Thoracique"
                 class="icon-thoracique"
             />
+            <img
+                v-if="partOfBody.icon === 'global'"
+                src="../../img/icons/part-of-body/global.svg"
+                alt="Icone Thoracique"
+                class="icon-global"
+            />
             <span class="text wsnw">{{ partOfBody.name }}</span>
             <i class="kiv-completed icon-22"></i>
         </vs-button>

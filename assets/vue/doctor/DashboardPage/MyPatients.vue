@@ -2,16 +2,7 @@
     <section
         id="my-worksheets"
         class="kiv-block s-prescriptions"
-        :class="{ reduced: !$parent.myPrescriptionsContent }"
     >
-        <div
-            class="toggle-content tab"
-            @click="
-                $parent.myPrescriptionsContent = !$parent.myPrescriptionsContent
-            "
-        >
-            <i class="kiv-chevron-down icon-3"></i>
-        </div>
         <div class="tabs">
             <div @click="activeTab(1)">
                 <h2><span>Mes Patients</span></h2>
@@ -30,7 +21,7 @@
             </div>
         </transition>
         <transition name="height">
-            <div v-if="$parent.myPrescriptionsContent">
+            <div>
                 <div class="primary-actions">
                     <div class="search loading-s-c">
                         <vs-input
@@ -90,7 +81,17 @@
                                 circle
                                 floating
                             >
-                                <svg v-if="!prescriProcess" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 48 48" width="96px" height="96px"><path d="M 12.5 4 C 10.019 4 8 6.019 8 8.5 L 8 39.5 C 8 41.981 10.019 44 12.5 44 L 25.640625 44 C 24.785625 43.111 24.055516 42.103 23.478516 41 L 12.5 41 C 11.673 41 11 40.327 11 39.5 L 11 8.5 C 11 7.673 11.673 7 12.5 7 L 24 7 L 24 15.5 C 24 17.981 26.019 20 28.5 20 L 37 20 L 37 22.169922 C 38.045 22.331922 39.053 22.606906 40 23.003906 L 40 18.5 C 40 18.0855 39.831922 17.710828 39.560547 17.439453 L 26.560547 4.4394531 C 26.289172 4.1680781 25.9145 4 25.5 4 L 12.5 4 z M 27 9.1210938 L 34.878906 17 L 28.5 17 C 27.673 17 27 16.327 27 15.5 L 27 9.1210938 z M 35 24 C 28.925 24 24 28.925 24 35 C 24 41.075 28.925 46 35 46 C 41.075 46 46 41.075 46 35 C 46 28.925 41.075 24 35 24 z M 35 27 C 35.552 27 36 27.448 36 28 L 36 34 L 42 34 C 42.552 34 43 34.448 43 35 C 43 35.552 42.552 36 42 36 L 36 36 L 36 42 C 36 42.552 35.552 43 35 43 C 34.448 43 34 42.552 34 42 L 34 36 L 28 36 C 27.448 36 27 35.552 27 35 C 27 34.448 27.448 34 28 34 L 34 34 L 34 28 C 34 27.448 34.448 27 35 27 z"/></svg>
+                                <svg v-if="!prescriProcess" version="1.1" id="Calque_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                    viewBox="0 0 96 96" style="enable-background:new 0 0 96 96;" xml:space="preserve">
+                                    <g>
+                                        <path class="st0" d="M70,48c-12.2,0-22,9.8-22,22s9.8,22,22,22s22-9.8,22-22S82.2,48,70,48z M70,82.6l-7,2.3l1-8.4l2.7-0.4L70,79
+                                            l3.3-2.9l2.7,0.4l1,8.4L70,82.6z M79.1,66.8L76,68.2l-0.4,3.4l-3.3-0.7L70,73.4l-2.3-2.5l-3.3,0.7l-0.4-3.4l-3.1-1.4l1.7-3l-1.7-3
+                                            l3.1-1.4l0.4-3.4l3.3,0.7l2.3-2.5l2.3,2.5l3.3-0.7l0.4,3.4l3.1,1.4l-1.7,3L79.1,66.8z"/>
+                                        <path class="st0" d="M25,82c-1.7,0-3-1.3-3-3V17c0-1.7,1.3-3,3-3h23v17c0,5,4,9,9,9h17v4.3c2.1,0.3,4.1,0.9,6,1.7v-9
+                                            c0-0.8-0.3-1.6-0.9-2.1l-26-26C52.6,8.3,51.8,8,51,8H25c-5,0-9,4-9,9v62c0,5,4,9,9,9h26.3c-1.7-1.8-3.2-3.8-4.3-6H25z M54,18.2
+                                            L69.8,34H57c-1.7,0-3-1.3-3-3V18.2z"/>
+                                    </g>
+                                </svg>
                                 <svg v-else xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 50 50" width="50px" height="50px"><path d="M 9.15625 6.3125 L 6.3125 9.15625 L 22.15625 25 L 6.21875 40.96875 L 9.03125 43.78125 L 25 27.84375 L 40.9375 43.78125 L 43.78125 40.9375 L 27.84375 25 L 43.6875 9.15625 L 40.84375 6.3125 L 25 22.15625 Z"/></svg>
                                 <span class="btn-action-text">Prescrire</span>
                             </vs-button>
@@ -187,7 +188,8 @@
                                             <h4
                                                 @click="
                                                     redirectToPatientDashboard(
-                                                        patient.id
+                                                        patient.id,
+                                                        'my-worksheets'
                                                     )
                                                 "
                                             >
@@ -203,7 +205,14 @@
                                                 </span>
                                                 <span v-else>aucune prescription</span>
                                             </h4>
-                                            <ul class="prescriptions-patient-list">
+                                            <ul class="prescriptions-patient-list"
+                                                @click="
+                                                    redirectToPatientDashboard(
+                                                        patient.id,
+                                                        'my-worksheets'
+                                                    )
+                                                "
+                                            >
                                                 <li                                                 
                                                     v-for="(
                                                         worksheet, i
@@ -362,122 +371,246 @@
                     </div>
                     <div v-if="loadingDoctorFirstsPatients">
                         <div class="loading loading-block">
-                            <div class="worksheet-header w-85">
-                                <div class="loading worksheet-title w-65"></div>
-                                <div class="loading part-of-body"></div>
-                            </div>
-                            <div class="loading worksheet-progress-line"></div>
-                            <div class="worksheet-content">
-                                <div class="worksheet-details">
+                            <div class="patient-details">
+                                <div>
                                     <div
-                                        class="loading worksheet-exercises-count w-45"
-                                    ></div>
-                                    <div
-                                        class="loading worksheet-timing w-25"
-                                    ></div>
-                                    <div
-                                        class="loading worksheet-period w-15"
-                                    ></div>
+                                        class="vs-avatar-content avatar vs-avatar-content--circle"
+                                        style="width: 60px; height: 60px"
+                                    >
+                                        <div class="vs-avatar loading">
+                                        </div>
+                                    </div>
+                                    <div class="user-name">
+                                        <div class="name loading  w-15">
+                                            <span> xxxxxx </span>
+                                        </div>
+                                        <div class="mail loading  w-25">
+                                             xxxxxx 
+                                        </div>
+                                        <div class="prescriptions">
+                                            <h4 class="loading w-15">
+                                                <span
+                                                    ><span>X</span>
+                                                    prescription<!----></span
+                                                >
+                                            </h4>
+                                            <ul
+                                                class="prescriptions-patient-list"
+                                            >
+                                                <li
+                                                    class="worksheet-progress-line"
+                                                >
+                                                    <div
+                                                        class="progressbar-base"
+                                                    >
+                                                        <div
+                                                            class="worksheet-infos loading  w-35"
+                                                        >
+                                                            <span>XXXXXXXXXXXXXXXX</span>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <li
+                                                    class="worksheet-progress-line"
+                                                >
+                                                    <div
+                                                        class="progressbar-base"
+                                                    >
+                                                        <div
+                                                            class="worksheet-infos loading  w-35"
+                                                        >
+                                                            <span>XXXXXXXXXXXXXXXX</span>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <button class="remove-user loading">
+                                    </button>
                                 </div>
                             </div>
                         </div>
                         <div class="loading loading-block">
-                            <div class="worksheet-header w-85">
-                                <div class="loading worksheet-title w-45"></div>
-                                <div class="loading part-of-body"></div>
-                            </div>
-                            <div class="loading worksheet-progress-line"></div>
-                            <div class="worksheet-content">
-                                <div class="worksheet-details">
+                            <div class="patient-details">
+                                <div>
                                     <div
-                                        class="loading worksheet-exercises-count w-45"
-                                    ></div>
-                                    <div
-                                        class="loading worksheet-timing w-25"
-                                    ></div>
-                                    <div
-                                        class="loading worksheet-period w-15"
-                                    ></div>
+                                        class="vs-avatar-content avatar vs-avatar-content--circle"
+                                        style="width: 60px; height: 60px"
+                                    >
+                                        <div class="vs-avatar loading">
+                                        </div>
+                                    </div>
+                                    <div class="user-name">
+                                        <div class="name loading  w-15">
+                                            <span> xxxxxx </span>
+                                        </div>
+                                        <div class="mail loading  w-25">
+                                             xxxxxx 
+                                        </div>
+                                        <div class="prescriptions">
+                                            <h4 class="loading w-15">
+                                                <span
+                                                    ><span>X</span>
+                                                    prescription<!----></span
+                                                >
+                                            </h4>
+                                            <ul
+                                                class="prescriptions-patient-list"
+                                            >
+                                                <li
+                                                    class="worksheet-progress-line"
+                                                >
+                                                    <div
+                                                        class="progressbar-base"
+                                                    >
+                                                        <div
+                                                            class="worksheet-infos loading  w-35"
+                                                        >
+                                                            <span>XXXXXXXXXXXXXXXX</span>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <li
+                                                    class="worksheet-progress-line"
+                                                >
+                                                    <div
+                                                        class="progressbar-base"
+                                                    >
+                                                        <div
+                                                            class="worksheet-infos loading  w-35"
+                                                        >
+                                                            <span>XXXXXXXXXXXXXXXX</span>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <button class="remove-user loading">
+                                    </button>
                                 </div>
                             </div>
                         </div>
                         <div class="loading loading-block">
-                            <div class="worksheet-header w-85">
-                                <div class="loading worksheet-title w-55"></div>
-                                <div class="loading part-of-body"></div>
-                            </div>
-                            <div class="loading worksheet-progress-line"></div>
-                            <div class="worksheet-content">
-                                <div class="worksheet-details">
+                            <div class="patient-details">
+                                <div>
                                     <div
-                                        class="loading worksheet-exercises-count w-45"
-                                    ></div>
-                                    <div
-                                        class="loading worksheet-timing w-25"
-                                    ></div>
-                                    <div
-                                        class="loading worksheet-period w-15"
-                                    ></div>
+                                        class="vs-avatar-content avatar vs-avatar-content--circle"
+                                        style="width: 60px; height: 60px"
+                                    >
+                                        <div class="vs-avatar loading">
+                                        </div>
+                                    </div>
+                                    <div class="user-name">
+                                        <div class="name loading  w-15">
+                                            <span> xxxxxx </span>
+                                        </div>
+                                        <div class="mail loading  w-25">
+                                             xxxxxx 
+                                        </div>
+                                        <div class="prescriptions">
+                                            <h4 class="loading w-15">
+                                                <span
+                                                    ><span>X</span>
+                                                    prescription<!----></span
+                                                >
+                                            </h4>
+                                            <ul
+                                                class="prescriptions-patient-list"
+                                            >
+                                                <li
+                                                    class="worksheet-progress-line"
+                                                >
+                                                    <div
+                                                        class="progressbar-base"
+                                                    >
+                                                        <div
+                                                            class="worksheet-infos loading  w-35"
+                                                        >
+                                                            <span>XXXXXXXXXXXXXXXX</span>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <li
+                                                    class="worksheet-progress-line"
+                                                >
+                                                    <div
+                                                        class="progressbar-base"
+                                                    >
+                                                        <div
+                                                            class="worksheet-infos loading  w-35"
+                                                        >
+                                                            <span>XXXXXXXXXXXXXXXX</span>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <button class="remove-user loading">
+                                    </button>
                                 </div>
                             </div>
                         </div>
                         <div class="loading loading-block">
-                            <div class="worksheet-header w-85">
-                                <div class="loading worksheet-title w-45"></div>
-                                <div class="loading part-of-body"></div>
-                            </div>
-                            <div class="loading worksheet-progress-line"></div>
-                            <div class="worksheet-content">
-                                <div class="worksheet-details">
+                            <div class="patient-details">
+                                <div>
                                     <div
-                                        class="loading worksheet-exercises-count w-45"
-                                    ></div>
-                                    <div
-                                        class="loading worksheet-timing w-25"
-                                    ></div>
-                                    <div
-                                        class="loading worksheet-period w-15"
-                                    ></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="loading loading-block">
-                            <div class="worksheet-header w-85">
-                                <div class="loading worksheet-title w-45"></div>
-                                <div class="loading part-of-body"></div>
-                            </div>
-                            <div class="loading worksheet-progress-line"></div>
-                            <div class="worksheet-content">
-                                <div class="worksheet-details">
-                                    <div
-                                        class="loading worksheet-exercises-count w-45"
-                                    ></div>
-                                    <div
-                                        class="loading worksheet-timing w-25"
-                                    ></div>
-                                    <div
-                                        class="loading worksheet-period w-15"
-                                    ></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="loading loading-block">
-                            <div class="worksheet-header w-85">
-                                <div class="loading worksheet-title w-45"></div>
-                                <div class="loading part-of-body"></div>
-                            </div>
-                            <div class="loading worksheet-progress-line"></div>
-                            <div class="worksheet-content">
-                                <div class="worksheet-details">
-                                    <div
-                                        class="loading worksheet-exercises-count w-45"
-                                    ></div>
-                                    <div
-                                        class="loading worksheet-timing w-25"
-                                    ></div>
-                                    <div
-                                        class="loading worksheet-period w-15"
-                                    ></div>
+                                        class="vs-avatar-content avatar vs-avatar-content--circle"
+                                        style="width: 60px; height: 60px"
+                                    >
+                                        <div class="vs-avatar loading">
+                                        </div>
+                                    </div>
+                                    <div class="user-name">
+                                        <div class="name loading  w-15">
+                                            <span> xxxxxx </span>
+                                        </div>
+                                        <div class="mail loading  w-25">
+                                             xxxxxx 
+                                        </div>
+                                        <div class="prescriptions">
+                                            <h4 class="loading w-15">
+                                                <span
+                                                    ><span>X</span>
+                                                    prescription<!----></span
+                                                >
+                                            </h4>
+                                            <ul
+                                                class="prescriptions-patient-list"
+                                            >
+                                                <li
+                                                    class="worksheet-progress-line"
+                                                >
+                                                    <div
+                                                        class="progressbar-base"
+                                                    >
+                                                        <div
+                                                            class="worksheet-infos loading  w-35"
+                                                        >
+                                                            <span>XXXXXXXXXXXXXXXX</span>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <li
+                                                    class="worksheet-progress-line"
+                                                >
+                                                    <div
+                                                        class="progressbar-base"
+                                                    >
+                                                        <div
+                                                            class="worksheet-infos loading  w-35"
+                                                        >
+                                                            <span>XXXXXXXXXXXXXXXX</span>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <button class="remove-user loading">
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -487,8 +620,7 @@
                     class="pagination"
                     v-if="
                         !loadingDoctorFirstsPatients &&
-                        !loadingDoctorAllPatients &&
-                        doctorPatients.length > max
+                        !loadingDoctorAllPatients
                     "
                 >
                     <vs-pagination
@@ -766,24 +898,12 @@ export default {
         redirectToWorksheetPage(worksheetId) {
             document.location.href = `/doctor/${this.doctor.id}/fiche/voir/${worksheetId}`;
         },
-        redirectToPatientDashboard(patientId) {
-            document.location.href = `/doctor/${this.doctor.id}/voir/patient/${patientId}`;
+        redirectToPatientDashboard(patientId, scrollTarget=null) {
+            document.location.href = `/doctor/${this.doctor.id}/voir/patient/${patientId}${scrollTarget?`?st=${scrollTarget}`:''}`;
         },
         activeTab(num) {
             if(this.$parent.activeTab != num)
-            {
                 this.$parent.activeTab = num;
-
-                if (window.innerWidth < 576) {
-                    if (1 === num) {
-                        this.$parent.myPrescriptionsContent =
-                            !this.$parent.myPrescriptionsContent;
-                    }
-                    if (2 === num) {
-                        this.$parent.myWorksheetTemplatesContent = true;
-                    }
-                }
-            }
             window.scrollTo({ top: 0, behavior: "smooth" });
         },
         removeWorksheet(patient) {
@@ -903,6 +1023,21 @@ export default {
 
 <style lang="scss">
 @import "../../../scss/variables";
+
+.loading-block
+{
+    .loading:not(.vs-avatar)
+    {
+        border-radius: 0.6rem;
+        color: transparent;
+
+        &.remove-user
+        {
+            border: none !important;
+        }
+    }
+}
+
 #my-worksheets.s-prescriptions .tabs > div.inactive.disabled
 {
     opacity: 0.2;
@@ -1255,6 +1390,7 @@ body .kiv-block .prescri-process-dialog::after {
                                     overflow-x: auto;
                                     padding: 0.35rem 0;
                                     position: relative;
+                                    cursor: pointer;
 
                                     // @media (max-width: 1000px) {
                                         -ms-overflow-style: none; /* Pour Internet Explorer et Edge */
@@ -1392,6 +1528,11 @@ body .kiv-block .prescri-process-dialog::after {
                                                     }
 
                                                     &.icon-thoracique {
+                                                        top: -0.1rem;
+                                                        height: 1.1rem;
+                                                    }
+
+                                                    &.icon-global {
                                                         top: -0.1rem;
                                                         height: 1.1rem;
                                                     }
@@ -1695,7 +1836,11 @@ body .kiv-block .prescri-process-dialog::after {
                     // color: #d6cfbe;
                     cursor: pointer;
                     transition: all 0.2s;
-                    background: transparent;
+
+                    &:not(.loading)
+                    {
+                        background: transparent;
+                    }
 
                     @media (min-width: 800px) {
                         border: 1px solid #d6cfbe;

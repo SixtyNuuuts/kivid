@@ -601,6 +601,22 @@ export default {
                 console.error(errorMess);
             });
     },
+    mounted() {
+        const params = new URLSearchParams(window.location.search);
+        if(params.size)
+        {
+            const elementToScrollTo = document.getElementById(params.get('st'));
+            const offset = 90;
+
+            if (elementToScrollTo) {
+                const offsetTop = elementToScrollTo.offsetTop - offset;
+                window.scrollTo({
+                    top: offsetTop,
+                    behavior: 'smooth',
+                });
+            }
+        }
+    },
     beforeDestroy() {
         window.removeEventListener("resize", this.onResize);
     },

@@ -2,7 +2,6 @@
     <section
         id="dashboard-notifications"
         class="kiv-block"
-        :class="{ reduced: !$parent.myDBNotificationsContent }"
         v-if="
             !doctor.city ||
             !doctor.gender ||
@@ -11,19 +10,9 @@
             !doctor.isVerified
         "
     >
-        <button
-            class="toggle-content"
-            @click="
-                $parent.myDBNotificationsContent =
-                    !$parent.myDBNotificationsContent
-            "
-        >
-            <i class="kiv-chevron-down icon-3"></i>
-        </button>
         <h2>Notifications</h2>
         <transition name="height">
             <div
-                v-if="$parent.myDBNotificationsContent"
                 class="notifications-list"
             >
                 <div

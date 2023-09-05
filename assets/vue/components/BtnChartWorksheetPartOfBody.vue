@@ -54,6 +54,12 @@
             alt="Icone Thoracique"
             class="icon-thoracique"
         />
+        <img
+            v-if="worksheet.partOfBody.icon === 'global'"
+            src="../../img/icons/part-of-body/global.svg"
+            alt="Icone Thoracique"
+            class="icon-global"
+        />
         {{
             worksheet.title.length > 20
                 ? worksheet.title.substring(0, 20) + "..."

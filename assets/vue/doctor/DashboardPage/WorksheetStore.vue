@@ -2,562 +2,215 @@
     <section
         id="worksheet-store"
         class="kiv-block"
-        :class="{ reduced: !$parent.worksheetStoreContent }"
     >
         <button
             class="toggle-content"
-            @click="$parent.worksheetStoreContent = !$parent.worksheetStoreContent"
         >
             <i class="kiv-chevron-down icon-3"></i>
         </button>
         <h2>Magasin de fiches</h2>
-        <transition name="height">
-            <div v-if="$parent.worksheetStoreContent">
-                <div class="worksheet-list wl-doctor">
-                    <transition name="fade">
-                        <div
-                            v-if="
-                                !loadingStoreFirstsWorksheets &&
-                                getStoreWorksheets.length
-                            "
-                        >
-                            <div
-                                v-for="(worksheet, i) in getStoreWorksheets"
-                                :key="i"
-                                class="worksheet-container"
-                            >
-                                <div 
-                                    class="worksheet"
-                                >
-                                    <div class="worksheet-header">
-                                        <h3 class="worksheet-title">
-                                            {{ worksheet.title }}
-                                        </h3>
-                                        <TagPartOfBody
-                                            :partOfBody="worksheet.partOfBody"
-                                        />
-                                    </div>
-                                    <div class="worksheet-content-wt">                            
-                                        <div class="worksheet-details">
-                                            <div
-                                                class="
-                                                    worksheet-exercises-count
-                                                "
-                                            >
-                                                <i
-                                                    class="kiv-exercise icon-7"
-                                                ></i>
-                                                <span class="space">{{
-                                                    worksheet.exercises.length
-                                                }}</span>
-                                                <span class="space">exercice</span><span
-                                                    v-if="
-                                                        worksheet.exercises
-                                                            .length > 1
-                                                    "
-                                                    >s</span
-                                                >
-                                            </div>
-                                            <div class="worksheet-timing">
-                                                <i
-                                                    class="kiv-calendar icon-10"
-                                                ></i>
-                                                <span class="space"
-                                                    >{{
-                                                        worksheet.perDay
-                                                    }}x</span
-                                                >
-                                                <span class="space">/ jour -</span>
-                                                
-                                                <span class="space"
-                                                    >{{
-                                                        worksheet.perWeek
-                                                    }}x</span
-                                                >
-                                                <span class="space">/ sem.</span>
-                                            </div>
-                                            <div class="worksheet-period">
-                                                <i
-                                                    class="kiv-clock icon-11"
-                                                ></i>
-                                                <span class="space">Pér. :</span>
-                                                <span class="space"
-                                                    >{{
-                                                        worksheet.duration
-                                                    }}
-                                                    sem.</span>
-                                            </div>
-                                        </div>
-                                        <transition name="height3">
-                                            <div class="worksheet-details-footer">
-                                                <div class="worksheet-exercises-container">
-                                                    <div class="worksheet-exercises">
-                                                        <div 
-                                                            v-for="(exercise, i) in worksheet.exercises"
-                                                            :key="i"
-                                                            class="worksheet-exercise"
-                                                        >
-                                                            <div
-                                                                class="worksheet-exercise-thumbnail"
-                                                            >
-                                                                <img :src="exercise.video.thumbnailUrl">
-                                                            </div>
-                                                            <div class="worksheet-exercise-details">
-                                                                <div class="series-reps">
-                                                                    <i class="kiv-reps icon-19"></i>
-                                                                    <span>{{ exercise.numberOfSeries }}</span>
-                                                                        x <span class="no-space">{{ exercise.numberOfRepetitions }}</span>
-                                                                </div>
-                                                                <div v-if="exercise.option" class="option">
-                                                                    - Option : <span>{{ exercise.option }}</span>
-                                                                </div>
-                                                                <div v-if="exercise.hold" class="hold">
-                                                                    - Tenir : <span>{{ exercise.hold }}s</span>
-                                                                </div>
-                                                                <div v-if="exercise.tempo" class="tempo">
-                                                                    - Tempo : <span>{{ exercise.tempo }}</span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="worksheet-exercise-other">
-                                                        <div class="tags">
-                                                            <div
-                                                                class="tag-chip"
-                                                                v-for="(
-                                                                    tag, i
-                                                                ) in worksheet.exercisesTags"
-                                                                :key="i"
-                                                            >
-                                                                {{ tag }}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="buttons-container" :class="{disabled:$parent.prescriProcess}">
-                                                    <!-- <vs-tooltip>
-                                                        <vs-button
-                                                            :loading="
-                                                                btnLoadingCopyWorksheet ===
-                                                                worksheet.id
-                                                            "
-                                                            @click="
-                                                                redirectToCreatePage(
-                                                                    worksheet.id
-                                                                )
-                                                            "
-                                                            circle
-                                                            class="btn-copy"
-                                                        >
-                                                            <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 64 64" width="64px" height="64px"><path d="M 14 10.5 A 3.5 3.5 0 0 0 10.5 14 L 10.5 39.560547 A 3.5 3.5 0 0 0 14 43.060547 L 17.439453 43.060547 A 1.5 1.5 0 0 0 17.439453 40.060547 L 14 40.060547 A 0.5 0.5 0 0 1 13.5 39.560547 L 13.5 14 A 0.51 0.51 0 0 1 14 13.5 L 39.560547 13.5 A 0.5 0.5 0 0 1 40.060547 14 L 40.060547 17.439453 A 1.5 1.5 0 0 0 43.060547 17.439453 L 43.060547 14 A 3.5 3.5 0 0 0 39.560547 10.5 L 14 10.5 z M 24.439453 20.939453 C 22.500453 20.939453 20.939453 22.500453 20.939453 24.439453 L 20.939453 50 C 20.939453 51.939 22.500453 53.5 24.439453 53.5 L 50 53.5 C 51.939 53.5 53.5 51.939 53.5 50 L 53.5 24.439453 C 53.5 22.500453 51.939 20.939453 50 20.939453 L 24.439453 20.939453 z"/></svg>
-                                                        </vs-button>
-                                                        <template #tooltip>
-                                                            Copier
-                                                        </template>
-                                                    </vs-tooltip> -->
-                                                </div>
-                                            </div>
-                                        </transition>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- <div
-                            class="not-found"
-                            v-if="
-                                !loadingStoreFirstsWorksheets &&
-                                !getStoreWorksheets.length &&
-                                !search &&
-                                !selectedTags.length
-                            "
-                        >
-                            <p>
-                                <i class="fas fa-folder-minus"></i>
-                                <span v-if="!prescriProcess">Vous n'avez pas de fiche</span>
-                                <span v-else>
-                                    Pour créer une prescription, Vous&nbsp;devez&nbsp;avoir préalablement créé des&nbsp;modèles&nbsp;de&nbsp;fiche,<br>
-                                    mais vous pouvez également en&nbsp;créer&nbsp;de&nbsp;zéro en utilisant le&nbsp;bouton&nbsp;"+"&nbsp;ci-dessus,<br>
-                                    puis valider avec le bouton "Paramétrer&nbsp;puis&nbsp;Prescrire".
-                                </span>
-                            </p>
-                        </div> -->
-                        <!-- <div
-                            class="not-found"
-                            v-if="
-                                !loadingStoreAllWorksheets &&
-                                !loadingStoreFirstsWorksheets &&
-                                !getStoreWorksheets.length &&
-                                (search || selectedTags.length)
-                            "
-                        >
-                            <p>
-                                <i class="fas fa-folder-minus"></i>
-                                <span
-                                    >Aucune fiche n'a été trouvée avec
-                                    <span v-if="search"
-                                        >"<strong>{{ search }}</strong
-                                        >"</span
-                                    ><span
-                                        v-if="search && selectedTags.length"
-                                        class="et"
-                                        >et</span
-                                    ><span
-                                        v-if="selectedTags.length"
-                                        class="tags"
-                                    >
-                                        <div
-                                            class="tag-chip"
-                                            v-for="(tag, i) in selectedTags"
-                                            :key="i"
-                                        >
-                                            {{ tag }}
-                                        </div>
-                                    </span></span
-                                >
-                            </p>
-                        </div> -->
-                        <!-- <div
-                            class="not-found"
-                            v-if="
-                                loadingStoreAllWorksheets &&
-                                search
-                            "
-                        >
-                            <p>
-                                <span class="loading-n">
-                                    <span class="ldio">
-                                        <span></span>
-                                        <span></span>
-                                    </span>
-                                </span>
-                                <span>Chargement...</span>
-                            </p>          
-                        </div> -->
-                        <div v-if="loadingStoreFirstsWorksheets">
-                            <div class="loading loading-block">
-                                <div class="worksheet-header w-85">
-                                    <div
-                                        class="loading worksheet-title w-65"
-                                    ></div>
-                                    <div class="loading part-of-body"></div>
-                                </div>
-                                <div
-                                    class="loading worksheet-progress-line"
-                                ></div>
-                                <div class="worksheet-content">
-                                    <div class="worksheet-details">
-                                        <div
-                                            class="
-                                                loading
-                                                worksheet-exercises-count
-                                                w-45
-                                            "
-                                        ></div>
-                                        <div
-                                            class="
-                                                loading
-                                                worksheet-timing
-                                                w-25
-                                            "
-                                        ></div>
-                                        <div
-                                            class="
-                                                loading
-                                                worksheet-period
-                                                w-15
-                                            "
-                                        ></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="loading loading-block">
-                                <div class="worksheet-header w-85">
-                                    <div
-                                        class="loading worksheet-title w-45"
-                                    ></div>
-                                    <div class="loading part-of-body"></div>
-                                </div>
-                                <div
-                                    class="loading worksheet-progress-line"
-                                ></div>
-                                <div class="worksheet-content">
-                                    <div class="worksheet-details">
-                                        <div
-                                            class="
-                                                loading
-                                                worksheet-exercises-count
-                                                w-45
-                                            "
-                                        ></div>
-                                        <div
-                                            class="
-                                                loading
-                                                worksheet-timing
-                                                w-25
-                                            "
-                                        ></div>
-                                        <div
-                                            class="
-                                                loading
-                                                worksheet-period
-                                                w-15
-                                            "
-                                        ></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="loading loading-block">
-                                <div class="worksheet-header w-85">
-                                    <div
-                                        class="loading worksheet-title w-55"
-                                    ></div>
-                                    <div class="loading part-of-body"></div>
-                                </div>
-                                <div
-                                    class="loading worksheet-progress-line"
-                                ></div>
-                                <div class="worksheet-content">
-                                    <div class="worksheet-details">
-                                        <div
-                                            class="
-                                                loading
-                                                worksheet-exercises-count
-                                                w-45
-                                            "
-                                        ></div>
-                                        <div
-                                            class="
-                                                loading
-                                                worksheet-timing
-                                                w-25
-                                            "
-                                        ></div>
-                                        <div
-                                            class="
-                                                loading
-                                                worksheet-period
-                                                w-15
-                                            "
-                                        ></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="loading loading-block">
-                                <div class="worksheet-header w-85">
-                                    <div
-                                        class="loading worksheet-title w-45"
-                                    ></div>
-                                    <div class="loading part-of-body"></div>
-                                </div>
-                                <div
-                                    class="loading worksheet-progress-line"
-                                ></div>
-                                <div class="worksheet-content">
-                                    <div class="worksheet-details">
-                                        <div
-                                            class="
-                                                loading
-                                                worksheet-exercises-count
-                                                w-45
-                                            "
-                                        ></div>
-                                        <div
-                                            class="
-                                                loading
-                                                worksheet-timing
-                                                w-25
-                                            "
-                                        ></div>
-                                        <div
-                                            class="
-                                                loading
-                                                worksheet-period
-                                                w-15
-                                            "
-                                        ></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="loading loading-block">
-                                <div class="worksheet-header w-85">
-                                    <div
-                                        class="loading worksheet-title w-45"
-                                    ></div>
-                                    <div class="loading part-of-body"></div>
-                                </div>
-                                <div
-                                    class="loading worksheet-progress-line"
-                                ></div>
-                                <div class="worksheet-content">
-                                    <div class="worksheet-details">
-                                        <div
-                                            class="
-                                                loading
-                                                worksheet-exercises-count
-                                                w-45
-                                            "
-                                        ></div>
-                                        <div
-                                            class="
-                                                loading
-                                                worksheet-timing
-                                                w-25
-                                            "
-                                        ></div>
-                                        <div
-                                            class="
-                                                loading
-                                                worksheet-period
-                                                w-15
-                                            "
-                                        ></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="loading loading-block">
-                                <div class="worksheet-header w-85">
-                                    <div
-                                        class="loading worksheet-title w-45"
-                                    ></div>
-                                    <div class="loading part-of-body"></div>
-                                </div>
-                                <div
-                                    class="loading worksheet-progress-line"
-                                ></div>
-                                <div class="worksheet-content">
-                                    <div class="worksheet-details">
-                                        <div
-                                            class="
-                                                loading
-                                                worksheet-exercises-count
-                                                w-45
-                                            "
-                                        ></div>
-                                        <div
-                                            class="
-                                                loading
-                                                worksheet-timing
-                                                w-25
-                                            "
-                                        ></div>
-                                        <div
-                                            class="
-                                                loading
-                                                worksheet-period
-                                                w-15
-                                            "
-                                        ></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="loading loading-block">
-                                <div class="worksheet-header w-85">
-                                    <div
-                                        class="loading worksheet-title w-45"
-                                    ></div>
-                                    <div class="loading part-of-body"></div>
-                                </div>
-                                <div
-                                    class="loading worksheet-progress-line"
-                                ></div>
-                                <div class="worksheet-content">
-                                    <div class="worksheet-details">
-                                        <div
-                                            class="
-                                                loading
-                                                worksheet-exercises-count
-                                                w-45
-                                            "
-                                        ></div>
-                                        <div
-                                            class="
-                                                loading
-                                                worksheet-timing
-                                                w-25
-                                            "
-                                        ></div>
-                                        <div
-                                            class="
-                                                loading
-                                                worksheet-period
-                                                w-15
-                                            "
-                                        ></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </transition>
-                </div>
-                <div 
-                    class="pagination" 
+        <div>
+            <div class="worksheet-list wl-doctor swiper">
+                <div
                     v-if="
                         !loadingStoreFirstsWorksheets &&
-                        !loadingStoreAllWorksheets &&
-                        countStoreWorksheets > max"
+                        getStoreWorksheets.length
+                    "
+                    class="swiper-wrapper"
+                >
+                    <div
+                        v-for="(worksheet, i) in getStoreWorksheets"
+                        :key="i"
+                        class="worksheet-container swiper-slide"
                     >
-                    <vs-pagination 
-                        v-model="page" 
-                        :length="
-                            getLength(
-                                storeWorksheets,
-                                max
-                            )
-                        "
-                    >
-                        <vs-select v-model="page">
-                            <vs-option
-                                v-for="numberPage in getLength(storeWorksheets,max)"
-                                :key="numberPage"
-                                :label="numberPage"
-                                :value="numberPage">
-                                {{ numberPage }}
-                            </vs-option>
-                        </vs-select>
-                    </vs-pagination>
-                </div>
-                <div class="pagination" v-else>
-                    <div class="vs-pagination-content vs-component--primary">
-                        <button
-                            class="vs-pagination__arrow prev"
-                            disabled="disabled"
+                        <div 
+                            class="worksheet"
                         >
-                            <i class="vs-icon-arrow"></i>
-                        </button>
-                        <div class="vs-pagination__slot">
-                            <div
-                                class="vs-select-content loading-c vs-component--primary"
-                            >
-                                <div class="vs-select vs-select--state-null">
-                                    <input
-                                        class="vs-select__input simple"
-                                    /><label
-                                        class="vs-select__label vs-select__label--hidden"
-                                    ></label
-                                    ><label
-                                        class="vs-select__label vs-select__label--hidden"
-                                    ></label
-                                    ><i class="vs-icon-arrow"></i>
+                            <div class="worksheet-header">
+                                <h3 class="worksheet-title">
+                                    {{ worksheet.title }}
+                                </h3>
+                                <TagPartOfBody
+                                    :partOfBody="worksheet.partOfBody"
+                                />
+                            </div>
+                            <div class="worksheet-content-wt">
+                                <div class="worksheet-details">
+                                    <div
+                                        class="
+                                            worksheet-exercises-count
+                                        "
+                                    >
+                                        <i
+                                            class="kiv-exercise icon-7"
+                                        ></i>
+                                        <span class="space">{{
+                                            worksheet.exercises.length
+                                        }}</span>
+                                        <span class="space">exercice</span><span
+                                            v-if="
+                                                worksheet.exercises
+                                                    .length > 1
+                                            "
+                                            >s</span
+                                        >
+                                    </div>
+                                    <div class="worksheet-timing">
+                                        <i
+                                            class="kiv-calendar icon-10"
+                                        ></i>
+                                        <span class="space"
+                                            >{{
+                                                worksheet.perDay
+                                            }}x</span
+                                        >
+                                        <span class="space">/ jour -</span>
+                                        
+                                        <span class="space"
+                                            >{{
+                                                worksheet.perWeek
+                                            }}x</span
+                                        >
+                                        <span class="space">/ sem.</span>
+                                    </div>
+                                    <div class="worksheet-period">
+                                        <i
+                                            class="kiv-clock icon-11"
+                                        ></i>
+                                        <span class="space">Pér. :</span>
+                                        <span class="space"
+                                            >{{
+                                                worksheet.duration
+                                            }}
+                                            sem.</span>
+                                    </div>
+                                </div>
+                                <div class="worksheet-details-footer">
+                                    <div class="worksheet-exercises-container">
+                                        <div class="worksheet-exercises">
+                                            <div 
+                                                v-for="(exercise, i) in worksheet.exercises"
+                                                :key="i"
+                                                class="worksheet-exercise"
+                                            >
+                                                <div
+                                                    class="worksheet-exercise-thumbnail"
+                                                >
+                                                    <img :src="exercise.video.thumbnailUrl">
+                                                </div>
+                                                <div class="worksheet-exercise-details">
+                                                    <div class="series-reps">
+                                                        <i class="kiv-reps icon-19"></i>
+                                                        <span>{{ exercise.numberOfSeries }}</span>
+                                                            x <span class="no-space">{{ exercise.numberOfRepetitions }}</span>
+                                                    </div>
+                                                    <div v-if="exercise.option" class="option">
+                                                        - Option : <span>{{ exercise.option }}</span>
+                                                    </div>
+                                                    <div v-if="exercise.hold" class="hold">
+                                                        - Tenir : <span>{{ exercise.hold }}s</span>
+                                                    </div>
+                                                    <div v-if="exercise.tempo" class="tempo">
+                                                        - Tempo : <span>{{ exercise.tempo }}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="worksheet-exercise-other">
+                                            <div class="tags">
+                                                <div
+                                                    class="tag-chip"
+                                                    v-for="(
+                                                        tag, i
+                                                    ) in worksheet.exercisesTags"
+                                                    :key="i"
+                                                >
+                                                    {{ tag }}
+                                                </div>
+                                            </div>
+                                            <vs-button
+                                                :disabled="
+                                                    btnLoadingAddWorksheet ===
+                                                    worksheet.id
+                                                "
+                                                :loading="loadingDoctorFirstsWorksheets || loadingDoctorAllWorksheets"
+                                                @click="
+                                                    redirectToAddWorksheet(
+                                                        worksheet
+                                                    )
+                                                "
+                                                circle
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="96px" height="96px"><path d="M 12.5 4 C 10.019 4 8 6.019 8 8.5 L 8 39.5 C 8 41.981 10.019 44 12.5 44 L 25.640625 44 C 24.785625 43.111 24.055516 42.103 23.478516 41 L 12.5 41 C 11.673 41 11 40.327 11 39.5 L 11 8.5 C 11 7.673 11.673 7 12.5 7 L 24 7 L 24 15.5 C 24 17.981 26.019 20 28.5 20 L 37 20 L 37 22.169922 C 38.045 22.331922 39.053 22.606906 40 23.003906 L 40 18.5 C 40 18.0855 39.831922 17.710828 39.560547 17.439453 L 26.560547 4.4394531 C 26.289172 4.1680781 25.9145 4 25.5 4 L 12.5 4 z M 27 9.1210938 L 34.878906 17 L 28.5 17 C 27.673 17 27 16.327 27 15.5 L 27 9.1210938 z M 35 24 C 28.925 24 24 28.925 24 35 C 24 41.075 28.925 46 35 46 C 41.075 46 46 41.075 46 35 C 46 28.925 41.075 24 35 24 z M 35 27 C 35.552 27 36 27.448 36 28 L 36 34 L 42 34 C 42.552 34 43 34.448 43 35 C 43 35.552 42.552 36 42 36 L 36 36 L 36 42 C 36 42.552 35.552 43 35 43 C 34.448 43 34 42.552 34 42 L 34 36 L 28 36 C 27.448 36 27 35.552 27 35 C 27 34.448 27.448 34 28 34 L 34 34 L 34 28 C 34 27.448 34.448 27 35 27 z"></path></svg>
+                                                Ajouter à mes fiches
+                                            </vs-button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <button class="vs-pagination__arrow next loading">
-                            <i class="vs-icon-arrow" disabled="disabled"></i>
-                        </button>
+                    </div>
+                </div>
+                <div class="swiper-pagination"></div>
+                <div class="swiper-button-prev"></div>
+                <div class="swiper-button-next"></div>
+                <div v-if="loadingStoreFirstsWorksheets">
+                    <div class="loading loading-block">
+                        <div class="worksheet-header w-85">
+                            <div
+                                class="loading worksheet-title w-65"
+                            ></div>
+                            <div class="loading part-of-body"></div>
+                        </div>
+                        <div
+                            class="loading worksheet-progress-line"
+                        ></div>
+                        <div class="worksheet-content">
+                            <div class="worksheet-details">
+                                <div
+                                    class="
+                                        loading
+                                        worksheet-exercises-count
+                                        w-45
+                                    "
+                                ></div>
+                                <div
+                                    class="
+                                        loading
+                                        worksheet-timing
+                                        w-25
+                                    "
+                                ></div>
+                                <div
+                                    class="
+                                        loading
+                                        worksheet-period
+                                        w-15
+                                    "
+                                ></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </transition>
+        </div>
     </section>
 </template>
 
 <script>
 import f from "../../services/function";
 import TagPartOfBody from "../../components/TagPartOfBody.vue";
+import Swiper from 'swiper/bundle';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
 
 export default {
     props: {
         doctor: Object,
+        csrfTokenCreateWorksheet: String,
+        loadingDoctorFirstsWorksheets: Boolean,
+        loadingDoctorAllWorksheets: Boolean,
     },
     components: {
         TagPartOfBody,
@@ -569,6 +222,8 @@ export default {
             storeWorksheets:[],
             loadingStoreFirstsWorksheets: false,
             loadingStoreAllWorksheets: false,
+            btnLoadingAddWorksheet: null,
+            mySwiper: null
         };
     },
     computed: {
@@ -579,25 +234,62 @@ export default {
                 this.max
             );
         },
-        countStoreWorksheets() {
-            return this.storeWorksheets.length;
-        },
     },
     methods: {
-        // redirectToCreatePage(worksheetId) {
-        //     if (worksheetId) {
-        //         this.btnLoadingCopyWorksheet = worksheetId;
-        //     } else {
-        //         this.btnLoadingAddWorksheet = true;
-        //     }
+        redirectToAddWorksheet(worksheet){
+            this.btnLoadingAddWorksheet = worksheet.id;
+            this.axios
+                .post(`/doctor/${this.doctor.id}/create/worksheets`, {
+                   _token: this.csrfTokenCreateWorksheet,
+                   patientId: null,
+                   worksheetsIds: [worksheet.id],
+                })
+                .then((response) => {
+                    f.openSuccessNotification(
+                        "Confirmation",
+                        `La fiche <strong> ${
+                            worksheet.title
+                        }</strong> 
+                        a été ajoutée à vos fiches</strong>`
+                    );
+                    // this.btnLoadingAddWorksheet = null;
+                    if(!this.$parent.prescriProcess)
+                        this.$parent.activeTab = 2
 
-        //     document.location.href = `/doctor/${this.doctor.id}/fiche/creation/${worksheetId}`;
-        // },
+                    this.$emit("addWorksheetStore", response.data.worksheets);
+                })
+                .catch((error) => {
+                    const errorMess =
+                        "object" === typeof error.response.data
+                            ? error.response.data.detail
+                            : error.response.data;
+                    this.btnLoadingAddWorksheet = null;
+                    f.openErrorNotification("Erreur", errorMess);
+                });
+        },
         getPage(data, page, maxItems) {
             return f.getPage(data, page, maxItems);
         },
         getLength(data, maxItems) {
             return f.getLength(data, maxItems);
+        },
+        initSwiper() {
+            this.mySwiper = new Swiper('.swiper', {
+                    spaceBetween: 0,
+                    centeredSlides: true,
+                    autoplay: {
+                        delay: 6000,
+                        // disableOnInteraction: false,
+                    },
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true,
+                },
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev',
+                },
+            });
         },
     },
     created() {
@@ -624,6 +316,8 @@ export default {
                             }
                         });
 
+                        this.initSwiper();
+
                         this.loadingStoreAllWorksheets = false;
                     })
                     .catch((error) => {
@@ -648,17 +342,134 @@ export default {
 </script>
 
 <style lang="scss">
+@import "../../../scss/variables";
+:root {
+    --swiper-navigation-size: 18px;
+    --swiper-navigation-sides-offset: 5px;
+    --swiper-theme-color: #ccc4b4;
+    --swiper-pagination-bullet-inactive-color: #b0aa9f;
+}
+
+.swiper-button-prev, .swiper-button-next 
+{
+    opacity: 0 !important;
+}
+
+@media (min-width: 799px) {
+    :root {
+        --swiper-navigation-size: 15px;
+        --swiper-navigation-sides-offset: 6px;
+        --swiper-theme-color: #fb8b68;
+        --swiper-pagination-bullet-inactive-color: #fb8b68;
+    }
+}
+
 #worksheet-store
 {
+    margin-top: 1rem;
+    margin-bottom: 0;
+
     @media (max-width: 799px) {
-        max-width: 91.2vw;
+        max-width: 98.4vw;
+
+        &.kiv-block {
+            background: transparent;
+            border-radius: 0;
+            box-shadow: none;
+            padding: 0;
+            position: initial;
+            padding-top: 0 !important;
+
+            .tabs {
+                position: fixed !important;
+                top: auto !important;
+                left: 0 !important;
+                right: 0 !important;
+                bottom: 0 !important;
+                background: $white;
+                z-index: 999 !important;
+                box-shadow: 0px 1.2rem 3rem rgba(56, 41,13, 0.55);
+                padding-bottom: 1.5rem;
+
+                > div {
+                    padding-bottom: 3.7rem !important;
+
+                    h2 {
+                        top: 0 !important;
+                        white-space: nowrap !important;
+                        &::before {
+                            top: -0.1812rem !important;
+                        }
+                    }
+                }
+            }    
+        }
+
+        .worksheet-list.wl-doctor .worksheet-container {
+            padding: 0 2.2rem;
+            padding-bottom: 3rem;
+
+            .worksheet {
+                        background: #fff;
+                        border-radius: 1rem;
+                        box-shadow: 0.6px 0.4rem 0.4rem rgb(140 136 130 / 13%);
+                        padding-top: 1.5rem !important;
+                        padding: 1.7rem;
+                        padding-bottom: 1.2rem;
+                        opacity: 1;
+                        &.active-effect {
+                            animation: mymove 2s infinite;
+                        }
+                        &.active {
+                            cursor: pointer;
+                            > * {
+                                user-select: none;
+                                pointer-events: none;
+                            }
+                        }
+                        &.selected {
+                            border-left: 5px solid $orange;
+                        }
+                        @keyframes mymove {
+                            50% {
+                                box-shadow: 0rem 0.1rem 1.5rem 0rem rgba(255, 107, 38, 0.8);
+                            }
+                        }        
+                    }
+        }
     }
-        margin-top: 1rem;
-        margin-bottom: 0;
 
     @media (min-width: 799px) {
         margin-top: 2rem;
         margin-bottom: 0;
+        max-width: 92.8vw;
+        padding: 2rem 0;
+        padding-bottom: 1rem;
+
+        h2 {
+            margin-left: 2rem;
+        }
+
+        .worksheet-list.wl-doctor .worksheet-container {
+            padding: 0 2.2rem;
+            padding-bottom: 3rem;
+            background-color: transparent;
+            border-radius: none;
+        }
+
+        .worksheet-list.wl-doctor .worksheet
+        {
+            background-color: #faf8f4;
+            border-radius: 0.5rem;
+        }
+    }
+
+    @media (min-width: 899px) {
+        max-width: 93.7vw;
+    }
+
+    @media (min-width: 999px) {
+        max-width: 94.6vw;
     }
 
     @media (min-width: 1100px) {
@@ -681,29 +492,84 @@ export default {
         max-width: 34.3vw;
     }
 
-    .worksheet-list.wl-doctor .worksheet-container {
-        // background-color: #c6bea9;
-        margin-bottom: 1.5rem;
-        border-radius: 1.1rem;
-        // color: #fff;
-
-        @media (max-width: 799px) {
-            box-shadow: 0.6px 0.4rem 0.4rem rgb(171 159 141 / 13%);
-            border: 1px solid #e7dfcd;
-        }
+    .swiper {
+      width: 100%;
     }
 
-    // .worksheet-list.wl-doctor .worksheet-container .worksheet .worksheet-content-wt .worksheet-details:not(.worksheet-details-short)::after {
-    //     background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, #c6bea9 60%, #c6bea9 100%);
-    // }   
+    .worksheet-list.wl-doctor .worksheet-container .worksheet {
+        padding-bottom: 1.6rem !important;
+    }
 
-    // .worksheet-exercise-other::after {
-    //     background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, #c6bea9 100%);
-    // }
+    .worksheet-exercise-other
+    {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 1rem;
 
-    // .worksheet-list.wl-doctor .worksheet-container .worksheet .worksheet-content-wt .worksheet-details > * {
-    //     // color: #ffffff;
-    // }
+        .vs-button {
+            white-space: nowrap;
+            flex: none;
+            border-radius: 0.6rem;
+            font-size: 1.3rem;
+            overflow: visible;
+            box-shadow: 0.1rem 0.1rem 0.25rem 0rem rgba(0, 0, 0, 0.15);
+            letter-spacing: 0;
+
+            .vs-button__content {
+                padding: 0.35rem 0.8rem;
+                padding-left: 0.6rem;
+                padding-top: 0.45rem;
+            }
+
+            svg
+            {
+                width: 1.8rem;
+                height: 1.8rem;
+                fill: #fff;
+                margin-right: 0.4rem;
+                position: relative;
+                top: -0.1rem;
+            }
+
+            &::after
+            {
+                content: '';
+                display: block;
+                background: linear-gradient(
+                    90deg,
+                    rgba(250, 248, 244, 0)00 0%,
+                    #fff 55%,
+                    #fff 100%,
+                );
+                width: 4.1rem;
+                height: 2rem;
+                position: absolute;
+                top: 0.45rem;
+                left: -4.10rem;
+                z-index: 5;
+
+                @media (min-width: 800px) {
+                    background: linear-gradient(
+                        90deg,
+                        rgba(250, 248, 244, 0)00 0%,
+                        #faf8f4 55%,
+                        #faf8f4 100%,
+                    ); 
+                }
+
+            }
+        }
+
+        &::after
+        {
+            display: none;
+        }
+
+        .tags {
+            max-width: 75%;
+        }
+    }
 
     .worksheet-list > div:not(.not-found) .loading-block {
         border-radius: 0.5rem;
@@ -834,6 +700,14 @@ export default {
                 height: 5.5rem;
                 width: 5.5rem;
             }
+        }
+    }
+
+
+    &.disabled-custom
+    {
+        @media (max-width: 1099px) {
+            display: none;
         }
     }
 }

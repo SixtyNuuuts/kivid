@@ -12,7 +12,7 @@
         </button>
         <h2>
             <span v-if="!doctorView">Mes</span
-            ><span v-if="doctorView">Ses</span> fiches
+            ><span v-if="doctorView">Ses</span> prescriptions
         </h2>
         <transition name="height">
             <div v-if="$parent.myWorksheetsContent" class="worksheet-list">

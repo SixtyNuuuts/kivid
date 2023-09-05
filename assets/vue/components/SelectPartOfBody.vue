@@ -60,6 +60,12 @@
                     alt="Icone Thoracique"
                     class="icon-thoracique"
                 />
+                <img
+                    v-if="getPartOfBodySelected.icon === 'global'"
+                    src="../../img/icons/part-of-body/global.svg"
+                    alt="Icone Thoracique"
+                    class="icon-global"
+                />
                 <span class="text wsnw">{{ getPartOfBodySelected.name }}</span>
             </div>
             <input
@@ -144,6 +150,12 @@
                                     src="../../img/icons/part-of-body/thoracique.svg"
                                     alt="Icone Thoracique"
                                     class="icon-thoracique"
+                                />
+                                <img
+                                    v-if="part.icon === 'global'"
+                                    src="../../img/icons/part-of-body/global.svg"
+                                    alt="Icone Thoracique"
+                                    class="icon-global"
                                 />
                                 <span class="text wsnw">{{ part.name }}</span>
                             </div>
@@ -505,6 +517,11 @@ export default {
             }
 
             &.icon-thoracique {
+                top: -0.1rem;
+                height: 1.6rem;
+            }
+
+            &.icon-global {
                 top: -0.1rem;
                 height: 1.6rem;
             }
