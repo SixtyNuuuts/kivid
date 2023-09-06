@@ -36,7 +36,7 @@
                     {{ !$parent.prescriProcessPatientSelected ? 1 : 2 }}
                 </span>
                 <p>
-                    <span v-if="getWorksheetTemplates.length">Et / Ou sélectionnez</span
+                    <span v-if="getWorksheetTemplates.length">et / ou sélectionnez</span
                     ><span v-else>Sélectionnez</span> le nombre de prescriptions que vous souhaitez créer&nbsp;de&nbsp;zéro 
                     <span v-if="$parent.prescriProcessPatientSelected"> pour 
                         <strong>
@@ -2116,7 +2116,7 @@ body .btn-create-action .vs-button
                 }
             }
 
-            .vs-button--size-mini.tag.part-of-body {
+            .vs-button--size-mini.tag.part-of-body:not(.loading) {
                 background: #faf8f4 !important;
                 border-radius: 50% !important;
                 width: 2.5rem !important;

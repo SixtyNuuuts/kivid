@@ -1,21 +1,326 @@
 <template>
     <div class="container" id="worksheet">
         <div v-if="loading" class="loading-block">
-            <div class="title loading-gray"></div>
-            <div class="loading-gray"></div>
-            <div class="loading-gray"></div>
-            <div class="loading-gray"></div>
-            <div class="loading-gray"></div>
-            <div class="loading-gray"></div>
-            <div class="loading-gray"></div>
-            <div class="loading-gray"></div>
-            <div class="loading-gray"></div>
-            <div class="loading-gray"></div>
-            <div class="loading-gray"></div>
-            <div class="loading-gray"></div>
-            <div class="loading-gray"></div>
-            <div class="loading-gray"></div>
-            <div class="loading-gray"></div>
+            <div>
+                <div v-if="patient" class="prescri-for-patient-content">
+                    <div class="prescri-for-patient"
+                        :class="{ 'multiple-contexte': worksheetsIds.length > 1 }"
+                    >
+                        <div class="label loading">
+                            <span>xxxxxxxxxxxxxxxx</span>
+                        </div>
+                        <div
+                            class="vs-avatar-content user-avatar vs-avatar-content--circle vs-avatar-content--size vs-change-color-badge"
+                            style="width: 26px; height: 26px"
+                        >
+                            <div class="vs-avatar loading">
+                            </div>
+                        </div>
+                        <div class="user-name loading "><div>XxxxxxxxxxXxxxxxxxxxXxxxx</div></div>
+                    </div>
+                </div>
+                <div v-if="worksheetsIds.length > 1">
+                    <div class="tab-worksheet-header loading-gray">
+                        <span class="worksheet-title-zone"
+                            ><span
+                                ><svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 24 24"
+                                    width="24px"
+                                    height="24px"
+                                >
+                                    <path
+                                        d="M19,3H5C3.895,3,3,3.895,3,5v14c0,1.105,0.895,2,2,2h10l6-6V5C21,3.895,20.105,3,19,3z M19,14h-5v5H5V5h14V14z"
+                                    ></path>
+                                </svg>
+                                <span class="worksheet-title loading w-35"
+                                    >XxxxxxxxXxxxxxxxXxxxxxxxXxxxxxxxx</span
+                                ></span
+                            >
+                            <span class="vs-icon-arrow"></span
+                        ></span>
+                        <button class="worksheet-remove">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 48 48"
+                                width="48px"
+                                height="48px"
+                            >
+                                <path
+                                    d="M 24 4 C 20.491685 4 17.570396 6.6214322 17.080078 10 L 6.5 10 A 1.50015 1.50015 0 1 0 6.5 13 L 8.6367188 13 L 11.15625 39.029297 C 11.43025 41.862297 13.785813 44 16.632812 44 L 31.367188 44 C 34.214187 44 36.56875 41.862297 36.84375 39.029297 L 39.363281 13 L 41.5 13 A 1.50015 1.50015 0 1 0 41.5 10 L 30.919922 10 C 30.429604 6.6214322 27.508315 4 24 4 z M 24 7 C 25.879156 7 27.420767 8.2681608 27.861328 10 L 20.138672 10 C 20.579233 8.2681608 22.120844 7 24 7 z M 19.5 18 C 20.328 18 21 18.671 21 19.5 L 21 34.5 C 21 35.329 20.328 36 19.5 36 C 18.672 36 18 35.329 18 34.5 L 18 19.5 C 18 18.671 18.672 18 19.5 18 z M 28.5 18 C 29.328 18 30 18.671 30 19.5 L 30 34.5 C 30 35.329 29.328 36 28.5 36 C 27.672 36 27 35.329 27 34.5 L 27 19.5 C 27 18.671 27.672 18 28.5 18 z"
+                                ></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="tab-worksheet-header loading-gray">
+                        <span class="worksheet-title-zone"
+                            ><span
+                                ><svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 24 24"
+                                    width="24px"
+                                    height="24px"
+                                >
+                                    <path
+                                        d="M19,3H5C3.895,3,3,3.895,3,5v14c0,1.105,0.895,2,2,2h10l6-6V5C21,3.895,20.105,3,19,3z M19,14h-5v5H5V5h14V14z"
+                                    ></path>
+                                </svg>
+                                <span class="worksheet-title loading w-15"
+                                    >XxxxxxxxXxxxxxXxxxx</span
+                                ></span
+                            >
+                            <span class="vs-icon-arrow"></span
+                        ></span>
+                        <button class="worksheet-remove">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 48 48"
+                                width="48px"
+                                height="48px"
+                            >
+                                <path
+                                    d="M 24 4 C 20.491685 4 17.570396 6.6214322 17.080078 10 L 6.5 10 A 1.50015 1.50015 0 1 0 6.5 13 L 8.6367188 13 L 11.15625 39.029297 C 11.43025 41.862297 13.785813 44 16.632812 44 L 31.367188 44 C 34.214187 44 36.56875 41.862297 36.84375 39.029297 L 39.363281 13 L 41.5 13 A 1.50015 1.50015 0 1 0 41.5 10 L 30.919922 10 C 30.429604 6.6214322 27.508315 4 24 4 z M 24 7 C 25.879156 7 27.420767 8.2681608 27.861328 10 L 20.138672 10 C 20.579233 8.2681608 22.120844 7 24 7 z M 19.5 18 C 20.328 18 21 18.671 21 19.5 L 21 34.5 C 21 35.329 20.328 36 19.5 36 C 18.672 36 18 35.329 18 34.5 L 18 19.5 C 18 18.671 18.672 18 19.5 18 z M 28.5 18 C 29.328 18 30 18.671 30 19.5 L 30 34.5 C 30 35.329 29.328 36 28.5 36 C 27.672 36 27 35.329 27 34.5 L 27 19.5 C 27 18.671 27.672 18 28.5 18 z"
+                                ></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <div
+                        class="tab-worksheet-content multiple-contexte"
+                        style=""
+                    >
+                        <header>
+                            <div>
+                                <div>
+                                    <div class="title">
+                                        <div
+                                            class="vs-input-parent vs-input-parent--state-null vs-input-content--has-label vs-component--primary"
+                                            type="text loading"
+                                        >
+                                        </div>
+                                        <div class="select-filter-block loading">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="worksheet-params">
+                                    <div class="worksheet-details">
+                                        <div class="worksheet-timing-perweek loading">
+                                        </div>
+                                        <div class="worksheet-timing-perday loading">
+                                        </div>
+                                        <div class="worksheet-period loading">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </header>
+                        <main>
+                            <section id="exercises-playlist" >
+                                <div>
+                                    <div class="exercises-list-container">
+                                        <h2 class="loading"></h2>
+                                        <div
+                                            id="exercises-list-2"
+                                            class="exercises-list scroll-snap"
+                                        >
+                                            <div
+                                                class="exercise"
+                                            >
+                                                <div class="exercise-position loading">
+                                                </div>
+                                                <div class="input-h2">
+                                                    <h2 class="loading">
+                                                        <span
+                                                            >Xxxx xxxxxxxx</span
+                                                        >
+                                                    </h2>
+                                                    <button
+                                                        class="remove-exercise loading"
+                                                    >
+                                                    </button>
+                                                </div>
+                                                <div class="thumbnail-wrapper loading">
+                                                </div>
+                                                <div class="content">
+                                                    <div class="details">
+                                                        <div
+                                                            class="series-reps"
+                                                        >
+                                                            <div class="series loading">
+                                                            </div>
+                                                            <div class="reps loading">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="options">
+                                                        <div
+                                                            class="option loading"
+                                                        >
+                                                            <span>Xxxxxx</span>
+                                                        </div>
+                                                        <div class="hold loading">
+                                                            <span>Xxxxxx</span>
+                                                        </div>
+                                                        <div class="tempo loading">
+                                                            <span>Xxxxxx</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                                                                        <div
+                                                class="exercise"
+                                            >
+                                                <div class="exercise-position loading">
+                                                </div>
+                                                <div class="input-h2">
+                                                    <h2 class="loading">
+                                                        <span
+                                                            >Xxxx xxxxxxxx</span
+                                                        >
+                                                    </h2>
+                                                    <button
+                                                        class="remove-exercise loading"
+                                                    >
+                                                    </button>
+                                                </div>
+                                                <div class="thumbnail-wrapper loading">
+                                                </div>
+                                                <div class="content">
+                                                    <div class="details">
+                                                        <div
+                                                            class="series-reps"
+                                                        >
+                                                            <div class="series loading">
+                                                            </div>
+                                                            <div class="reps loading">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="options">
+                                                        <div
+                                                            class="option loading"
+                                                        >
+                                                            <span>Xxxxxx</span>
+                                                        </div>
+                                                        <div class="hold loading">
+                                                            <span>Xxxxxx</span>
+                                                        </div>
+                                                        <div class="tempo loading">
+                                                            <span>Xxxxxx</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div
+                                                class="exercise"
+                                            >
+                                                <div class="exercise-position loading">
+                                                </div>
+                                                <div class="input-h2">
+                                                    <h2 class="loading">
+                                                        <span
+                                                            >Xxxx xxxxxxxx</span
+                                                        >
+                                                    </h2>
+                                                    <button
+                                                        class="remove-exercise loading"
+                                                    >
+                                                    </button>
+                                                </div>
+                                                <div class="thumbnail-wrapper loading">
+                                                </div>
+                                                <div class="content">
+                                                    <div class="details">
+                                                        <div
+                                                            class="series-reps"
+                                                        >
+                                                            <div class="series loading">
+                                                            </div>
+                                                            <div class="reps loading">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="options">
+                                                        <div
+                                                            class="option loading"
+                                                        >
+                                                            <span>Xxxxxx</span>
+                                                        </div>
+                                                        <div class="hold loading">
+                                                            <span>Xxxxxx</span>
+                                                        </div>
+                                                        <div class="tempo loading">
+                                                            <span>Xxxxxx</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div
+                                                class="exercise"
+                                            >
+                                                <div class="exercise-position loading">
+                                                </div>
+                                                <div class="input-h2">
+                                                    <h2 class="loading">
+                                                        <span
+                                                            >Xxxx xxxxxxxx</span
+                                                        >
+                                                    </h2>
+                                                    <button
+                                                        class="remove-exercise loading"
+                                                    >
+                                                    </button>
+                                                </div>
+                                                <div class="thumbnail-wrapper loading">
+                                                </div>
+                                                <div class="content">
+                                                    <div class="details">
+                                                        <div
+                                                            class="series-reps"
+                                                        >
+                                                            <div class="series loading">
+                                                            </div>
+                                                            <div class="reps loading">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="options">
+                                                        <div
+                                                            class="option loading"
+                                                        >
+                                                            <span>Xxxxxx</span>
+                                                        </div>
+                                                        <div class="hold loading">
+                                                            <span>Xxxxxx</span>
+                                                        </div>
+                                                        <div class="tempo loading">
+                                                            <span>Xxxxxx</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="add-videos">
+                                            <div class="vs-tooltip-content">
+                                                <button
+                                                    class="vs-button vs-button--null vs-button--size-null vs-button--circle vs-button--primary vs-button--floating loading"
+                                                >
+                                                    <div
+                                                        class="vs-button__content"
+                                                    >
+                                                    </div>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </main>
+                    </div>
+                </div>
+            </div>
         </div>
         <div v-else>
             <div v-if="patient" class="prescri-for-patient-content">
@@ -23,9 +328,14 @@
                     class="kiv-arrow-left icon-31"
                     @click="rederictToDashboard()"
                 ></i> -->
-                <div class="prescri-for-patient" :class="{'multiple-contexte':getWorksheets.length>1}">
+                <div
+                    class="prescri-for-patient"
+                    :class="{ 'multiple-contexte': getWorksheets.length > 1 }"
+                >
                     <div class="label">
-                        <span v-if="getWorksheets.length > 1">{{ getWorksheets.length }} prescriptions</span>
+                        <span v-if="getWorksheets.length > 1"
+                            >{{ getWorksheets.length }} prescriptions</span
+                        >
                         <span v-else>prescription</span>
                         <span>pour</span>
                     </div>
@@ -47,27 +357,75 @@
                 </div>
             </div>
             <div
-              v-for="(worksheet, worksheetIndex) in getWorksheets"
-              :key="worksheetIndex"
+                v-for="(worksheet, worksheetIndex) in getWorksheets"
+                :key="worksheetIndex"
             >
-                <div v-if="getWorksheets.length > 1" class="tab-worksheet-header" :class="{active:currentOpenWorksheet == worksheet.id, error: worksheet.titleIsEmptyMessage||worksheet.partOfBodyIsEmptyMessage||worksheet.exercisesIsEmptyMessage}">
-                    <span class="worksheet-title-zone" @click="toggleCurrentOpenWorksheet(worksheet.id)">
+                <div
+                    v-if="getWorksheets.length > 1"
+                    class="tab-worksheet-header"
+                    :class="{
+                        active: currentOpenWorksheet == worksheet.id,
+                        error:
+                            worksheet.titleIsEmptyMessage ||
+                            worksheet.partOfBodyIsEmptyMessage ||
+                            worksheet.exercisesIsEmptyMessage,
+                    }"
+                >
+                    <span
+                        class="worksheet-title-zone"
+                        @click="toggleCurrentOpenWorksheet(worksheet.id)"
+                    >
                         <span>
-                            <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" width="24px" height="24px"><path d="M19,3H5C3.895,3,3,3.895,3,5v14c0,1.105,0.895,2,2,2h10l6-6V5C21,3.895,20.105,3,19,3z M19,14h-5v5H5V5h14V14z"/></svg>
-                            <span class="worksheet-title">{{ worksheetTitleGeneration(worksheet.title, worksheet.id) }}</span>
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                width="24px"
+                                height="24px"
+                            >
+                                <path
+                                    d="M19,3H5C3.895,3,3,3.895,3,5v14c0,1.105,0.895,2,2,2h10l6-6V5C21,3.895,20.105,3,19,3z M19,14h-5v5H5V5h14V14z"
+                                />
+                            </svg>
+                            <span class="worksheet-title">{{
+                                worksheetTitleGeneration(
+                                    worksheet.title,
+                                    worksheet.id
+                                )
+                            }}</span>
                         </span>
                         <span class="vs-icon-arrow"></span>
                     </span>
-                    <button class="worksheet-remove" @click="removeWorksheet(worksheet)">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48px" height="48px"><path d="M 24 4 C 20.491685 4 17.570396 6.6214322 17.080078 10 L 6.5 10 A 1.50015 1.50015 0 1 0 6.5 13 L 8.6367188 13 L 11.15625 39.029297 C 11.43025 41.862297 13.785813 44 16.632812 44 L 31.367188 44 C 34.214187 44 36.56875 41.862297 36.84375 39.029297 L 39.363281 13 L 41.5 13 A 1.50015 1.50015 0 1 0 41.5 10 L 30.919922 10 C 30.429604 6.6214322 27.508315 4 24 4 z M 24 7 C 25.879156 7 27.420767 8.2681608 27.861328 10 L 20.138672 10 C 20.579233 8.2681608 22.120844 7 24 7 z M 19.5 18 C 20.328 18 21 18.671 21 19.5 L 21 34.5 C 21 35.329 20.328 36 19.5 36 C 18.672 36 18 35.329 18 34.5 L 18 19.5 C 18 18.671 18.672 18 19.5 18 z M 28.5 18 C 29.328 18 30 18.671 30 19.5 L 30 34.5 C 30 35.329 29.328 36 28.5 36 C 27.672 36 27 35.329 27 34.5 L 27 19.5 C 27 18.671 27.672 18 28.5 18 z"></path></svg>
+                    <button
+                        class="worksheet-remove"
+                        @click="removeWorksheet(worksheet)"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 48 48"
+                            width="48px"
+                            height="48px"
+                        >
+                            <path
+                                d="M 24 4 C 20.491685 4 17.570396 6.6214322 17.080078 10 L 6.5 10 A 1.50015 1.50015 0 1 0 6.5 13 L 8.6367188 13 L 11.15625 39.029297 C 11.43025 41.862297 13.785813 44 16.632812 44 L 31.367188 44 C 34.214187 44 36.56875 41.862297 36.84375 39.029297 L 39.363281 13 L 41.5 13 A 1.50015 1.50015 0 1 0 41.5 10 L 30.919922 10 C 30.429604 6.6214322 27.508315 4 24 4 z M 24 7 C 25.879156 7 27.420767 8.2681608 27.861328 10 L 20.138672 10 C 20.579233 8.2681608 22.120844 7 24 7 z M 19.5 18 C 20.328 18 21 18.671 21 19.5 L 21 34.5 C 21 35.329 20.328 36 19.5 36 C 18.672 36 18 35.329 18 34.5 L 18 19.5 C 18 18.671 18.672 18 19.5 18 z M 28.5 18 C 29.328 18 30 18.671 30 19.5 L 30 34.5 C 30 35.329 29.328 36 28.5 36 C 27.672 36 27 35.329 27 34.5 L 27 19.5 C 27 18.671 27.672 18 28.5 18 z"
+                            ></path>
+                        </svg>
                     </button>
                 </div>
                 <transition name="height4">
-                    <div class="tab-worksheet-content" v-show="currentOpenWorksheet == worksheet.id" :class="{'multiple-contexte':getWorksheets.length>1}">
+                    <div
+                        class="tab-worksheet-content"
+                        v-show="currentOpenWorksheet == worksheet.id"
+                        :class="{
+                            'multiple-contexte': getWorksheets.length > 1,
+                        }"
+                    >
                         <header>
                             <div>
                                 <div>
-                                    <div v-if="'voir' === action" class="title-view">
+                                    <div
+                                        v-if="'voir' === action"
+                                        class="title-view"
+                                    >
                                         <div class="title">
                                             <!-- <i
                                                 class="kiv-arrow-left icon-31"
@@ -91,20 +449,37 @@
                                             v-model="worksheet.title"
                                             label-placeholder="Titre de la fiche"
                                             type="text"
-                                            @keyup="worksheet.titleIsEmptyMessage = null"
-                                            :class="{error: worksheet.titleIsEmptyMessage}"
+                                            @keyup="
+                                                worksheet.titleIsEmptyMessage =
+                                                    null
+                                            "
+                                            :class="{
+                                                error: worksheet.titleIsEmptyMessage,
+                                            }"
                                         >
                                             <!-- <template v-if="worksheet.titleIsEmptyMessage" #message-danger>
                                                 {{ worksheet.titleIsEmptyMessage }}
                                             </template> -->
                                         </vs-input>
-                                       <div class="select-filter-block"
-                                            :class="{error: worksheet.partOfBodyIsEmptyMessage}"
-                                       >
+                                        <div
+                                            class="select-filter-block"
+                                            :class="{
+                                                error: worksheet.partOfBodyIsEmptyMessage,
+                                            }"
+                                        >
                                             <SelectPartOfBody
-                                                :partOfBody="worksheet.partOfBody"
-                                                @partOfBodySelected="setPartOfBody($event, worksheet)"
-                                                @partOfBodyReset="resetPoB($event, worksheet)"
+                                                :partOfBody="
+                                                    worksheet.partOfBody
+                                                "
+                                                @partOfBodySelected="
+                                                    setPartOfBody(
+                                                        $event,
+                                                        worksheet
+                                                    )
+                                                "
+                                                @partOfBodyReset="
+                                                    resetPoB($event, worksheet)
+                                                "
                                             />
                                             <!-- <div v-if="worksheet.partOfBodyIsEmptyMessage" class="error-mess">
                                                 {{ worksheet.partOfBodyIsEmptyMessage }}
@@ -112,7 +487,10 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div v-if="'voir' !== action" class="worksheet-params">
+                                <div
+                                    v-if="'voir' !== action"
+                                    class="worksheet-params"
+                                >
                                     <div
                                         class="worksheet-details"
                                         :class="{
@@ -130,8 +508,9 @@
                                         >
                                             <i class="kiv-info icon-17"></i>
                                             <p>
-                                                Vous ne pouvez plus modifier la durée de la
-                                                prescription car le patient a déjà démarré ses
+                                                Vous ne pouvez plus modifier la
+                                                durée de la prescription car le
+                                                patient a déjà démarré ses
                                                 sessions.
                                             </p>
                                         </div>
@@ -199,7 +578,10 @@
                         <main>
                             <section
                                 id="exercises-playlist"
-                                :class="{ 'no-mt': 'voir' === action, error: worksheet.exercisesIsEmptyMessage }"
+                                :class="{
+                                    'no-mt': 'voir' === action,
+                                    error: worksheet.exercisesIsEmptyMessage,
+                                }"
                             >
                                 <ExercisesPlaylist
                                     :doctor="doctor"
@@ -210,9 +592,15 @@
                                     :loadingVideos="loadingVideos"
                                     :videos="videos"
                                     :worksheetIndex="worksheetIndex"
-                                    :csrfTokenRemoveExercise="csrfTokenRemoveExercise"
-                                    :csrfTokenSaveFFMKRRequestToken="csrfTokenSaveFFMKRRequestToken"
-                                    @videos-selection="worksheet.exercisesIsEmptyMessage=null"
+                                    :csrfTokenRemoveExercise="
+                                        csrfTokenRemoveExercise
+                                    "
+                                    :csrfTokenSaveFFMKRRequestToken="
+                                        csrfTokenSaveFFMKRRequestToken
+                                    "
+                                    @videos-selection="
+                                        worksheet.exercisesIsEmptyMessage = null
+                                    "
                                 />
                             </section>
                         </main>
@@ -240,7 +628,7 @@
                     v-if="'creation' === action && !patient"
                     @click="validCreate"
                     :loading="btnLoadingValidCreateWorksheet"
-                > 
+                >
                     <i class="fas fa-check-circle"></i>
                     Créer la fiche
                 </vs-button>
@@ -250,7 +638,9 @@
                     :loading="btnLoadingValidCreateWorksheet"
                 >
                     <i class="fas fa-check-circle"></i>
-                    <span v-if="getWorksheets.length > 1">Créer les prescriptions</span>
+                    <span v-if="getWorksheets.length > 1"
+                        >Créer les prescriptions</span
+                    >
                     <span v-else>Créer la prescription</span>
                 </vs-button>
             </div>
@@ -264,7 +654,14 @@
                 </div>
                 <p>
                     <span>
-                        {{ removeWorksheetDetails ? worksheetTitleGeneration(removeWorksheetDetails.title, removeWorksheetDetails.id) : '' }}
+                        {{
+                            removeWorksheetDetails
+                                ? worksheetTitleGeneration(
+                                      removeWorksheetDetails.title,
+                                      removeWorksheetDetails.id
+                                  )
+                                : ""
+                        }}
                     </span>
                 </p>
             </div>
@@ -276,11 +673,7 @@
                 >
                     Annuler
                 </vs-button>
-                <vs-button
-                    @click="validRemoveWorksheet"
-                >
-                    Confirmer
-                </vs-button>
+                <vs-button @click="validRemoveWorksheet"> Confirmer </vs-button>
             </div>
         </vs-dialog>
     </div>
@@ -317,7 +710,7 @@ export default {
                     exercisesIsEmptyMessage: null,
                     exercises: [],
                     checkIfWorksheetSessionsExist: null,
-                }
+                },
             ],
             patient: null,
             loadingVideos: false,
@@ -325,7 +718,7 @@ export default {
             csrfTokenCreateWorksheet: null,
             csrfTokenEditWorksheet: null,
             csrfTokenRemoveExercise: null,
-            csrfTokenSaveFFMKRRequestToken:null,
+            csrfTokenSaveFFMKRRequestToken: null,
             loading: false,
             maxDuration: {
                 duration: 52,
@@ -356,7 +749,8 @@ export default {
             document.location.href = `/doctor/${this.doctor.id}/dashboard`;
         },
         toggleCurrentOpenWorksheet(worksheetId) {
-            this.currentOpenWorksheet = this.currentOpenWorksheet != worksheetId ? worksheetId : null;
+            this.currentOpenWorksheet =
+                this.currentOpenWorksheet != worksheetId ? worksheetId : null;
         },
         checkIfDurationValueIsEmptyOrNull(durationValue, event, worksheet) {
             const durationType = event.target.id;
@@ -399,7 +793,7 @@ export default {
         },
         checkIfEmpty(worksheet) {
             let check = false;
-            let emptyFields = '';
+            let emptyFields = "";
 
             if (!worksheet.partOfBody) {
                 emptyFields += "Partie du corps";
@@ -409,7 +803,10 @@ export default {
             }
 
             if (worksheet.title === "" || worksheet.title === null) {
-                emptyFields += emptyFields != '' ? ", Titre de la fiche" : "Titre de la fiche";
+                emptyFields +=
+                    emptyFields != ""
+                        ? ", Titre de la fiche"
+                        : "Titre de la fiche";
                 worksheet.titleIsEmptyMessage =
                     "Vous devez entrer un titre pour la fiche.";
                 check = true;
@@ -421,11 +818,20 @@ export default {
                 check = true;
             }
 
-            if(emptyFields != ''||!worksheet.exercises.length)
-            {
+            if (emptyFields != "" || !worksheet.exercises.length) {
                 this.currentOpenWorksheet = worksheet.id;
-            
-                f.openErrorNotification("Erreur", `Il y a des champs vides pour <strong>${ worksheet.id != 0 ? this.worksheetTitleGeneration(worksheet.title, worksheet.id) : 'cette fiche' }</strong>`);
+
+                f.openErrorNotification(
+                    "Erreur",
+                    `Il y a des champs vides pour <strong>${
+                        worksheet.id != 0
+                            ? this.worksheetTitleGeneration(
+                                  worksheet.title,
+                                  worksheet.id
+                              )
+                            : "cette fiche"
+                    }</strong>`
+                );
             }
 
             return check;
@@ -433,21 +839,20 @@ export default {
         validEdit() {
             this.btnLoadingValidEditWorksheet = true;
 
-            const 
-                worksheet = this.worksheets[0],
-                isNotEmpty = !this.checkIfEmpty(worksheet)
-            ;
-
+            const worksheet = this.worksheets[0],
+                isNotEmpty = !this.checkIfEmpty(worksheet);
             if (isNotEmpty) {
                 const worksheetCopy = JSON.parse(JSON.stringify(worksheet));
 
-                worksheetCopy.exercises = worksheetCopy.exercises.map(exercise => {
-                    const id = String(exercise.id);
-                    if (id.startsWith('new')) {
-                        return { ...exercise, id: null };
+                worksheetCopy.exercises = worksheetCopy.exercises.map(
+                    (exercise) => {
+                        const id = String(exercise.id);
+                        if (id.startsWith("new")) {
+                            return { ...exercise, id: null };
+                        }
+                        return exercise;
                     }
-                    return exercise;
-                });
+                );
 
                 this.axios
                     .post(`/doctor/${this.doctor.id}/edit/worksheet`, {
@@ -501,30 +906,33 @@ export default {
             this.btnLoadingValidCreateWorksheet = true;
 
             let allNotEmpty = true;
-            this.worksheets.forEach(worksheet => {
+            this.worksheets.forEach((worksheet) => {
                 if (this.checkIfEmpty(worksheet)) {
                     allNotEmpty = false;
                 }
-            }); 
+            });
 
             if (allNotEmpty) {
-                const worksheetsCopy = JSON.parse(JSON.stringify(this.worksheets));
+                const worksheetsCopy = JSON.parse(
+                    JSON.stringify(this.worksheets)
+                );
 
-                worksheetsCopy.forEach(worksheet => {
+                worksheetsCopy.forEach((worksheet) => {
                     const worksheetId = String(worksheet.id);
-                    if (worksheetId.startsWith('new')) {
+                    if (worksheetId.startsWith("new")) {
                         worksheet.id = null;
                     }
 
-                    worksheet.exercises = worksheet.exercises.map(exercise => {
-                        const exerciseId = String(exercise.id);
-                        if (exerciseId.startsWith('new')) {
-                            return { ...exercise, id: null };
+                    worksheet.exercises = worksheet.exercises.map(
+                        (exercise) => {
+                            const exerciseId = String(exercise.id);
+                            if (exerciseId.startsWith("new")) {
+                                return { ...exercise, id: null };
+                            }
+                            return exercise;
                         }
-                        return exercise;
-                    });
-
-                }); 
+                    );
+                });
 
                 this.axios
                     .post(`/doctor/${this.doctor.id}/create/worksheets`, {
@@ -538,7 +946,7 @@ export default {
                                 "Création de la prescription",
                                 // `La fiche <strong> ${
                                 //     this.worksheet.title
-                                // }</strong> 
+                                // }</strong>
                                 // a été prescrite à <strong>
                                 // ${this.getUserName(this.patient)}</strong>`
                                 response.data.message
@@ -584,14 +992,16 @@ export default {
                 this.worksheets.indexOf(this.removeWorksheetDetails),
                 1
             );
-            if(this.worksheets.length==1)
+            if (this.worksheets.length == 1)
                 this.currentOpenWorksheet = this.worksheets[0].id;
             this.modalConfirmRemoveWorksheet = false;
         },
         worksheetTitleGeneration(worksheetTitle, worksheetId) {
             worksheetId = String(worksheetId);
-            return worksheetTitle == "" && worksheetId.startsWith('new') ? `Création ${parseInt(worksheetId.slice(3))+1} ...` : worksheetTitle;
-        }
+            return worksheetTitle == "" && worksheetId.startsWith("new")
+                ? `Création ${parseInt(worksheetId.slice(3)) + 1} ...`
+                : worksheetTitle;
+        },
     },
     created() {
         Vue.prototype.$vs = this.$vs;
@@ -605,29 +1015,34 @@ export default {
         this.csrfTokenCreateWorksheet = data.csrfTokenCreateWorksheet;
         this.csrfTokenEditWorksheet = data.csrfTokenEditWorksheet;
         this.csrfTokenRemoveExercise = data.csrfTokenRemoveExercise;
-        this.csrfTokenSaveFFMKRRequestToken= data.csrfTokenSaveFFMKRRequestToken;
+        this.csrfTokenSaveFFMKRRequestToken =
+            data.csrfTokenSaveFFMKRRequestToken;
 
-        if(this.worksheetsIds != 0)
-        {
+        if (this.worksheetsIds != 0) {
             this.loading = true;
             let worksheetsIdsFiltered = null;
 
-            if(!Array.isArray(this.worksheetsIds))
-            {
+            if (!Array.isArray(this.worksheetsIds)) {
                 this.worksheets = [];
                 worksheetsIdsFiltered = [this.worksheetsIds];
                 this.currentOpenWorksheet = this.worksheetsIds;
-            }
-            else
-            {
-                worksheetsIdsFiltered = this.worksheetsIds.filter(wId=>(wId!=0&&wId!=null));
-                const worksheetsCreationCount = this.worksheetsIds.length - worksheetsIdsFiltered.length; 
-                
-                this.worksheets = Array.from({ length: worksheetsCreationCount }, (_, index) => {
-                    const newWorksheet = { ...JSON.parse(JSON.stringify(this.worksheets[0])) };
-                    newWorksheet.id = `new${index}`;
-                    return newWorksheet;
-                });
+            } else {
+                worksheetsIdsFiltered = this.worksheetsIds.filter(
+                    (wId) => wId != 0 && wId != null
+                );
+                const worksheetsCreationCount =
+                    this.worksheetsIds.length - worksheetsIdsFiltered.length;
+
+                this.worksheets = Array.from(
+                    { length: worksheetsCreationCount },
+                    (_, index) => {
+                        const newWorksheet = {
+                            ...JSON.parse(JSON.stringify(this.worksheets[0])),
+                        };
+                        newWorksheet.id = `new${index}`;
+                        return newWorksheet;
+                    }
+                );
             }
 
             if (worksheetsIdsFiltered.length) {
@@ -636,59 +1051,77 @@ export default {
                         worksheetsIds: worksheetsIdsFiltered,
                     })
                     .then((response) => {
-                        let existingWorksheets = Array.isArray(response.data) ? response.data : [response.data];
+                        let existingWorksheets = Array.isArray(response.data)
+                            ? response.data
+                            : [response.data];
                         if (this.action === "creation" && !this.patient) {
-                            existingWorksheets = existingWorksheets.map(worksheet => ({
-                                ...worksheet,
-                                title: `Copie de ${worksheet.title}`
-                            }));
+                            existingWorksheets = existingWorksheets.map(
+                                (worksheet) => ({
+                                    ...worksheet,
+                                    title: `Copie de ${worksheet.title}`,
+                                })
+                            );
                         }
-                        
-                        existingWorksheets.forEach(worksheet => {
-                                worksheet.exercises = worksheet.exercises.map((exercise) => {
+
+                        existingWorksheets.forEach((worksheet) => {
+                            worksheet.exercises = worksheet.exercises.map(
+                                (exercise) => {
                                     return {
                                         ...exercise,
                                         option: exercise.option
                                             ? exercise.option
                                             : "",
-                                        tempo: exercise.tempo ? exercise.tempo : "",
-                                        hold: exercise.hold ? exercise.hold : "",
+                                        tempo: exercise.tempo
+                                            ? exercise.tempo
+                                            : "",
+                                        hold: exercise.hold
+                                            ? exercise.hold
+                                            : "",
                                         optionActive: exercise.option
                                             ? true
                                             : false,
-                                        tempoActive: exercise.tempo ? true : false,
-                                        holdActive: exercise.hold ? true : false,
-                                        isActive: false
+                                        tempoActive: exercise.tempo
+                                            ? true
+                                            : false,
+                                        holdActive: exercise.hold
+                                            ? true
+                                            : false,
+                                        isActive: false,
                                     };
-                                });
-
-                                if ("edition" === this.action) {
-                                    this.axios
-                                        .get(
-                                            `/doctor/${this.doctor.id}/check/worksheet-sessions-exist/${worksheet.id}`
-                                        )
-                                        .then((response) => {
-                                            worksheet.checkIfWorksheetSessionsExist =
-                                                response.data;
-
-                                            this.loading = false;
-                                        })
-                                        .catch((error) => {
-                                            const errorMess =
-                                                "object" ===
-                                                typeof error.response.data
-                                                    ? error.response.data.detail
-                                                    : error.response.data;
-
-                                            console.error(errorMess);
-                                        });
-                                } else {
-                                    this.loading = false;
                                 }
+                            );
+
+                            if ("edition" === this.action) {
+                                this.axios
+                                    .get(
+                                        `/doctor/${this.doctor.id}/check/worksheet-sessions-exist/${worksheet.id}`
+                                    )
+                                    .then((response) => {
+                                        worksheet.checkIfWorksheetSessionsExist =
+                                            response.data;
+
+                                        this.loading = false;
+                                    })
+                                    .catch((error) => {
+                                        const errorMess =
+                                            "object" ===
+                                            typeof error.response.data
+                                                ? error.response.data.detail
+                                                : error.response.data;
+
+                                        console.error(errorMess);
+                                    });
+                            } else {
+                                this.loading = false;
+                            }
                         });
-                    
-                        this.worksheets = [...this.worksheets, ...existingWorksheets];
-                        this.currentOpenWorksheet = this.worksheets[this.worksheets.length-1].id;
+
+                        this.worksheets = [
+                            ...this.worksheets,
+                            ...existingWorksheets,
+                        ];
+                        this.currentOpenWorksheet =
+                            this.worksheets[this.worksheets.length - 1].id;
                     })
                     .catch((error) => {
                         const errorMess =
@@ -701,10 +1134,9 @@ export default {
             } else {
                 this.loading = false;
             }
-        }
-        else
-        {
-            this.currentOpenWorksheet = this.worksheets[this.worksheets.length-1].id;
+        } else {
+            this.currentOpenWorksheet =
+                this.worksheets[this.worksheets.length - 1].id;
         }
 
         this.loadingVideos = true;
@@ -736,8 +1168,7 @@ export default {
 #worksheet {
     padding: 0rem 0;
 
-    .tab-worksheet-header
-    {
+    .tab-worksheet-header {
         padding: 1rem;
         font-size: 1.45rem;
         background-color: #e7dfcd;
@@ -754,8 +1185,7 @@ export default {
             padding: 1.4rem 3.4rem;
         }
 
-        &.active
-        {
+        &.active {
             background-color: #fff;
             color: #afa17e;
             font-weight: bold;
@@ -768,17 +1198,14 @@ export default {
                     // height: 1.8rem;
                 }
 
-                .vs-icon-arrow
-                {
+                .vs-icon-arrow {
                     transform: rotate(45deg);
                     top: 0.3rem;
                 }
-             }
+            }
 
-            .worksheet-remove
-            {
-                > svg
-                {
+            .worksheet-remove {
+                > svg {
                     fill: #e7dfcd;
                     width: 1.6rem;
                     height: 1.6rem;
@@ -786,26 +1213,23 @@ export default {
             }
         }
 
-        &.error
-        {
+        &.error {
             color: #ff564b !important;
 
             .worksheet-title-zone {
                 svg {
                     fill: #ff564b !important;
                 }
-             }
+            }
         }
 
-        .worksheet-title-zone
-        {
+        .worksheet-title-zone {
             display: inline-flex;
             justify-content: space-between;
             align-items: center;
             flex-grow: 1;
 
-            > span
-            {
+            > span {
                 display: inline-flex;
                 align-items: center;
             }
@@ -817,23 +1241,21 @@ export default {
                 margin-right: 0.5rem;
             }
 
-            .vs-icon-arrow
-            {
+            .vs-icon-arrow {
                 width: 9px;
                 height: 9px;
                 position: relative;
                 top: -0.2rem;
                 transition: 0.25s;
 
-                &::before, &::after
-                {
+                &::before,
+                &::after {
                     background: #b4ac95;
                 }
             }
         }
 
-        .worksheet-remove
-        {
+        .worksheet-remove {
             border: none;
             background-color: transparent;
             border-radius: 50%;
@@ -841,8 +1263,7 @@ export default {
             height: 1.9rem;
             margin-left: 1.1rem;
 
-            > svg
-            {
+            > svg {
                 fill: #fff;
                 width: 1.6rem;
                 height: 1.6rem;
@@ -852,8 +1273,7 @@ export default {
             }
         }
 
-        .worksheet-title
-        {
+        .worksheet-title {
             flex-grow: 1;
             white-space: nowrap;
             max-width: 65vw;
@@ -880,14 +1300,11 @@ export default {
             @media (min-width: 690px) {
                 max-width: 85vw;
             }
-
         }
     }
 
-    .tab-worksheet-content
-    {
-        header
-        {
+    .tab-worksheet-content {
+        header {
             padding: 1.5rem;
             padding-top: 2rem;
 
@@ -900,8 +1317,7 @@ export default {
             }
         }
 
-        &.multiple-contexte
-        {
+        &.multiple-contexte {
             background-color: #fbf9f7;
 
             header {
@@ -915,7 +1331,6 @@ export default {
                 @media (min-width: 799px) {
                     padding: 2.5rem 3.4rem;
                 }
-
             }
 
             .exercises-list-container .add-videos {
@@ -923,14 +1338,10 @@ export default {
             }
         }
 
-        main
-        {
-            #exercises-playlist
-            {
-                .exercises-list-container
-                {
-                    > *:not(.exercises-list)
-                    {
+        main {
+            #exercises-playlist {
+                .exercises-list-container {
+                    > *:not(.exercises-list) {
                         padding: 0 1.5rem;
                         font-size: 1.5rem;
                         color: #c1b79d;
@@ -943,8 +1354,7 @@ export default {
                     }
                 }
 
-                &.error
-                {
+                &.error {
                     .exercises-list-container > h2 {
                         color: #ff2012 !important;
                     }
@@ -966,7 +1376,7 @@ export default {
             margin-bottom: 1rem;
 
             &.title {
-               width: 100%;
+                width: 100%;
                 height: 4.8rem;
                 margin-bottom: 2.1rem;
             }
@@ -1009,8 +1419,7 @@ export default {
                 margin-top: 4rem;
             }
 
-            &:not(.multiple-contexte)
-            {
+            &:not(.multiple-contexte) {
                 margin-bottom: 0.3rem;
             }
 
@@ -1021,7 +1430,6 @@ export default {
                 padding: 0.4rem;
                 padding-right: 0.8rem;
                 border-radius: 1.1rem;
-                background: #f6f5f2;
                 color: #afa17e;
                 text-transform: uppercase;
                 font-size: 0.87rem;
@@ -1029,6 +1437,11 @@ export default {
                 align-items: center;
                 justify-content: center;
                 letter-spacing: 0.01rem;
+
+                &:not(.loading)
+                {
+                    background: #f6f5f2;
+                }
 
                 span {
                     margin-left: 0.5rem;
@@ -1078,8 +1491,7 @@ export default {
             align-items: flex-start;
             flex-direction: column;
 
-            > div:first-child
-            {
+            > div:first-child {
                 width: 100%;
                 display: flex;
             }
@@ -1096,7 +1508,6 @@ export default {
                         &:focus,
                         &:hover {
                             background: $white;
-
                         }
                     }
 
@@ -1201,8 +1612,7 @@ export default {
                     }
                 }
 
-                .vs-input-parent.error
-                {
+                .vs-input-parent.error {
                     .vs-input-content {
                         .vs-input {
                             box-shadow: 0rem 0.4rem 1.4rem 0rem #f69e99;
@@ -1334,12 +1744,9 @@ export default {
                             // }
                         }
 
-                        .vs-input-parent
-                        {
-                            .vs-input-content
-                            {
-                                .vs-input__label--hidden.vs-input__label--placeholder 
-                                {
+                        .vs-input-parent {
+                            .vs-input-content {
+                                .vs-input__label--hidden.vs-input__label--placeholder {
                                     font-size: 1.2rem;
                                     top: -0.65rem;
                                     left: 0.6rem;
@@ -1348,60 +1755,49 @@ export default {
                         }
 
                         &.worksheet-timing-perweek,
-                        &.worksheet-timing-perday
-                        {
-                            .vs-input-parent
-                            {
+                        &.worksheet-timing-perday {
+                            .vs-input-parent {
                                 margin-right: 1.2rem;
                             }
                         }
                     }
-                } 
+                }
             }
 
-            .select-filter
-            {
-                
-                > div:first-child
-                {
+            .select-filter {
+                > div:first-child {
                     transition: 0.25s;
                     width: 12.6625rem;
                     margin-left: 1rem;
                     position: relative;
                 }
 
-                input 
-                {
+                input {
                     border: none;
                 }
 
-                .loading-pob
-                {
+                .loading-pob {
                     border-radius: 50%;
                     height: 5rem;
-                    top: -0.1rem!important;
+                    top: -0.1rem !important;
                 }
 
-                .part-of-body 
-                {
+                .part-of-body {
                     margin-top: 0;
                     background: #fff;
                     box-shadow: 0rem 0.4rem 1.4rem 0rem #e7dfcdd1;
                     margin-left: 0;
 
-                    &.partofbody-selected
-                    {
+                    &.partofbody-selected {
                         border: 1px solid #e2d4b3;
                     }
 
-                    .text 
-                    {
+                    .text {
                         font-size: 1.4rem;
                     }
                 }
 
-                #partofbody-choice-select
-                {
+                #partofbody-choice-select {
                     position: relative;
                     top: 0.08rem;
                     min-height: 3.9rem;
@@ -1410,49 +1806,41 @@ export default {
                     border: 1px solid #e2d4b3;
                 }
 
-                .arrow-toggle-box
-                {
+                .arrow-toggle-box {
                     top: 0.2rem;
                     right: -0.2rem;
                     width: 3.2rem;
                     height: 3.7rem;
 
-                    i.vs-icon-arrow
-                    {
+                    i.vs-icon-arrow {
                         width: 0.8rem;
                         height: 0.8rem;
                         margin-right: 0.2rem;
                     }
                 }
 
-                .select-box 
-                {
+                .select-box {
                     top: 4.1rem;
                     left: 0.1rem;
                     width: 99.8%;
-                } 
+                }
 
-                &:not(.active)
-                {
+                &:not(.active) {
                     transition: 0.25s;
 
-                    > div:first-child
-                    {
+                    > div:first-child {
                         transition: 0.25s;
                         width: 5rem;
                         position: relative;
                     }
 
-                    &:not(.partofbodyselected)
-                    {
-                        > div:first-child
-                        {
+                    &:not(.partofbodyselected) {
+                        > div:first-child {
                             transition: 0.25s;
                             width: 5rem;
                             position: relative;
 
-                            &::after
-                            {
+                            &::after {
                                 // content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48' width='40px' height='40px'%3E%3Cpath fill='%23ffb74d' d='M31,46c-0.611-0.306-1.316-0.517-2-0.664V36h-4v3.02c0,0.27,0.01,0.55,0.02,0.83	c0.05,0.71,0.18,1.12,0.37,2.09l0.07,0.35L26,45c0,0-1,1-1,2s0.448,1,1,1h7C33,46.343,33,47,31,46z'/%3E%3Cpath fill='%23ffb74d' d='M19,45.336c-0.684,0.147-1.389,0.359-2,0.664c-2,1-2,0.343-2,2h7c0.552,0,1,0,1-1s-1-2-1-2l0.54-2.71	l0.07-0.35c0.02-0.1,0.04-0.19,0.06-0.27c0.17-0.8,0.27-1.21,0.31-1.87C23,39.54,23,39.28,23,39.02V36h-4V45.336z'/%3E%3Cpath fill='%23ff9800' d='M23,36v3.02c0,0.26,0,0.52-0.02,0.78c-0.04,0.66-0.14,1.07-0.31,1.87c-0.02,0.08-0.04,0.17-0.06,0.27	l-0.07,0.35C22,40,22,39,21,39c-1.1,0-1.78,0.08-2-1v-2H23z'/%3E%3Cpath fill='%23ff9800' d='M29,36v2c-0.22,1.08-0.9,1-2,1c-1,0-1,1-1.54,3.29l-0.07-0.35c-0.19-0.97-0.32-1.38-0.37-2.09	C25.01,39.57,25,39.29,25,39.02V36H29z'/%3E%3Cpath fill='%23ffb74d' d='M37.504,26.687l-1.647-1.306c-0.052-0.041-0.112-0.065-0.175-0.08l-1.74-5.221l-1.238-4.949	C32.961,14.587,33,13.834,33,13c0-1.8-1.25-3-2.5-3c-0.167,0-0.334,0.023-0.5,0.047V10l-4-1h-4l-4,1v0.047	C17.834,10.023,17.667,10,17.5,10c-1.25,0-2.5,1.2-2.5,3c0,0.834,0.039,1.587,0.296,2.131l-1.238,4.949l-1.74,5.221	c-0.063,0.014-0.124,0.039-0.175,0.08l-1.647,1.306c-0.203,0.161-0.242,0.473-0.087,0.697c0.11,0.159,0.288,0.23,0.456,0.2	c0.068-0.012,0.135-0.041,0.194-0.088l0.55-0.436c-0.838,2.579-0.631,3.072,0.232,3.398c0.879,0.332,2.168,1.649,3.294-2.612	c0.172-0.654,0.178-1.232,0.068-1.713l1.719-5.159c0.012-0.036,0.023-0.073,0.032-0.11l1.247-4.986l0.668,2.902l0.01,0.05l0.29,1.05	l0.35,1.32c0.31,1.17,0.28,2.41-0.11,3.57c-0.27,0.82-0.46,1.66-0.57,2.52l-0.31,2.55C18.18,31.93,18.59,33.92,19,36	c0.03,0.13,0.05,0.27,0.08,0.4C19.26,37.29,20,38,20.9,38c1.19,0,1.99-0.81,2.1-2l1-10l1,10c0.11,1.19,0.91,2,2.1,2	c0.9,0,1.64-0.71,1.82-1.6c0.03-0.13,0.05-0.27,0.08-0.4c0.41-2.08,0.82-4.07,0.47-6.16l-0.31-2.55c-0.11-0.86-0.3-1.7-0.57-2.52	l-0.02-0.06c-0.37-1.12-0.42-2.32-0.13-3.46l0.37-1.45c0-0.01,0-0.01,0-0.01L29,19.02l0.06-0.25l0.73-2.928l1.255,5.021	c0.009,0.037,0.02,0.074,0.032,0.11l1.719,5.159c-0.11,0.481-0.104,1.059,0.068,1.713c1.126,4.261,2.415,2.944,3.294,2.612	c0.863-0.326,1.07-0.819,0.232-3.398l0.55,0.436c0.059,0.047,0.126,0.076,0.194,0.088c0.168,0.03,0.346-0.041,0.456-0.2	C37.746,27.16,37.707,26.848,37.504,26.687z'/%3E%3Cpath fill='%23ff9800' d='M22,5h4v4c0,1.105-0.895,2-2,2l0,0c-1.105,0-2-0.895-2-2V5z'/%3E%3Cpath fill='%23ffb74d' d='M21,4c0-3,1-4,3-4s3,1,3,4c0,1.5-1,5-3,5S21,5.5,21,4z'/%3E%3Cpath fill='%23ff9800' d='M23,17l-1.09,0.27c-0.94,0.24-2.22,0.81-3.03,1.56l-0.01-0.05l-0.73-3.17L18,15l1.41,1.41	C19.79,16.79,20.3,17,20.83,17H23z'/%3E%3Cpath fill='%23ff9800' d='M30,15l-0.17,0.68l-0.77,3.09L29,19.02c-0.91-0.7-2.34-1.61-2.91-1.75L25,17h2.17	c0.53,0,1.04-0.21,1.42-0.59L30,15z'/%3E%3C/svg%3E");
                                 content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48' width='36px' height='36px'%3E%3Cpath fill='%23e7dfcd' d='M31,46c-0.611-0.306-1.316-0.517-2-0.664V36h-4v3.02c0,0.27,0.01,0.55,0.02,0.83	c0.05,0.71,0.18,1.12,0.37,2.09l0.07,0.35L26,45c0,0-1,1-1,2s0.448,1,1,1h7C33,46.343,33,47,31,46z'/%3E%3Cpath fill='%23e7dfcd' d='M19,45.336c-0.684,0.147-1.389,0.359-2,0.664c-2,1-2,0.343-2,2h7c0.552,0,1,0,1-1s-1-2-1-2l0.54-2.71	l0.07-0.35c0.02-0.1,0.04-0.19,0.06-0.27c0.17-0.8,0.27-1.21,0.31-1.87C23,39.54,23,39.28,23,39.02V36h-4V45.336z'/%3E%3Cpath fill='%23d8cbb2' d='M23,36v3.02c0,0.26,0,0.52-0.02,0.78c-0.04,0.66-0.14,1.07-0.31,1.87c-0.02,0.08-0.04,0.17-0.06,0.27	l-0.07,0.35C22,40,22,39,21,39c-1.1,0-1.78,0.08-2-1v-2H23z'/%3E%3Cpath fill='%23d8cbb2' d='M29,36v2c-0.22,1.08-0.9,1-2,1c-1,0-1,1-1.54,3.29l-0.07-0.35c-0.19-0.97-0.32-1.38-0.37-2.09	C25.01,39.57,25,39.29,25,39.02V36H29z'/%3E%3Cpath fill='%23e7dfcd' d='M37.504,26.687l-1.647-1.306c-0.052-0.041-0.112-0.065-0.175-0.08l-1.74-5.221l-1.238-4.949	C32.961,14.587,33,13.834,33,13c0-1.8-1.25-3-2.5-3c-0.167,0-0.334,0.023-0.5,0.047V10l-4-1h-4l-4,1v0.047	C17.834,10.023,17.667,10,17.5,10c-1.25,0-2.5,1.2-2.5,3c0,0.834,0.039,1.587,0.296,2.131l-1.238,4.949l-1.74,5.221	c-0.063,0.014-0.124,0.039-0.175,0.08l-1.647,1.306c-0.203,0.161-0.242,0.473-0.087,0.697c0.11,0.159,0.288,0.23,0.456,0.2	c0.068-0.012,0.135-0.041,0.194-0.088l0.55-0.436c-0.838,2.579-0.631,3.072,0.232,3.398c0.879,0.332,2.168,1.649,3.294-2.612	c0.172-0.654,0.178-1.232,0.068-1.713l1.719-5.159c0.012-0.036,0.023-0.073,0.032-0.11l1.247-4.986l0.668,2.902l0.01,0.05l0.29,1.05	l0.35,1.32c0.31,1.17,0.28,2.41-0.11,3.57c-0.27,0.82-0.46,1.66-0.57,2.52l-0.31,2.55C18.18,31.93,18.59,33.92,19,36	c0.03,0.13,0.05,0.27,0.08,0.4C19.26,37.29,20,38,20.9,38c1.19,0,1.99-0.81,2.1-2l1-10l1,10c0.11,1.19,0.91,2,2.1,2	c0.9,0,1.64-0.71,1.82-1.6c0.03-0.13,0.05-0.27,0.08-0.4c0.41-2.08,0.82-4.07,0.47-6.16l-0.31-2.55c-0.11-0.86-0.3-1.7-0.57-2.52	l-0.02-0.06c-0.37-1.12-0.42-2.32-0.13-3.46l0.37-1.45c0-0.01,0-0.01,0-0.01L29,19.02l0.06-0.25l0.73-2.928l1.255,5.021	c0.009,0.037,0.02,0.074,0.032,0.11l1.719,5.159c-0.11,0.481-0.104,1.059,0.068,1.713c1.126,4.261,2.415,2.944,3.294,2.612	c0.863-0.326,1.07-0.819,0.232-3.398l0.55,0.436c0.059,0.047,0.126,0.076,0.194,0.088c0.168,0.03,0.346-0.041,0.456-0.2	C37.746,27.16,37.707,26.848,37.504,26.687z'/%3E%3Cpath fill='%23d8cbb2' d='M22,5h4v4c0,1.105-0.895,2-2,2l0,0c-1.105,0-2-0.895-2-2V5z'/%3E%3Cpath fill='%23e7dfcd' d='M21,4c0-3,1-4,3-4s3,1,3,4c0,1.5-1,5-3,5S21,5.5,21,4z'/%3E%3Cpath fill='%23d8cbb2' d='M23,17l-1.09,0.27c-0.94,0.24-2.22,0.81-3.03,1.56l-0.01-0.05l-0.73-3.17L18,15l1.41,1.41	C19.79,16.79,20.3,17,20.83,17H23z'/%3E%3Cpath fill='%23d8cbb2' d='M30,15l-0.17,0.68l-0.77,3.09L29,19.02c-0.91-0.7-2.34-1.61-2.91-1.75L25,17h2.17	c0.53,0,1.04-0.21,1.42-0.59L30,15z'/%3E%3C/svg%3E");
                                 position: absolute;
@@ -1461,14 +1849,13 @@ export default {
                                 pointer-events: none;
                                 user-select: none;
                             }
-                        }                        
+                        }
                     }
 
                     #partofbody-choice-select,
-                    .partofbody-selected
-                    {
+                    .partofbody-selected {
                         transition: 0.25s;
-                        padding: 1rem!important;
+                        padding: 1rem !important;
                         width: 5rem;
                         height: 4.9rem;
                         border-radius: 50%;
@@ -1477,15 +1864,13 @@ export default {
                         top: -0.05rem;
                         margin-left: 0.1rem;
 
-                        &::placeholder
-                        {
+                        &::placeholder {
                             transition: 0.25s;
                             color: #fff;
                             opacity: 0;
                         }
 
-                        .text
-                        {
+                        .text {
                             display: none;
                         }
 
@@ -1542,38 +1927,29 @@ export default {
                                 height: 2.6rem;
                             }
                         }
-
                     }
 
-                    .part-of-body 
-                    {
+                    .part-of-body {
                         transition: 0.25s;
                         display: flex;
                         flex-direction: column;
                         justify-content: center;
                     }
 
-                    .arrow-toggle-box
-                    {
+                    .arrow-toggle-box {
                         transition: 0.25s;
                         opacity: 0;
                     }
                 }
-
-
             }
 
-            .select-filter-block
-            {
+            .select-filter-block {
                 position: relative;
                 top: -0.1rem;
 
-                &.error
-                {
-                    .select-filter
-                    {
-                        .part-of-body 
-                        {
+                &.error {
+                    .select-filter {
+                        .part-of-body {
                             // box-shadow: 0rem 0.4rem 1.4rem 0rem #ff564b;
                         }
 
@@ -1586,8 +1962,8 @@ export default {
                             border: 0.1rem solid #ff564b;
                         }
 
-                        &:not(.active):not(.partofbodyselected) > div:first-child::after 
-                        {
+                        &:not(.active):not(.partofbodyselected)
+                            > div:first-child::after {
                             content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48' width='36px' height='36px'%3E%3Cpath fill='%23fb7e76' d='M31,46c-0.611-0.306-1.316-0.517-2-0.664V36h-4v3.02c0,0.27,0.01,0.55,0.02,0.83	c0.05,0.71,0.18,1.12,0.37,2.09l0.07,0.35L26,45c0,0-1,1-1,2s0.448,1,1,1h7C33,46.343,33,47,31,46z'/%3E%3Cpath fill='%23fb7e76' d='M19,45.336c-0.684,0.147-1.389,0.359-2,0.664c-2,1-2,0.343-2,2h7c0.552,0,1,0,1-1s-1-2-1-2l0.54-2.71	l0.07-0.35c0.02-0.1,0.04-0.19,0.06-0.27c0.17-0.8,0.27-1.21,0.31-1.87C23,39.54,23,39.28,23,39.02V36h-4V45.336z'/%3E%3Cpath fill='%23ff564b' d='M23,36v3.02c0,0.26,0,0.52-0.02,0.78c-0.04,0.66-0.14,1.07-0.31,1.87c-0.02,0.08-0.04,0.17-0.06,0.27	l-0.07,0.35C22,40,22,39,21,39c-1.1,0-1.78,0.08-2-1v-2H23z'/%3E%3Cpath fill='%23ff564b' d='M29,36v2c-0.22,1.08-0.9,1-2,1c-1,0-1,1-1.54,3.29l-0.07-0.35c-0.19-0.97-0.32-1.38-0.37-2.09	C25.01,39.57,25,39.29,25,39.02V36H29z'/%3E%3Cpath fill='%23fb7e76' d='M37.504,26.687l-1.647-1.306c-0.052-0.041-0.112-0.065-0.175-0.08l-1.74-5.221l-1.238-4.949	C32.961,14.587,33,13.834,33,13c0-1.8-1.25-3-2.5-3c-0.167,0-0.334,0.023-0.5,0.047V10l-4-1h-4l-4,1v0.047	C17.834,10.023,17.667,10,17.5,10c-1.25,0-2.5,1.2-2.5,3c0,0.834,0.039,1.587,0.296,2.131l-1.238,4.949l-1.74,5.221	c-0.063,0.014-0.124,0.039-0.175,0.08l-1.647,1.306c-0.203,0.161-0.242,0.473-0.087,0.697c0.11,0.159,0.288,0.23,0.456,0.2	c0.068-0.012,0.135-0.041,0.194-0.088l0.55-0.436c-0.838,2.579-0.631,3.072,0.232,3.398c0.879,0.332,2.168,1.649,3.294-2.612	c0.172-0.654,0.178-1.232,0.068-1.713l1.719-5.159c0.012-0.036,0.023-0.073,0.032-0.11l1.247-4.986l0.668,2.902l0.01,0.05l0.29,1.05	l0.35,1.32c0.31,1.17,0.28,2.41-0.11,3.57c-0.27,0.82-0.46,1.66-0.57,2.52l-0.31,2.55C18.18,31.93,18.59,33.92,19,36	c0.03,0.13,0.05,0.27,0.08,0.4C19.26,37.29,20,38,20.9,38c1.19,0,1.99-0.81,2.1-2l1-10l1,10c0.11,1.19,0.91,2,2.1,2	c0.9,0,1.64-0.71,1.82-1.6c0.03-0.13,0.05-0.27,0.08-0.4c0.41-2.08,0.82-4.07,0.47-6.16l-0.31-2.55c-0.11-0.86-0.3-1.7-0.57-2.52	l-0.02-0.06c-0.37-1.12-0.42-2.32-0.13-3.46l0.37-1.45c0-0.01,0-0.01,0-0.01L29,19.02l0.06-0.25l0.73-2.928l1.255,5.021	c0.009,0.037,0.02,0.074,0.032,0.11l1.719,5.159c-0.11,0.481-0.104,1.059,0.068,1.713c1.126,4.261,2.415,2.944,3.294,2.612	c0.863-0.326,1.07-0.819,0.232-3.398l0.55,0.436c0.059,0.047,0.126,0.076,0.194,0.088c0.168,0.03,0.346-0.041,0.456-0.2	C37.746,27.16,37.707,26.848,37.504,26.687z'/%3E%3Cpath fill='%23ff564b' d='M22,5h4v4c0,1.105-0.895,2-2,2l0,0c-1.105,0-2-0.895-2-2V5z'/%3E%3Cpath fill='%23fb7e76' d='M21,4c0-3,1-4,3-4s3,1,3,4c0,1.5-1,5-3,5S21,5.5,21,4z'/%3E%3Cpath fill='%23ff564b' d='M23,17l-1.09,0.27c-0.94,0.24-2.22,0.81-3.03,1.56l-0.01-0.05l-0.73-3.17L18,15l1.41,1.41	C19.79,16.79,20.3,17,20.83,17H23z'/%3E%3Cpath fill='%23ff564b' d='M30,15l-0.17,0.68l-0.77,3.09L29,19.02c-0.91-0.7-2.34-1.61-2.91-1.75L25,17h2.17	c0.53,0,1.04-0.21,1.42-0.59L30,15z'/%3E%3C/svg%3E");
                         }
                     }
@@ -1653,13 +2029,108 @@ export default {
 }
 
 @media (max-width: 991px) {
-    .footer
-    {
+    .footer {
         min-height: 6.4rem;
-        > *
-        {
+        > * {
             display: none !important;
         }
     }
+}
+
+#worksheet .loading-block 
+{
+    min-height: 88.2rem;
+    padding: 0;
+
+    .loading:not(.vs-avatar)
+    {
+        border-radius: 0.6rem;
+        color: transparent;
+    }
+
+    .tab-worksheet-header {
+        background-color: #e7dfcd;
+    }
+
+    .select-filter-block,
+    .title > div:first-child {
+        height: 4rem;
+        box-shadow: 0rem 0.4rem 1.4rem 0rem #e7dfcdd1;
+        border-radius: 0.5rem !important;
+    }
+
+    .select-filter-block {
+        height: 4.565rem;
+        width: 4.565rem;
+        border-radius: 50% !important;
+        margin-left: 1.3rem;
+        flex: none;
+    }
+
+    .worksheet-params .worksheet-details > *
+    {
+        height: 3.8rem;
+        box-shadow: 0rem 0.4rem 1.4rem 0rem #e7dfcdd1;
+        border-radius: 0.5rem !important;
+
+        &:not(:last-child)
+        {
+            margin-right: 3rem;
+        }
+    }
+
+    .tab-worksheet-content main #exercises-playlist .exercises-list-container > *:not(.exercises-list):not(.add-videos)  {
+        margin-bottom: 0.8rem;
+        margin-left: 3.4rem;
+        width: 14rem;
+        height: 1.6rem;
+    }
+
+    .exercises-list-container .exercise .exercise-position {
+        border-radius: 50% !important;
+        border: none !important;
+    }
+
+    .exercises-list-container .exercise .input-h2 .remove-exercise {
+        border-radius: 50% !important;
+        width: 1.6rem !important;
+        height: 1.6rem !important;
+        background-color: #f3f3f3;
+        border: none;
+        top: 0rem;
+    }
+
+    .exercises-list-container .exercise .content .details {
+        padding: 0.8rem 0;
+
+        .series-reps > *
+        {
+            height: 3.8rem;
+            border-radius: 0.5rem !important;
+            width: 50%;
+
+            &:not(:last-child)
+            {
+                margin-right: 1.8rem;
+            }
+        }
+    }
+
+
+    .exercises-list-container .exercise .content .options > div {
+        height: 2.3rem;
+    }
+
+    .exercises-list-container .exercises-list {
+        overflow-x: hidden !important;
+    }
+
+    .exercises-list-container .add-videos .vs-button 
+    {
+        width: 4.5rem !important;
+        height: 4.5rem !important;
+        box-shadow: none !important;
+        border-radius: 50% !important;
+    }       
 }
 </style>

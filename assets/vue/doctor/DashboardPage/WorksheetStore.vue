@@ -155,39 +155,100 @@
                 <div class="swiper-button-prev"></div>
                 <div class="swiper-button-next"></div>
                 <div v-if="loadingStoreFirstsWorksheets">
-                    <div class="loading loading-block">
-                        <div class="worksheet-header w-85">
-                            <div
-                                class="loading worksheet-title w-65"
-                            ></div>
-                            <div class="loading part-of-body"></div>
-                        </div>
-                        <div
-                            class="loading worksheet-progress-line"
-                        ></div>
-                        <div class="worksheet-content">
-                            <div class="worksheet-details">
+                    <div
+                        class="worksheet-container swiper-slide loading-block"
+                    >
+                        <div class="worksheet">
+                            <div class="worksheet-header">
+                                <h3 class="worksheet-title loading w-35">Xxxxx xx xxxxxx xxx</h3>
                                 <div
-                                    class="
-                                        loading
-                                        worksheet-exercises-count
-                                        w-45
-                                    "
-                                ></div>
-                                <div
-                                    class="
-                                        loading
-                                        worksheet-timing
-                                        w-25
-                                    "
-                                ></div>
-                                <div
-                                    class="
-                                        loading
-                                        worksheet-period
-                                        w-15
-                                    "
-                                ></div>
+                                    class="vs-tooltip-content kiv-help"
+                                >
+                                    <button
+                                        class="vs-button tag part-of-body vs-button--null vs-button--size-mini vs-button--primary vs-button--default  loading"
+                                    >
+                                        <div class="vs-button__content">
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="worksheet-content-wt">
+                                <div class="worksheet-details">
+                                    <div class="worksheet-exercises-count">
+                                        <i class="kiv-exercise icon-7"></i>
+                                        <span class="space loading w-35">Xxxxxxx</span>
+                                    </div>
+                                    <div class="worksheet-timing">
+                                        <i class="kiv-calendar icon-10"></i>
+                                        <span class="space loading w-35">Xxxxxxxx</span>
+                                    </div>
+                                    <div class="worksheet-period">
+                                        <i class="kiv-clock icon-11"></i>
+                                        <span class="space loading w-35">Xxxxxxxxxx</span>
+                                    </div>
+                                </div>
+                                <div class="worksheet-details-footer">
+                                    <div class="worksheet-exercises-container">
+                                        <div class="worksheet-exercises">
+                                            <div class="worksheet-exercise">
+                                                <div
+                                                    class="worksheet-exercise-thumbnail loading w-35"
+                                                >
+                                                </div>
+                                                <div
+                                                    class="worksheet-exercise-details"
+                                                >
+                                                    <div class="series-reps loading w-35">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="worksheet-exercise">
+                                                <div
+                                                    class="worksheet-exercise-thumbnail loading w-35"
+                                                >
+                                                </div>
+                                                <div
+                                                    class="worksheet-exercise-details"
+                                                >
+                                                    <div class="series-reps loading w-35">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="worksheet-exercise">
+                                                <div
+                                                    class="worksheet-exercise-thumbnail loading w-35"
+                                                >
+                                                </div>
+                                                <div
+                                                    class="worksheet-exercise-details"
+                                                >
+                                                    <div class="series-reps loading w-35">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="worksheet-exercise-other">
+                                            <div class="tags">
+                                                <div class="tag-chip loading w-35">
+                                                    Xxxxxxxxxxxxxxxxxx
+                                                </div>
+                                                <div class="tag-chip loading w-35">
+                                                    Xxxxxxxxxx
+                                                </div>
+                                                <div class="tag-chip loading w-35">
+                                                    Xxxxxxxx
+                                                </div>
+                                            </div>
+                                            <button
+                                                class="vs-button vs-button--null vs-button--size-null vs-button--circle vs-button--primary vs-button--default loading w-35"
+                                            >
+                                                <div class="vs-button__content">
+                                                    Xxxx xxxxxxxxxxxx
+                                                </div>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -494,6 +555,7 @@ export default {
 
     .swiper {
       width: 100%;
+      min-height: 26.9rem;
     }
 
     .worksheet-list.wl-doctor .worksheet-container .worksheet {
@@ -571,138 +633,60 @@ export default {
         }
     }
 
-    .worksheet-list > div:not(.not-found) .loading-block {
-        border-radius: 0.5rem;
-        height: 12.5rem;
-        background: #fdfcfa;
+    .loading-block.worksheet-container
+    {
+        max-height: initial;
 
-        .worksheet-header {
-            .worksheet-title {
-                border-radius: 0.5rem;
-                height: 2.5rem;
-            }
-            .part-of-body {
-                border-radius: 0.5rem;
-                height: 2.5rem;
-                width: 8.3rem;
-                top: 1.9rem;
-                right: 1.9rem;
-            }
-        }
-        .worksheet-progress-line {
-            border-radius: 0.8rem;
-            min-height: 0.8rem;
-            margin-top: 1rem;
-            margin-bottom: 1.6rem !important;
-            width: 100%;
-        }
-        .worksheet-content {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-
-            .worksheet-details {
-                width: 100%;
-                > div {
-                    display: flex;
-                    align-items: center;
-                    margin: 0 !important;
-
-                    &:first-child {
-                        margin-top: 0;
-                    }
-
-                    &:last-child {
-                        margin-bottom: 0;
-                    }
-
-                    &.worksheet-exercises-count {
-                        border-radius: 0.5rem;
-                        height: 1.7rem;
-                    }
-
-                    &.worksheet-timing {
-                        border-radius: 0.5rem;
-                        height: 1.7rem;
-                    }
-                    &.worksheet-period {
-                        border-radius: 0.5rem;
-                        height: 1.7rem;
-                    }
-                }
-            }
-        }
-    }
-    .loading-block {
-        border-radius: 0.5rem;
-        height: 19rem;
-        background: #fdfcfa;
-
-        .worksheet-header {
-            .worksheet-title {
-                border-radius: 0.5rem;
-                height: 2.5rem;
-            }
-            .part-of-body {
-                border-radius: 0.5rem;
-                height: 2.7rem;
-                width: 8.3rem;
-            }
-        }
-        .worksheet-progress-line {
-            border-radius: 1rem;
-            height: 1rem;
-            width: 100%;
-        }
-        .worksheet-content {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-
-            .worksheet-details {
-                width: 100%;
-                > div {
-                    display: flex;
-                    align-items: center;
-                    margin: 1rem 0;
-
-                    &:first-child {
-                        margin-top: 0;
-                    }
-
-                    &:last-child {
-                        margin-bottom: 0;
-                    }
-
-                    &.worksheet-exercises-count {
-                        border-radius: 0.5rem;
-                        height: 1.7rem;
-                    }
-
-                    &.worksheet-timing {
-                        border-radius: 0.5rem;
-                        height: 1.7rem;
-                    }
-                    &.worksheet-period {
-                        border-radius: 0.5rem;
-                        height: 1.7rem;
-                    }
-                }
-            }
+        .tags .tag-chip,
+        .worksheet .worksheet-header .vs-button--size-mini.tag.part-of-body {
+            -webkit-animation-duration: 1.2s;
+            animation-duration: 1.2s;
+            -webkit-animation-fill-mode: forwards;
+            animation-fill-mode: forwards;
+            -webkit-animation-iteration-count: infinite;
+            animation-iteration-count: infinite;
+            -webkit-animation-name: placeHolderShimmer;
+            animation-name: placeHolderShimmer;
+            -webkit-animation-timing-function: linear;
+            animation-timing-function: linear;
+            background: linear-gradient(to right, #fafafa 8%, #f5f3ef 38%, #fafafa 54%);
+            background-size: 1000px 640px;
+            position: relative;
         }
 
-        .buttons {
-            display: flex;
-            align-items: flex-end;
+        .worksheet-exercises .worksheet-exercise .worksheet-exercise-thumbnail {
+            width: 16.625rem;
+        }
 
-            .btn-go {
-                border-radius: 50%;
-                height: 5.5rem;
-                width: 5.5rem;
+        .worksheet-exercises {
+            overflow-x: hidden;
+        }
+
+        .worksheet .worksheet-header .vs-button--size-mini.tag.part-of-body {
+            position: absolute !important;
+            top: -0.1rem !important;
+            right: 0.5rem !important;
+            width: 2.5rem !important;
+            height: 2.5rem !important;
+        }
+
+        .worksheet-exercise-other .vs-button {
+            width: 17rem !important;
+            height: 2.5rem !important;
+            border-radius: 0.3rem !important;
+            position: absolute !important;
+            top: 0.3rem !important;
+            right: 0rem !important;
+            box-shadow: none !important;
+
+            &::after {
+                display: none;
             }
         }
     }
 
+
+    // 238.96
 
     &.disabled-custom
     {
