@@ -276,7 +276,7 @@ export default {
                 .then((response) => {
                     f.openSuccessNotification(
                         "Ajout du patient",
-                        response.data
+                        response.data.message
                     );
 
                     this.userSelected.addRequestDoctor = false;
@@ -335,9 +335,45 @@ export default {
                             ? error.response.data.detail
                             : error.response.data;
 
-                    f.openErrorNotification("Erreur", errorMess);
-                    this.btnLoadingValidCreatePatient = false;
-                    this.$emit("closeModalAddPatient", true);
+                    if(error.response?.data)
+                        this.axios
+                            .post(`/doctor/${this.doctor.id}/add/patient`, {
+                                _token: this.csrfTokenAddPatient,
+                                patientEmail: this.createPatientDetails.email,
+                            })
+                            .then((response) => {
+                                f.openSuccessNotification(
+                                    "Ajout du patient",
+                                    response.data.message
+                                );
+
+                                this.$emit("addPatient", response.data.patient);
+
+                                this.createPatientDetails = {
+                                    firstname: "",
+                                    lastname: "",
+                                    email: "",
+                                    gender: "",
+                                };
+                                this.btnLoadingValidCreatePatient = false;
+                                this.$emit("closeModalAddPatient", true);
+                            })
+                            .catch((error) => {
+                                const errorMess =
+                                    "object" === typeof error.response.data
+                                        ? error.response.data.detail
+                                        : error.response.data;
+
+                                f.openErrorNotification("Erreur", errorMess);
+                                this.btnLoadingValidAddPatient = false;
+                                this.$emit("closeModalAddPatient", true);
+                            });
+                    else
+                    {
+                        f.openErrorNotification("Erreur", errorMess);
+                        this.btnLoadingValidCreatePatient = false;
+                        this.$emit("closeModalAddPatient", true);
+                    }
                 });
         },
         validationEmail() {

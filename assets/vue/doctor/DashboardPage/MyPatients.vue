@@ -83,14 +83,14 @@
                             >
                                 <svg v-if="!prescriProcess" version="1.1" id="Calque_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                                     viewBox="0 0 96 96" style="enable-background:new 0 0 96 96;" xml:space="preserve">
-                                    <g>
-                                        <path class="st0" d="M70,48c-12.2,0-22,9.8-22,22s9.8,22,22,22s22-9.8,22-22S82.2,48,70,48z M70,82.6l-7,2.3l1-8.4l2.7-0.4L70,79
-                                            l3.3-2.9l2.7,0.4l1,8.4L70,82.6z M79.1,66.8L76,68.2l-0.4,3.4l-3.3-0.7L70,73.4l-2.3-2.5l-3.3,0.7l-0.4-3.4l-3.1-1.4l1.7-3l-1.7-3
-                                            l3.1-1.4l0.4-3.4l3.3,0.7l2.3-2.5l2.3,2.5l3.3-0.7l0.4,3.4l3.1,1.4l-1.7,3L79.1,66.8z"/>
-                                        <path class="st0" d="M25,82c-1.7,0-3-1.3-3-3V17c0-1.7,1.3-3,3-3h23v17c0,5,4,9,9,9h17v4.3c2.1,0.3,4.1,0.9,6,1.7v-9
-                                            c0-0.8-0.3-1.6-0.9-2.1l-26-26C52.6,8.3,51.8,8,51,8H25c-5,0-9,4-9,9v62c0,5,4,9,9,9h26.3c-1.7-1.8-3.2-3.8-4.3-6H25z M54,18.2
-                                            L69.8,34H57c-1.7,0-3-1.3-3-3V18.2z"/>
-                                    </g>
+                                <polygon points="66.3,93.6 48.8,95 54.5,85 59.6,84 66.1,91.1 73.3,83.9 78.8,85.4 83.7,94.9 "/>
+                                <path d="M24,4c-5,0-9,4-9,9v62c0,5,4,9,9,9l24-0.3c-0.4-2.4-0.4-2.4-1-5.8L24,78c-1.7,0-3-1.3-3-3V13c0-1.7,1.3-3,3-3h23v17
+                                    c0,5,4,9,9,9h17l-0.3,5.8c5.6-1.2,0,0,6.3-1.4V33c0-0.8-0.3-1.6-0.9-2.1l-26-26C51.6,4.3,50.8,4,50,4H24z M53,14.2L68.8,30H56
+                                    c-1.7,0-3-1.3-3-3V14.2z"/>
+                                <path d="M89,56.1l-7.7-3.5l-1-8.4l-8.2,1.7l-5.7-6.2l-5.7,6.2l-8.2-1.7l-1,8.4l-7.7,3.5l4.2,7.4L43.8,71l7.7,3.5l1,8.4l8.2-1.7
+                                    l5.7,6.2l5.7-6.2l8.2,1.7l1-8.4L89,71l-4.2-7.4L89,56.1z M79,65.3c-0.5,0.5-1.2,0.8-1.9,0.8h-8.2v8.2c0,1.4-1.1,2.5-2.5,2.5
+                                    s-2.5-1.1-2.5-2.5v-8.2h-8.2c-1.4,0-2.5-1.1-2.5-2.5s1.1-2.5,2.5-2.5h8.2v-8.2c0-1.4,1.1-2.5,2.5-2.5s2.5,1.1,2.5,2.5V61h8.2
+                                    c1.3,0,2.5,1.1,2.5,2.4C79.7,64.1,79.5,64.8,79,65.3z"/>
                                 </svg>
                                 <svg v-else xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 50 50" width="50px" height="50px"><path d="M 9.15625 6.3125 L 6.3125 9.15625 L 22.15625 25 L 6.21875 40.96875 L 9.03125 43.78125 L 25 27.84375 L 40.9375 43.78125 L 43.78125 40.9375 L 27.84375 25 L 43.6875 9.15625 L 40.84375 6.3125 L 25 22.15625 Z"/></svg>
                                 <span class="btn-action-text">Prescrire</span>
@@ -620,7 +620,7 @@
                     class="pagination"
                     v-if="
                         !loadingDoctorFirstsPatients &&
-                        !loadingDoctorAllPatients
+                        !loadingDoctorAllPatients && getDoctorPatients.length
                     "
                 >
                     <vs-pagination
@@ -644,7 +644,12 @@
                         </vs-select>
                     </vs-pagination>
                 </div>
-                <div class="pagination" v-else>
+                <div class="pagination" 
+                    v-if="
+                        (loadingDoctorFirstsPatients ||
+                        loadingDoctorAllPatients) && getDoctorPatients.length
+                    "
+                >
                     <div class="vs-pagination-content vs-component--primary">
                         <button
                             class="vs-pagination__arrow prev"
@@ -968,19 +973,6 @@ export default {
                         this.doctorPatients.indexOf(this.removePatientDetails),
                         1
                     );
-                    this.$parent.doctor.patients.splice(
-                        this.$parent.doctor.patients.indexOf(
-                            this.removePatientDetails
-                        ),
-                        1
-                    );
-                    if (this.allPatients.length) {
-                        const patient = this.allPatients.find(
-                            (p) => p.id === this.removePatientDetails.id
-                        );
-                        patient.doctor = null;
-                        patient.addRequestDoctor = null;
-                    }
                     this.btnLoadingValidRemovePatient = false;
                     this.modalConfirmRemovePatient = false;
                 })
@@ -997,7 +989,7 @@ export default {
         },
         addPatient(patient) {
             this.doctorPatients.unshift(patient);
-            this.$parent.doctor.patients.unshift(patient);
+            // this.$parent.doctor.patients.unshift(patient);
         },
         formatDate(datetime) {
             return moment(datetime).format("DD/MM/YYYY");
@@ -1017,6 +1009,16 @@ export default {
         getSearch(data, filter) {
             return f.getSearch(data, filter);
         },
+    },
+    beforeDestroy() {
+        this.modalConfirmRemoveWorksheet = false;
+        this.removeWorksheetDetails = {};
+        this.removePatientDetails = {};
+        this.btnLoadingValidRemoveWorksheet = false;
+        this.modalAddPatient = false;
+        this.modalConfirmRemovePatient = false;
+        this.btnLoadingValidRemovePatient = false;
+        this.loadingsGetSessions = [];
     },
 };
 </script>

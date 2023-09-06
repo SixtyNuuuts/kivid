@@ -161,6 +161,18 @@ body {
                 margin-top: 0.4rem!important;
             }
         }
+
+        @media (max-width: 380px) {    
+            &.offset-left
+            {
+                > *
+                {
+                    position: relative;
+                    left: -7%;
+                }
+            }
+        }
+
     }
     
     .btn-prescri-main

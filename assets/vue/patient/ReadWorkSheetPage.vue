@@ -404,6 +404,9 @@ export default {
                 console.error(errorMess);
             });
     },
+    beforeDestroy() {
+        this.loading = false;
+    },
 };
 </script>
 

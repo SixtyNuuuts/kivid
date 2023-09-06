@@ -399,6 +399,11 @@ export default {
                 console.error(errorMess);
             });
     },
+    beforeDestroy() {
+        this.loadingStoreFirstsWorksheets = false;
+        this.loadingStoreAllWorksheets = false;
+        this.btnLoadingAddWorksheet = false;
+    },
 };
 </script>
 
@@ -414,6 +419,14 @@ export default {
 .swiper-button-prev, .swiper-button-next 
 {
     opacity: 0 !important;
+
+    @media (max-width: 799px) {
+        --swiper-navigation-sides-offset: 0px;
+        opacity: 1 !important;
+        height: 4rem;
+        width: 2rem;
+        top: 10rem;
+    }
 }
 
 @media (min-width: 799px) {
@@ -427,7 +440,7 @@ export default {
 
 #worksheet-store
 {
-    margin-top: 1rem;
+    margin-top: 2.9rem;
     margin-bottom: 0;
 
     @media (max-width: 799px) {
@@ -577,6 +590,16 @@ export default {
             overflow: visible;
             box-shadow: 0.1rem 0.1rem 0.25rem 0rem rgba(0, 0, 0, 0.15);
             letter-spacing: 0;
+            z-index: 2;
+
+            @media (max-width: 799px) {
+                &:not(.loading)
+                {
+                    background-color: #fff;
+                    color: #ff6838;
+                    box-shadow: 0.05rem 0.1rem 0.8rem rgba(255, 104, 56, 0.5);
+                }
+            }
 
             .vs-button__content {
                 padding: 0.35rem 0.8rem;
@@ -592,34 +615,19 @@ export default {
                 margin-right: 0.4rem;
                 position: relative;
                 top: -0.1rem;
-            }
 
-            &::after
-            {
-                content: '';
-                display: block;
-                background: linear-gradient(
-                    90deg,
-                    rgba(250, 248, 244, 0)00 0%,
-                    #fff 55%,
-                    #fff 100%,
-                );
-                width: 4.1rem;
-                height: 2rem;
-                position: absolute;
-                top: 0.45rem;
-                left: -4.10rem;
-                z-index: 5;
-
-                @media (min-width: 800px) {
-                    background: linear-gradient(
-                        90deg,
-                        rgba(250, 248, 244, 0)00 0%,
-                        #faf8f4 55%,
-                        #faf8f4 100%,
-                    ); 
+                @media (max-width: 799px) {
+                    fill: #ff6838;
                 }
 
+            }
+
+            &:disabled
+            {
+                svg
+                {
+                    fill: #fff;
+                }
             }
         }
 
@@ -630,6 +638,34 @@ export default {
 
         .tags {
             max-width: 75%;
+        }
+
+        &::after
+        {
+            content: '';
+            display: block;
+            background: linear-gradient(
+                90deg,
+                rgba(250, 248, 244, 0)00 0%,
+                #fff 55%,
+                #fff 100%,
+            );
+            width: 4.1rem;
+            height: 2rem;
+            position: absolute;
+            top: 0.45rem;
+            right: 15.53rem;
+            z-index: 1;
+
+            @media (min-width: 799px) {
+                background: linear-gradient(
+                    90deg,
+                    rgba(250, 248, 244, 0)00 0%,
+                    #faf8f4 55%,
+                    #faf8f4 100%,
+                ); 
+            }
+
         }
     }
 

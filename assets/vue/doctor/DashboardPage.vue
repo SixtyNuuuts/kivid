@@ -413,6 +413,21 @@ export default {
                 console.error(errorMess);
             });
     },
+    beforeDestroy() {
+        this.activeTab = 1;
+        this.prescriProcess = false;
+        this.prescriProcessPatient = false;
+        this.prescriProcessPatientSelected = null;
+        this.prescriProcessWorksheet = false;
+        this.prescriProcessWorksheetsSelected = null;
+        this.btnLoadingPatientPrescriProcessRedirect = null;
+        this.btnLoadingWorksheetPrescriProcessRedirect = false;
+        this.loadingDoctorFirstsWorksheets = false;
+        this.loadingDoctorAllWorksheets = false;
+        this.loadingDoctorFirstsPatients = false;
+        this.loadingDoctorAllPatients = false;
+        this.loadingAllPatients = false;
+    },
 };
 </script>
 
