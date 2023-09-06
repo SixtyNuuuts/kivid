@@ -131,7 +131,10 @@ class PatientController extends AbstractController
             $data = json_decode($request->getContent());
 
             if ($this->isCsrfTokenValid('add_patient' . $doctor->getId(), $data->_token)) {
-                $patient = $this->patientRepository->findOneBy(['id' => $data->patientId]);
+                if(!empty($data->patientId))
+                    $patient = $this->patientRepository->findOneBy(['id' => $data->patientId]);
+                elseif(!empty($data->patientEmail))
+                    $patient = $this->patientRepository->findOneBy(['email' => $data->patientEmail]);
 
                 if ($patient->getAddRequestDoctor()) {
                     return $this->json(
@@ -151,10 +154,15 @@ class PatientController extends AbstractController
                 $this->em->flush();
 
                 return $this->json(
-                    "<strong>{$this->userService->getUserName($patient)}</strong> 
-                    a bien été ajouté à votre liste, 
-                    nous lui avons envoyé une demande d'approbation",
+                    [
+                        "message" => "<strong>{$this->userService->getUserName($patient)}</strong> 
+                        a bien été ajouté à votre liste, 
+                        nous lui avons envoyé une demande d'approbation",
+                        "patient" => $patient
+                    ],
                     200,
+                    [],
+                    ['groups' => 'patient_read']
                 );
             }
         }
