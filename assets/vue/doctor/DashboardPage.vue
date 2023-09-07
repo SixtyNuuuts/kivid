@@ -83,7 +83,6 @@
                         class="desktop-view"
                     />
                     <WorksheetStore
-                        :class="{'disabled-custom': activeTab === 1}"
                         :csrfTokenCreateWorksheet="csrfTokenCreateWorksheet"
                         :doctor="doctor"
                         :loadingDoctorFirstsWorksheets="loadingDoctorFirstsWorksheets"
@@ -241,7 +240,7 @@ export default {
             this.activeTab = 1;
             this.prescriProcessStartOrigin = target;
         },
-        stopPrescriProcess(e, activeTab=null) {
+        stopPrescriProcess(e, activeTab=1) {
             this.prescriProcess = false;
             this.prescriProcessWorksheet = false;
             this.prescriProcessPatient = false;
@@ -249,12 +248,14 @@ export default {
             this.prescriProcessPatientSelected = null;
             this.btnLoadingPatientPrescriProcessRedirect = null;
             this.btnLoadingWorksheetPrescriProcessRedirect = false;
-            if(activeTab!=null)
-                this.activeTab = activeTab;
-            else if(this.prescriProcessStartOrigin === 'worksheet')
-                this.activeTab = 2;
-            else if(this.prescriProcessStartOrigin === 'patient')
-                this.activeTab = 1;
+            this.activeTab = activeTab;
+            
+            // if(activeTab!=null)
+            //     this.activeTab = activeTab;
+            // else if(this.prescriProcessStartOrigin === 'worksheet')
+            //     this.activeTab = 2;
+            // else if(this.prescriProcessStartOrigin === 'patient')
+            //     this.activeTab = 1;
         },
         sortByCreatedAt(array) {
             array.sort(function (a, b) {
@@ -412,21 +413,6 @@ export default {
 
                 console.error(errorMess);
             });
-    },
-    beforeDestroy() {
-        this.activeTab = 1;
-        this.prescriProcess = false;
-        this.prescriProcessPatient = false;
-        this.prescriProcessPatientSelected = null;
-        this.prescriProcessWorksheet = false;
-        this.prescriProcessWorksheetsSelected = null;
-        this.btnLoadingPatientPrescriProcessRedirect = null;
-        this.btnLoadingWorksheetPrescriProcessRedirect = false;
-        this.loadingDoctorFirstsWorksheets = false;
-        this.loadingDoctorAllWorksheets = false;
-        this.loadingDoctorFirstsPatients = false;
-        this.loadingDoctorAllPatients = false;
-        this.loadingAllPatients = false;
     },
 };
 </script>

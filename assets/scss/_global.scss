@@ -278,11 +278,17 @@ body {
             }
         }
 
+        &:not(.cancel-prescri-process)
+        {
+            display: none !important;
+        }
+
         @media (min-width: 799px) {
-            width: initial !important;
-            position: relative;
-            bottom: -0.2rem;
-            right: 0;
+            // width: initial !important;
+            // position: relative;
+            // bottom: -0.2rem;
+            // right: 0;
+            display: none !important;
         }
     }
 

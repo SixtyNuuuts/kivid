@@ -16,9 +16,30 @@
                 v-if="prescriProcess && getWorksheetTemplates.length"
                 class="prescri-process-dialog prescri-process-dialog-select-worksheet offset-left"
             >   
-                <span class="step-num"
+                <!-- <span class="step-num"
                     ><i class="fas fa-folder-plus"></i><span class="only-mobile">Prescription - </span>Etape
                     {{ !$parent.prescriProcessPatientSelected ? 1 : 2 }}
+                </span> -->
+                <span class="step-num"
+                    ><i class="fas fa-folder-plus"></i>
+                    <span>Prescription 
+                        <span v-if="$parent.prescriProcessPatientSelected"> pour 
+                            <strong>
+                                <span
+                                    v-if="
+                                        $parent.prescriProcessPatientSelected.firstname ||
+                                        $parent.prescriProcessPatientSelected.lastname
+                                    "
+                                >
+                                    {{ $parent.prescriProcessPatientSelected.firstname }}
+                                    {{ $parent.prescriProcessPatientSelected.lastname }}
+                                </span>
+                                <span v-else>
+                                    {{ $parent.prescriProcessPatientSelected.email }}
+                                </span>
+                            </strong>
+                        </span>
+                    </span>
                 </span>
                 <p>
                     Veuillez sélectionner une ou&nbsp;plusieurs&nbsp;fiche(s). 
@@ -31,29 +52,13 @@
                 v-if="prescriProcess"
                 class="prescri-process-dialog pp-create-worksheet prescri-process-dialog-create-worksheet"
             >
-                <span class="step-num"
+                <!-- <span class="step-num"
                     ><i class="fas fa-folder-plus"></i>Etape
                     {{ !$parent.prescriProcessPatientSelected ? 1 : 2 }}
-                </span>
+                </span> -->
                 <p>
                     <span v-if="getWorksheetTemplates.length">et / ou sélectionnez</span
                     ><span v-else>Sélectionnez</span> le nombre de prescriptions que vous souhaitez créer&nbsp;de&nbsp;zéro 
-                    <span v-if="$parent.prescriProcessPatientSelected"> pour 
-                        <strong>
-                            <span
-                                v-if="
-                                    $parent.prescriProcessPatientSelected.firstname ||
-                                    $parent.prescriProcessPatientSelected.lastname
-                                "
-                            >
-                                {{ $parent.prescriProcessPatientSelected.firstname }}
-                                {{ $parent.prescriProcessPatientSelected.lastname }}
-                            </span>
-                            <span v-else>
-                                {{ $parent.prescriProcessPatientSelected.email }}
-                            </span>
-                        </strong>
-                    </span>
                 </p>
             </div>
         </transition>
@@ -482,10 +487,6 @@
                                                     </vs-tooltip>
                                                     <vs-tooltip>
                                                         <vs-button
-                                                            :loading="
-                                                                btnLoadingCopyWorksheet ===
-                                                                worksheet.id
-                                                            "
                                                             @click="
                                                                 redirectToCreatePage(
                                                                     worksheet.id
@@ -1343,17 +1344,6 @@ export default {
             }
         }
     },
-    beforeDestroy() {
-        this.modalConfirmRemoveWorksheet = false;
-        this.removeWorksheetDetails = {};
-        this.btnLoadingValidRemoveWorksheet = false;
-        this.btnLoadingAddWorksheet = false;
-        this.btnLoadingCopyWorksheet = false;
-        this.btnLoadingCreatePublicAccess = null;
-        this.popUpCopyActive = null;
-        this.currentOpenWorksheet = null;
-        this.prescriProcessWorksheetsChoice = [];
-    },
 };
 </script>
 
@@ -1399,8 +1389,9 @@ body .kiv-block .prescri-process-dialog.prescri-process-dialog-select-worksheet 
 }
 
 body .kiv-block .prescri-process-dialog.prescri-process-dialog-create-worksheet {
-    top: -7.8rem;
+    top: -3.8rem;
     right: -4.9rem;
+    padding-top: 0.5rem;
 }
 
 body .btn-create-action .vs-button 
@@ -1469,6 +1460,11 @@ body .btn-create-action .vs-button
 
         .btn-primary-action {
             margin: 0;
+
+            &.add
+            {
+                width: 4.1rem;
+            }
         }
 
         > :first-child {
@@ -1714,7 +1710,7 @@ body .btn-create-action .vs-button
             top: -0.55rem;
             left: 1.0625rem;
             text-transform: uppercase;
-            color: #222e54;
+            color: #fb8b68;
             background-color: #ffffff;
             padding: 0.0625rem 0.25rem;
             padding-top: 0.25rem;

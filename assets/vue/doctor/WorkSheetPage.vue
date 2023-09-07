@@ -1159,15 +1159,6 @@ export default {
                 this.loadingVideos = false;
             });
     },
-    beforeDestroy() {
-        this.loadingVideos = false;
-        this.loading = false;
-        this.btnLoadingValidEditWorksheet = false;
-        this.btnLoadingValidCreateWorksheet = false;
-        this.currentOpenWorksheet = null;
-        this.modalConfirmRemoveWorksheet = false;
-        this.removeWorksheetDetails = null;
-    },
 };
 </script>
 

@@ -11,8 +11,8 @@
             <i class="kiv-chevron-down icon-3"></i>
         </button>
         <h2>
-            <span v-if="!doctorView">Mes</span
-            ><span v-if="doctorView">Ses</span> prescriptions
+            <span v-if="!doctorView">Mes fiches</span
+            ><span v-if="doctorView">Ses prescriptions</span>
         </h2>
         <transition name="height">
             <div v-if="$parent.myWorksheetsContent" class="worksheet-list">

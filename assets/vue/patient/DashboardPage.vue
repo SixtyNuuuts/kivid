@@ -619,10 +619,6 @@ export default {
     },
     beforeDestroy() {
         window.removeEventListener("resize", this.onResize);
-        this.loadingDoctor = false;
-        this.loadingPatientWorksheets = false;
-        this.modalChangeDoctor = false;
-        this.loadingChangeDoctor = false;
     },
 };
 </script>

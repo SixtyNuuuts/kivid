@@ -10,7 +10,7 @@
         </button>
         <h2>Magasin de fiches</h2>
         <div>
-            <div class="worksheet-list wl-doctor swiper">
+            <div class="worksheet-list wl-doctor swiper" :class="{'loading-start':loadingStoreFirstsWorksheets || loadingStoreAllWorksheets}">
                 <div
                     v-if="
                         !loadingStoreFirstsWorksheets &&
@@ -342,6 +342,7 @@ export default {
                         delay: 6000,
                         // disableOnInteraction: false,
                     },
+                    allowTouchMove: false,
                 pagination: {
                     el: '.swiper-pagination',
                     clickable: true,
@@ -399,11 +400,6 @@ export default {
                 console.error(errorMess);
             });
     },
-    beforeDestroy() {
-        this.loadingStoreFirstsWorksheets = false;
-        this.loadingStoreAllWorksheets = false;
-        this.btnLoadingAddWorksheet = false;
-    },
 };
 </script>
 
@@ -411,31 +407,34 @@ export default {
 @import "../../../scss/variables";
 :root {
     --swiper-navigation-size: 18px;
-    --swiper-navigation-sides-offset: 5px;
-    --swiper-theme-color: #ccc4b4;
-    --swiper-pagination-bullet-inactive-color: #b0aa9f;
+    --swiper-navigation-sides-offset: -10px;
+    --swiper-theme-color: #fb8b68;
+    --swiper-pagination-bullet-inactive-color: #fb8b68;
+
+    // --swiper-theme-color: #ccc4b4;
+    // --swiper-pagination-bullet-inactive-color: #b0aa9f;
+}
+
+.swiper.loading-start
+{
+    .swiper-button-prev, .swiper-button-next, .swiper-pagination
+    {
+        opacity: 0;
+    }
 }
 
 .swiper-button-prev, .swiper-button-next 
 {
-    opacity: 0 !important;
-
-    @media (max-width: 799px) {
-        --swiper-navigation-sides-offset: 0px;
-        opacity: 1 !important;
-        height: 4rem;
-        width: 2rem;
-        top: 10rem;
-    }
+    height: 5rem;
+    width: 4rem;
+    top: 10rem;
+    z-index: 20;
 }
 
-@media (min-width: 799px) {
-    :root {
-        --swiper-navigation-size: 15px;
-        --swiper-navigation-sides-offset: 6px;
-        --swiper-theme-color: #fb8b68;
-        --swiper-pagination-bullet-inactive-color: #fb8b68;
-    }
+.swiper-button-prev.swiper-button-disabled, 
+.swiper-button-next.swiper-button-disabled 
+{
+    opacity: 0;
 }
 
 #worksheet-store
@@ -584,42 +583,36 @@ export default {
 
         .vs-button {
             white-space: nowrap;
-            flex: none;
-            border-radius: 0.6rem;
-            font-size: 1.3rem;
+            border-radius: 0.4rem;
+            font-size: 1.2rem;
             overflow: visible;
-            box-shadow: 0.1rem 0.1rem 0.25rem 0rem rgba(0, 0, 0, 0.15);
+            box-shadow: 0.15rem 0.15rem 0.7rem rgba(255, 104, 56, 0.6);
             letter-spacing: 0;
             z-index: 2;
-
-            @media (max-width: 799px) {
-                &:not(.loading)
-                {
-                    background-color: #fff;
-                    color: #ff6838;
-                    box-shadow: 0.05rem 0.1rem 0.8rem rgba(255, 104, 56, 0.5);
-                }
+            margin-top: 0.3rem;
+            
+            &:not(.loading)
+            {
+                background-color: #fff;
+                color: #ff6838;
             }
 
             .vs-button__content {
-                padding: 0.35rem 0.8rem;
-                padding-left: 0.6rem;
-                padding-top: 0.45rem;
+                padding: 0.1rem 0.9rem;
+                padding-left: 0.7rem;
+                padding-top: 0.25rem;
+                display: flex;
+                align-items: center;
             }
 
             svg
             {
-                width: 1.8rem;
-                height: 1.8rem;
-                fill: #fff;
-                margin-right: 0.4rem;
+                width: 1.45rem;
+                height: 1.45rem;
+                fill: #ff6838;
+                margin-right: 0.3rem;
                 position: relative;
                 top: -0.1rem;
-
-                @media (max-width: 799px) {
-                    fill: #ff6838;
-                }
-
             }
 
             &:disabled
@@ -650,11 +643,11 @@ export default {
                 #fff 55%,
                 #fff 100%,
             );
-            width: 4.1rem;
+            width: 1.5rem;
             height: 2rem;
             position: absolute;
             top: 0.45rem;
-            right: 15.53rem;
+            right: 14.23rem;
             z-index: 1;
 
             @media (min-width: 799px) {
