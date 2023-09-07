@@ -1439,37 +1439,6 @@ body .kiv-block .prescri-process-dialog::after {
                                 {
                                     .patient-prescription-btn
                                     {
-                                        position: relative;
-
-                                        &::after
-                                        {
-                                            content: '';
-                                            display: block;
-                                            background: linear-gradient(
-                                                90deg,
-                                                rgba(250, 250, 252, 0) 0%,
-                                                white 100%
-                                            );
-                                            width: 2.4rem;
-                                            height: 100%;
-                                            position: absolute;
-                                            top: 0;
-                                            left: -2.7rem;
-                                            z-index: 3;
-
-                                            @media (min-width: 800px) {
-                                                background: linear-gradient(
-                                                    90deg,
-                                                    rgba(250, 250, 252, 0) 0%,
-                                                    #faf8f4 100%
-                                                );
-                                            }
-                                        }
-
-                                        .worksheet-progress-line:last-child
-                                        {
-                                            margin-right: 1.3rem !important;
-                                        }
 
                                     }
                                 }
@@ -1729,7 +1698,39 @@ body .kiv-block .prescri-process-dialog::after {
                         }
                     }
 
-                    .patient-prescription-btn {                        
+                    .patient-prescription-btn {
+                        position: relative;
+
+                        &::after
+                        {
+                            content: '';
+                            display: block;
+                            background: linear-gradient(
+                                90deg,
+                                rgba(250, 250, 252, 0) 0%,
+                                white 100%
+                            );
+                            width: 2.4rem;
+                            height: 100%;
+                            position: absolute;
+                            top: 0;
+                            left: -2.7rem;
+                            z-index: 3;
+
+                            @media (min-width: 800px) {
+                                background: linear-gradient(
+                                    90deg,
+                                    rgba(250, 250, 252, 0) 0%,
+                                    #faf8f4 100%
+                                );
+                            }
+                        }
+
+                        .worksheet-progress-line:last-child
+                        {
+                            margin-right: 1.3rem !important;
+                        }
+                 
                         .vs-button {
                             white-space: nowrap;
                             border-radius: 0.4rem;
