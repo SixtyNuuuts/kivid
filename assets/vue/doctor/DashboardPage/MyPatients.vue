@@ -1487,6 +1487,9 @@ body .kiv-block .prescri-process-dialog::after {
                                 .patient-prescriptions-list-container 
                                 {
                                     display: flex;
+                                    @media (max-width: 500px) {
+                                        justify-content: space-between;
+                                    }
 
                                     .patient-prescriptions-list {
                                         display: flex;
