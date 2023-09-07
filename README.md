@@ -35,7 +35,7 @@ Ensuite, dans l'ordre taper les commandes :
 
 - 8 ``symfony serve -d`` afin de lancer le serveur symfony.
 
-Vous pouvez maintenant accéder à l'application : ``https://localhost:8000``
+Vous pouvez maintenant accéder à l'application : ``https://localhost:8000``.
 
 ### Paramètres Oauth2 (Social Login)
 
