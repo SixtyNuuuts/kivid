@@ -192,7 +192,7 @@
                                 </div>
                                 <div
                                     class="prescriptions"
-                                    :class="{multiples:'worksheets' in patient && patient.worksheets.length && patient.worksheets.length>1}"
+                                    :class="{multiples:'worksheets' in patient && patient.worksheets.length && patient.worksheets.length>1, 'no-prescription':'worksheets' in patient && !patient.worksheets.length}"
                                 >
                                     <h4>
                                         <span 
@@ -1323,7 +1323,7 @@ body .kiv-block .prescri-process-dialog::after {
                         }
                     }
 
-                    &:not(.multiples)
+                    &.no-prescription
                     {
                         .patient-prescriptions-list-container
                         {
