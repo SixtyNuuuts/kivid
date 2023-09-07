@@ -150,11 +150,6 @@
                                     </vs-avatar>
                                     <div class="user-name">
                                         <div
-                                            @click="
-                                                redirectToPatientDashboard(
-                                                    patient.id
-                                                )
-                                            "
                                             class="name"
                                         >
                                             <span
@@ -162,38 +157,50 @@
                                                     patient.firstname ||
                                                     patient.lastname
                                                 "
+                                                @click="
+                                                    redirectToPatientDashboard(
+                                                        patient.id
+                                                    )
+                                                "
                                             >
                                                 {{ patient.firstname }}
                                                 {{ patient.lastname }}
                                             </span>
-                                            <span v-else>
+                                            <span v-else
+                                                @click="
+                                                    redirectToPatientDashboard(
+                                                        patient.id
+                                                    )
+                                                "
+                                            >
                                                 {{ patient.email }}
                                             </span>
                                         </div>
                                         <div
                                             v-if="patient.addRequestDoctor"
                                             class="mail"
-                                            @click="
-                                                redirectToPatientDashboard(
-                                                    patient.id
-                                                )
-                                            "
                                         >
-                                            {{ patient.email }}
+                                            <span
+                                                @click="
+                                                    redirectToPatientDashboard(
+                                                        patient.id
+                                                    )
+                                                "
+                                            >{{ patient.email }}</span>
                                         </div>
                                         <div
                                             class="prescriptions"
                                             :class="{multiples:'worksheets' in patient && patient.worksheets.length && patient.worksheets.length>1}"
                                         >
-                                            <h4
-                                                @click="
-                                                    redirectToPatientDashboard(
-                                                        patient.id,
-                                                        'my-worksheets'
-                                                    )
-                                                "
-                                            >
-                                                <span v-if="'worksheets' in patient && patient.worksheets.length">
+                                            <h4>
+                                                <span 
+                                                    @click="
+                                                        redirectToPatientDashboard(
+                                                            patient.id,
+                                                            'my-worksheets'
+                                                        )
+                                                    "
+                                                v-if="'worksheets' in patient && patient.worksheets.length">
                                                     <span>{{ patient.worksheets.length }}</span>
                                                     prescription<span
                                                         v-if="
@@ -203,105 +210,67 @@
                                                         >s
                                                     :</span>
                                                 </span>
-                                                <span v-else>aucune prescription</span>
+                                                <span 
+                                                    @click="
+                                                        redirectToPatientDashboard(
+                                                            patient.id,
+                                                            'my-worksheets'
+                                                        )
+                                                    "
+                                                v-else>aucune prescription</span>
                                             </h4>
-                                            <ul class="prescriptions-patient-list"
-                                                @click="
-                                                    redirectToPatientDashboard(
-                                                        patient.id,
-                                                        'my-worksheets'
-                                                    )
-                                                "
-                                            >
-                                                <li                                                 
-                                                    v-for="(
-                                                        worksheet, i
-                                                    ) in patient.worksheets"
-                                                    :key="i"
-                                                    class="worksheet-progress-line"
+                                            <div class="patient-prescriptions-list-container">
+                                                <ul class="patient-prescriptions-list"
+                                                    :class="{'not-empty':!('worksheets' in patient && patient.worksheets.length)}"
+                                                    @click="
+                                                        redirectToPatientDashboard(
+                                                            patient.id,
+                                                            'my-worksheets'
+                                                        )
+                                                    "
                                                 >
-                                                    <div 
-                                                        class="progressbar-base"
-                                                       :class="{'loading-gray': loadingsGetSessions.includes(worksheet.id)}"
+                                                    <li                                                 
+                                                        v-for="(
+                                                            worksheet, i
+                                                        ) in patient.worksheets"
+                                                        :key="i"
+                                                        class="worksheet-progress-line"
                                                     >
-                                                        <div class="worksheet-infos">
-                                                            <span>{{ worksheet.title }}</span>
+                                                        <div 
+                                                            class="progressbar-base"
+                                                        :class="{'loading-gray': loadingsGetSessions.includes(worksheet.id)}"
+                                                        >
+                                                            <div class="worksheet-infos">
+                                                                <span>{{ worksheet.title }}</span>
+                                                            </div>
+                                                            <div
+                                                                class="progressbar-thumb"
+                                                                :style="{
+                                                                    width: worksheet.worksheetTotalProgression > 3 ? `${worksheet.worksheetTotalProgression}%` : `${0}%`,
+                                                                }"
+                                                            ></div>
                                                         </div>
-                                                        <div
-                                                            class="progressbar-thumb"
-                                                            :style="{
-                                                                width: worksheet.worksheetTotalProgression > 3 ? `${worksheet.worksheetTotalProgression}%` : `${0}%`,
-                                                            }"
-                                                        ></div>
-                                                    </div>
-                                                    <!-- <div v-if="worksheet.commentaries && worksheet.commentaries.length" class="worksheet-commentaries">
-                                                        <i class="far fa-comment-alt"></i>
-                                                        <div class="count-commentaries">
-                                                            {{ worksheet.commentaries.length}}
-                                                        </div>
-                                                    </div> -->
-                                                </li>
-                                                <!-- <div
-                                                    class="btn-prescription-action"
-                                                    :class="{
-                                                        active: prescriProcess,
-                                                        'active-effect': prescriProcess&&!$parent.prescriProcessPatientSelected,
-                                                        selected:
-                                                            $parent.prescriProcessPatientSelected &&
-                                                            $parent
-                                                                .prescriProcessPatientSelected
-                                                                .id === patient.id,
-                                                    }"
+                                                        <!-- <div v-if="worksheet.commentaries && worksheet.commentaries.length" class="worksheet-commentaries">
+                                                            <i class="far fa-comment-alt"></i>
+                                                            <div class="count-commentaries">
+                                                                {{ worksheet.commentaries.length}}
+                                                            </div>
+                                                        </div> -->
+                                                    </li>
+                                                </ul>
+                                                <div
+                                                    class="patient-prescription-btn"
                                                 >
                                                     <vs-button
-                                                        :loading="
-                                                            btnLoadingPatientPrescriProcessRedirect ===
-                                                            patient.id
-                                                        "
                                                         @click="
                                                             prescriProcessPatientChoice(patient)
                                                         "
-                                                        class="w-100"
                                                     >
-                                                        <transition name="fade">
-                                                            <span
-                                                                v-if="
-                                                                    (!prescriProcess &&
-                                                                        !$parent.prescriProcessPatientSelected) ||
-                                                                    ($parent.prescriProcessPatientSelected &&
-                                                                        $parent
-                                                                            .prescriProcessPatientSelected
-                                                                            .id != patient.id)
-                                                                "
-                                                                >
-                                                            <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" width="48px" height="48px">    <path d="M14,2H6C4.9,2,4,2.9,4,4v16c0,1.1,0.9,2,2,2h12c1.1,0,2-0.9,2-2V8L14,2z M15,14h-2v2c0,0.552-0.448,1-1,1h0 c-0.552,0-1-0.448-1-1v-2H9c-0.552,0-1-0.448-1-1v0c0-0.552,0.448-1,1-1h2v-2c0-0.552,0.448-1,1-1h0c0.552,0,1,0.448,1,1v2h2 c0.552,0,1,0.448,1,1v0C16,13.552,15.552,14,15,14z"/></svg>
-                                                            Prescrire</span
-                                                            >
-                                                            <span
-                                                                v-if="
-                                                                    prescriProcess &&
-                                                                    !$parent.prescriProcessPatientSelected
-                                                                "
-                                                                >
-                                                                <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" width="48px" height="48px">    <path d="M14,2H6C4.9,2,4,2.9,4,4v16c0,1.1,0.9,2,2,2h12c1.1,0,2-0.9,2-2V8L14,2z M15,14h-2v2c0,0.552-0.448,1-1,1h0 c-0.552,0-1-0.448-1-1v-2H9c-0.552,0-1-0.448-1-1v0c0-0.552,0.448-1,1-1h2v-2c0-0.552,0.448-1,1-1h0c0.552,0,1,0.448,1,1v2h2 c0.552,0,1,0.448,1,1v0C16,13.552,15.552,14,15,14z"/></svg>
-                                                                Sélectionner</span
-                                                            >
-                                                            <span
-                                                                v-if="
-                                                                    $parent.prescriProcessPatientSelected &&
-                                                                    $parent
-                                                                        .prescriProcessPatientSelected
-                                                                        .id === patient.id
-                                                                "
-                                                                ><i
-                                                                    class="fas fa-check-circle"
-                                                                ></i
-                                                                >Sélectionné</span
-                                                            >
-                                                        </transition>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="96px" height="96px"><path d="M 12.5 4 C 10.019 4 8 6.019 8 8.5 L 8 39.5 C 8 41.981 10.019 44 12.5 44 L 25.640625 44 C 24.785625 43.111 24.055516 42.103 23.478516 41 L 12.5 41 C 11.673 41 11 40.327 11 39.5 L 11 8.5 C 11 7.673 11.673 7 12.5 7 L 24 7 L 24 15.5 C 24 17.981 26.019 20 28.5 20 L 37 20 L 37 22.169922 C 38.045 22.331922 39.053 22.606906 40 23.003906 L 40 18.5 C 40 18.0855 39.831922 17.710828 39.560547 17.439453 L 26.560547 4.4394531 C 26.289172 4.1680781 25.9145 4 25.5 4 L 12.5 4 z M 27 9.1210938 L 34.878906 17 L 28.5 17 C 27.673 17 27 16.327 27 15.5 L 27 9.1210938 z M 35 24 C 28.925 24 24 28.925 24 35 C 24 41.075 28.925 46 35 46 C 41.075 46 46 41.075 46 35 C 46 28.925 41.075 24 35 24 z M 35 27 C 35.552 27 36 27.448 36 28 L 36 34 L 42 34 C 42.552 34 43 34.448 43 35 C 43 35.552 42.552 36 42 36 L 36 36 L 36 42 C 36 42.552 35.552 43 35 43 C 34.448 43 34 42.552 34 42 L 34 36 L 28 36 C 27.448 36 27 35.552 27 35 C 27 34.448 27.448 34 28 34 L 34 34 L 34 28 C 34 27.448 34.448 27 35 27 z"></path></svg>
+                                                        Prescrire
                                                     </vs-button>
-                                                </div> -->
-                                            </ul>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <button
@@ -370,7 +339,7 @@
                         </p>          
                     </div>
                     <div v-if="loadingDoctorFirstsPatients">
-                        <div class="loading loading-block">
+                        <div class="loading loading-block" style="height: 11.3rem;">
                             <div class="patient-details">
                                 <div>
                                     <div
@@ -381,49 +350,51 @@
                                         </div>
                                     </div>
                                     <div class="user-name">
-                                        <div class="name loading  w-15">
+                                        <div class="name loading  w-25">
                                             <span> xxxxxx </span>
                                         </div>
-                                        <div class="mail loading  w-25">
-                                             xxxxxx 
+                                        <div class="mail loading  w-35">
+                                            xxxxxx 
                                         </div>
                                         <div class="prescriptions">
-                                            <h4 class="loading w-15">
+                                            <h4 class="loading w-45" style="max-height:1rem;">
                                                 <span
                                                     ><span>X</span>
                                                     prescription<!----></span
                                                 >
                                             </h4>
-                                            <ul
-                                                class="prescriptions-patient-list"
-                                            >
-                                                <li
-                                                    class="worksheet-progress-line"
+                                            <div class="patient-prescriptions-list-container" style="max-height:3rem;">
+                                                <ul
+                                                    class="patient-prescriptions-list"
                                                 >
-                                                    <div
-                                                        class="progressbar-base"
+                                                    <li
+                                                        class="worksheet-progress-line"
                                                     >
                                                         <div
-                                                            class="worksheet-infos loading  w-35"
+                                                            class="progressbar-base"
                                                         >
-                                                            <span>XXXXXXXXXXXXXXXX</span>
+                                                            <div
+                                                                class="worksheet-infos loading  w-35"
+                                                            >
+                                                                <span>XXXXXXXXXXXXXXXX</span>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </li>
-                                                <li
-                                                    class="worksheet-progress-line"
-                                                >
-                                                    <div
-                                                        class="progressbar-base"
+                                                    </li>
+                                                    <li
+                                                        class="worksheet-progress-line"
                                                     >
                                                         <div
-                                                            class="worksheet-infos loading  w-35"
+                                                            class="progressbar-base"
                                                         >
-                                                            <span>XXXXXXXXXXXXXXXX</span>
+                                                            <div
+                                                                class="worksheet-infos loading  w-35"
+                                                            >
+                                                                <span>XXXXXXXXXXXXXXXX</span>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </li>
-                                            </ul>
+                                                    </li>
+                                                </ul>
+                                            </div>
                                         </div>
                                     </div>
                                     <button class="remove-user loading">
@@ -431,7 +402,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="loading loading-block">
+                                                <div class="loading loading-block" style="height: 11.3rem;">
                             <div class="patient-details">
                                 <div>
                                     <div
@@ -442,49 +413,51 @@
                                         </div>
                                     </div>
                                     <div class="user-name">
-                                        <div class="name loading  w-15">
+                                        <div class="name loading  w-25">
                                             <span> xxxxxx </span>
                                         </div>
-                                        <div class="mail loading  w-25">
-                                             xxxxxx 
+                                        <div class="mail loading  w-35">
+                                            xxxxxx 
                                         </div>
                                         <div class="prescriptions">
-                                            <h4 class="loading w-15">
+                                            <h4 class="loading w-45" style="max-height:1rem;">
                                                 <span
                                                     ><span>X</span>
                                                     prescription<!----></span
                                                 >
                                             </h4>
-                                            <ul
-                                                class="prescriptions-patient-list"
-                                            >
-                                                <li
-                                                    class="worksheet-progress-line"
+                                            <div class="patient-prescriptions-list-container" style="max-height:3rem;">
+                                                <ul
+                                                    class="patient-prescriptions-list"
                                                 >
-                                                    <div
-                                                        class="progressbar-base"
+                                                    <li
+                                                        class="worksheet-progress-line"
                                                     >
                                                         <div
-                                                            class="worksheet-infos loading  w-35"
+                                                            class="progressbar-base"
                                                         >
-                                                            <span>XXXXXXXXXXXXXXXX</span>
+                                                            <div
+                                                                class="worksheet-infos loading  w-35"
+                                                            >
+                                                                <span>XXXXXXXXXXXXXXXX</span>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </li>
-                                                <li
-                                                    class="worksheet-progress-line"
-                                                >
-                                                    <div
-                                                        class="progressbar-base"
+                                                    </li>
+                                                    <li
+                                                        class="worksheet-progress-line"
                                                     >
                                                         <div
-                                                            class="worksheet-infos loading  w-35"
+                                                            class="progressbar-base"
                                                         >
-                                                            <span>XXXXXXXXXXXXXXXX</span>
+                                                            <div
+                                                                class="worksheet-infos loading  w-35"
+                                                            >
+                                                                <span>XXXXXXXXXXXXXXXX</span>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </li>
-                                            </ul>
+                                                    </li>
+                                                </ul>
+                                            </div>
                                         </div>
                                     </div>
                                     <button class="remove-user loading">
@@ -492,7 +465,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="loading loading-block">
+                        <div class="loading loading-block" style="height: 11.3rem;">
                             <div class="patient-details">
                                 <div>
                                     <div
@@ -503,49 +476,51 @@
                                         </div>
                                     </div>
                                     <div class="user-name">
-                                        <div class="name loading  w-15">
+                                        <div class="name loading  w-25">
                                             <span> xxxxxx </span>
                                         </div>
-                                        <div class="mail loading  w-25">
-                                             xxxxxx 
+                                        <div class="mail loading  w-35">
+                                            xxxxxx 
                                         </div>
                                         <div class="prescriptions">
-                                            <h4 class="loading w-15">
+                                            <h4 class="loading w-45" style="max-height:1rem;">
                                                 <span
                                                     ><span>X</span>
                                                     prescription<!----></span
                                                 >
                                             </h4>
-                                            <ul
-                                                class="prescriptions-patient-list"
-                                            >
-                                                <li
-                                                    class="worksheet-progress-line"
+                                            <div class="patient-prescriptions-list-container" style="max-height:3rem;">
+                                                <ul
+                                                    class="patient-prescriptions-list"
                                                 >
-                                                    <div
-                                                        class="progressbar-base"
+                                                    <li
+                                                        class="worksheet-progress-line"
                                                     >
                                                         <div
-                                                            class="worksheet-infos loading  w-35"
+                                                            class="progressbar-base"
                                                         >
-                                                            <span>XXXXXXXXXXXXXXXX</span>
+                                                            <div
+                                                                class="worksheet-infos loading  w-35"
+                                                            >
+                                                                <span>XXXXXXXXXXXXXXXX</span>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </li>
-                                                <li
-                                                    class="worksheet-progress-line"
-                                                >
-                                                    <div
-                                                        class="progressbar-base"
+                                                    </li>
+                                                    <li
+                                                        class="worksheet-progress-line"
                                                     >
                                                         <div
-                                                            class="worksheet-infos loading  w-35"
+                                                            class="progressbar-base"
                                                         >
-                                                            <span>XXXXXXXXXXXXXXXX</span>
+                                                            <div
+                                                                class="worksheet-infos loading  w-35"
+                                                            >
+                                                                <span>XXXXXXXXXXXXXXXX</span>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </li>
-                                            </ul>
+                                                    </li>
+                                                </ul>
+                                            </div>
                                         </div>
                                     </div>
                                     <button class="remove-user loading">
@@ -553,7 +528,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="loading loading-block">
+                        <div class="loading loading-block" style="height: 11.3rem;">
                             <div class="patient-details">
                                 <div>
                                     <div
@@ -564,49 +539,51 @@
                                         </div>
                                     </div>
                                     <div class="user-name">
-                                        <div class="name loading  w-15">
+                                        <div class="name loading  w-25">
                                             <span> xxxxxx </span>
                                         </div>
-                                        <div class="mail loading  w-25">
-                                             xxxxxx 
+                                        <div class="mail loading  w-35">
+                                            xxxxxx 
                                         </div>
                                         <div class="prescriptions">
-                                            <h4 class="loading w-15">
+                                            <h4 class="loading w-45" style="max-height:1rem;">
                                                 <span
                                                     ><span>X</span>
                                                     prescription<!----></span
                                                 >
                                             </h4>
-                                            <ul
-                                                class="prescriptions-patient-list"
-                                            >
-                                                <li
-                                                    class="worksheet-progress-line"
+                                            <div class="patient-prescriptions-list-container" style="max-height:3rem;">
+                                                <ul
+                                                    class="patient-prescriptions-list"
                                                 >
-                                                    <div
-                                                        class="progressbar-base"
+                                                    <li
+                                                        class="worksheet-progress-line"
                                                     >
                                                         <div
-                                                            class="worksheet-infos loading  w-35"
+                                                            class="progressbar-base"
                                                         >
-                                                            <span>XXXXXXXXXXXXXXXX</span>
+                                                            <div
+                                                                class="worksheet-infos loading  w-35"
+                                                            >
+                                                                <span>XXXXXXXXXXXXXXXX</span>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </li>
-                                                <li
-                                                    class="worksheet-progress-line"
-                                                >
-                                                    <div
-                                                        class="progressbar-base"
+                                                    </li>
+                                                    <li
+                                                        class="worksheet-progress-line"
                                                     >
                                                         <div
-                                                            class="worksheet-infos loading  w-35"
+                                                            class="progressbar-base"
                                                         >
-                                                            <span>XXXXXXXXXXXXXXXX</span>
+                                                            <div
+                                                                class="worksheet-infos loading  w-35"
+                                                            >
+                                                                <span>XXXXXXXXXXXXXXXX</span>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </li>
-                                            </ul>
+                                                    </li>
+                                                </ul>
+                                            </div>
                                         </div>
                                     </div>
                                     <button class="remove-user loading">
@@ -614,7 +591,134 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                        <div class="loading loading-block" style="height: 11.3rem;">
+                            <div class="patient-details">
+                                <div>
+                                    <div
+                                        class="vs-avatar-content avatar vs-avatar-content--circle"
+                                        style="width: 60px; height: 60px"
+                                    >
+                                        <div class="vs-avatar loading">
+                                        </div>
+                                    </div>
+                                    <div class="user-name">
+                                        <div class="name loading  w-25">
+                                            <span> xxxxxx </span>
+                                        </div>
+                                        <div class="mail loading  w-35">
+                                            xxxxxx 
+                                        </div>
+                                        <div class="prescriptions">
+                                            <h4 class="loading w-45" style="max-height:1rem;">
+                                                <span
+                                                    ><span>X</span>
+                                                    prescription<!----></span
+                                                >
+                                            </h4>
+                                            <div class="patient-prescriptions-list-container" style="max-height:3rem;">
+                                                <ul
+                                                    class="patient-prescriptions-list"
+                                                >
+                                                    <li
+                                                        class="worksheet-progress-line"
+                                                    >
+                                                        <div
+                                                            class="progressbar-base"
+                                                        >
+                                                            <div
+                                                                class="worksheet-infos loading  w-35"
+                                                            >
+                                                                <span>XXXXXXXXXXXXXXXX</span>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                    <li
+                                                        class="worksheet-progress-line"
+                                                    >
+                                                        <div
+                                                            class="progressbar-base"
+                                                        >
+                                                            <div
+                                                                class="worksheet-infos loading  w-35"
+                                                            >
+                                                                <span>XXXXXXXXXXXXXXXX</span>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button class="remove-user loading">
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="loading loading-block" style="height: 11.3rem;">
+                            <div class="patient-details">
+                                <div>
+                                    <div
+                                        class="vs-avatar-content avatar vs-avatar-content--circle"
+                                        style="width: 60px; height: 60px"
+                                    >
+                                        <div class="vs-avatar loading">
+                                        </div>
+                                    </div>
+                                    <div class="user-name">
+                                        <div class="name loading  w-25">
+                                            <span> xxxxxx </span>
+                                        </div>
+                                        <div class="mail loading  w-35">
+                                            xxxxxx 
+                                        </div>
+                                        <div class="prescriptions">
+                                            <h4 class="loading w-45" style="max-height:1rem;">
+                                                <span
+                                                    ><span>X</span>
+                                                    prescription<!----></span
+                                                >
+                                            </h4>
+                                            <div class="patient-prescriptions-list-container" style="max-height:3rem;">
+                                                <ul
+                                                    class="patient-prescriptions-list"
+                                                >
+                                                    <li
+                                                        class="worksheet-progress-line"
+                                                    >
+                                                        <div
+                                                            class="progressbar-base"
+                                                        >
+                                                            <div
+                                                                class="worksheet-infos loading  w-35"
+                                                            >
+                                                                <span>XXXXXXXXXXXXXXXX</span>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                    <li
+                                                        class="worksheet-progress-line"
+                                                    >
+                                                        <div
+                                                            class="progressbar-base"
+                                                        >
+                                                            <div
+                                                                class="worksheet-infos loading  w-35"
+                                                            >
+                                                                <span>XXXXXXXXXXXXXXXX</span>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button class="remove-user loading">
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>  
                 </div>
                 <div
                     class="pagination"
@@ -1010,16 +1114,6 @@ export default {
             return f.getSearch(data, filter);
         },
     },
-    beforeDestroy() {
-        this.modalConfirmRemoveWorksheet = false;
-        this.removeWorksheetDetails = {};
-        this.removePatientDetails = {};
-        this.btnLoadingValidRemoveWorksheet = false;
-        this.modalAddPatient = false;
-        this.modalConfirmRemovePatient = false;
-        this.btnLoadingValidRemovePatient = false;
-        this.loadingsGetSessions = [];
-    },
 };
 </script>
 
@@ -1116,6 +1210,12 @@ body .kiv-block .prescri-process-dialog::after {
             align-items: center;
             padding-top: 1.9rem;
 
+            @media (max-width: 500px) {
+                padding-top: 1.1rem !important;
+                padding: 1.3rem !important;
+                padding-bottom: 1.2rem !important;            
+            }
+
             // @media (min-width: 500px) {
             //     align-items: flex-start;
             //     padding-top: 1.5rem;
@@ -1149,9 +1249,15 @@ body .kiv-block .prescri-process-dialog::after {
                         
                         .avatar {
                             margin-right: 1.5rem;
-                            min-width: 60px;
+                            flex: none;
                             position: relative;
                             cursor: pointer;
+
+                            @media (max-width: 500px) {
+                                width: 45px !important;
+                                height: 45px !important;
+                                margin-right: 1rem;
+                            }
 
                             .age {
                                 position: absolute;
@@ -1229,6 +1335,10 @@ body .kiv-block .prescri-process-dialog::after {
                                 text-overflow: ellipsis;
                                 white-space: nowrap;
                                 cursor: pointer;
+
+                                @media (max-width: 500px) {
+                                    font-size: 1.5rem;
+                                }   
                             }
                             .mail {
                                 margin-top: 0.3rem;
@@ -1327,36 +1437,40 @@ body .kiv-block .prescri-process-dialog::after {
 
                                 &.multiples
                                 {
-                                    &::after
+                                    .patient-prescription-btn
                                     {
-                                        content: '';
-                                        display: block;
-                                        background: linear-gradient(
-                                            90deg,
-                                            rgba(250, 250, 252, 0) 0%,
-                                            white 65%,
-                                            white 100%
-                                        );
-                                        width: 3.7rem;
-                                        height: 100%;
-                                        position: absolute;
-                                        top: 0;
-                                        right: 0;
-                                        z-index: 5;
+                                        position: relative;
 
-                                        @media (min-width: 800px) {
+                                        &::after
+                                        {
+                                            content: '';
+                                            display: block;
                                             background: linear-gradient(
                                                 90deg,
                                                 rgba(250, 250, 252, 0) 0%,
-                                                #faf8f4 65%,
-                                                #faf8f4 100%
+                                                white 100%
                                             );
-                                        }
-                                    }
+                                            width: 2.4rem;
+                                            height: 100%;
+                                            position: absolute;
+                                            top: 0;
+                                            left: -2.7rem;
+                                            z-index: 3;
 
-                                    .worksheet-progress-line:last-child
-                                    {
-                                        margin-right: 2rem !important;
+                                            @media (min-width: 800px) {
+                                                background: linear-gradient(
+                                                    90deg,
+                                                    rgba(250, 250, 252, 0) 0%,
+                                                    #faf8f4 100%
+                                                );
+                                            }
+                                        }
+
+                                        .worksheet-progress-line:last-child
+                                        {
+                                            margin-right: 1.3rem !important;
+                                        }
+
                                     }
                                 }
 
@@ -1365,6 +1479,10 @@ body .kiv-block .prescri-process-dialog::after {
                                     margin-top: 1rem;
                                     font-weight: 700;
                                     cursor: pointer;
+
+                                    @media (max-width: 500px) {
+                                        margin-top: 0.4rem;
+                                    }
 
                                     .count-patient-prescri {
                                         position: relative;
@@ -1387,159 +1505,107 @@ body .kiv-block .prescri-process-dialog::after {
                                         padding-left: 0.15rem;
                                     }
                                 }
-                                .prescriptions-patient-list {
-                                    display: flex;
-                                    overflow-x: auto;
-                                    padding: 0.35rem 0;
-                                    position: relative;
-                                    cursor: pointer;
 
-                                    // @media (max-width: 1000px) {
+                                &:not(.multiples)
+                                {
+                                    .patient-prescriptions-list-container
+                                    {
+                                        margin-bottom: 0.4rem;
+                                        margin-top: 0.13rem;
+                                    }
+                                }
+
+                                .patient-prescriptions-list-container 
+                                {
+                                    display: flex;
+
+                                    .patient-prescriptions-list {
+                                        display: flex;
+                                        overflow-x: auto;
+                                        padding: 0.35rem 0;
+                                        position: relative;
+                                        cursor: pointer;
+
                                         -ms-overflow-style: none; /* Pour Internet Explorer et Edge */
                                         scrollbar-width: none; /* Pour Firefox */
-                                    // }
-                                    @media (min-width: 800px) {
-                                        min-height: 2.749rem;
-                                        width: 100%;
-                                        // max-width: calc(98% - 5.3rem);
-                                    }
-                                    // @media (min-width: 820px) {
-                                    //     max-width: calc(99% - 5.3rem);
-                                    // }
-                                    // @media (min-width: 870px) {
-                                    //     max-width: calc(100% - 5.3rem);
-                                    // }
-
-                                    // @media (min-width: 920px) {
-                                    //     max-width: calc(101% - 5.3rem);
-                                    // }
-                                    // @media (min-width: 990px) {
-                                    //     max-width: calc(102% - 5.3rem);
-                                    // }
-                                    // @media (min-width: 1050px) {
-                                    //     max-width: calc(103% - 5.3rem);
-                                    // }
-                                    // @media (min-width: 1100px) {
-                                    //     max-width: calc(95.2% - 5.3rem);
-                                    // }
-                                    // @media (min-width: 1120px) {
-                                    //     max-width: calc(96.2% - 5.3rem);
-                                    // }
-                                    // @media (min-width: 1175px) {
-                                    //     max-width: calc(97.2% - 5.3rem);
-                                    // }
-                                    // @media (min-width: 1235px) {
-                                    //     max-width: calc(98.2% - 5.3rem);
-                                    // }
-                                    // @media (min-width: 1285px) {
-                                    //     max-width: calc(99.2% - 5.3rem);
-                                    // }
-                                    // @media (min-width: 1370px) {
-                                    //     max-width: calc(100.2% - 5.3rem);
-                                    // }
-                                    // @media (min-width: 1400px) {
-                                    //     max-width: calc(101.2% - 5.3rem);
-                                    // }
-                                    // @media (min-width: 1440px) {
-                                    //     max-width: calc(102.2% - 5.3rem);
-                                    // }
-                                    // @media (min-width: 1580px) {
-                                    //     max-width: calc(103% - 5.3rem);
-                                    // }
-                                    // @media (min-width: 1620px) {
-                                    //     max-width: calc(104% - 5.3rem);
-                                    // }
-
-                                    // @media (min-width: 1000px) {
-                                    //     padding-bottom: 0.6rem;
-                                    // }
-
-                                    &::-webkit-scrollbar {
-                                        // width: 4px;
-                                        // height: 4px;
-                                        // display: block;
-                                        // background: #f6f3eb;
-                                        // border-radius: 4px;
-
-                                        // @media (max-width: 1000px) {
+                                        &::-webkit-scrollbar {
                                             display: none;
-                                        // }
-                                    }
+                                        }
 
-                                    // &::-webkit-scrollbar-thumb {
-                                    //     background: #ece5d5;
-                                    //     border: 1px solid transparent;
-                                    //     border-radius: 4px;
-                                    // }
+                                        .prescription {
+                                            background-color: transparent;
+                                            font-size: 0.8rem;
+                                            cursor: initial;
+                                            height: 100%;
+                                            width: 100%;
 
-                                    .prescription {
-                                        background-color: transparent;
-                                        font-size: 0.8rem;
-                                        cursor: initial;
-                                        height: 100%;
-                                        width: 100%;
+                                            &.vs-button--size-mini.btn-chart.part-of-body {
+                                                .vs-button__content {
+                                                    white-space: nowrap;
+                                                    padding: 0.4rem 1.3rem;
 
-                                        &.vs-button--size-mini.btn-chart.part-of-body {
-                                            .vs-button__content {
-                                                white-space: nowrap;
-                                                padding: 0.4rem 1.3rem;
+                                                    img {
+                                                        display: none;
+                                                        position: relative;
+                                                        margin-right: 0.5rem;
 
-                                                img {
-                                                    display: none;
-                                                    position: relative;
-                                                    margin-right: 0.5rem;
+                                                        &.icon-pied {
+                                                            top: -0.089rem;
+                                                            height: 0.9rem;
+                                                        }
 
-                                                    &.icon-pied {
-                                                        top: -0.089rem;
-                                                        height: 0.9rem;
-                                                    }
+                                                        &.icon-jambe {
+                                                            top: -0.08rem;
+                                                            height: 1.35rem;
+                                                        }
 
-                                                    &.icon-jambe {
-                                                        top: -0.08rem;
-                                                        height: 1.35rem;
-                                                    }
+                                                        &.icon-bras {
+                                                            top: -0.1rem;
+                                                            height: 1.1rem;
+                                                        }
 
-                                                    &.icon-bras {
-                                                        top: -0.1rem;
-                                                        height: 1.1rem;
-                                                    }
+                                                        &.icon-main {
+                                                            top: -0.1rem;
+                                                            height: 1.1rem;
+                                                        }
 
-                                                    &.icon-main {
-                                                        top: -0.1rem;
-                                                        height: 1.1rem;
-                                                    }
+                                                        &.icon-epaule {
+                                                            top: -0.1rem;
+                                                            height: 1.1rem;
+                                                        }
 
-                                                    &.icon-epaule {
-                                                        top: -0.1rem;
-                                                        height: 1.1rem;
-                                                    }
+                                                        &.icon-dos {
+                                                            top: -0.1rem;
+                                                            height: 1.1rem;
+                                                        }
 
-                                                    &.icon-dos {
-                                                        top: -0.1rem;
-                                                        height: 1.1rem;
-                                                    }
+                                                        &.icon-cervicales {
+                                                            top: -0.1rem;
+                                                            height: 1.1rem;
+                                                        }
 
-                                                    &.icon-cervicales {
-                                                        top: -0.1rem;
-                                                        height: 1.1rem;
-                                                    }
+                                                        &.icon-lombaires {
+                                                            top: -0.1rem;
+                                                            height: 1.2rem;
+                                                        }
 
-                                                    &.icon-lombaires {
-                                                        top: -0.1rem;
-                                                        height: 1.2rem;
-                                                    }
+                                                        &.icon-thoracique {
+                                                            top: -0.1rem;
+                                                            height: 1.1rem;
+                                                        }
 
-                                                    &.icon-thoracique {
-                                                        top: -0.1rem;
-                                                        height: 1.1rem;
-                                                    }
-
-                                                    &.icon-global {
-                                                        top: -0.1rem;
-                                                        height: 1.1rem;
+                                                        &.icon-global {
+                                                            top: -0.1rem;
+                                                            height: 1.1rem;
+                                                        }
                                                     }
                                                 }
                                             }
+                                        }
+
+                                        &:not(.not-empty)
+                                        {
+                                            margin-right: 0.3rem;
                                         }
                                     }
                                 }
@@ -1663,161 +1729,51 @@ body .kiv-block .prescri-process-dialog::after {
                         }
                     }
 
-                    .btn-prescription-action {
-                        width: 100%;
-                        margin-right: 0.8rem;
-                        transform: none;
-
-                        .vs-button--default:hover,  .vs-button--default:hover
-                        {
-                            transform: none;
-                        }
-
-                        @media (max-width: 799px) {
-                            display: none;
-                        }
-
-                        @media (min-width: 800px) {
-                            position: absolute;
-                            top: -0.1rem;
-                            right: -9.875rem;
-                            width: initial;
-                            z-index: 55;
-                            padding: 0.3rem 1.5rem;
-                            padding-left: 0;
-                            background-color: #faf8f4;
-                            
-                            &.active-effect {
-                                right: -11.575rem;
-                            }
-
-                            // &.active-effect {
-                            //     .vs-button {
-                            //         animation: mymove 2s infinite;
-                            //     }
-                            // }
-
-                            &.selected {
-                                right: -11.275rem;
-
-                                i {
-                                    font-size: 1.1rem!important;
-                                    margin-right: 0.4rem;
-                                    position: relative;
-                                    top: -0.1rem;
-                                }
-
-                                .vs-button {
-                                    background: #fff !important;
-                                    color: $orange!important;
-                                }
-                            }
-
-                            .vs-button {
-                                background: $orange!important;
-                                color: #fff!important;
-                                margin-bottom: 0!important;
-                                .vs-button__content {
-                                    padding: 0.3rem 0.8rem !important;
-                                    position: relative;
-                                    top: 0.08rem;
-                                }
-                                span {
-                                    display: flex;
-                                    align-items: center;
-                                }
-                                svg {
-                                    width: 1.3rem;
-                                    height: 1.3rem;
-                                    fill: #fff;
-                                    margin-right: 0.2rem;
-                                    position: relative;
-                                    top: -0.1rem;
-                                }
-                                box-shadow:  -0.6rem 0.2rem 0.8rem 0rem rgba(231, 223, 205, 0.8), 0rem 0.2rem 0.8rem 0rem rgba(255, 104, 56, 0.15)!important;
-                                &:hover {
-                                    box-shadow: 0rem 0.4rem 1.4rem 0rem rgba(255, 104, 56, 0.43)!important;
-                                }
-                            }
-
-                            &:not(:first-child)
-                            {
-                                right: -10.075rem;
-
-                                &.active-effect {
-                                    right: -11.775rem;
-                                }
-
-                                &.selected {
-                                    right: -11.475rem;
-                                }
-
-                                .vs-button {
-                                    // box-shadow:  -0.6rem 0.2rem 0.8rem 0rem #e7dfcd, 0rem 0.2rem 0.8rem 0rem rgba(255, 104, 56, 0.15);
-                                }
-                                // &::after
-                                //     {
-                                //         content: '';
-                                //         display: block;
-                                //         background: linear-gradient(82deg, rgba(250,250,252,0) 0%, rgba(250,248,244,1) 74%, rgba(250,248,244,1) 100%);
-                                //         width: 0.9rem;
-                                //         height: 100%;
-                                //         position: absolute;
-                                //         top: 0;
-                                //         left: -0.9rem;
-                                //         z-index: 5;
-                                //     }
-                            }
-                        }
-
-                        // @media (min-width: 500px) {
-                        //     width: initial;
-                        // }
-
-                        // @media (min-width: 1100px) {
-                        //     margin-right: 0;
-                        // }
-
-                        // @media (min-width: 1400px) {
-                        //     margin-right: 0.8rem;
-                        // }
-
+                    .patient-prescription-btn {                        
                         .vs-button {
-                            background: $white;
-                            font-size: 1.4rem;
-                            margin-top: 0.8rem;
-                            margin-bottom: 1.8rem;
-                            background: $white;
-                            font-size: 1.4rem;
-                            margin-bottom: 2.3rem;
-                            margin-top: 1.2rem;
-                            color: $orange;
-                            border-radius: 0.5rem;
-                            box-shadow: 0rem 0.2rem 0.8rem 0rem
-                                rgba(255, 104, 56, 0.15);
+                            white-space: nowrap;
+                            border-radius: 0.4rem;
+                            font-size: 1.2rem;
+                            overflow: visible;
+                            box-shadow: 0.15rem 0.15rem 0.7rem rgba(255, 104, 56, 0.6);
+                            letter-spacing: 0;
+                            z-index: 2;
+                            margin-top: 0.3rem;
 
-                            &:hover {
-                                box-shadow: 0rem 0.4rem 1.4rem 0rem
-                                    rgba(255, 104, 56, 0.43);
+                            @media (min-width: 500px) {
+                                margin-right: 1.3rem;
                             }
 
-                            // @media (min-width: 800px) {
-                            //     margin-top: 0;
-                            //     margin-bottom: 0;
-                            // }
-
-                            // @media (min-width: 950px) {
-                            //     flex-direction: row;
-                            //     margin-bottom: 1.1rem;
-                            // }
-
-                            i {
-                                font-size: 1.5rem;
+                            &:not(.loading)
+                            {
+                                background-color: #fff;
+                                color: #ff6838;
                             }
 
                             .vs-button__content {
-                                padding: 0.7rem 1.5rem;
-                                padding-top: 0.8rem;
+                                padding: 0rem 0.9rem;
+                                padding-left: 0.7rem;
+                                padding-top: 0.2rem;
+                                display: flex;
+                                align-items: center;
+                            }
+
+                            svg
+                            {
+                                width: 1.45rem;
+                                height: 1.45rem;
+                                fill: #ff6838;
+                                margin-right: 0.2rem;
+                                position: relative;
+                                top: -0.15rem;                            
+                            }
+
+                            &:disabled
+                            {
+                                svg
+                                {
+                                    fill: #fff;
+                                }
                             }
                         }
                     }
@@ -1838,6 +1794,11 @@ body .kiv-block .prescri-process-dialog::after {
                     // color: #d6cfbe;
                     cursor: pointer;
                     transition: all 0.2s;
+
+                    @media (max-width: 500px) {
+                        top: -0.5rem;
+                        right: -0.5rem;                    
+                    }   
 
                     &:not(.loading)
                     {
