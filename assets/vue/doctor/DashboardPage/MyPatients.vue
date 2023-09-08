@@ -1498,20 +1498,22 @@ body .kiv-block .prescri-process-dialog::after {
                         background: linear-gradient(
                             90deg,
                             rgba(250, 250, 252, 0) 0%,
-                            white 100%
+                            white 70%,
+                            white 100%,
                         );
-                        width: 2.4rem;
+                        width: 1.9rem;
                         height: 100%;
                         position: absolute;
                         top: 0;
-                        left: -2.7rem;
+                        left: -2.2rem;
                         z-index: 3;
 
                         @media (min-width: 800px) {
                             background: linear-gradient(
                                 90deg,
                                 rgba(250, 250, 252, 0) 0%,
-                                #faf8f4 100%
+                                #faf8f4 70%,
+                                #faf8f4 100%,
                             );
                         }
                     }
