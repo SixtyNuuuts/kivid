@@ -640,10 +640,10 @@ export default {
             background: linear-gradient(
                 90deg,
                 rgba(250, 248, 244, 0)00 0%,
-                #fff 55%,
+                #fff 75%,
                 #fff 100%,
             );
-            width: 1.5rem;
+            width: 2.6rem;
             height: 2rem;
             position: absolute;
             top: 0.45rem;
@@ -654,7 +654,7 @@ export default {
                 background: linear-gradient(
                     90deg,
                     rgba(250, 248, 244, 0)00 0%,
-                    #faf8f4 55%,
+                    #faf8f4 75%,
                     #faf8f4 100%,
                 ); 
             }
