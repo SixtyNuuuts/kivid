@@ -341,12 +341,12 @@ class WorksheetController extends AbstractController
                             $this->generateExercise($exercise, $worksheet);
                         }
 
+                        $this->em->persist($worksheet);
+                        $worksheets_for_json_response[] = $worksheet;
+
                         if ($patient){
                             $this->notificationService->createPrescriptionNotification($worksheet, $patient);
                         }
-
-                        $worksheets_for_json_response[] = $worksheet;
-                        $this->em->persist($worksheet);
                     }
                 }
                 elseif(!empty($data->worksheets))
@@ -366,10 +366,6 @@ class WorksheetController extends AbstractController
         
                         foreach ($worksheetData->exercises as $exerciseData) {
                             $this->generateExercise($exerciseData, $worksheet);
-                        }
-
-                        if ($patient){
-                            $this->notificationService->createPrescriptionNotification($worksheet, $patient);
                         }
     
                         // // Si en mode prescription : Création du modèle de fiche (identique sans le patient)
@@ -398,8 +394,12 @@ class WorksheetController extends AbstractController
                         //     $this->em->persist($worksheetCopy);
                         // }
 
-                        $worksheets_for_json_response[] = $worksheet;
                         $this->em->persist($worksheet);
+                        $worksheets_for_json_response[] = $worksheet;
+
+                        if ($patient){
+                            $this->notificationService->createPrescriptionNotification($worksheet, $patient);
+                        }
                     }
 
                 $this->em->flush();
