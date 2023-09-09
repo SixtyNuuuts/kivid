@@ -1162,7 +1162,6 @@ export default {
     padding: 0rem 0;
 
     .tab-worksheet-header {
-        padding: 1rem;
         font-size: 1.45rem;
         background-color: #e7dfcd;
         cursor: pointer;
@@ -1173,10 +1172,6 @@ export default {
         min-height: 3.5rem;
         border-top: 1px solid #ffffff;
         border-bottom: 0px solid transparent;
-
-        @media (min-width: 500px) {
-            padding: 1.4rem 3.4rem;
-        }
 
         &.active {
             background-color: #fff;
@@ -1221,6 +1216,12 @@ export default {
             justify-content: space-between;
             align-items: center;
             flex-grow: 1;
+            padding: 1rem;
+            padding-right: 0.5rem;
+            @media (min-width: 500px) {
+                padding: 1.4rem 3.4rem;
+                padding-right: 0.5rem;
+            }
 
             > span {
                 display: inline-flex;
@@ -1255,6 +1256,10 @@ export default {
             width: 1.9rem;
             height: 1.9rem;
             margin-left: 1.1rem;
+            margin-right: 1rem;
+            @media (min-width: 500px) {
+                margin-right: 2rem;
+            }
 
             > svg {
                 fill: #fff;

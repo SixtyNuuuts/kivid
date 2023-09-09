@@ -175,7 +175,7 @@
                                         ) in exercise.commentaries"
                                         :key="i"
                                     >
-                                        <div v-if="commentary.id != exercise.commentary.id" class="commentary-history">
+                                        <div v-if="commentary && exercise.commentary && commentary.id != exercise.commentary.id" class="commentary-history">
                                             <h5>
                                                 <span class="commentary-user">
                                                     <vs-avatar
@@ -239,6 +239,7 @@
                                         <div
                                             class="commentary-edit-container"
                                             v-if="
+                                                commentary && exercise.commentary &&
                                                 commentary.id == exercise.commentary.id &&
                                                 exercise.commentary &&
                                                 exercise.commentary.id &&
