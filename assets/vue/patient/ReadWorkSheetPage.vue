@@ -33,7 +33,10 @@
                             alt="Icone de confettis"
                         />
                     </i>
-                    <p>
+                    <p v-if="doctorView">
+                        Super ! Le patient a terminé tous les exercices de la fiche.
+                    </p>
+                    <p v-else>
                         Félicitations, vous avez fait tous les exercices de la
                         fiche.
                         <span v-if="currentWorksheetSession"
@@ -44,7 +47,10 @@
                 </div>
                 <div v-if="!loading && !allExercisesIsCompleted">
                     <i class="kiv-info icon-17"></i>
-                    <p>
+                    <p v-if="doctorView">
+                       N'hésitez pas à laisser un commentaire pour guider le patient dans ses exercices ou répondre à ses questions.
+                    </p>
+                    <p v-else>
                         À la fin de vos exercices, vous aurez la possiblité
                         d’écrire un bref commentaire.
                     </p>
@@ -85,6 +91,7 @@
             <section id="exercises-playlist">
                 <ExercisesPlaylist
                     :patient="patient"
+                    :doctor="doctor"
                     :loading="loading"
                     :doctorView="doctorView"
                     :worksheet="getWorksheet"
@@ -165,6 +172,8 @@ export default {
             let commentary = {
                 content: "",
                 id: null,
+                doctor:this.doctorView?this.doctor:null,
+                patient:this.doctorView?null:this.patient,
             };
 
             if (
@@ -176,19 +185,48 @@ export default {
                         this.getCurrentWorksheetSession.id
                 )
             ) {
-                commentary = exerciseCommentaries.find(
-                    (c) =>
-                        c.worksheetSession.id ===
-                        this.getCurrentWorksheetSession.id
-                );
+                if(this.doctorView)
+                {
+                    const doctorCommentary = exerciseCommentaries.filter(
+                        (c) => c.doctor && c.doctor.id == this.doctor.id && c.worksheetSession.id == this.getCurrentWorksheetSession.id
+                    ).pop();
+
+                    if(doctorCommentary)
+                        commentary = doctorCommentary;
+                }
+                else
+                {
+                    const patientCommentary = exerciseCommentaries.filter(
+                        (c) => c.patient && c.patient.id == this.patient.id && c.worksheetSession.id == this.getCurrentWorksheetSession.id
+                    ).pop();
+
+                    if(patientCommentary)
+                        commentary = patientCommentary;
+                }
             }
 
             if (
                 exerciseCommentaries.length &&
                 !this.getCurrentWorksheetSession
             ) {
-                commentary =
-                    exerciseCommentaries[exerciseCommentaries.length - 1];
+                if(this.doctorView)
+                {
+                    const doctorCommentary = exerciseCommentaries.filter(
+                        (c) => c.doctor && c.doctor.id == this.doctor.id
+                    ).pop();
+
+                    if(doctorCommentary)
+                        commentary = doctorCommentary;
+                }
+                else
+                {
+                    const patientCommentary = exerciseCommentaries.filter(
+                        (c) => c.patient && c.patient.id == this.patient.id
+                    ).pop();
+
+                    if(patientCommentary)
+                        commentary = patientCommentary;
+                }
             }
 
             return commentary;
@@ -291,12 +329,146 @@ export default {
                             )
                             .then((response) => {
                                 this.exercises = response.data;
+                                this.loading = false;
+
+//                                    this.exercises[0].commentaries = [...this.exercises[0].commentaries, ...[
+//                                         {
+//                                             content: "Combien de temps il faut faire l'exercice ?",
+//                                             createdAt: "2023-05-08T14:42:36+00:00",
+//                                             doctor:null,
+//                                             id: 201,
+//                                             patient: {
+//                                                 avatarUrl: null,
+//                                                 firstname:"Julien ",
+//                                                 id: 754,
+//                                                 lastname: "Ferhat",
+//                                             },
+//                                             worksheetSession: {
+//                                                 execOrder: 1,
+//                                                 id: 31121,
+//                                             },
+//                                         },
+//                                         {
+//                                             content: "Combien de temps il faut faire l'exercice ?",
+//                                             createdAt: "2023-05-08T14:42:36+00:00",
+//                                             doctor:null,
+//                                             id: 202,
+//                                             patient: {
+//                                                 avatarUrl: null,
+//                                                 firstname:"Julien ",
+//                                                 id: 754,
+//                                                 lastname: "Ferhat",
+//                                             },
+//                                             worksheetSession: {
+//                                                 execOrder: 1,
+//                                                 id: 31121,
+//                                             },
+//                                         }
+// ,
+//                                         {
+//                                             content: "Combien de temps il faut faire l'exercice ?",
+//                                             createdAt: "2023-05-08T14:42:36+00:00",
+//                                             doctor:null,
+//                                             id: 203,
+//                                             patient: {
+//                                                 avatarUrl: null,
+//                                                 firstname:"Julien ",
+//                                                 id: 754,
+//                                                 lastname: "Ferhat",
+//                                             },
+//                                             worksheetSession: {
+//                                                 execOrder: 1,
+//                                                 id: 31121,
+//                                             },
+//                                         },
+//                                         {
+//                                             content: "Combien de temps il faut faire l'exercice ?",
+//                                             createdAt: "2023-05-08T14:42:36+00:00",
+//                                             doctor:null,
+//                                             id: 204,
+//                                             patient: {
+//                                                 avatarUrl: null,
+//                                                 firstname:"Julien ",
+//                                                 id: 754,
+//                                                 lastname: "Ferhat",
+//                                             },
+//                                             worksheetSession: {
+//                                                 execOrder: 1,
+//                                                 id: 31121,
+//                                             },
+//                                         },
+//                                         {
+//                                             content: "Combien de temps il faut faire l'exercice ?",
+//                                             createdAt: "2023-05-08T14:42:36+00:00",
+//                                             doctor:null,
+//                                             id: 205,
+//                                             patient: {
+//                                                 avatarUrl: null,
+//                                                 firstname:"Julien ",
+//                                                 id: 754,
+//                                                 lastname: "Ferhat",
+//                                             },
+//                                             worksheetSession: {
+//                                                 execOrder: 1,
+//                                                 id: 31121,
+//                                             },
+//                                         },
+//                                         {
+//                                             content: "Combien de temps il faut faire l'exercice ?",
+//                                             createdAt: "2023-05-08T14:42:36+00:00",
+//                                             doctor:null,
+//                                             id: 206,
+//                                             patient: {
+//                                                 avatarUrl: null,
+//                                                 firstname:"Julien ",
+//                                                 id: 754,
+//                                                 lastname: "Ferhat",
+//                                             },
+//                                             worksheetSession: {
+//                                                 execOrder: 1,
+//                                                 id: 31121,
+//                                             },
+//                                         },
+//                                         {
+//                                             content: "Combien de temps il faut faire l'exercice ?",
+//                                             createdAt: "2023-05-08T14:42:36+00:00",
+//     doctor:{
+//                                                 avatarUrl: null,
+//                                                 firstname:"Yann",
+//                                                 id: 20,
+//                                                 lastname: "Chapotton",
+//                                             },
+//                                             id: 207,
+//                                             patient: null,                                            worksheetSession: {
+//                                                 execOrder: 1,
+//                                                 id: 31121,
+//                                             },
+//                                         },
+//                                         {
+//                                             content: "s",
+//                                             createdAt: "2023-05-08T14:42:36+00:00",
+//                                             doctor:{
+//                                                 avatarUrl: null,
+//                                                 firstname:"Yann",
+//                                                 id: 20,
+//                                                 lastname: "Chapotton",
+//                                             },
+//                                             id: 208,
+//                                             patient: null,
+//                                             worksheetSession: {
+//                                                 execOrder: 1,
+//                                                 id: 31121,
+//                                             },
+//                                         }
+//                                     ]
+//                                    ] 
+
 
                                 this.exercises = f.sortByPosition(
                                     this.exercises.map((exercise) => {
                                         return {
                                             ...exercise,
-                                            commentaries: f.sortByCreatedAtDesc(
+                                            commentaries: f.sortByCreatedAtAsc(
                                                 exercise.commentaries
                                             ),
                                             commentary:
@@ -462,16 +634,19 @@ export default {
         {
             max-width: 87.6%;
             display: -webkit-box;
-            -webkit-line-clamp: 2; /* Limite le nombre de lignes à 2 */
+            -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
             text-overflow: ellipsis;
-            line-height: 0.9;
+            line-height: 1.1;
             padding-top: 0.4rem;
+            padding-bottom: 0.5rem;
             margin: 0;
             white-space: initial;
+            max-height: 8rem;
             @media (max-width: 790px) {
                 font-size: 2.4rem;
+                max-height: 5.8rem;
             }
         }
     }

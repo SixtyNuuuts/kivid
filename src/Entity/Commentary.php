@@ -43,18 +43,19 @@ class Commentary
 
     /**
      * @ORM\ManyToOne(targetEntity=Patient::class, inversedBy="commentaries")
-     *
+     * @Groups({"worksheet_read"})
      */
     private $patient;
 
     /**
      * @ORM\ManyToOne(targetEntity=Doctor::class, inversedBy="commentaries")
+     * @Groups({"worksheet_read", "patient_read", "dashboard_worksheet_read"})
      */
     private $doctor;
 
     /**
      * @ORM\ManyToOne(targetEntity=WorksheetSession::class, inversedBy="commentaries")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn()
      * @Groups({"worksheet_read"})
      */
     private $worksheetSession;

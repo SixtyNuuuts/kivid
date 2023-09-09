@@ -5,21 +5,23 @@ namespace App\Controller\Doctor;
 use App\Entity\Doctor;
 use App\Entity\Exercise;
 use App\Entity\Worksheet;
+use App\Entity\Commentary;
+use App\Repository\VideoRepository;
 use App\Repository\DoctorRepository;
 use App\Service\NotificationService;
-use App\Repository\VideoRepository;
 use App\Repository\PatientRepository;
 use App\Repository\ExerciseRepository;
-use App\Repository\PartOfBodyRepository;
 use App\Repository\WorksheetRepository;
-use App\Repository\WorksheetSessionRepository;
+use App\Repository\CommentaryRepository;
+use App\Repository\PartOfBodyRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use App\Repository\WorksheetSessionRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
  * @Route("/doctor")
@@ -606,5 +608,52 @@ class WorksheetController extends AbstractController
         $worksheet->addExercise($exercise);
 
         $this->em->persist($exercise);
+    }
+
+    /**
+     * @Route("/{id}/create/commentary", name="app_doctor_create_commentary", methods={"POST"})
+     * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
+     */
+    public function createCommentary(Request $request, Doctor $doctor, CommentaryRepository $commentaryRepository): JsonResponse
+    {
+        if ($request->isMethod('post')) {
+            $data = json_decode($request->getContent());
+
+            if ($this->isCsrfTokenValid('create_commentary' . $doctor->getId(), $data->_token)) {
+                $commentary = $data->commentaryId
+                            ? $commentaryRepository->findOneBy(['id' => $data->commentaryId])
+                            : new Commentary();
+
+                $commentary->setContent($data->commentaryContent);
+                $commentary->setCreatedAt(new \DateTimeImmutable());
+
+                if (!$data->commentaryId) {
+                    $exercise = $this->exerciseRepository->findOneBy(['id' => $data->exerciseId]);
+                    $worksheet = $this->worksheetRepository->findOneBy(['id' => $data->worksheetId]);
+                    $worksheetSession = $this->worksheetSessionRepository->findOneBy(
+                        ['id' => $data->worksheetSessionId]
+                    );
+
+                    $commentary->setDoctor($doctor)
+                               ->setExercise($exercise)
+                               ->setWorksheet($worksheet)
+                               ->setWorksheetSession($worksheetSession)
+                    ;
+                    $this->em->persist($commentary);
+                }
+
+                $this->em->flush();
+
+                return $this->json(
+                    ['message' => 'Commentaire créé', 'commentaryId' => $commentary->getId()],
+                    200
+                );
+            }
+        }
+
+        return $this->json(
+            "Une erreur s'est produite lors de la création du commentaire",
+            500
+        );
     }
 }

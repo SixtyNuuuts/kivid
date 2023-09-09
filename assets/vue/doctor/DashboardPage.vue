@@ -308,7 +308,8 @@ export default {
                     }
                 });
 
-                this.loadingDoctorFirstsPatients = false;
+                const params = new URLSearchParams(window.location.search);
+                this.loadingDoctorFirstsPatients = params.size && params.get('pp') ? true : false;
 
                 this.axios
                     .get(`/doctor/${this.doctor.id}/get/patients/999999/6`)
@@ -322,6 +323,17 @@ export default {
                         });
 
                         this.loadingDoctorAllPatients = false;
+
+                        // check if param prescri patient
+                        if(params.size && params.get('pp'))
+                        {
+                            const patientPrescriTargeted = this.doctorPatients.filter(p=>p.id==params.get('pp'));
+
+                            if(patientPrescriTargeted.length)
+                                this.setPrescriProcessPatientChoice(patientPrescriTargeted[0]);
+
+                            this.loadingDoctorFirstsPatients = false;
+                        }
 
                         if(this.doctor.giveAccessAddFreePatient)
                             this.axios
@@ -413,7 +425,7 @@ export default {
 
                 console.error(errorMess);
             });
-    },
+    }
 };
 </script>
 

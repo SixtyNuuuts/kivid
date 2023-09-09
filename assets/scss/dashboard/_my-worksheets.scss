@@ -117,8 +117,12 @@
                     .progressbar-base {
                         height: 0.8rem;
                         border-radius: 1rem;
-                        background: $gray-middle;
                         position: relative;
+
+                        &:not(.loading-gray)
+                        {
+                            background: $gray-middle;
+                        }
 
                         .progressbar-thumb {
                             background: linear-gradient(270deg, #fb8b68 9.29%, #ff6839 100%);
@@ -166,6 +170,14 @@
                                     &.completed {
                                         color: $orange;
                                         font-weight: 600;
+                                    }
+
+                                    &.loading-gray
+                                    {
+                                        width: 6rem;
+                                        border-radius: 0.2rem;
+                                        color: transparent;
+                                        height: 1.2rem;
                                     }
                                 }
                             }

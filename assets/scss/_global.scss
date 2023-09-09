@@ -579,6 +579,11 @@ body {
                 transition: all 0.25s;
                 top: 1.2rem;
                 transform: rotate(180deg);
+
+                &.hidden
+                {
+                    display: none;
+                }
             }
         }
 
@@ -603,6 +608,23 @@ body {
                 &::before {
                     top: 0.1rem;
                 }
+            }
+        }
+    }
+}
+
+.vs-dialog-content.view-video {
+    .vs-dialog {
+        width: 100%;
+        margin: auto 2rem;
+        max-width: 650px;
+
+        .vs-dialog__content {
+            height: 54vw;
+            max-height: 382px;
+
+            @media (min-width: 672px) {
+                height: 55vw;
             }
         }
     }

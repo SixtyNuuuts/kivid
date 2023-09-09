@@ -234,16 +234,19 @@ export default {
         {
             max-width: 87.6%;
             display: -webkit-box;
-            -webkit-line-clamp: 2; /* Limite le nombre de lignes à 2 */
+            -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
             text-overflow: ellipsis;
-            line-height: 0.9;
+            line-height: 1.1;
             padding-top: 0.4rem;
+            padding-bottom: 0.5rem;
             margin: 0;
             white-space: initial;
+            max-height: 8rem;
             @media (max-width: 790px) {
                 font-size: 2.4rem;
+                max-height: 5.8rem;
             }
         }
     }
