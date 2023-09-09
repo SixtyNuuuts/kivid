@@ -68,6 +68,7 @@
                     :doctor="currentUser"
                     :patientWorksheets="patientWorksheets"
                     :loadingPatientWorksheets="loadingPatientWorksheets"
+                    :loadingPatientWorksheetsProgression="loadingPatientWorksheetsProgression"
                     :csrfTokenRemoveWorksheet="csrfTokenRemoveWorksheet"
                 />
                 <aside>
@@ -318,6 +319,7 @@ export default {
             myWorksheetsContent: true,
             loadingDoctor: false,
             loadingPatientWorksheets: false,
+            loadingPatientWorksheetsProgression: false,
             patientWorksheets: [],
             modalChangeDoctor: false,
             doctorSelected: null,
@@ -471,7 +473,11 @@ export default {
         this.axios
             .get(`/patient/${this.patient.id}/get/worksheets`)
             .then((response) => {
-                this.patientWorksheets = response.data.map((worksheet) => {
+                this.patientWorksheets = response.data;
+                this.loadingPatientWorksheets = false;
+
+                this.loadingPatientWorksheetsProgression = true;
+                this.patientWorksheets = this.patientWorksheets.map((worksheet) => {
                     return {
                         ...worksheet,
                         worksheetProgression:
@@ -481,7 +487,6 @@ export default {
                         currentWorksheetSession: {},
                     };
                 });
-
                 if (this.patientWorksheets.length) {
                     this.patientWorksheets.forEach((worksheet) => {
                         this.axios
@@ -567,7 +572,7 @@ export default {
                                     .then((response) => {
                                         worksheet.totalWorksheetSessions =
                                             response.data;
-                                        this.loadingPatientWorksheets = false;
+                                        this.loadingPatientWorksheetsProgression = false;
                                     })
                                     .catch((error) => {
                                         const errorMess =
@@ -588,8 +593,6 @@ export default {
                                 console.error(errorMess);
                             });
                     });
-                } else {
-                    this.loadingPatientWorksheets = false;
                 }
             })
             .catch((error) => {

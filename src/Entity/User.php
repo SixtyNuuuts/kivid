@@ -18,7 +18,7 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"patient_read", "doctor_read", "user_read", "dashboard_worksheet_read"})
+     * @Groups({"patient_read", "doctor_read", "user_read", "dashboard_worksheet_read", "worksheet_read"})
      */
     private $id;
 
@@ -47,20 +47,21 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient_read", "doctor_read", "user_read", "dashboard_worksheet_read"})
+     * @Groups({"patient_read", "doctor_read", "user_read", "dashboard_worksheet_read", "worksheet_read"})
      */
     private $firstname;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient_read", "doctor_read", "user_read", "dashboard_worksheet_read"})
+     * @Groups({"patient_read", "doctor_read", "user_read", "dashboard_worksheet_read", "worksheet_read"})
 
      */
     private $lastname;
 
     /**
      * @ORM\Column(type="string", length=500, nullable=true)
-     * @Groups({"patient_read", "doctor_read", "user_read", "dashboard_worksheet_read"})
+     * @Groups({"patient_read", "doctor_read", "user_read", "dashboard_worksheet_read", "worksheet_read"})
+     * 
      */
     private $avatarUrl;
 

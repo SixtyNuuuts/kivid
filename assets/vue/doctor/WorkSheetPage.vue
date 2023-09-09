@@ -793,44 +793,37 @@ export default {
         },
         checkIfEmpty(worksheet) {
             let check = false;
-            let emptyFields = "";
+            let emptyFields = '';
 
-            if (!worksheet.partOfBody) {
-                emptyFields += "Partie du corps";
-                worksheet.partOfBodyIsEmptyMessage =
-                    "Vous devez choisir une partie du corps";
+            if (worksheet.title === "" || worksheet.title === null) {
+                emptyFields = emptyFields.length ? `${emptyFields}, Titre de la fiche manquant` : 'Titre de la fiche manquant';
+                worksheet.titleIsEmptyMessage = 'Vous devez entrer un titre pour la fiche.';
                 check = true;
             }
 
-            if (worksheet.title === "" || worksheet.title === null) {
-                emptyFields +=
-                    emptyFields != ""
-                        ? ", Titre de la fiche"
-                        : "Titre de la fiche";
-                worksheet.titleIsEmptyMessage =
-                    "Vous devez entrer un titre pour la fiche.";
+            if (!worksheet.partOfBody) {
+                emptyFields = emptyFields.length ? `${emptyFields}, Partie du corps manquante` : 'Partie du corps manquante';
+                worksheet.partOfBodyIsEmptyMessage = 'Vous devez choisir une partie du corps';
                 check = true;
             }
 
             if (!worksheet.exercises.length) {
-                worksheet.exercisesIsEmptyMessage =
-                    "Vous devez ajouter des exercices.";
+                emptyFields = emptyFields.length ? `${emptyFields}, Exercices manquants` : 'Exercices manquants';
+                worksheet.exercisesIsEmptyMessage = 'Vous devez ajouter des exercices.';
                 check = true;
             }
 
-            if (emptyFields != "" || !worksheet.exercises.length) {
+            if (emptyFields != "") {
                 this.currentOpenWorksheet = worksheet.id;
 
                 f.openErrorNotification(
                     "Erreur",
-                    `Il y a des champs vides pour <strong>${
-                        worksheet.id != 0
-                            ? this.worksheetTitleGeneration(
+                    `${this.worksheets.length > 1 ? `<strong>${
+                        this.worksheetTitleGeneration(
                                   worksheet.title,
                                   worksheet.id
                               )
-                            : "cette fiche"
-                    }</strong>`
+                    }</strong> : `:''}${emptyFields}.`
                 );
             }
 

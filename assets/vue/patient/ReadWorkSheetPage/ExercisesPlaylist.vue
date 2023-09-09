@@ -67,6 +67,7 @@
                     class="exercise"
                     :class="{
                         disabled:
+                            !doctorView &&
                             getCurrentWorksheetSession &&
                             exercise !== getCurrentExercise &&
                             !exercise.isCompleted,
@@ -101,6 +102,14 @@
                         >
                             <vs-button @click="openVideoPlayer(exercise)">
                                 <span>Revoir</span>
+                            </vs-button>
+                        </div>
+                        <div
+                            v-if="doctorView"
+                            class="btn-playlist"
+                        >
+                            <vs-button @click="viewVideo(exercise.video)">
+                                <span>Voir</span>
                             </vs-button>
                         </div>
                         <div
@@ -154,127 +163,206 @@
                             </div>
                         </div>
                         <div class="commentary">
-                            <p
-                                v-if="
-                                    ((getCurrentWorksheetSession &&
-                                        exercise.commentary) ||
-                                        (!getCurrentWorksheetSession &&
-                                            exercise.commentary.id)) &&
-                                    !doctorView
-                                "
-                            >
-                                Commentaire
-                            </p>
-                            <transition name="fade" mode="out-in">
-                                <div
-                                    class="commentary-create"
-                                    v-if="
-                                        exercise.commentary &&
-                                        !doctorView &&
-                                        getCurrentWorksheetSession &&
-                                        (!exercise.commentary.id ||
-                                            (exercise.commentary.id &&
-                                                isCommentaryBeingEdited(
-                                                    exercise.commentary.id
-                                                )))
-                                    "
-                                    key="1"
-                                >
-                                    <vs-input
-                                        class="commentary"
-                                        placeholder="Tapez votre commentaire"
-                                        v-model="exercise.commentary.content"
-                                    />
-                                    <vs-button
-                                        :class="{
-                                            disactived:
-                                                exercise.commentary.content ==
-                                                '',
-                                        }"
-                                        @click="setCommentary(exercise)"
-                                        class="btn-send-commentary"
-                                        floating
-                                        :disabled="loadingSetCommentary"
-                                        :loading="loadingSetCommentary"
-                                    >
-                                        <i class="fas fa-paper-plane"></i>
-                                    </vs-button>
-                                </div>
-                                <div
-                                    class="commentary-edit"
-                                    v-if="
-                                        exercise.commentary &&
-                                        !doctorView &&
-                                        exercise.commentary.id &&
-                                        !isCommentaryBeingEdited(
-                                            exercise.commentary.id
-                                        )
-                                    "
-                                    key="2"
-                                >
+                            <div class="commentary-doc-read">
+                                <p class="commentary-label">
+                                    <i class="far fa-comment-alt"></i>
+                                    Commentaire
+                                </p>
+                                <div class="commentary-history-list" v-if="exercise.commentaries.length">
                                     <div
-                                        class="commentary-edit-read"
-                                        :class="{
-                                            'full-border-radius':
-                                                !getCurrentWorksheetSession,
-                                        }"
+                                        v-for="(
+                                            commentary, i
+                                        ) in exercise.commentaries"
+                                        :key="i"
                                     >
-                                        <span
-                                            v-if="exercise.commentary.content"
-                                            >{{
-                                                exercise.commentary.content
-                                            }}</span
-                                        >
-                                        <span
+                                        <div v-if="commentary.id != exercise.commentary.id" class="commentary-history">
+                                            <h5>
+                                                <span class="commentary-user">
+                                                    <vs-avatar
+                                                        size="14"
+                                                        class="commentary-user-avatar"
+                                                        circle
+                                                    >
+                                                        <img
+                                                            v-if="commentary.doctor"
+                                                            :src="
+                                                                commentary.doctor.avatarUrl
+                                                                    ? commentary.doctor.avatarUrl
+                                                                    : '/img/avatar-default.svg'
+                                                            "
+                                                            :alt="`Avatar de ${commentary.doctor.firstname} ${commentary.doctor.lastname}`"
+                                                        />
+                                                        <img
+                                                            v-if="commentary.patient"
+                                                            :src="
+                                                                commentary.patient.avatarUrl
+                                                                    ? commentary.patient.avatarUrl
+                                                                    : '/img/avatar-default.svg'
+                                                            "
+                                                            :alt="`Avatar de ${commentary.patient.firstname} ${commentary.patient.lastname}`"
+                                                        />
+                                                    </vs-avatar>
+                                                    <span class="commentary-user-name">
+                                                        <span
+                                                            v-if="
+                                                                commentary.doctor &&
+                                                                (commentary.doctor.firstname ||
+                                                                commentary.doctor.lastname)
+                                                            "
+                                                        >
+                                                            {{ commentary.doctor.firstname }}
+                                                            {{ commentary.doctor.lastname }}
+                                                        </span>
+                                                        <span
+                                                            v-if="
+                                                                commentary.patient &&
+                                                                (commentary.patient.firstname ||
+                                                                commentary.patient.lastname)
+                                                            "
+                                                        >
+                                                            {{ commentary.patient.firstname }}
+                                                            {{ commentary.patient.lastname }}
+                                                        </span>
+                                                    </span>
+                                                </span>
+                                                |
+                                                {{ formatDate(exercise.commentary.createdAt) }}
+                                                <span v-if="commentary.worksheetSession" class="commentary-worksheet-session">
+                                                    | Session
+                                                    {{ commentary.worksheetSession.execOrder }} 
+                                                </span>
+                                            </h5>
+                                            <div class="commentary-history-message">
+                                                <p>{{ commentary.content }}</p>
+                                            </div>
+                                        </div>
+                                        <div
+                                            class="commentary-edit-container"
                                             v-if="
-                                                !exercise.commentary.content.trim()
+                                                commentary.id == exercise.commentary.id &&
+                                                exercise.commentary &&
+                                                exercise.commentary.id &&
+                                                !isCommentaryBeingEdited(
+                                                    exercise.commentary.id
+                                                )
                                             "
-                                            class="light"
-                                            >Vide</span
+                                            key="2"
                                         >
+                                            <h5>
+                                                <span class="commentary-user">
+                                                    <vs-avatar
+                                                        size="14"
+                                                        class="commentary-user-avatar"
+                                                        circle
+                                                    >
+                                                        <img
+                                                            v-if="doctorView && exercise.commentary.doctor"
+                                                            :src="
+                                                                exercise.commentary.doctor.avatarUrl
+                                                                    ? exercise.commentary.doctor.avatarUrl
+                                                                    : '/img/avatar-default.svg'
+                                                            "
+                                                            :alt="`Avatar de ${exercise.commentary.doctor.firstname} ${exercise.commentary.doctor.lastname}`"
+                                                        />
+                                                        <img
+                                                            v-if="exercise.commentary.patient"
+                                                            :src="
+                                                                exercise.commentary.patient.avatarUrl
+                                                                    ? exercise.commentary.patient.avatarUrl
+                                                                    : '/img/avatar-default.svg'
+                                                            "
+                                                            :alt="`Avatar de ${exercise.commentary.patient.firstname} ${exercise.commentary.patient.lastname}`"
+                                                        />
+                                                    </vs-avatar>
+                                                    <span class="commentary-user-name">
+                                                        <span
+                                                            v-if="
+                                                                doctorView && exercise.commentary.doctor &&
+                                                                (exercise.commentary.doctor.firstname ||
+                                                                exercise.commentary.doctor.lastname)
+                                                            "
+                                                        >
+                                                            {{ exercise.commentary.doctor.firstname }}
+                                                            {{ exercise.commentary.doctor.lastname }}
+                                                        </span>
+                                                        <span
+                                                            v-if="
+                                                                exercise.commentary.patient &&
+                                                                (exercise.commentary.patient.firstname ||
+                                                                exercise.commentary.patient.lastname)
+                                                            "
+                                                        >
+                                                            {{ exercise.commentary.patient.firstname }}
+                                                            {{ exercise.commentary.patient.lastname }}
+                                                        </span>
+                                                    </span>
+                                                </span>
+                                                |
+                                                {{ formatDate(exercise.commentary.createdAt) }}
+                                                <span v-if="getCurrentWorksheetSession" class="commentary-worksheet-session">
+                                                    | Session
+                                                    {{ getCurrentWorksheetSession.execOrder }} 
+                                                </span>
+                                            </h5>
+                                            <div class="commentary-edit">
+                                                <div
+                                                    class="commentary-edit-read"
+                                                >
+                                                    <span
+                                                        v-if="exercise.commentary.content"
+                                                        >{{
+                                                            exercise.commentary.content
+                                                        }}</span
+                                                    >
+                                                    <span
+                                                        v-if="
+                                                            !exercise.commentary.content.trim()
+                                                        "
+                                                        class="light"
+                                                        >Vide</span
+                                                    >
+                                                </div>
+                                                <vs-button
+                                                    @click="
+                                                        editCommentary(
+                                                            exercise.commentary.id
+                                                        )
+                                                    "
+                                                    class="btn-edit-commentary"
+                                                    floating
+                                                >
+                                                    <i class="fas fa-pen"></i>
+                                                </vs-button>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <vs-button
-                                        v-if="getCurrentWorksheetSession"
-                                        @click="
-                                            editCommentary(
-                                                exercise.commentary.id
-                                            )
-                                        "
-                                        class="btn-edit-commentary"
-                                        floating
-                                    >
-                                        <i class="fas fa-pen"></i>
-                                    </vs-button>
                                 </div>
-                            </transition>
-                            <p
-                                v-if="
-                                    exercise.commentaries.length > 0 &&
-                                    doctorView
-                                "
-                            >
-                                Commentaire<span
-                                    v-if="exercise.commentaries.length > 1"
-                                    >s</span
-                                >
-                            </p>
-                            <div v-if="exercise.commentaries && doctorView">
-                                <div
-                                    v-for="(
-                                        commentary, i
-                                    ) in exercise.commentaries"
-                                    :key="i"
-                                    class="commentary-doc-read"
-                                >
-                                    <h5>
-                                        {{ formatDate(commentary.createdAt) }} |
-                                        Session
-                                        {{
-                                            commentary.worksheetSession
-                                                .execOrder
-                                        }}
-                                    </h5>
-                                    <p>{{ commentary.content }}</p>
+                                <div>
+                                    <div
+                                        class="commentary-create"
+                                        v-if="!exercise.commentary.id || isCommentaryBeingEdited(exercise.commentary.id)"
+                                        key="1"
+                                    >
+                                        <vs-input
+                                            class="commentary"
+                                            placeholder="Tapez votre commentaire"
+                                            v-model="exercise.commentary.content"
+                                        />
+                                        <vs-button
+                                            :class="{
+                                                disactived:
+                                                    exercise.commentary.content ==
+                                                    '',
+                                            }"
+                                            @click="setCommentary(exercise)"
+                                            class="btn-send-commentary"
+                                            floating
+                                            :disabled="loadingSetCommentary"
+                                            :loading="loadingSetCommentary"
+                                        >
+                                            <i class="fas fa-paper-plane"></i>
+                                        </vs-button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -301,6 +389,12 @@
                 </div>
             </div> -->
         </div>
+        <vs-dialog class="view-video" v-model="modalViewVideo">
+            <youtube
+                :player-vars="playerVars"
+                :video-id="selectedViewVideo.youtubeId"
+            ></youtube>
+        </vs-dialog>
         <transition name="fade">
             <VideoPlayer
                 v-if="videoPlayerToggle && !doctorView"
@@ -333,6 +427,7 @@ export default {
     },
     props: {
         patient: Object,
+        doctor: Object,
         loading: Boolean,
         worksheet: Object,
         exercises: Array,
@@ -361,6 +456,14 @@ export default {
             commentariesBeingEdited: [],
             loadingSetCommentary: false,
             exerciseForRePlaying: null,
+            modalViewVideo: false,
+            selectedViewVideo: false,
+            playerVars: {
+                rel: 0,
+                showinfo: 0,
+                ecver: 2,
+                modestbranding: 1,
+            },
         };
     },
     computed: {
@@ -396,6 +499,11 @@ export default {
         },
     },
     methods: {
+        viewVideo(video) {
+            this.selectedViewVideo = video;
+
+            return (this.modalViewVideo = !this.modalViewVideo);
+        },
         openVideoPlayer(exercise) {
             this.exerciseForRePlaying = exercise;
             this.videoPlayerToggle = true;
@@ -414,11 +522,11 @@ export default {
                 this.loadingSetCommentary = true;
 
                 this.axios
-                    .post(`/patient/${this.patient.id}/create/commentary`, {
+                    .post(`/${this.doctorView?`doctor/${this.doctor.id}`:`patient/${this.patient.id}`}/create/commentary`, {
                         _token: this.csrfTokenCreateCommentary,
                         exerciseId: exercise.id,
                         worksheetId: this.getWorksheet.id,
-                        worksheetSessionId: this.getCurrentWorksheetSession.id,
+                        worksheetSessionId: this.getCurrentWorksheetSession ? this.getCurrentWorksheetSession.id : null,
                         commentaryId: exercise.commentary.id,
                         commentaryContent: exercise.commentary.content.trim(),
                     })
@@ -434,7 +542,17 @@ export default {
                             );
                         } else {
                             exercise.commentary.id = response.data.commentaryId;
+
+                            const commentaryAlreadyInCommentaries = exercise.commentaries.find(c=>c.id==exercise.commentary.id);
+                            if(!commentaryAlreadyInCommentaries)
+                            {
+                                exercise.commentaries.push(exercise.commentary);
+                            }
                         }
+
+                        this.$nextTick(() => {
+                            this.scrollToListElements();
+                        });
 
                         this.loadingSetCommentary = false;
                     })
@@ -468,13 +586,30 @@ export default {
         formatDate(datetime) {
             return moment(datetime).format("DD/MM/YYYY");
         },
+        scrollToListElements() {
+            const listeElements = document.querySelectorAll('.commentary-history-list');
+
+            listeElements.forEach((element) => {
+                element.scrollTop = element.scrollHeight;
+            });
+        }
+    },
+    watch: {
+        getExercises: {
+            handler() {
+                // Une fois que la computed exercises est mise à jour, exécutez le code de défilement
+                this.$nextTick(() => {
+                    this.scrollToListElements();
+                });
+            },
+            immediate: true // Exécutez le gestionnaire immédiatement lors de la création du composant
+        }
     },
 };
 </script>
 
 <style lang="scss" scoped>
 @import "../../../scss/variables";
-
 .exercises-list {
     width: 100%;
 
@@ -896,16 +1031,27 @@ export default {
                     }
                 }
 
+                .commentary-create {
+                    margin-top: 1.25rem;
+                }
+
+                .commentary-edit-container {
+                    margin-top: 0.8rem;
+                }
+
                 .commentary-edit {
                     .commentary-edit-read {
                         flex: 1;
+                        padding: 1.005rem 1.5rem;
+                        border: 0.1rem solid #e7dfcd;
                         border-radius: 0.8rem 0 0 0.8rem;
-                        border: 1px solid #ebe4d5;
+                        // border: 1px solid #ebe4d5;
                         overflow-y: auto;
-                        padding: 1.6rem 1.7rem;
+                        // padding: 1.6rem 1.7rem;
                         line-height: 1.3;
-                        font-weight: 700;
+                        // font-weight: 700;
                         font-style: italic;
+                        font-size: 1.3rem;
 
                         &.full-border-radius {
                             border-radius: 0.8rem;
@@ -920,8 +1066,11 @@ export default {
                     .vs-button {
                         transform: none;
                         border-radius: 0 0.8rem 0.8rem 0;
-                        background-color: #ebe4d5;
+                        background-color: #fff;
                         box-shadow: none;
+                        border: 0.1rem solid #e7dfcd;
+                        border-left: none;
+                        --vs-button-padding: 1rem 1.3rem;
 
                         &:hover {
                             background-color: $orange;
@@ -932,6 +1081,7 @@ export default {
                         }
 
                         i {
+                            font-size: 1.5rem;
                             color: $gray-dark;
                         }
                     }
@@ -940,7 +1090,51 @@ export default {
                 .commentary-doc-read {
                     background: $white;
                     padding: 1.2rem;
-                    border-radius: 0.8rem;
+                    border-radius: 0 0 0.8rem 0.8rem;
+
+                    .commentary-label
+                    {
+                        margin-bottom: 0.5rem;
+                        margin-top: 0.3rem;
+                        color: #c1b79d;
+                        font-weight: bold;
+
+                        i {
+                            font-size: 1.3rem;
+                            position: relative;
+                            top: 0.08rem;
+                            margin-right: 0.3rem;
+                        }
+                    }
+
+                    .commentary-history-list
+                    {
+                        max-height: 27.2rem;
+                        overflow: auto;
+                        /* box-shadow: inset 0 0 8px 0 rgba(0, 0, 0, 0.05); */
+                        padding-right: 0.8rem;
+                        padding-bottom: 0.8rem;
+                        border-radius: 0.4rem;
+
+                        .commentary-history
+                        {
+                            margin-top: 1.1rem;
+
+                            .commentary-history-message
+                            {
+                                border-radius: 0.8rem;
+                                padding: 1.1rem 1.5rem;
+                                border: 0.1rem solid #e7dfcd;
+
+                                p
+                                {
+                                    margin-top: 0;
+                                    font-style: italic;
+                                    font-size: 1.3rem;
+                                }
+                            }
+                        }
+                    }
 
                     &:not(:last-child) {
                         margin-bottom: 1.2rem;
@@ -950,6 +1144,29 @@ export default {
                         color: $gray-dark;
                         margin: 0;
                         font-size: 1rem;
+                        display: flex;
+                        align-items: center;
+                        white-space: nowrap;
+
+                        .commentary-user
+                        {
+                            display: flex;
+                            align-items: center;
+
+                            .commentary-user-avatar {
+                                position: relative;
+                                top: -0.3rem;
+                                margin-right: 0.1rem;
+                                flex: none;
+                                min-width: 14px;
+                            }
+                        }
+
+                        .commentary-user-name,
+                        .commentary-worksheet-session
+                        {
+                            margin: 0 0.3rem;
+                        }
                     }
 
                     p {

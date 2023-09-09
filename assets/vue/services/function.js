@@ -161,6 +161,13 @@ export default {
     return array;
   },
 
+  sortByCreatedAtAsc(array) {
+    array.sort(function (a, b) {
+      return new Date(a.createdAt) - new Date(b.createdAt);
+    });
+    return array;
+  },
+
   hexToRgbA(hex, alpha) {
     let c;
     if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {

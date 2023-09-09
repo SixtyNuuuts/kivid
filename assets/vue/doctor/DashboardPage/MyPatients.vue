@@ -237,10 +237,11 @@
                                                 ) in patient.worksheets"
                                                 :key="i"
                                                 class="worksheet-progress-line"
+                                                :class="{'with-commentaries': worksheet.commentaries && worksheet.commentaries.filter((c) => !c.doctor).length}"
                                             >
                                                 <div 
                                                     class="progressbar-base"
-                                                :class="{'loading-gray': loadingsGetSessions.includes(worksheet.id)}"
+                                                    :class="{'loading-gray': loadingsGetSessions.includes(worksheet.id)}"
                                                 >
                                                     <div class="worksheet-infos">
                                                         <span>{{ worksheet.title }}</span>
@@ -252,12 +253,11 @@
                                                         }"
                                                     ></div>
                                                 </div>
-                                                <!-- <div v-if="worksheet.commentaries && worksheet.commentaries.length" class="worksheet-commentaries">
-                                                    <i class="far fa-comment-alt"></i>
-                                                    <div class="count-commentaries">
-                                                        {{ worksheet.commentaries.length}}
-                                                    </div>
-                                                </div> -->
+                                                <div v-if="worksheet.commentaries && worksheet.commentaries.filter((c) => !c.doctor).length" class="worksheet-commentaries">
+                                                    <span class="count-commentaries">
+                                                        {{ worksheet.commentaries.filter((c) => !c.doctor).length}}
+                                                    </span>
+                                                </div>
                                             </li>
                                         </ul>
                                         <div
@@ -1274,11 +1274,15 @@ body .kiv-block .prescri-process-dialog::after {
                         overflow: hidden;
                         text-overflow: ellipsis;
                         white-space: nowrap;
-                        cursor: pointer;
 
                         @media (max-width: 500px) {
                             font-size: 1.5rem;
-                        }   
+                        }
+
+                        > span 
+                        {
+                            cursor: pointer;
+                        }
                     }
                     .mail {
                         margin-top: 0.3rem;
@@ -1286,7 +1290,10 @@ body .kiv-block .prescri-process-dialog::after {
                         overflow: hidden;
                         text-overflow: ellipsis;
                         white-space: nowrap;
-                        cursor: pointer;
+                        > span 
+                        {
+                            cursor: pointer;
+                        }
                     }
                 }
 
@@ -1297,7 +1304,10 @@ body .kiv-block .prescri-process-dialog::after {
                     h4 {
                         font-size: 1.1rem;
                         font-weight: 700;
-                        cursor: pointer;
+                        > span 
+                        {
+                            cursor: pointer;
+                        }
 
                         margin-top: 1rem;
 
@@ -1377,6 +1387,12 @@ body .kiv-block .prescri-process-dialog::after {
                     margin-bottom: 0;
                     margin-right: 0.7rem;
 
+                    &.with-commentaries
+                    {
+                        padding-right: 0.7rem;
+                        position: relative;
+                    }
+
                     .progressbar-base {
                         flex-grow: 1;
                         position: relative;
@@ -1384,11 +1400,21 @@ body .kiv-block .prescri-process-dialog::after {
                         height: 1.8rem;
                         background: #ece8e0;
                         min-width: 7.5rem;
-                        max-width: 30rem;
+                        max-width: 9.8rem;
 
-                        @media (max-width: 799px) {
-                            max-width: 20rem;
+                        @media (min-width: 500px) {
+                            max-width: 11.8rem;
                         }
+                        @media (min-width: 600px) {
+                            max-width: 13.8rem;
+                        }
+                        @media (min-width: 799px) {
+                            max-width: 15.9rem;
+                        }
+                        @media (min-width: 1100px) {
+                            max-width: 16.8rem;
+                        }
+
                         @media (min-width: 800px) {
                             background: #ffffff;
                         }
@@ -1401,10 +1427,23 @@ body .kiv-block .prescri-process-dialog::after {
                             display: flex;  
                             align-items: center;
                             justify-content: center;
-                            padding: 0 1.4rem;
+                            padding: 0 0.7rem;
                             width: 100%;
                             user-select: none;
                             font-size: 0.875rem;
+                            
+                            @media (min-width: 500px) {
+                                padding: 0 0.8rem;
+                            }
+                            @media (min-width: 600px) {
+                                padding: 0 0.9rem;
+                            }
+                            @media (min-width: 799px) {
+                                padding: 0 1.1rem;
+                            }
+                            @media (min-width: 1100px) {
+                                padding: 0 1.4rem;
+                            }
 
                             span {
                                 display: block;
@@ -1626,53 +1665,43 @@ body .kiv-block .prescri-process-dialog::after {
                 }
             }
 
-            // .worksheet-header {
+            .worksheet-commentaries
+            {
+                width: 1.6rem;
+                height: 1.4rem;
+                position: absolute;
+                top: 0.1rem;
+                right: 0;
+                color: #ffffff;
+                font-size: 0.8rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0.1rem 0.1rem;
+                z-index: 5;
 
-            //         .btn-action {
-            //             &.commentaries {
-            //                 background: $white !important;
-            //                 color: $gray-middle;
-            //                 position: relative;
-            //                 overflow: visible;
-            //                 width: 3rem;
-            //                 height: 3rem;
-            //                 min-width: 3rem;
-            //                 min-height: 3rem;
-            //                 max-height: 3rem;
-            //                 margin-left: 1rem;
-            //                 box-shadow: 0rem 0.2rem 0.9rem 0rem
-            //                     rgba(231, 223, 205, 0.6);
-            //                 z-index: 111;
+                &::before 
+                {
+                    content: url("data:image/svg+xml,%3Csvg version='1.1' id='Calque_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 50 45.8' style='enable-background:new 0 0 50 45.8;' xml:space='preserve' fill='%23fb8b68'%3E%3Cpath class='st0' d='M41.6,1.8H8.1c-3.4,0-6.2,2.5-6.2,5.5v20.9c0,3.1,2.8,5.5,6.2,5.5h8v10.5l16.1-10.5h9.3c3.4,0,6.2-2.5,6.2-5.5 V7.3C47.7,4.2,45,1.8,41.6,1.8z'/%3E%3C/svg%3E%0A");
+                    width: 1.6rem;
+                    height: 1.4rem;
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    z-index: -1;
+                    -webkit-filter: drop-shadow(0rem 0.15rem 0.1525rem rgba(251, 139, 104, 0.9));
+                    filter: drop-shadow(0rem 0.15rem 0.1525rem rgba(251, 139, 104, 0.9));
+                }
 
-            //                 i {
-            //                     font-size: 1.6rem;
-            //                     top: 0.18rem;
-            //                     left: 0.45rem;
-            //                 }
-
-            //                 .count-commentaries {
-            //                     position: absolute;
-            //                     top: -0.3rem;
-            //                     right: -0.5rem;
-            //                     width: 1.2rem;
-            //                     height: 1.2rem;
-            //                     min-width: 1.2rem;
-            //                     min-height: 1.2rem;
-            //                     max-height: 1.2rem;
-            //                     background-color: $orange;
-            //                     border-radius: 50%;
-            //                     font-size: 0.7rem;
-            //                     display: flex;
-            //                     justify-content: center;
-            //                     align-items: center;
-            //                     color: white;
-            //                     padding: 0.1rem 0.2rem;
-            //                     padding-top: 0.15rem;
-            //                 }
-            //             }
-            //         }
-            //     }
-            // }
+                .count-commentaries {
+                    display: block;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    position: relative;
+                    top: -0.02rem;
+                }
+            }
 
             .avert-not-patient-doctor {
                 position: absolute;
