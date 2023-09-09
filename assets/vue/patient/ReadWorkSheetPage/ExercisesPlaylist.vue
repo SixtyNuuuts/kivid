@@ -339,7 +339,7 @@
                                 <div>
                                     <div
                                         class="commentary-create"
-                                        v-if="exercise.commentary && !exercise.commentary.id || isCommentaryBeingEdited(exercise.commentary.id)"
+                                        v-if="exercise.commentary && (!exercise.commentary.id || isCommentaryBeingEdited(exercise.commentary.id))"
                                         key="1"
                                     >
                                         <vs-input
