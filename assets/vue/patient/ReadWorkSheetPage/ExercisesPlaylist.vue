@@ -175,7 +175,7 @@
                                         ) in exercise.commentaries"
                                         :key="i"
                                     >
-                                        <div v-if="commentary && exercise.commentary && commentary.id != exercise.commentary.id" class="commentary-history">
+                                        <div v-if="exercise.commentary && commentary.id != exercise.commentary.id" class="commentary-history">
                                             <h5>
                                                 <span class="commentary-user">
                                                     <vs-avatar
@@ -239,10 +239,8 @@
                                         <div
                                             class="commentary-edit-container"
                                             v-if="
-                                                commentary && exercise.commentary &&
+                                                exercise.commentary && exercise.commentary.id &&
                                                 commentary.id == exercise.commentary.id &&
-                                                exercise.commentary &&
-                                                exercise.commentary.id &&
                                                 !isCommentaryBeingEdited(
                                                     exercise.commentary.id
                                                 )
@@ -341,7 +339,7 @@
                                 <div>
                                     <div
                                         class="commentary-create"
-                                        v-if="!exercise.commentary.id || isCommentaryBeingEdited(exercise.commentary.id)"
+                                        v-if="exercise.commentary && !exercise.commentary.id || isCommentaryBeingEdited(exercise.commentary.id)"
                                         key="1"
                                     >
                                         <vs-input
