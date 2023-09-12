@@ -463,16 +463,13 @@ class WorksheetController extends AbstractController
                                      ->setPosition((int)$dataExercise->position);
 
                             $exerciseDoctorCommentaryInputContent = trim($dataExercise->commentary->content);
-                            if($exerciseDoctorCommentaryInputContent != '')
-                            {
-                                $exerciseDoctorCommentaries = array_filter($exercise->getCommentaries()->toArray(), function ($commentary) {
-                                    return $commentary->getPatient() === null;
-                                });
-                                $exerciseDoctorCommentaryExistantContent = reset($exerciseDoctorCommentaries)->getContent() ?? null;
-                                
-                                if($exerciseDoctorCommentaryInputContent != $exerciseDoctorCommentaryExistantContent)
-                                    $this->createCommentary($doctor, $dataExercise->commentary->id, $exerciseDoctorCommentaryInputContent, $exercise, $worksheet, null);    
-                            }
+                            $exerciseDoctorCommentaries = array_filter($exercise->getCommentaries()->toArray(), function ($commentary) {
+                                return $commentary->getPatient() === null;
+                            });
+                            $exerciseDoctorCommentaryExistantContent = sizeof($exerciseDoctorCommentaries) > 0 ? reset($exerciseDoctorCommentaries)->getContent() : null;
+
+                            if($exerciseDoctorCommentaryInputContent != $exerciseDoctorCommentaryExistantContent)
+                                $this->createCommentary($doctor, $dataExercise->commentary->id, $exerciseDoctorCommentaryInputContent, $exercise, $worksheet, null);    
                         }
                         if (null === $dataExercise->id) {
                             $this->generateExercise($dataExercise, $worksheet, $doctor);
@@ -719,7 +716,6 @@ class WorksheetController extends AbstractController
                        ->setExercise($exercise)
                        ->setWorksheet($worksheet)
                        ->setWorksheetSession($worksheetSession)
-                       ->setCreatedAt(new \DateTimeImmutable())
             ;
 
             $this->em->persist($commentary);

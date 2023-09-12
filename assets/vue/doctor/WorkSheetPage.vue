@@ -1082,7 +1082,7 @@ export default {
                                             ? true
                                             : false,
                                         commentary: docFirstCommentary ?? {id:null,content:''},
-                                        commentaryActive: docFirstCommentary
+                                        commentaryActive: docFirstCommentary && docFirstCommentary.content != ''
                                             ? true
                                             : false,
                                         isActive: false,
@@ -1665,7 +1665,7 @@ export default {
                     .avert-sessions-start {
                         position: absolute;
                         z-index: 11;
-                        top: -0.9rem;
+                        top: 0.1rem;
                         left: -0.9rem;
                         right: 0;
                         bottom: 0;
@@ -1677,8 +1677,8 @@ export default {
                         color: $black;
                         font-size: 1.3rem;
                         text-align: center;
-                        padding: 0 14%;
-                        line-height: 1.5;
+                        // padding: 0 14%;
+                        line-height: 1.2;
                         text-shadow: 0 0 0.3rem #fff, 0 0 0.3rem #fff,
                             0 0 0.3rem #fff, 0 0 0.3rem #fff, 0 0 0.3rem #fff,
                             0 0 0.3rem #fff, 0 0 0.3rem #fff, 0 0 0.3rem #fff,
