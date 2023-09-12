@@ -244,4 +244,33 @@ class WorksheetController extends AbstractController
             500
         );
     }
+
+    /**
+     * @Route("/{id}/remove/commentary", name="app_patient_remove_commentary", methods={"POST"})
+     * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
+     */
+    public function removeCommentary(Request $request): JsonResponse
+    {
+        if ($request->isMethod('post')) {
+            $data = json_decode($request->getContent());
+
+            if ($data->commentaryId) {
+                $commentary = $this->commentaryRepository->findOneBy(['id' => $data->commentaryId]);
+
+                $this->em->remove($commentary);
+
+                $this->em->flush();
+
+                return $this->json(
+                    ['message' => 'Commentaire supprimé', 'commentaryId' => $data->commentaryId],
+                    200
+                );
+            }
+        }
+
+        return $this->json(
+            "Une erreur s'est produite lors de la création du commentaire",
+            500
+        );
+    }
 }

@@ -134,18 +134,6 @@
                         ></div>
                     </div>
                     <div class="content">
-                        <!-- <div class="input-h2 input-h2-desktop">
-                            <h2>
-                                <span>{{ exercise.video.name }}</span>
-                            </h2>
-                            <button
-                                v-if="'voir' !== action"
-                                class="remove-exercise"
-                                @click="removeExercise(exercise)"
-                            >
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div> -->
                         <div v-if="'voir' !== action" class="details">
                             <div class="series-reps">
                                 <div class="series">
@@ -286,6 +274,27 @@
                                         contrôlé.
                                     </template>
                                 </vs-tooltip>
+                            </div>
+                            <div
+                                class="commentary"
+                                :class="{ active: exercise.commentaryActive }"
+                            >
+                                <span>Commentaire</span>
+                                <vs-switch
+                                    v-model="exercise.commentaryActive"
+                                />
+                                <!-- <vs-input
+                                    label-placeholder="Ta"
+                                    type="text"
+                                    :class="{ disabled: !exercise.commentaryActive }"
+                                >
+                                </vs-input> -->
+                                <textarea
+                                    v-model="exercise.commentary.content"
+                                    rows="2"
+                                    :class="{ disabled: !exercise.commentaryActive }"
+                                >
+                                </textarea>
                             </div>
                         </div>
                         <div v-if="'voir' === action" class="details">
@@ -490,9 +499,11 @@ export default {
                     option: "",
                     tempo: "",
                     hold: "",
+                    commentary: {id:null,content:''},
                     optionActive: false,
                     tempoActive: false,
                     holdActive: false,
+                    commentaryActive: false,
                     video: v,
                 };
 
@@ -588,57 +599,67 @@ export default {
                 !this.modalConfirmRemoveExercise);
         },
         validRemoveExercise() {
-            this.btnLoadingValidRemoveExercise = true;
+            
+            this.exercises.splice(
+                this.exercises.indexOf(this.removeExerciseDetails),
+                1
+            );
 
-            if (!this.removeExerciseDetails.id || "creation" === this.action) {
-                this.exercises.splice(
-                    this.exercises.indexOf(this.removeExerciseDetails),
-                    1
-                );
+            f.sortByPosition(this.exercises).map(
+                (e, i) => (e.position = i)
+            );
 
-                f.sortByPosition(this.exercises).map(
-                    (e, i) => (e.position = i)
-                );
+            this.modalConfirmRemoveExercise = false;
+            // this.btnLoadingValidRemoveExercise = true;
+            // if (!this.removeExerciseDetails.id || String(this.removeExerciseDetails.id).startsWith("new") || "creation" === this.action) {
+            //     this.exercises.splice(
+            //         this.exercises.indexOf(this.removeExerciseDetails),
+            //         1
+            //     );
 
-                this.btnLoadingValidRemoveExercise = false;
-                this.modalConfirmRemoveExercise = false;
-            } else {
-                this.axios
-                    .post(`/doctor/${this.doctor.id}/remove/exercise`, {
-                        _token: this.csrfTokenRemoveExercise,
-                        worksheetId: this.getWorksheet.id,
-                        exerciseId: this.removeExerciseDetails.id,
-                    })
-                    .then((response) => {
-                        this.exercises.splice(
-                            this.exercises.indexOf(this.removeExerciseDetails),
-                            1
-                        );
+            //     f.sortByPosition(this.exercises).map(
+            //         (e, i) => (e.position = i)
+            //     );
 
-                        f.sortByPosition(this.exercises).map(
-                            (e, i) => (e.position = i)
-                        );
+            //     this.btnLoadingValidRemoveExercise = false;
+            //     this.modalConfirmRemoveExercise = false;
+            // } else {
+            //     this.axios
+            //         .post(`/doctor/${this.doctor.id}/remove/exercise`, {
+            //             _token: this.csrfTokenRemoveExercise,
+            //             worksheetId: this.getWorksheet.id,
+            //             exerciseId: this.removeExerciseDetails.id,
+            //         })
+            //         .then((response) => {
+            //             this.exercises.splice(
+            //                 this.exercises.indexOf(this.removeExerciseDetails),
+            //                 1
+            //             );
 
-                        f.openSuccessNotification(
-                            "Suppression de l'exercice",
-                            response.data
-                        );
+            //             f.sortByPosition(this.exercises).map(
+            //                 (e, i) => (e.position = i)
+            //             );
 
-                        this.btnLoadingValidRemoveExercise = false;
-                        this.modalConfirmRemoveExercise = false;
-                    })
-                    .catch((error) => {
-                        const errorMess =
-                            "object" === typeof error.response.data
-                                ? error.response.data.detail
-                                : error.response.data;
+            //             f.openSuccessNotification(
+            //                 "Suppression de l'exercice",
+            //                 response.data
+            //             );
 
-                        f.openErrorNotification("Erreur", errorMess);
+            //             this.btnLoadingValidRemoveExercise = false;
+            //             this.modalConfirmRemoveExercise = false;
+            //         })
+            //         .catch((error) => {
+            //             const errorMess =
+            //                 "object" === typeof error.response.data
+            //                     ? error.response.data.detail
+            //                     : error.response.data;
 
-                        this.btnLoadingValidRemoveExercise = false;
-                        this.modalConfirmRemoveExercise = false;
-                    });
-            }
+            //             f.openErrorNotification("Erreur", errorMess);
+
+            //             this.btnLoadingValidRemoveExercise = false;
+            //             this.modalConfirmRemoveExercise = false;
+            //         });
+            // }
         },
         openVideoPlayer(exercise) {
             this.exerciseForPlaying = exercise;
@@ -825,7 +846,8 @@ export default {
                     }
                     .option,
                     .tempo,
-                    .hold {
+                    .hold,
+                    .commentary {
                         height: 1.6rem;
                     }
                 }
@@ -1198,6 +1220,48 @@ export default {
                                 color: #efe9df;
                                 transition: all;
                             }
+                        }
+                    }
+
+                    &.commentary
+                    {
+                        flex-wrap: wrap;
+
+                        .vs-input-parent
+                        {
+                            min-width: 90.9%;
+                            margin-left: 0.9rem;
+                            margin-top: 0.5rem;
+                        }
+
+                        textarea
+                        {
+                            width: 100%;
+                            margin-left: 0.9rem;
+                            margin-right: 1.2rem;
+                            margin-top: 0.5rem;
+                            padding: 0.9rem 1rem;
+                            background: #fff;
+                            box-shadow: 0rem 0.4rem 1.4rem 0rem #e7dfcdd1;
+                            border: 1px solid #e2d4b3;
+                            border-radius: 0.5rem;
+                            font-size: 1.3rem;
+                            color: #222e54;
+
+                            &:focus-visible, :focus
+                            {
+                                outline: #b7aa8a!important;
+                                border: 1px solid #b7aa8a!important;
+                            }
+
+                            &.disabled
+                            {
+                                display: none;
+                            }
+                        }
+
+                        > span {
+                            width: 8.6rem;
                         }
                     }
                 }

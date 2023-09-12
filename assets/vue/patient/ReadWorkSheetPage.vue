@@ -168,69 +168,41 @@ export default {
         },
     },
     methods: {
-        getCurrentCommentary(exerciseCommentaries) {
-            let commentary = {
-                content: "",
-                id: null,
-                doctor:this.doctorView?this.doctor:null,
-                patient:this.doctorView?null:this.patient,
-            };
+        // getCurrentCommentary(exerciseCommentaries) {
+            
+        //     let 
+        //         commentary = {
+        //             content: "",
+        //             id: null,
+        //             doctor:this.doctorView?this.doctor:null,
+        //             patient:this.doctorView?null:this.patient,
+        //         },
+        //         exerciseCommentariesFilteredByUser
+        //     ;
+            
+        //     if(this.doctorView)
+        //     {
+        //         exerciseCommentariesFilteredByUser = exerciseCommentaries.filter(
+        //             (c) => c.doctor && c.doctor.id == this.doctor.id
+        //         );
+        //     }
+        //     else
+        //     {
+        //         exerciseCommentariesFilteredByUser = exerciseCommentaries.filter(
+        //             (c) => c.patient && c.patient.id == this.patient.id
+        //         );
+        //     }
+    
+        //     if(exerciseCommentariesFilteredByUser.length)
+        //     {
+        //        const commentaryExistForThisSession = exerciseCommentariesFilteredByUser.find(c=>c.worksheetSession&&this.getCurrentWorksheetSession&&c.worksheetSession.id==this.getCurrentWorksheetSession.id);
+                
+        //         if(commentaryExistForThisSession)
+        //             commentary = commentaryExistForThisSession;
+        //     }
 
-            if (
-                exerciseCommentaries.length &&
-                this.getCurrentWorksheetSession &&
-                exerciseCommentaries.find(
-                    (c) =>
-                        c.worksheetSession.id ===
-                        this.getCurrentWorksheetSession.id
-                )
-            ) {
-                if(this.doctorView)
-                {
-                    const doctorCommentary = exerciseCommentaries.filter(
-                        (c) => c.doctor && c.doctor.id == this.doctor.id && c.worksheetSession.id == this.getCurrentWorksheetSession.id
-                    ).pop();
-
-                    if(doctorCommentary)
-                        commentary = doctorCommentary;
-                }
-                else
-                {
-                    const patientCommentary = exerciseCommentaries.filter(
-                        (c) => c.patient && c.patient.id == this.patient.id && c.worksheetSession.id == this.getCurrentWorksheetSession.id
-                    ).pop();
-
-                    if(patientCommentary)
-                        commentary = patientCommentary;
-                }
-            }
-
-            if (
-                exerciseCommentaries.length &&
-                !this.getCurrentWorksheetSession
-            ) {
-                if(this.doctorView)
-                {
-                    const doctorCommentary = exerciseCommentaries.filter(
-                        (c) => c.doctor && c.doctor.id == this.doctor.id
-                    ).pop();
-
-                    if(doctorCommentary)
-                        commentary = doctorCommentary;
-                }
-                else
-                {
-                    const patientCommentary = exerciseCommentaries.filter(
-                        (c) => c.patient && c.patient.id == this.patient.id
-                    ).pop();
-
-                    if(patientCommentary)
-                        commentary = patientCommentary;
-                }
-            }
-
-            return commentary;
-        },
+        //     return commentary;
+        // },
         rederictToDashboard() {
             if (this.doctorView && this.doctor) {
                 const queryString = window.location.search;
@@ -471,10 +443,12 @@ export default {
                                             commentaries: f.sortByCreatedAtAsc(
                                                 exercise.commentaries
                                             ),
-                                            commentary:
-                                                this.getCurrentCommentary(
-                                                    exercise.commentaries
-                                                ),
+                                            commentary:{
+                                                content: "",
+                                                id: null,
+                                                doctor:this.doctorView?this.doctor:null,
+                                                patient:this.doctorView?null:this.patient,
+                                            }
                                         };
                                     })
                                 );
