@@ -267,50 +267,50 @@ class WorksheetController extends AbstractController
      * @Route("/{id}/create/worksheet", name="app_doctor_create_worksheet", methods={"POST"})
      * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
-    public function createWorksheet(Request $request, Doctor $doctor): JsonResponse
-    {
-        if ($request->isMethod('post')) {
-            $data = json_decode($request->getContent());
+    // public function createWorksheet(Request $request, Doctor $doctor): JsonResponse
+    // {
+    //     if ($request->isMethod('post')) {
+    //         $data = json_decode($request->getContent());
 
-            if ($this->isCsrfTokenValid('create_worksheet' . $doctor->getId(), $data->_token)) {
-                $patient = $this->patientRepository->findOneBy(['id' => $data->patientId]);
-                $partOfBody = $this->partOfBodyRepository->findOneBy(['id' => $data->partOfBodyId]);
+    //         if ($this->isCsrfTokenValid('create_worksheet' . $doctor->getId(), $data->_token)) {
+    //             $patient = $this->patientRepository->findOneBy(['id' => $data->patientId]);
+    //             $partOfBody = $this->partOfBodyRepository->findOneBy(['id' => $data->partOfBodyId]);
 
-                $worksheet = new Worksheet();
+    //             $worksheet = new Worksheet();
 
-                $worksheet->setTitle($data->title)
-                          ->setPartOfBody($partOfBody)
-                          ->setDuration($data->duration)
-                          ->setPerWeek($data->perWeek)
-                          ->setPerDay($data->perDay)
-                          ->setPatient($patient)
-                          ->setDoctor($doctor)
-                ;
+    //             $worksheet->setTitle($data->title)
+    //                       ->setPartOfBody($partOfBody)
+    //                       ->setDuration($data->duration)
+    //                       ->setPerWeek($data->perWeek)
+    //                       ->setPerDay($data->perDay)
+    //                       ->setPatient($patient)
+    //                       ->setDoctor($doctor)
+    //             ;
 
-                foreach ($data->exercises as $dataExercise) {
-                    $this->generateExercise($dataExercise, $worksheet, $doctor);
-                }
+    //             foreach ($data->exercises as $dataExercise) {
+    //                 $this->generateExercise($dataExercise, $worksheet, $doctor);
+    //             }
 
-                $this->em->persist($worksheet);
+    //             $this->em->persist($worksheet);
 
-                if ($patient) {
-                    $this->notificationService->createPrescriptionNotification($worksheet, $patient);
-                }
+    //             if ($patient) {
+    //                 $this->notificationService->createPrescriptionNotification($worksheet, $patient);
+    //             }
 
-                $this->em->flush();
+    //             $this->em->flush();
 
-                return $this->json(
-                    "La fiche a bien été créée",
-                    200,
-                );
-            }
-        }
+    //             return $this->json(
+    //                 "La fiche a bien été créée",
+    //                 200,
+    //             );
+    //         }
+    //     }
 
-        return $this->json(
-            "Une erreur s'est produite lors de la création de la fiche",
-            500,
-        );
-    }
+    //     return $this->json(
+    //         "Une erreur s'est produite lors de la création de la fiche",
+    //         500,
+    //     );
+    // }
 
     /**
      * @Route("/{id}/create/worksheets", name="app_doctor_create_worksheets", methods={"POST"})
@@ -610,16 +610,16 @@ class WorksheetController extends AbstractController
     
             $this->em->persist($exercise);
     
-            $exerciseCommentaries = $exercise->getCommentaries();
+            $exerciseCommentaries = $dataExercise->getCommentaries();
             if(count($exerciseCommentaries) > 0)
             {
                 $exerciseDoctorCommentaries = array_filter($exerciseCommentaries->toArray(), function ($commentary) {
                     return $commentary->getPatient() === null;
                 });
-                $exerciseDoctorCommentaryExistant = reset($exerciseDoctorCommentaries) ?? null;
-                
-                if($exerciseDoctorCommentaryExistant)
-                    $this->createCommentary($doctor, $exerciseDoctorCommentaryExistant->getId(), $exerciseDoctorCommentaryExistant->getContent(), $exercise, $worksheet, null);    
+                $exerciseDoctorCommentaryExistantContent = reset($exerciseDoctorCommentaries)->getContent() ?? null;
+                                
+                if($exerciseDoctorCommentaryExistantContent)
+                    $this->createCommentary($doctor, null, $exerciseDoctorCommentaryExistantContent, $exercise, $worksheet, null);    
             }
         }
         else 
@@ -642,7 +642,7 @@ class WorksheetController extends AbstractController
 
             $exerciseDoctorCommentaryInputContent = trim($dataExercise->commentary->content);
             if($exerciseDoctorCommentaryInputContent!='')
-                $this->createCommentary($doctor, $dataExercise->commentary->id, $exerciseDoctorCommentaryInputContent, $exercise, $worksheet, null);
+                $this->createCommentary($doctor, null, $exerciseDoctorCommentaryInputContent, $exercise, $worksheet, null);
         }
     }
 

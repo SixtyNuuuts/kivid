@@ -235,7 +235,13 @@
                                         <div 
                                             class="commentary-zone"
                                         >
-                                            <div class="commentary-zone-read">
+                                            <div 
+                                                class="commentary-zone-read"
+                                                :class="{nobtns:!((doctorView && commentary.doctor && doctor.id == commentary.doctor.id)
+                                                    ||(!doctorView && commentary.patient && patient.id == commentary.patient.id))||isCommentaryBeingEdited(
+                                                        commentary.id
+                                                    )}"
+                                            >
                                                 <p>{{ commentary.content }}</p>
                                             </div>
                                             <div
@@ -266,8 +272,8 @@
                                                             exercise)
                                                             "
                                                     floating
-                                                    :disabled="loadingRemoveCommentary"
-                                                    :loading="loadingRemoveCommentary"
+                                                    :disabled="loadingRemoveCommentary==commentary.id"
+                                                    :loading="loadingRemoveCommentary==commentary.id"
                                                 >
                                                     <i class="fas fa-trash"></i>
                                                 </vs-button>  
@@ -284,11 +290,16 @@
                                             >
                                                 <vs-button
                                                     class="btn-edit-commentary"
+                                                    @click="
+                                                        closeEditCommentary(exercise)
+                                                    "
                                                     floating
-                                                    disabled
                                                 >
-                                                    <i class="fas fa-pen"></i>
+                                                    <i class="vs-icon-close vs-icon-hover-x"></i>
                                                 </vs-button>
+                                                <div class="icon-edit-active">
+                                                    <i class="fas fa-pen"></i>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -413,7 +424,7 @@ export default {
             timeoutSetCommentary: null,
             commentariesBeingEdited: null,
             loadingSetCommentary: false,
-            loadingRemoveCommentary: false,
+            loadingRemoveCommentary: null,
             exerciseForRePlaying: null,
             modalViewVideo: false,
             selectedViewVideo: false,
@@ -529,7 +540,7 @@ export default {
         },
         removeCommentary(commentary,exercise) {
             if (commentary.id) {
-                this.loadingRemoveCommentary = true;
+                this.loadingRemoveCommentary = commentary.id;
                 this.axios
                     .post(`/${this.doctorView?`doctor/${this.doctor.id}`:`patient/${this.patient.id}`}/remove/commentary`, {
                         commentaryId: commentary.id,
@@ -544,7 +555,7 @@ export default {
                             this.scrollToListElements();
                         });
 
-                        this.loadingRemoveCommentary = false;
+                        this.loadingRemoveCommentary = null;
                     })
                     .catch((error) => {
                         const errorMess =
@@ -552,7 +563,7 @@ export default {
                                 ? error.response.data.detail
                                 : error.response.data;
 
-                        this.loadingRemoveCommentary = false;
+                        this.loadingRemoveCommentary = null;
 
                         console.error(errorMess);
                     });
@@ -561,6 +572,15 @@ export default {
         editCommentary(commentary, exercise) {
             this.commentariesBeingEdited = commentary.id;
             exercise.commentary = commentary;
+        },
+        closeEditCommentary(exercise) {
+            this.commentariesBeingEdited = null;
+            exercise.commentary = {
+                content: "",
+                id: null,
+                doctor:this.doctorView?this.doctor:null,
+                patient:this.doctorView?null:this.patient,
+            };
         },
         isCommentaryBeingEdited(commentaryId) {
             return this.commentariesBeingEdited == commentaryId;
@@ -1022,12 +1042,6 @@ export default {
                     }
                 }
 
-                .commentary-create .commentary.active .vs-input-content .vs-input
-                {
-                    box-shadow: 0px 0rem 1.5rem rgba(173, 100, 74, 0.88) !important;
-                    border: 0.1rem solid $orange  !important;
-                }
-
                 .commentary-create {
                     margin-top: 1.25rem;
 
@@ -1066,6 +1080,12 @@ export default {
                             font-weight: 400;
                             color: $gray-dark;
                         }
+
+                        &.nobtns
+                        {
+                            border-radius: 0.8rem;
+                            padding-right: 6rem;
+                        }
                     }
 
                     .commentary-zone-btns
@@ -1094,7 +1114,7 @@ export default {
                             }
 
                             i {
-                                font-size: 1.5rem;
+                                font-size: 1.4rem;
                                 color: $gray-dark;
                             }
                         }
@@ -1104,14 +1124,39 @@ export default {
                     .commentary-zone-btns-inprogress
                     {
                         display: flex;
+                        position: relative;
+
+                        .icon-edit-active
+                        {
+                            position: absolute;
+                            top: 0.8rem;
+                            right: 1.1rem;
+                            width: 2.3rem;
+                            height: 2.3rem;
+                            color: #fff;
+                            background-color: #fb8b68;
+                            border-radius: 50%;
+                            z-index: 2;
+                            display: flex;
+                            align-items: center;
+                            justify-content: end;
+
+                            i {
+                                position: relative;
+                                left: -0.5rem;
+                                font-size: 1.2rem;
+                            }
+                        }
                         .vs-button {
                             transform: none;
                             border-radius: 0 0.8rem 0.8rem 0;
                             background-color: #fff;
                             box-shadow: none;
-                            border: 0.1rem solid #e7dfcd;
                             border-left: none;
-                            --vs-button-padding: 1rem 1.3rem;
+                            --vs-button-padding: 0rem 0rem;
+                            position: absolute;
+                            top: 0.4rem;
+                            right: 3.5rem;
 
                             &:disabled {
                                 opacity: 1;
@@ -1225,7 +1270,6 @@ export default {
 
                     p {
                         margin: 0;
-                        margin-top: 0.5rem;
                         overflow: hidden;
                         text-overflow: ellipsis;
                     }
