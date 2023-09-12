@@ -282,6 +282,11 @@
                                 <span>Commentaire</span>
                                 <vs-switch
                                     v-model="exercise.commentaryActive"
+                                    @input="
+                                        switchCommentary(
+                                            exercise
+                                        )
+                                    "
                                 />
                                 <!-- <vs-input
                                     label-placeholder="Ta"
@@ -699,6 +704,11 @@ export default {
                     this.exercisePositionActiveId = null;
             }
         },
+        switchCommentary(exercise)
+        {
+            if(!exercise.commentaryActive)
+                exercise.commentary.content = '';
+        }
     },
 };
 </script>
