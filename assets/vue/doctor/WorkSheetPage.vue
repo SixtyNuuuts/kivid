@@ -1059,7 +1059,7 @@ export default {
                         existingWorksheets.forEach((worksheet) => {
                             worksheet.exercises = worksheet.exercises.map(
                                 (exercise) => {
-                                    const docFirstCommentary = exercise.commentaries.length ? exercise.commentaries.find(c=>!c.patient) : null;
+                                    const docFirstCommentary = exercise.commentaries.length ? f.sortByCreatedAtAsc(exercise.commentaries).find(c=>!c.patient) : null;
 
                                     return {
                                         ...exercise,
