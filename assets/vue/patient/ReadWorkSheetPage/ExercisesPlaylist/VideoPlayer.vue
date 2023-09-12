@@ -113,7 +113,7 @@
             </div>
         </transition>
         <transition name="fade">
-            <div class="doctor-commentary" v-if="getDoctorCommentary && doctorCommentaryActive">
+            <div class="doctor-commentary" v-if="videoFrame && getDoctorCommentary && doctorCommentaryActive">
                 <button
                     class="vs-dialog__close btn-close-modal"
                     @click="doctorCommentaryActive=false"
