@@ -383,11 +383,11 @@ export default {
                     this.doctorWorksheets
                 );
 
-                // this.doctorWorksheets.forEach((w) => {
-                //     if (w.exercises) {
-                //         f.sortByPosition(w.exercises);
-                //     }
-                // });
+                this.doctorWorksheets.forEach((w) => {
+                    if (w.exercises) {
+                        w.exercises = f.sortByPosition(w.exercises);
+                    }
+                });
 
                 this.loadingDoctorFirstsWorksheets = false;
 
@@ -400,11 +400,11 @@ export default {
                             this.doctorWorksheets
                         );
 
-                        // this.doctorWorksheets.forEach((w) => {
-                        //     if (w.exercises) {
-                        //         f.sortByPosition(w.exercises);
-                        //     }
-                        // });
+                        this.doctorWorksheets.forEach((w) => {
+                            if (w.exercises) {
+                                w.exercises = f.sortByPosition(w.exercises);
+                            }
+                        });
 
                         this.loadingDoctorAllWorksheets = false;
                     })

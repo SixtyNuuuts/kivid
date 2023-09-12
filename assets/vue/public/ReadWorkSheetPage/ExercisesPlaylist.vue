@@ -750,7 +750,6 @@ export default {
 
                     p {
                         margin: 0;
-                        margin-top: 0.5rem;
                         overflow: hidden;
                         text-overflow: ellipsis;
                     }

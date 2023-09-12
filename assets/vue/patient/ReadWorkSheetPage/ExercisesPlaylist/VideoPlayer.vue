@@ -113,6 +113,34 @@
             </div>
         </transition>
         <transition name="fade">
+            <div class="doctor-commentary" v-if="getDoctorCommentary && doctorCommentaryActive">
+                <button
+                    class="vs-dialog__close btn-close-modal"
+                    @click="doctorCommentaryActive=false"
+                >
+                    <i class="vs-icon-close vs-icon-hover-x"></i>
+                </button>
+                <vs-avatar
+                    size="25"
+                    class="commentary-user-avatar"
+                    circle
+                >
+                    <img
+                        v-if="getDoctorCommentary && getDoctorCommentary.doctor"
+                        :src="
+                            getDoctorCommentary.doctor.avatarUrl
+                                ? getDoctorCommentary.doctor.avatarUrl
+                                : '/img/avatar-default.svg'
+                        "
+                        :alt="`Avatar de ${getDoctorCommentary.doctor.firstname} ${getDoctorCommentary.doctor.lastname}`"
+                    />
+                </vs-avatar>
+                <div>
+                    {{getDoctorCommentary ? getDoctorCommentary.content : ''}}
+                </div>
+            </div>
+        </transition>
+        <transition name="fade">
             <div v-if="videoFrame" class="bottom-bar">
                 <div
                     class="bottom-bar-content"
@@ -254,6 +282,7 @@ export default {
             loadingBtnEvalNext: false,
             loadingBtnNextExercise: false,
             sessionScorePoints: null,
+            doctorCommentaryActive: true
         };
     },
     computed: {
@@ -278,6 +307,10 @@ export default {
                 this.ponderation.length
             );
         },
+        getDoctorCommentary()
+        {
+            return this.getExercise.commentaries.find(c=>c.doctor);
+        }
     },
     methods: {
         videoEnded() {
@@ -903,6 +936,57 @@ export default {
                 }
             }
         }
+    }
+
+    .doctor-commentary
+    {
+        background-color: #ffffff;
+        position: absolute;
+        bottom: 33vh;
+        left: 50%;
+        transform: translateX(-50%) translateY(0);
+        padding: 1.2rem 1.9rem;
+        border-radius: 1.7rem;
+        display: flex;
+        align-items: center;
+        font-size: 1.3rem;
+        box-shadow: 0px 0rem 1.5rem rgba(40, 33, 31, 0.25);
+        z-index: 2;
+
+        .vs-dialog__close {
+            background-color: #faf8f4;
+            top: -4px;
+            right: -3px;
+
+            &:hover {
+                transform: none !important;
+            }
+        }
+        .vs-dialog__close i {
+            width: 17px;
+            height: 17px;
+        }
+        .vs-icon-close::before,.vs-icon-close::after {
+            width: 10px;
+        }
+
+        @media (min-width: 560px) {
+            bottom: 12vh;
+        }
+
+        .vs-avatar-content
+        {
+            margin-right: 1.5rem;
+            flex: none;
+        }
+
+        div:not(.vs-avatar-content)
+        {
+            max-height: 5.8vh;
+            overflow-y: auto;
+            padding: 0.6rem 0;
+        }
+
     }
 
     .bottom-bar {
