@@ -97,7 +97,7 @@
         "/build/587.0e8c4249.js",
         "/build/561.47cb6e26.js",
         "/build/480.6660ca2e.js",
-        "/build/doctor-dashboard-page.9dfec96f.js"
+        "/build/doctor-dashboard-page.eefcc77c.js"
       ],
       "css": [
         "/build/doctor-dashboard-page.52701d8a.css"
@@ -137,10 +137,10 @@
         "/build/274.57a26017.js",
         "/build/949.27b11c86.js",
         "/build/480.6660ca2e.js",
-        "/build/patient-read-worksheet-page.34f5780d.js"
+        "/build/patient-read-worksheet-page.32df22cc.js"
       ],
       "css": [
-        "/build/patient-read-worksheet-page.dce3487c.css"
+        "/build/patient-read-worksheet-page.90f614ba.css"
       ]
     },
     "public-read-worksheet-page": {
@@ -152,7 +152,7 @@
         "/build/public-read-worksheet-page.50afb7c0.js"
       ],
       "css": [
-        "/build/public-read-worksheet-page.64e977b5.css"
+        "/build/public-read-worksheet-page.2b18b965.css"
       ]
     },
     "ffmkr-admin-dashboard-page": {
