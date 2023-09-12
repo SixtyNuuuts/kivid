@@ -168,7 +168,7 @@
                                     <i class="far fa-comment-alt"></i>
                                     Commentaire
                                 </p>
-                                <div class="commentary-history-list" v-if="exercise.commentaries.length">
+                                <div class="commentary-history-list" v-if="exercise.commentaries.length && exercise.commentaries.filter(c=>c.content!='').length">
                                     <div
                                         v-for="(
                                             commentary, i
@@ -176,129 +176,131 @@
                                         :key="i"
                                         class="commentary-history"
                                     >
-                                        <h5>
-                                            <span class="commentary-user">
-                                                <vs-avatar
-                                                    size="14"
-                                                    class="commentary-user-avatar"
-                                                    circle
-                                                >
-                                                    <img
-                                                        v-if="commentary.doctor"
-                                                        :src="
-                                                            commentary.doctor.avatarUrl
-                                                                ? commentary.doctor.avatarUrl
-                                                                : '/img/avatar-default.svg'
-                                                        "
-                                                        :alt="`Avatar de ${commentary.doctor.firstname} ${commentary.doctor.lastname}`"
-                                                    />
-                                                    <img
-                                                        v-if="commentary.patient"
-                                                        :src="
-                                                            commentary.patient.avatarUrl
-                                                                ? commentary.patient.avatarUrl
-                                                                : '/img/avatar-default.svg'
-                                                        "
-                                                        :alt="`Avatar de ${commentary.patient.firstname} ${commentary.patient.lastname}`"
-                                                    />
-                                                </vs-avatar>
-                                                <span class="commentary-user-name">
-                                                    <span
-                                                        v-if="
-                                                            commentary.doctor &&
-                                                            (commentary.doctor.firstname ||
-                                                            commentary.doctor.lastname)
-                                                        "
+                                        <div v-if="commentary.content!=''">
+                                            <h5>
+                                                <span class="commentary-user">
+                                                    <vs-avatar
+                                                        size="14"
+                                                        class="commentary-user-avatar"
+                                                        circle
                                                     >
-                                                        {{ commentary.doctor.firstname }}
-                                                        {{ commentary.doctor.lastname }}
-                                                    </span>
-                                                    <span
-                                                        v-if="
-                                                            commentary.patient &&
-                                                            (commentary.patient.firstname ||
-                                                            commentary.patient.lastname)
-                                                        "
-                                                    >
-                                                        {{ commentary.patient.firstname }}
-                                                        {{ commentary.patient.lastname }}
+                                                        <img
+                                                            v-if="commentary.doctor"
+                                                            :src="
+                                                                commentary.doctor.avatarUrl
+                                                                    ? commentary.doctor.avatarUrl
+                                                                    : '/img/avatar-default.svg'
+                                                            "
+                                                            :alt="`Avatar de ${commentary.doctor.firstname} ${commentary.doctor.lastname}`"
+                                                        />
+                                                        <img
+                                                            v-if="commentary.patient"
+                                                            :src="
+                                                                commentary.patient.avatarUrl
+                                                                    ? commentary.patient.avatarUrl
+                                                                    : '/img/avatar-default.svg'
+                                                            "
+                                                            :alt="`Avatar de ${commentary.patient.firstname} ${commentary.patient.lastname}`"
+                                                        />
+                                                    </vs-avatar>
+                                                    <span class="commentary-user-name">
+                                                        <span
+                                                            v-if="
+                                                                commentary.doctor &&
+                                                                (commentary.doctor.firstname ||
+                                                                commentary.doctor.lastname)
+                                                            "
+                                                        >
+                                                            {{ commentary.doctor.firstname }}
+                                                            {{ commentary.doctor.lastname }}
+                                                        </span>
+                                                        <span
+                                                            v-if="
+                                                                commentary.patient &&
+                                                                (commentary.patient.firstname ||
+                                                                commentary.patient.lastname)
+                                                            "
+                                                        >
+                                                            {{ commentary.patient.firstname }}
+                                                            {{ commentary.patient.lastname }}
+                                                        </span>
                                                     </span>
                                                 </span>
-                                            </span>
-                                            |
-                                            {{ formatDate(commentary.createdAt) }}
-                                            <span v-if="commentary.worksheetSession" class="commentary-worksheet-session">
-                                                | Session
-                                                {{ commentary.worksheetSession.execOrder }} 
-                                            </span>
-                                        </h5>
-                                        <div 
-                                            class="commentary-zone"
-                                        >
+                                                |
+                                                {{ formatDate(commentary.createdAt) }}
+                                                <span v-if="commentary.worksheetSession" class="commentary-worksheet-session">
+                                                    | Session
+                                                    {{ commentary.worksheetSession.execOrder }} 
+                                                </span>
+                                            </h5>
                                             <div 
-                                                class="commentary-zone-read"
-                                                :class="{nobtns:!((doctorView && commentary.doctor && doctor.id == commentary.doctor.id)
-                                                    ||(!doctorView && commentary.patient && patient.id == commentary.patient.id))||isCommentaryBeingEdited(
-                                                        commentary.id
-                                                    )}"
+                                                class="commentary-zone"
                                             >
-                                                <p>{{ commentary.content }}</p>
-                                            </div>
-                                            <div
-                                                class="commentary-zone-btns"
-                                                v-if="
-                                                    ((doctorView && commentary.doctor && doctor.id == commentary.doctor.id)
-                                                    ||(!doctorView && commentary.patient && patient.id == commentary.patient.id))
-                                                    && !isCommentaryBeingEdited(
-                                                        commentary.id
-                                                    )
-                                                "
-                                            >
-                                                <vs-button
-                                                    @click="
-                                                        editCommentary(
-                                                            commentary,
-                                                            exercise
+                                                <div 
+                                                    class="commentary-zone-read"
+                                                    :class="{nobtns:!((doctorView && commentary.doctor && doctor.id == commentary.doctor.id)
+                                                        ||(!doctorView && commentary.patient && patient.id == commentary.patient.id))||isCommentaryBeingEdited(
+                                                            commentary.id
+                                                        )}"
+                                                >
+                                                    <p>{{ commentary.content }}</p>
+                                                </div>
+                                                <div
+                                                    class="commentary-zone-btns"
+                                                    v-if="
+                                                        ((doctorView && commentary.doctor && doctor.id == commentary.doctor.id)
+                                                        ||(!doctorView && commentary.patient && patient.id == commentary.patient.id))
+                                                        && !isCommentaryBeingEdited(
+                                                            commentary.id
                                                         )
                                                     "
-                                                    class="btn-edit-commentary"
-                                                    floating
                                                 >
-                                                    <i class="fas fa-pen"></i>
-                                                </vs-button>
-                                                <vs-button
-                                                    @click="removeCommentary(
-                                                            commentary,
-                                                            exercise)
-                                                            "
-                                                    floating
-                                                    :disabled="loadingRemoveCommentary==commentary.id"
-                                                    :loading="loadingRemoveCommentary==commentary.id"
-                                                >
-                                                    <i class="fas fa-trash"></i>
-                                                </vs-button>  
-                                            </div>
-                                            <div
-                                                class="commentary-zone-btns-inprogress"
-                                                v-if="
-                                                    ((doctorView && commentary.doctor && doctor.id == commentary.doctor.id)
-                                                    ||(!doctorView && commentary.patient && patient.id == commentary.patient.id))
-                                                    && isCommentaryBeingEdited(
-                                                        commentary.id
-                                                    )
-                                                "
-                                            >
-                                                <vs-button
-                                                    class="btn-edit-commentary"
-                                                    @click="
-                                                        closeEditCommentary(exercise)
+                                                    <vs-button
+                                                        @click="
+                                                            editCommentary(
+                                                                commentary,
+                                                                exercise
+                                                            )
+                                                        "
+                                                        class="btn-edit-commentary"
+                                                        floating
+                                                    >
+                                                        <i class="fas fa-pen"></i>
+                                                    </vs-button>
+                                                    <vs-button
+                                                        @click="removeCommentary(
+                                                                commentary,
+                                                                exercise)
+                                                                "
+                                                        floating
+                                                        :disabled="loadingRemoveCommentary==commentary.id"
+                                                        :loading="loadingRemoveCommentary==commentary.id"
+                                                    >
+                                                        <i class="fas fa-trash"></i>
+                                                    </vs-button>  
+                                                </div>
+                                                <div
+                                                    class="commentary-zone-btns-inprogress"
+                                                    v-if="
+                                                        ((doctorView && commentary.doctor && doctor.id == commentary.doctor.id)
+                                                        ||(!doctorView && commentary.patient && patient.id == commentary.patient.id))
+                                                        && isCommentaryBeingEdited(
+                                                            commentary.id
+                                                        )
                                                     "
-                                                    floating
                                                 >
-                                                    <i class="vs-icon-close vs-icon-hover-x"></i>
-                                                </vs-button>
-                                                <div class="icon-edit-active">
-                                                    <i class="fas fa-pen"></i>
+                                                    <vs-button
+                                                        class="btn-edit-commentary"
+                                                        @click="
+                                                            closeEditCommentary(exercise)
+                                                        "
+                                                        floating
+                                                    >
+                                                        <i class="vs-icon-close vs-icon-hover-x"></i>
+                                                    </vs-button>
+                                                    <div class="icon-edit-active">
+                                                        <i class="fas fa-pen"></i>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
