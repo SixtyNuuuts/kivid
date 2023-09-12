@@ -15,7 +15,7 @@ class Commentary
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"worksheet_read", "dashboard_worksheet_read", "patient_read"})
+     * @Groups({"worksheet_read", "dashboard_worksheet_read", "patient_read", "worksheet_doctor_read"})
      */
     private $id;
 
@@ -37,13 +37,13 @@ class Commentary
 
     /**
      * @ORM\Column(type="text")
-     * @Groups({"worksheet_read"})
+     * @Groups({"worksheet_read", "worksheet_doctor_read"})
      */
     private $content;
 
     /**
      * @ORM\ManyToOne(targetEntity=Patient::class, inversedBy="commentaries")
-     * @Groups({"worksheet_read"})
+     * @Groups({"worksheet_read", "worksheet_doctor_read"})
      */
     private $patient;
 

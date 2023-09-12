@@ -701,9 +701,9 @@ export default {
                 {
                     id: 0,
                     partOfBody: null,
-                    duration: 1,
-                    perDay: 1,
-                    perWeek: 1,
+                    duration: 6,
+                    perDay: 2,
+                    perWeek: 7,
                     title: "",
                     partOfBodyIsEmptyMessage: null,
                     titleIsEmptyMessage: null,
@@ -1059,6 +1059,8 @@ export default {
                         existingWorksheets.forEach((worksheet) => {
                             worksheet.exercises = worksheet.exercises.map(
                                 (exercise) => {
+                                    const docFirstCommentary = exercise.commentaries.length ? exercise.commentaries.find(c=>!c.patient) : null;
+
                                     return {
                                         ...exercise,
                                         option: exercise.option
@@ -1077,6 +1079,10 @@ export default {
                                             ? true
                                             : false,
                                         holdActive: exercise.hold
+                                            ? true
+                                            : false,
+                                        commentary: docFirstCommentary ?? {id:null,content:''},
+                                        commentaryActive: docFirstCommentary
                                             ? true
                                             : false,
                                         isActive: false,

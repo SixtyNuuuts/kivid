@@ -18,7 +18,7 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"patient_read", "doctor_read", "user_read", "dashboard_worksheet_read", "worksheet_read"})
+     * @Groups({"patient_read", "doctor_read", "user_read", "dashboard_worksheet_read", "worksheet_read", "worksheet_doctor_read"})
      */
     private $id;
 

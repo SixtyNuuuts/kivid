@@ -36,6 +36,7 @@ class WorksheetController extends AbstractController
     private $partOfBodyRepository;
     private $notificationService;
     private $em;
+    private $commentaryRepository;
 
     public function __construct(
         PatientRepository $patientRepository,
@@ -45,7 +46,8 @@ class WorksheetController extends AbstractController
         ExerciseRepository $exerciseRepository,
         NotificationService $notificationService,
         PartOfBodyRepository $partOfBodyRepository,
-        EntityManagerInterface $em
+        EntityManagerInterface $em,
+        CommentaryRepository $commentaryRepository
     ) {
         $this->patientRepository = $patientRepository;
         $this->worksheetRepository = $worksheetRepository;
@@ -55,6 +57,7 @@ class WorksheetController extends AbstractController
         $this->partOfBodyRepository = $partOfBodyRepository;
         $this->notificationService = $notificationService;
         $this->em = $em;
+        $this->commentaryRepository = $commentaryRepository;
     }
 
 
@@ -285,7 +288,7 @@ class WorksheetController extends AbstractController
                 ;
 
                 foreach ($data->exercises as $dataExercise) {
-                    $this->generateExercise($dataExercise, $worksheet);
+                    $this->generateExercise($dataExercise, $worksheet, $doctor);
                 }
 
                 $this->em->persist($worksheet);
@@ -338,7 +341,7 @@ class WorksheetController extends AbstractController
                         ;
         
                         foreach ($worksheetOrigin->getExercises() as $exercise) {
-                            $this->generateExercise($exercise, $worksheet);
+                            $this->generateExercise($exercise, $worksheet, $doctor);
                         }
 
                         $this->em->persist($worksheet);
@@ -365,7 +368,7 @@ class WorksheetController extends AbstractController
                         ;
         
                         foreach ($worksheetData->exercises as $exerciseData) {
-                            $this->generateExercise($exerciseData, $worksheet);
+                            $this->generateExercise($exerciseData, $worksheet, $doctor);
                         }
     
                         // // Si en mode prescription : Création du modèle de fiche (identique sans le patient)
@@ -458,9 +461,21 @@ class WorksheetController extends AbstractController
                                      ->setTempo($dataExercise->tempo !== "" ? $dataExercise->tempo : null)
                                      ->setHold($dataExercise->hold !== "" ? (int)$dataExercise->hold : null)
                                      ->setPosition((int)$dataExercise->position);
+
+                            $exerciseDoctorCommentaryInputContent = trim($dataExercise->commentary->content);
+                            if($exerciseDoctorCommentaryInputContent != '')
+                            {
+                                $exerciseDoctorCommentaries = array_filter($exercise->getCommentaries()->toArray(), function ($commentary) {
+                                    return $commentary->getPatient() === null;
+                                });
+                                $exerciseDoctorCommentaryExistantContent = reset($exerciseDoctorCommentaries)->getContent() ?? null;
+                                
+                                if($exerciseDoctorCommentaryInputContent != $exerciseDoctorCommentaryExistantContent)
+                                    $this->createCommentary($doctor, $dataExercise->commentary->id, $exerciseDoctorCommentaryInputContent, $exercise, $worksheet, null);    
+                            }
                         }
                         if (null === $dataExercise->id) {
-                            $this->generateExercise($dataExercise, $worksheet);
+                            $this->generateExercise($dataExercise, $worksheet, $doctor);
                         }
                     }
 
@@ -573,7 +588,7 @@ class WorksheetController extends AbstractController
         );
     }
 
-    private function generateExercise(object $dataExercise, Worksheet $worksheet): void
+    private function generateExercise(object $dataExercise, Worksheet $worksheet, Doctor $doctor): void
     {
         $exercise = new Exercise();
 
@@ -588,6 +603,24 @@ class WorksheetController extends AbstractController
                 ->setPosition($dataExercise->getPosition());
 
             $video = $dataExercise->getVideo();
+
+            $exercise->setVideo($video);
+
+            $worksheet->addExercise($exercise);
+    
+            $this->em->persist($exercise);
+    
+            $exerciseCommentaries = $exercise->getCommentaries();
+            if(count($exerciseCommentaries) > 0)
+            {
+                $exerciseDoctorCommentaries = array_filter($exerciseCommentaries->toArray(), function ($commentary) {
+                    return $commentary->getPatient() === null;
+                });
+                $exerciseDoctorCommentaryExistant = reset($exerciseDoctorCommentaries) ?? null;
+                
+                if($exerciseDoctorCommentaryExistant)
+                    $this->createCommentary($doctor, $exerciseDoctorCommentaryExistant->getId(), $exerciseDoctorCommentaryExistant->getContent(), $exercise, $worksheet, null);    
+            }
         }
         else 
         {
@@ -600,52 +633,35 @@ class WorksheetController extends AbstractController
                 ->setPosition((int)$dataExercise->position);
 
             $video = $this->videoRepository->findOneById($dataExercise->video->id);
+           
+            $exercise->setVideo($video);
+
+            $worksheet->addExercise($exercise);
+    
+            $this->em->persist($exercise);
+
+            $exerciseDoctorCommentaryInputContent = trim($dataExercise->commentary->content);
+            if($exerciseDoctorCommentaryInputContent!='')
+                $this->createCommentary($doctor, $dataExercise->commentary->id, $exerciseDoctorCommentaryInputContent, $exercise, $worksheet, null);
         }
-
-
-        $exercise->setVideo($video);
-
-        $worksheet->addExercise($exercise);
-
-        $this->em->persist($exercise);
     }
 
     /**
      * @Route("/{id}/create/commentary", name="app_doctor_create_commentary", methods={"POST"})
      * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
-    public function createCommentary(Request $request, Doctor $doctor, CommentaryRepository $commentaryRepository): JsonResponse
+    public function createCommentaryAction(Request $request, Doctor $doctor): JsonResponse
     {
         if ($request->isMethod('post')) {
             $data = json_decode($request->getContent());
 
             if ($this->isCsrfTokenValid('create_commentary' . $doctor->getId(), $data->_token)) {
-                $commentary = $data->commentaryId
-                            ? $commentaryRepository->findOneBy(['id' => $data->commentaryId])
-                            : new Commentary();
-
-                $commentary->setContent($data->commentaryContent);
-                $commentary->setCreatedAt(new \DateTimeImmutable());
-
-                if (!$data->commentaryId) {
-                    $exercise = $this->exerciseRepository->findOneBy(['id' => $data->exerciseId]);
-                    $worksheet = $this->worksheetRepository->findOneBy(['id' => $data->worksheetId]);
-                    $worksheetSession = $this->worksheetSessionRepository->findOneBy(
-                        ['id' => $data->worksheetSessionId]
-                    );
-
-                    $commentary->setDoctor($doctor)
-                               ->setExercise($exercise)
-                               ->setWorksheet($worksheet)
-                               ->setWorksheetSession($worksheetSession)
-                    ;
-                    $this->em->persist($commentary);
-                }
-
+                $commentaryId = $this->createCommentary($doctor, $data->commentaryId, $data->commentaryContent, $data->exerciseId, $data->worksheetId, $data->worksheetSessionId);
+                
                 $this->em->flush();
 
                 return $this->json(
-                    ['message' => 'Commentaire créé', 'commentaryId' => $commentary->getId()],
+                    ['message' => 'Commentaire créé', 'commentaryId' => $commentaryId],
                     200
                 );
             }
@@ -655,5 +671,60 @@ class WorksheetController extends AbstractController
             "Une erreur s'est produite lors de la création du commentaire",
             500
         );
+    }
+
+    /**
+     * @Route("/{id}/remove/commentary", name="app_doctor_remove_commentary", methods={"POST"})
+     * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
+     */
+    public function removeCommentary(Request $request): JsonResponse
+    {
+        if ($request->isMethod('post')) {
+            $data = json_decode($request->getContent());
+
+            if ($data->commentaryId) {
+                $commentary = $this->commentaryRepository->findOneBy(['id' => $data->commentaryId]);
+
+                $this->em->remove($commentary);
+
+                $this->em->flush();
+
+                return $this->json(
+                    ['message' => 'Commentaire supprimé', 'commentaryId' => $data->commentaryId],
+                    200
+                );
+            }
+        }
+
+        return $this->json(
+            "Une erreur s'est produite lors de la création du commentaire",
+            500
+        );
+    }
+
+    private function createCommentary($doctor, $commentaryId, $commentaryContent, $exercise, $worksheet, $worksheetSessionId): int
+    {
+        $commentary = $commentaryId ? 
+            $this->commentaryRepository->findOneBy(['id' => $commentaryId])
+            : new Commentary();
+
+        $commentary->setContent($commentaryContent);
+
+        if (!$commentaryId) {
+            $exercise = $exercise instanceof Exercise ? $exercise : $this->exerciseRepository->findOneBy(['id' => $exercise]);
+            $worksheet = $worksheet instanceof Worksheet ? $worksheet : $this->worksheetRepository->findOneBy(['id' => $worksheet]);
+            $worksheetSession = $worksheetSessionId ? $this->worksheetSessionRepository->findOneBy(['id' => $worksheetSessionId]) : null;
+
+            $commentary->setDoctor($doctor)
+                       ->setExercise($exercise)
+                       ->setWorksheet($worksheet)
+                       ->setWorksheetSession($worksheetSession)
+                       ->setCreatedAt(new \DateTimeImmutable())
+            ;
+
+            $this->em->persist($commentary);
+        }
+
+        return $commentary->getId();
     }
 }
