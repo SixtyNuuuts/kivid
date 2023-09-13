@@ -166,7 +166,7 @@
                             <div class="commentary-doc-read">
                                 <p class="commentary-label">
                                     <i class="far fa-comment-alt"></i>
-                                    Commentaire
+                                    Commentaire<span v-if="exercise.commentaries.length && exercise.commentaries.filter(c=>c.content!='').length>1">s</span>
                                 </p>
                                 <div class="commentary-history-list" v-if="exercise.commentaries.length && exercise.commentaries.filter(c=>c.content!='').length">
                                     <div
@@ -225,12 +225,9 @@
                                                             {{ commentary.patient.lastname }}
                                                         </span>
                                                     </span>
-                                                </span>
-                                                |
-                                                {{ formatDate(commentary.createdAt) }}
+                                                </span><span class="sepa-comm-label-title">|</span><span>{{ formatDate(commentary.createdAt) }}</span>
                                                 <span v-if="commentary.worksheetSession" class="commentary-worksheet-session">
-                                                    | Session
-                                                    {{ commentary.worksheetSession.execOrder }} 
+                                                    <span class="sepa-comm-label-title">|</span><span>Session {{ commentary.worksheetSession.execOrder }}</span>
                                                 </span>
                                             </h5>
                                             <div 
@@ -239,9 +236,7 @@
                                                 <div 
                                                     class="commentary-zone-read"
                                                     :class="{nobtns:!((doctorView && commentary.doctor && doctor.id == commentary.doctor.id)
-                                                        ||(!doctorView && commentary.patient && patient.id == commentary.patient.id))||isCommentaryBeingEdited(
-                                                            commentary.id
-                                                        )}"
+                                                        ||(!doctorView && commentary.patient && patient.id == commentary.patient.id)),'btns-edit':isCommentaryBeingEdited(commentary.id)}"
                                                 >
                                                     <p>{{ commentary.content }}</p>
                                                 </div>
@@ -273,8 +268,6 @@
                                                                 exercise)
                                                                 "
                                                         floating
-                                                        :disabled="loadingRemoveCommentary==commentary.id"
-                                                        :loading="loadingRemoveCommentary==commentary.id"
                                                     >
                                                         <i class="fas fa-trash"></i>
                                                     </vs-button>  
@@ -292,7 +285,7 @@
                                                     <vs-button
                                                         class="btn-edit-commentary"
                                                         @click="
-                                                            closeEditCommentary(exercise)
+                                                            closeEditCommentary(commentary, exercise)
                                                         "
                                                         floating
                                                     >
@@ -328,8 +321,8 @@
                                             @click="setCommentary(exercise)"
                                             class="btn-send-commentary"
                                             floating
-                                            :disabled="loadingSetCommentary"
-                                            :loading="loadingSetCommentary"
+                                            :disabled="loadingSetCommentary==exercise.id"
+                                            :loading="loadingSetCommentary==exercise.id"
                                         >
                                             <i class="fas fa-paper-plane"></i>
                                         </vs-button>
@@ -385,6 +378,38 @@
                 @stripeCheckout="stripeCheckout()"
             />
         </transition>
+        <vs-dialog v-model="modalConfirmRemoveCommentary">
+            <p class="modal-confirm-text">Confirmer la suppression de</p>
+
+            <div class="modal-confirm-detail remove-item">
+                <div class="modal-confirm-icon remove-item">
+                    <i class="fas fa-trash"></i>
+                </div>
+                <p>
+                    <span>
+                        {{ removeCommentaryDetails.commentary.content }}
+                    </span>
+                </p>
+            </div>
+
+            <div class="modal-confirm-buttons">
+                <vs-button
+                    class="secondary"
+                    @click="modalConfirmRemoveCommentary = false"
+                >
+                    Annuler
+                </vs-button>
+                <vs-button
+                    @click="validRemoveCommentary"
+                    :loading="loadingRemoveCommentary"
+                    :class="{
+                        disabled: loadingRemoveCommentary,
+                    }"
+                >
+                    Confirmer
+                </vs-button>
+            </div>
+        </vs-dialog>
     </div>
 </template>
 
@@ -425,8 +450,8 @@ export default {
             loadingBtnStartSession: false,
             timeoutSetCommentary: null,
             commentariesBeingEdited: null,
-            loadingSetCommentary: false,
-            loadingRemoveCommentary: null,
+            loadingSetCommentary: null,
+            loadingRemoveCommentary: false,
             exerciseForRePlaying: null,
             modalViewVideo: false,
             selectedViewVideo: false,
@@ -436,6 +461,8 @@ export default {
                 ecver: 2,
                 modestbranding: 1,
             },
+            modalConfirmRemoveCommentary: false,
+            removeCommentaryDetails: { commentary: {},  exercise: {}},
         };
     },
     computed: {
@@ -491,7 +518,7 @@ export default {
         },
         setCommentary(exercise) {
             if (exercise.commentary.content) {
-                this.loadingSetCommentary = true;
+                this.loadingSetCommentary = exercise.id;
 
                 this.axios
                     .post(`/${this.doctorView?`doctor/${this.doctor.id}`:`patient/${this.patient.id}`}/create/commentary`, {
@@ -503,7 +530,6 @@ export default {
                         commentaryContent: exercise.commentary.content.trim(),
                     })
                     .then((response) => {
-                        // console.log(response.data);
                         this.commentariesBeingEdited = null;
 
                         if (!exercise.commentary.id) {
@@ -514,6 +540,10 @@ export default {
                         if(!commentaryAlreadyInCommentaries)
                         {
                             exercise.commentaries.push(exercise.commentary);
+                        }
+                        else
+                        {
+                            commentaryAlreadyInCommentaries.content = exercise.commentary.content;
                         }
 
                         this.$nextTick(() => {
@@ -526,7 +556,7 @@ export default {
                             };
                         });
 
-                        this.loadingSetCommentary = false;
+                        this.loadingSetCommentary = null;
                     })
                     .catch((error) => {
                         const errorMess =
@@ -534,15 +564,19 @@ export default {
                                 ? error.response.data.detail
                                 : error.response.data;
 
-                        this.loadingSetCommentary = false;
+                        this.loadingSetCommentary = null;
 
                         console.error(errorMess);
                     });
             }
         },
-        removeCommentary(commentary,exercise) {
+        validRemoveCommentary() {
+            const 
+                commentary = this.removeCommentaryDetails.commentary,
+                exercise = this.removeCommentaryDetails.exercise
+            ;
             if (commentary.id) {
-                this.loadingRemoveCommentary = commentary.id;
+                this.loadingRemoveCommentary = true;
                 this.axios
                     .post(`/${this.doctorView?`doctor/${this.doctor.id}`:`patient/${this.patient.id}`}/remove/commentary`, {
                         commentaryId: commentary.id,
@@ -557,7 +591,8 @@ export default {
                             this.scrollToListElements();
                         });
 
-                        this.loadingRemoveCommentary = null;
+                        this.loadingRemoveCommentary = false;
+                        this.modalConfirmRemoveCommentary = false;
                     })
                     .catch((error) => {
                         const errorMess =
@@ -565,17 +600,24 @@ export default {
                                 ? error.response.data.detail
                                 : error.response.data;
 
-                        this.loadingRemoveCommentary = null;
-
+                        this.loadingRemoveCommentary = false;
+                        this.modalConfirmRemoveCommentary = false;
                         console.error(errorMess);
                     });
             }
         },
+        removeCommentary(commentary,exercise) {
+            this.removeCommentaryDetails = {commentary,exercise};
+
+            return (this.modalConfirmRemoveCommentary =
+                !this.modalConfirmRemoveCommentary);
+        },
         editCommentary(commentary, exercise) {
             this.commentariesBeingEdited = commentary.id;
-            exercise.commentary = commentary;
+            exercise.commentary.id = commentary.id;
+            exercise.commentary.content = commentary.content;
         },
-        closeEditCommentary(exercise) {
+        closeEditCommentary(commentary, exercise) {
             this.commentariesBeingEdited = null;
             exercise.commentary = {
                 content: "",
@@ -586,12 +628,6 @@ export default {
         },
         isCommentaryBeingEdited(commentaryId) {
             return this.commentariesBeingEdited == commentaryId;
-        },
-        setCommentaryWithDebounce(exercise, e) {
-            clearTimeout(this.timeoutSetCommentary);
-            this.timeoutSetCommentary = setTimeout(() => {
-                this.setCommentary(exercise, e);
-            }, 1500);
         },
         stripeCheckout() {
             this.$emit("stripeCheckout", 0);
@@ -1046,8 +1082,8 @@ export default {
 
                 .commentary-create {
                     margin-top: 1.25rem;
-
                     position: relative;
+                    margin-right: 0.75rem;
 
                     label
                     {
@@ -1086,6 +1122,10 @@ export default {
                         &.nobtns
                         {
                             border-radius: 0.8rem;
+                        }
+                        &.btns-edit
+                        {
+                            border-radius: 0.8rem;
                             padding-right: 6rem;
                         }
                     }
@@ -1100,7 +1140,9 @@ export default {
                             box-shadow: none;
                             border: 0.1rem solid #e7dfcd;
                             border-left: none;
-                            --vs-button-padding: 1rem 1.3rem;
+                            --vs-button-padding: 1.2rem 1rem;
+                            display: flex;
+                            align-items: flex-start;
 
                             &.btn-edit-commentary
                             {
@@ -1108,16 +1150,21 @@ export default {
                             }
 
                             &:hover {
-                                background-color: $orange;
+                                background-color: #fff;
 
                                 i {
-                                    color: $white;
+                                    color: $gray-dark;
                                 }
                             }
 
-                            i {
-                                font-size: 1.4rem;
+                            i {                                
+                                font-size: 1.3rem;
                                 color: $gray-dark;
+
+                                &.fa-trash
+                                {
+                                    font-size: 1.2rem;
+                                }
                             }
                         }
 
@@ -1132,7 +1179,7 @@ export default {
                         {
                             position: absolute;
                             top: 0.8rem;
-                            right: 1.1rem;
+                            right: 3.6rem;
                             width: 2.3rem;
                             height: 2.3rem;
                             color: #fff;
@@ -1158,7 +1205,7 @@ export default {
                             --vs-button-padding: 0rem 0rem;
                             position: absolute;
                             top: 0.4rem;
-                            right: 3.5rem;
+                            right: 0.5rem;
 
                             &:disabled {
                                 opacity: 1;
@@ -1187,6 +1234,7 @@ export default {
                     background: $white;
                     padding: 1.2rem;
                     border-radius: 0 0 0.8rem 0.8rem;
+                    padding-left: 1.8rem;
 
                     .commentary-label
                     {
@@ -1248,6 +1296,7 @@ export default {
                         display: flex;
                         align-items: center;
                         white-space: nowrap;
+                        margin-bottom: 0.15rem;
 
                         .commentary-user
                         {
@@ -1256,7 +1305,7 @@ export default {
 
                             .commentary-user-avatar {
                                 position: relative;
-                                top: -0.25rem;
+                                top: -0.15rem;
                                 margin-right: 0.1rem;
                                 flex: none;
                                 min-width: 14px;
@@ -1267,6 +1316,14 @@ export default {
                         .commentary-worksheet-session
                         {
                             margin: 0 0.3rem;
+                        }
+
+                        .sepa-comm-label-title
+                        {
+                            display: inline-block;
+                            margin: 0 0.4rem;
+                            margin-left: 0.25rem;
+                            font-weight: normal;
                         }
                     }
 

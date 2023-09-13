@@ -116,38 +116,6 @@ export default {
         },
     },
     methods: {
-        // getCurrentCommentary(exerciseCommentaries) {
-        //     let commentary = {
-        //         content: "",
-        //         id: null,
-        //     };
-
-        //     if (
-        //         exerciseCommentaries.length &&
-        //         this.getCurrentWorksheetSession &&
-        //         exerciseCommentaries.find(
-        //             (c) =>
-        //                 c.worksheetSession.id ===
-        //                 this.getCurrentWorksheetSession.id
-        //         )
-        //     ) {
-        //         commentary = exerciseCommentaries.find(
-        //             (c) =>
-        //                 c.worksheetSession.id ===
-        //                 this.getCurrentWorksheetSession.id
-        //         );
-        //     }
-
-        //     if (
-        //         exerciseCommentaries.length &&
-        //         !this.getCurrentWorksheetSession
-        //     ) {
-        //         commentary =
-        //             exerciseCommentaries[exerciseCommentaries.length - 1];
-        //     }
-
-        //     return commentary;
-        // },
     },
     created() {
         Vue.prototype.$vs = this.$vs;
@@ -164,7 +132,18 @@ export default {
             )
             .then((response) => {
                 this.worksheet = response.data;
-                this.exercises = this.worksheet.exercises.map(e=>e={...e,isCompleted:false});
+                this.exercises = f.sortByPosition(
+                    this.worksheet.exercises.map((exercise) => {
+                        return {
+                            ...exercise,
+                            isCompleted:false,
+                            commentaries: f.sortByCreatedAtAsc(
+                                exercise.commentaries
+                            ),
+                        };
+                    })
+                );
+
                 this.loading = false;
             })
             .catch((error) => {

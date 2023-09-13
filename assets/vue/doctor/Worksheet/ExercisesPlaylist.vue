@@ -603,68 +603,57 @@ export default {
             return (this.modalConfirmRemoveExercise =
                 !this.modalConfirmRemoveExercise);
         },
-        validRemoveExercise() {
-            
-            this.exercises.splice(
-                this.exercises.indexOf(this.removeExerciseDetails),
-                1
-            );
+        validRemoveExercise() {            
+            this.btnLoadingValidRemoveExercise = true;
+            if (!this.removeExerciseDetails.id || String(this.removeExerciseDetails.id).startsWith("new") || "creation" === this.action) {
+                this.exercises.splice(
+                    this.exercises.indexOf(this.removeExerciseDetails),
+                    1
+                );
 
-            f.sortByPosition(this.exercises).map(
-                (e, i) => (e.position = i)
-            );
+                f.sortByPosition(this.exercises).map(
+                    (e, i) => (e.position = i)
+                );
 
-            this.modalConfirmRemoveExercise = false;
-            // this.btnLoadingValidRemoveExercise = true;
-            // if (!this.removeExerciseDetails.id || String(this.removeExerciseDetails.id).startsWith("new") || "creation" === this.action) {
-            //     this.exercises.splice(
-            //         this.exercises.indexOf(this.removeExerciseDetails),
-            //         1
-            //     );
+                this.btnLoadingValidRemoveExercise = false;
+                this.modalConfirmRemoveExercise = false;
+            } else {
+                this.axios
+                    .post(`/doctor/${this.doctor.id}/remove/exercise`, {
+                        _token: this.csrfTokenRemoveExercise,
+                        worksheetId: this.getWorksheet.id,
+                        exerciseId: this.removeExerciseDetails.id,
+                    })
+                    .then((response) => {
+                        this.exercises.splice(
+                            this.exercises.indexOf(this.removeExerciseDetails),
+                            1
+                        );
 
-            //     f.sortByPosition(this.exercises).map(
-            //         (e, i) => (e.position = i)
-            //     );
+                        f.sortByPosition(this.exercises).map(
+                            (e, i) => (e.position = i)
+                        );
 
-            //     this.btnLoadingValidRemoveExercise = false;
-            //     this.modalConfirmRemoveExercise = false;
-            // } else {
-            //     this.axios
-            //         .post(`/doctor/${this.doctor.id}/remove/exercise`, {
-            //             _token: this.csrfTokenRemoveExercise,
-            //             worksheetId: this.getWorksheet.id,
-            //             exerciseId: this.removeExerciseDetails.id,
-            //         })
-            //         .then((response) => {
-            //             this.exercises.splice(
-            //                 this.exercises.indexOf(this.removeExerciseDetails),
-            //                 1
-            //             );
+                        f.openSuccessNotification(
+                            "Suppression de l'exercice",
+                            response.data
+                        );
 
-            //             f.sortByPosition(this.exercises).map(
-            //                 (e, i) => (e.position = i)
-            //             );
+                        this.btnLoadingValidRemoveExercise = false;
+                        this.modalConfirmRemoveExercise = false;
+                    })
+                    .catch((error) => {
+                        const errorMess =
+                            "object" === typeof error.response.data
+                                ? error.response.data.detail
+                                : error.response.data;
 
-            //             f.openSuccessNotification(
-            //                 "Suppression de l'exercice",
-            //                 response.data
-            //             );
+                        f.openErrorNotification("Erreur", errorMess);
 
-            //             this.btnLoadingValidRemoveExercise = false;
-            //             this.modalConfirmRemoveExercise = false;
-            //         })
-            //         .catch((error) => {
-            //             const errorMess =
-            //                 "object" === typeof error.response.data
-            //                     ? error.response.data.detail
-            //                     : error.response.data;
-
-            //             f.openErrorNotification("Erreur", errorMess);
-
-            //             this.btnLoadingValidRemoveExercise = false;
-            //             this.modalConfirmRemoveExercise = false;
-            //         });
-            // }
+                        this.btnLoadingValidRemoveExercise = false;
+                        this.modalConfirmRemoveExercise = false;
+                    });
+            }
         },
         openVideoPlayer(exercise) {
             this.exerciseForPlaying = exercise;

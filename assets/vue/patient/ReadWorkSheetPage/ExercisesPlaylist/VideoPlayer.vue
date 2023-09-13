@@ -309,7 +309,7 @@ export default {
         },
         getDoctorCommentary()
         {
-            return this.getExercise.commentaries.find(c=>c.doctor);
+            return this.getExercise.commentaries.find(c=>c.doctor&&c.content);
         }
     },
     methods: {
@@ -942,7 +942,7 @@ export default {
     {
         background-color: #ffffff;
         position: absolute;
-        bottom: 33vh;
+        bottom: 36.5vh;
         left: 50%;
         transform: translateX(-50%) translateY(0);
         padding: 1.2rem 1.9rem;
@@ -952,6 +952,7 @@ export default {
         font-size: 1.3rem;
         box-shadow: 0px 0rem 1.5rem rgba(40, 33, 31, 0.25);
         z-index: 2;
+        width: 89.5vw;
 
         .vs-dialog__close {
             background-color: #faf8f4;
@@ -970,8 +971,20 @@ export default {
             width: 10px;
         }
 
+        @media (max-height: 800px) and (max-width: 500px) {
+            bottom: 41vh;
+        }
+
+        @media (max-height: 800px) and (min-width: 500px) and (max-width: 750px) {
+            bottom: 34vh;
+        }
+
         @media (min-width: 560px) {
             bottom: 12vh;
+        }
+
+        @media (min-width: 700px) {
+            width: initial;
         }
 
         .vs-avatar-content
@@ -982,9 +995,13 @@ export default {
 
         div:not(.vs-avatar-content)
         {
-            max-height: 5.8vh;
+            max-height: 6.9vh;
             overflow-y: auto;
-            padding: 0.6rem 0;
+            padding: 0.4vh 0;
+
+            @media (min-width: 560px) {
+                max-height: 5.7vh;
+            }
         }
 
     }

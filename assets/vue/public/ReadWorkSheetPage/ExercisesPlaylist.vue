@@ -145,6 +145,66 @@
                                 </vs-tooltip>
                             </div>
                         </div>
+                        <div class="commentary" v-if="exercise.commentaries.length && exercise.commentaries.filter(c=>c.content!='').length">
+                            <div class="commentary-doc-read">
+                                <p class="commentary-label">
+                                    <i class="far fa-comment-alt"></i>
+                                        Commentaire
+                                </p>
+                                <div class="commentary-history-list">
+                                    <div
+                                        v-for="(
+                                            commentary, i
+                                        ) in exercise.commentaries"
+                                        :key="i"
+                                        class="commentary-history"
+                                    >
+                                        <div v-if="commentary.content!=''">
+                                            <h5>
+                                                <span class="commentary-user">
+                                                    <vs-avatar
+                                                        size="14"
+                                                        class="commentary-user-avatar"
+                                                        circle
+                                                    >
+                                                        <img
+                                                            v-if="commentary.doctor"
+                                                            :src="
+                                                                commentary.doctor.avatarUrl
+                                                                    ? commentary.doctor.avatarUrl
+                                                                    : '/img/avatar-default.svg'
+                                                            "
+                                                            :alt="`Avatar de ${commentary.doctor.firstname} ${commentary.doctor.lastname}`"
+                                                        />
+                                                    </vs-avatar>
+                                                    <span class="commentary-user-name">
+                                                        <span
+                                                            v-if="
+                                                                commentary.doctor &&
+                                                                (commentary.doctor.firstname ||
+                                                                commentary.doctor.lastname)
+                                                            "
+                                                        >
+                                                            {{ commentary.doctor.firstname }}
+                                                            {{ commentary.doctor.lastname }}
+                                                        </span>
+                                                    </span>
+                                                </span><span class="sepa-comm-label-title">|</span><span>{{ formatDate(commentary.createdAt) }}</span>
+                                            </h5>
+                                            <div 
+                                                class="commentary-zone"
+                                            >
+                                                <div 
+                                                    class="commentary-zone-read nobtns"
+                                                >
+                                                    <p>{{ commentary.content }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -672,7 +732,7 @@ export default {
                 }
 
                 .commentary-create,
-                .commentary-edit {
+                .commentary-zone {
                     display: flex;
 
                     .vs-button {
@@ -692,16 +752,35 @@ export default {
                     }
                 }
 
-                .commentary-edit {
-                    .commentary-edit-read {
+                .commentary-create {
+                    margin-top: 1.25rem;
+                    position: relative;
+                    margin-right: 0.75rem;
+
+                    label
+                    {
+                        position: absolute;
+                        left: 1.9rem;
+                        top: 1.7rem;
+                        z-index: 1;
+                        color: #cfc6b0;
+                        pointer-events: none;
+                    }
+                }
+
+                .commentary-zone {
+                    .commentary-zone-read {
                         flex: 1;
+                        padding: 1.005rem 1.5rem;
+                        border: 0.1rem solid #e7dfcd;
                         border-radius: 0.8rem 0 0 0.8rem;
-                        border: 1px solid #ebe4d5;
+                        // border: 1px solid #ebe4d5;
                         overflow-y: auto;
-                        padding: 1.6rem 1.7rem;
+                        // padding: 1.6rem 1.7rem;
                         line-height: 1.3;
-                        font-weight: 700;
+                        // font-weight: 700;
                         font-style: italic;
+                        font-size: 1.3rem;
 
                         &.full-border-radius {
                             border-radius: 0.8rem;
@@ -711,32 +790,172 @@ export default {
                             font-weight: 400;
                             color: $gray-dark;
                         }
+
+                        &.nobtns
+                        {
+                            border-radius: 0.8rem;
+                        }
+                        &.btns-edit
+                        {
+                            border-radius: 0.8rem;
+                            padding-right: 6rem;
+                        }
                     }
 
-                    .vs-button {
-                        transform: none;
-                        border-radius: 0 0.8rem 0.8rem 0;
-                        background-color: #ebe4d5;
-                        box-shadow: none;
+                    .commentary-zone-btns
+                    {
+                        display: flex;
+                        .vs-button {
+                            transform: none;
+                            border-radius: 0 0.8rem 0.8rem 0;
+                            background-color: #fff;
+                            box-shadow: none;
+                            border: 0.1rem solid #e7dfcd;
+                            border-left: none;
+                            --vs-button-padding: 1.2rem 1rem;
+                            display: flex;
+                            align-items: flex-start;
 
-                        &:hover {
-                            background-color: $orange;
+                            &.btn-edit-commentary
+                            {
+                                border-radius: 0;
+                            }
 
-                            i {
-                                color: $white;
+                            &:hover {
+                                background-color: #fff;
+
+                                i {
+                                    color: $gray-dark;
+                                }
+                            }
+
+                            i {                                
+                                font-size: 1.3rem;
+                                color: $gray-dark;
+
+                                &.fa-trash
+                                {
+                                    font-size: 1.2rem;
+                                }
                             }
                         }
 
-                        i {
-                            color: $gray-dark;
+                    }
+                    
+                    .commentary-zone-btns-inprogress
+                    {
+                        display: flex;
+                        position: relative;
+
+                        .icon-edit-active
+                        {
+                            position: absolute;
+                            top: 0.8rem;
+                            right: 3.6rem;
+                            width: 2.3rem;
+                            height: 2.3rem;
+                            color: #fff;
+                            background-color: #fb8b68;
+                            border-radius: 50%;
+                            z-index: 2;
+                            display: flex;
+                            align-items: center;
+                            justify-content: flex-end;
+
+                            i {
+                                position: relative;
+                                left: -0.5rem;
+                                font-size: 1.2rem;
+                            }
+                        }
+                        .vs-button {
+                            transform: none;
+                            border-radius: 0 0.8rem 0.8rem 0;
+                            background-color: #fff;
+                            box-shadow: none;
+                            border-left: none;
+                            --vs-button-padding: 0rem 0rem;
+                            position: absolute;
+                            top: 0.4rem;
+                            right: 0.5rem;
+
+                            &:disabled {
+                                opacity: 1;
+                                background: #fff !important;
+                                color: $orange !important;
+                            }
+
+                            &:hover {
+                                background-color: #fff;
+
+                                i {
+                                    color: $orange;
+                                }
+                            }
+
+                            i {
+                                font-size: 1.5rem;
+                                color: $orange;
+                            }
                         }
                     }
+
                 }
 
                 .commentary-doc-read {
                     background: $white;
                     padding: 1.2rem;
-                    border-radius: 0.8rem;
+                    border-radius: 0 0 0.8rem 0.8rem;
+                    padding-left: 1.8rem;
+
+                    .commentary-label
+                    {
+                        margin-bottom: 0.5rem;
+                        margin-top: 0.3rem;
+                        color: #c1b79d;
+                        font-weight: bold;
+
+                        i {
+                            font-size: 1.3rem;
+                            position: relative;
+                            top: 0.08rem;
+                            margin-right: 0.3rem;
+                        }
+                    }
+
+                    .commentary-history-list
+                    {
+                        max-height: 27.2rem;
+                        overflow: auto;
+                        /* box-shadow: inset 0 0 8px 0 rgba(0, 0, 0, 0.05); */
+                        padding-right: 0.8rem;
+                        padding-bottom: 0.8rem;
+                        border-radius: 0.4rem;
+
+                        .commentary-history
+                        {
+                            margin-top: 1.2rem;
+
+                            &:first-child 
+                            {
+                                margin-top: 0.8rem;
+                            }
+
+                            .commentary-history-message
+                            {
+                                border-radius: 0.8rem;
+                                padding: 1.1rem 1.5rem;
+                                border: 0.1rem solid #e7dfcd;
+
+                                p
+                                {
+                                    margin-top: 0;
+                                    font-style: italic;
+                                    font-size: 1.3rem;
+                                }
+                            }
+                        }
+                    }
 
                     &:not(:last-child) {
                         margin-bottom: 1.2rem;
@@ -746,6 +965,38 @@ export default {
                         color: $gray-dark;
                         margin: 0;
                         font-size: 1rem;
+                        display: flex;
+                        align-items: center;
+                        white-space: nowrap;
+                        margin-bottom: 0.15rem;
+
+                        .commentary-user
+                        {
+                            display: flex;
+                            align-items: center;
+
+                            .commentary-user-avatar {
+                                position: relative;
+                                top: -0.15rem;
+                                margin-right: 0.1rem;
+                                flex: none;
+                                min-width: 14px;
+                            }
+                        }
+
+                        .commentary-user-name,
+                        .commentary-worksheet-session
+                        {
+                            margin: 0 0.3rem;
+                        }
+
+                        .sepa-comm-label-title
+                        {
+                            display: inline-block;
+                            margin: 0 0.4rem;
+                            margin-left: 0.25rem;
+                            font-weight: normal;
+                        }
                     }
 
                     p {

@@ -22,12 +22,15 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Controller\RedirectFromIsGrantedTrait;
 
 /**
  * @Route("/doctor")
  */
 class WorksheetController extends AbstractController
-{
+{    
+    use RedirectFromIsGrantedTrait;
+
     private $patientRepository;
     private $worksheetRepository;
     private $worksheetSessionRepository;
@@ -65,84 +68,114 @@ class WorksheetController extends AbstractController
      * @Route("/{id}/get/worksheet/{worksheetId}", name="app_doctor_get_worksheet", methods={"GET"})
      * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
-    public function getWorksheet(Doctor $doctor, int $worksheetId): JsonResponse
+    public function getWorksheet(Request $request, Doctor $doctor, int $worksheetId)
     {
-        $worksheet = $this->worksheetRepository->findOneBy(['id' => $worksheetId]);
+        if ($request->isXmlHttpRequest()) {
+            $worksheet = $this->worksheetRepository->findOneBy(['id' => $worksheetId]);
 
-        return $this->json(
-            $worksheet,
-            200,
-            [],
-            ['groups' => 'worksheet_read']
-        );
+            return $this->json(
+                $worksheet,
+                200,
+                [],
+                ['groups' => 'worksheet_read']
+            );    
+        } else {
+            if ($this->getUser()) {
+                return $this->redirectFromIsGranted();
+            }
+        }
     }
 
     /**
      * @Route("/{id}/get/worksheets-group", name="app_doctor_get_worksheets_groupe", methods={"POST"})
      * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
-    public function getWorksheetsGroup(Doctor $doctor, Request $request): JsonResponse
+    public function getWorksheetsGroup(Request $request, Doctor $doctor)
     {
-        $data = json_decode($request->getContent());
-        $worksheets = $this->worksheetRepository->findBy(['id' => $data->worksheetsIds]);
-
-        return $this->json(
-            $worksheets,
-            200,
-            [],
-            ['groups' => 'worksheet_doctor_read']
-        );
+        if ($request->isXmlHttpRequest()) {
+            $data = json_decode($request->getContent());
+            $worksheets = $this->worksheetRepository->findBy(['id' => $data->worksheetsIds]);
+    
+            return $this->json(
+                $worksheets,
+                200,
+                [],
+                ['groups' => 'worksheet_doctor_read']
+            );
+        } else {
+            if ($this->getUser()) {
+                return $this->redirectFromIsGranted();
+            }
+        }    
     }
 
     /**
      * @Route("/{id}/get/worksheets/{maxresult}/{firstresult}", name="app_doctor_get_worksheets", methods={"GET"})
      * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
-    public function getWorksheets(Doctor $doctor, ?int $maxresult = null, ?int $firstresult = null): JsonResponse
+    public function getWorksheets(Request $request, Doctor $doctor, ?int $maxresult = null, ?int $firstresult = null)
     {
-        $worksheets = $this->worksheetRepository->findByDoctorPatientNull($doctor, $maxresult, $firstresult);
-
-        return $this->json(
-            $worksheets,
-            200,
-            [],
-            ['groups' => 'dashboard_worksheet_read']
-        );
+        if ($request->isXmlHttpRequest()) {
+            $worksheets = $this->worksheetRepository->findByDoctorPatientNull($doctor, $maxresult, $firstresult);
+    
+            return $this->json(
+                $worksheets,
+                200,
+                [],
+                ['groups' => 'dashboard_worksheet_read']
+            );
+        } else {
+            if ($this->getUser()) {
+                return $this->redirectFromIsGranted();
+            }
+        }    
     }
 
     /**
      * @Route("/{id}/get/store-worksheets/{maxresult}/{firstresult}", name="app_doctor_get_store_worksheets", methods={"GET"})
      */
-    public function getStoreWorksheets(Doctor $doctor, ?int $maxresult = null, ?int $firstresult = null, DoctorRepository $doctorRepository): JsonResponse
+    public function getStoreWorksheets(Request $request, Doctor $doctor, ?int $maxresult = null, ?int $firstresult = null, DoctorRepository $doctorRepository)
     {
-        $doctorStoreReferent = $doctorRepository->findOneBy(['id'=>1]);
-        $worksheets = $this->worksheetRepository->findByDoctorPatientNull($doctorStoreReferent, $maxresult, $firstresult);
-
-        return $this->json(
-            $worksheets,
-            200,
-            [],
-            ['groups' => 'dashboard_worksheet_read']
-        );
+        if ($request->isXmlHttpRequest()) {
+            $doctorStoreReferent = $doctorRepository->findOneBy(['id'=>1]);
+            $worksheets = $this->worksheetRepository->findByDoctorPatientNull($doctorStoreReferent, $maxresult, $firstresult);
+    
+            return $this->json(
+                $worksheets,
+                200,
+                [],
+                ['groups' => 'dashboard_worksheet_read']
+            );
+        } else {
+            if ($this->getUser()) {
+                return $this->redirectFromIsGranted();
+            }
+        }    
     }
 
     /**
      * @Route("/{id}/get/exercises/{worksheetId}", name="app_doctor_get_exercises", methods={"GET"})
      * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
-    public function getExercises(Doctor $doctor, int $worksheetId): JsonResponse
+    public function getExercises(Request $request, Doctor $doctor, int $worksheetId)
     {
-        $exercises = $this->exerciseRepository->findBy(
-            ['worksheet' => $worksheetId],
-            ['position' => 'ASC']
-        );
-
-        return $this->json(
-            $exercises,
-            200,
-            [],
-            ['groups' => 'worksheet_read']
-        );
+        if ($request->isXmlHttpRequest()) {
+            $exercises = $this->exerciseRepository->findBy(
+                ['worksheet' => $worksheetId],
+                ['position' => 'ASC']
+            );
+    
+            return $this->json(
+                $exercises,
+                200,
+                [],
+                ['groups' => 'worksheet_read']
+            );
+        } else {
+            if ($this->getUser()) {
+                return $this->redirectFromIsGranted();
+            }
+        }    
     }
 
     /**
@@ -203,16 +236,22 @@ class WorksheetController extends AbstractController
     /**
      * @Route("/{id}/get/all/worksheets", name="app_doctor_get_all_worksheets", methods={"GET"})
      */
-    public function getAllWorksheets(Doctor $doctor): JsonResponse
+    public function getAllWorksheets(Request $request, Doctor $doctor)
     {
-        $worksheets = $this->worksheetRepository->findAll();
-
-        return $this->json(
-            $worksheets,
-            200,
-            [],
-            ['groups' => 'dashboard_worksheet_read']
-        );
+        if ($request->isXmlHttpRequest()) {
+            $worksheets = $this->worksheetRepository->findAll();
+    
+            return $this->json(
+                $worksheets,
+                200,
+                [],
+                ['groups' => 'dashboard_worksheet_read']
+            );
+        } else {
+            if ($this->getUser()) {
+                return $this->redirectFromIsGranted();
+            }
+        }
     }
 
     /**

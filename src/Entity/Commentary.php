@@ -15,13 +15,13 @@ class Commentary
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"worksheet_read", "dashboard_worksheet_read", "patient_read", "worksheet_doctor_read"})
+     * @Groups({"worksheet_read", "dashboard_worksheet_read", "patient_read", "worksheet_doctor_read", "public_worksheet_read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="datetime_immutable")
-     * @Groups({"worksheet_read", "worksheet_doctor_read"})
+     * @Groups({"worksheet_read", "worksheet_doctor_read", "public_worksheet_read"})
      */
     private $createdAt;
 
@@ -37,7 +37,7 @@ class Commentary
 
     /**
      * @ORM\Column(type="text")
-     * @Groups({"worksheet_read", "worksheet_doctor_read"})
+     * @Groups({"worksheet_read", "worksheet_doctor_read", "public_worksheet_read"})
      */
     private $content;
 
@@ -49,7 +49,7 @@ class Commentary
 
     /**
      * @ORM\ManyToOne(targetEntity=Doctor::class, inversedBy="commentaries")
-     * @Groups({"worksheet_read", "patient_read", "dashboard_worksheet_read"})
+     * @Groups({"worksheet_read", "patient_read", "dashboard_worksheet_read", "public_worksheet_read"})
      */
     private $doctor;
 
