@@ -227,9 +227,9 @@
                                 class="btn-consult btn-consult-doctorview"
                             >
                                 Voir
-                                <div v-if="worksheet.commentaries && worksheet.commentaries.filter((c) => !c.doctor).length" class="worksheet-commentaries">
+                                <div v-if="worksheet.commentaries && worksheet.commentaries.filter((c) => !c.doctor && c.content != '').length" class="worksheet-commentaries">
                                     <span class="count-commentaries">
-                                        {{ worksheet.commentaries.filter((c) => !c.doctor).length }}
+                                        {{ worksheet.commentaries.filter((c) => !c.doctor && c.content != '').length }}
                                     </span>
                                 </div>
                             </vs-button>
@@ -290,9 +290,9 @@
                                     floating
                                 >
                                     <i class="fas fa-eye"></i>
-                                    <div v-if="worksheet.commentaries && worksheet.commentaries.filter((c) => !c.doctor).length" class="worksheet-commentaries">
+                                    <div v-if="worksheet.commentaries && worksheet.commentaries.filter((c) => !c.doctor && c.content != '').length" class="worksheet-commentaries">
                                         <span class="count-commentaries">
-                                            {{ worksheet.commentaries.filter((c) => !c.doctor).length }}
+                                            {{ worksheet.commentaries.filter((c) => !c.doctor && c.content != '').length }}
                                         </span>
                                     </div>
                                 </vs-button>
