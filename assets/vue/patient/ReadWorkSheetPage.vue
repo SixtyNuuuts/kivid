@@ -146,6 +146,13 @@ export default {
             stripeSubPlans: null,
             status: null,
             stripeSubscription: null,
+            commentaryModel: {
+                content: '',
+                id: null,
+                doctor:null,
+                patient:null,
+                worksheetSession:null
+            }
         };
     },
     computed: {
@@ -168,41 +175,6 @@ export default {
         },
     },
     methods: {
-        // getCurrentCommentary(exerciseCommentaries) {
-            
-        //     let 
-        //         commentary = {
-        //             content: "",
-        //             id: null,
-        //             doctor:this.doctorView?this.doctor:null,
-        //             patient:this.doctorView?null:this.patient,
-        //         },
-        //         exerciseCommentariesFilteredByUser
-        //     ;
-            
-        //     if(this.doctorView)
-        //     {
-        //         exerciseCommentariesFilteredByUser = exerciseCommentaries.filter(
-        //             (c) => c.doctor && c.doctor.id == this.doctor.id
-        //         );
-        //     }
-        //     else
-        //     {
-        //         exerciseCommentariesFilteredByUser = exerciseCommentaries.filter(
-        //             (c) => c.patient && c.patient.id == this.patient.id
-        //         );
-        //     }
-    
-        //     if(exerciseCommentariesFilteredByUser.length)
-        //     {
-        //        const commentaryExistForThisSession = exerciseCommentariesFilteredByUser.find(c=>c.worksheetSession&&this.getCurrentWorksheetSession&&c.worksheetSession.id==this.getCurrentWorksheetSession.id);
-                
-        //         if(commentaryExistForThisSession)
-        //             commentary = commentaryExistForThisSession;
-        //     }
-
-        //     return commentary;
-        // },
         rederictToDashboard() {
             if (this.doctorView && this.doctor) {
                 const queryString = window.location.search;
@@ -310,12 +282,7 @@ export default {
                                             commentaries: f.sortByCreatedAtAsc(
                                                 exercise.commentaries
                                             ),
-                                            commentary:{
-                                                content: "",
-                                                id: null,
-                                                doctor:this.doctorView?this.doctor:null,
-                                                patient:this.doctorView?null:this.patient,
-                                            }
+                                            commentary: {...this.commentaryModel,doctor:this.doctorView?this.doctor:null,patient:this.doctorView?null:this.patient,worksheetSession:this.getCurrentWorksheetSession??null}
                                         };
                                     })
                                 );

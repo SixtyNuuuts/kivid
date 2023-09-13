@@ -548,12 +548,7 @@ export default {
 
                         this.$nextTick(() => {
                             this.scrollToListElements();
-                            exercise.commentary = {
-                                content: "",
-                                id: null,
-                                doctor:this.doctorView?this.doctor:null,
-                                patient:this.doctorView?null:this.patient,
-                            };
+                            exercise.commentary = {...this.$parent.commentaryModel,doctor:this.doctorView?this.doctor:null,patient:this.doctorView?null:this.patient,worksheetSession:this.$parent.getCurrentWorksheetSession??null};
                         });
 
                         this.loadingSetCommentary = null;
@@ -619,12 +614,7 @@ export default {
         },
         closeEditCommentary(commentary, exercise) {
             this.commentariesBeingEdited = null;
-            exercise.commentary = {
-                content: "",
-                id: null,
-                doctor:this.doctorView?this.doctor:null,
-                patient:this.doctorView?null:this.patient,
-            };
+            exercise.commentary = {...this.$parent.commentaryModel,doctor:this.doctorView?this.doctor:null,patient:this.doctorView?null:this.patient,worksheetSession:this.$parent.getCurrentWorksheetSession??null};
         },
         isCommentaryBeingEdited(commentaryId) {
             return this.commentariesBeingEdited == commentaryId;
