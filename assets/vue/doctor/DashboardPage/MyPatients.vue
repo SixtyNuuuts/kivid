@@ -1013,6 +1013,14 @@ export default {
         activeTab(num) {
             if(this.$parent.activeTab != num)
                 this.$parent.activeTab = num;
+
+            const fadeElements = document.querySelectorAll('#dashboard-notifications, #worksheet-store');
+            fadeElements.forEach(fadeElement => {
+                fadeElement.classList.add('fade-hidden');
+                setTimeout(() => {
+                        fadeElement.classList.remove('fade-hidden');
+                }, 500);
+            });
             window.scrollTo({ top: 0, behavior: "smooth" });
         },
         removeWorksheet(patient) {

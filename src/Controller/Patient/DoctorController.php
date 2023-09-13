@@ -14,12 +14,15 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Controller\RedirectFromIsGrantedTrait;
 
 /**
  * @Route("/patient")
  */
 class DoctorController extends AbstractController
 {
+    use RedirectFromIsGrantedTrait;
+
     private $doctorRepository;
     private $notificationService;
     private $notificationRepository;
@@ -43,9 +46,18 @@ class DoctorController extends AbstractController
     /**
      * @Route("/{id}/get/doctors", name="app_patient_get_doctors", methods={"GET"})
      */
-    public function getDoctors(): JsonResponse
+    public function getDoctors(Request $request)
     {
-        return $this->json($this->doctorRepository->findAll(), 200, [], ['groups' => 'doctor_read']);
+        if ($request->isXmlHttpRequest()) {
+            return $this->json($this->doctorRepository->findAll(), 200, [], ['groups' => 'doctor_read']);
+        } else {
+            if ($this->getUser()) {
+                return $this->redirectFromIsGranted();
+            }
+            else {
+                return $this->redirectToRoute('app_home');
+            }
+        }    
     }
 
     /**

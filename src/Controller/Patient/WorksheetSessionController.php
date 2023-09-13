@@ -18,12 +18,15 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Controller\RedirectFromIsGrantedTrait;
 
 /**
  * @Route("/patient")
  */
 class WorksheetSessionController extends AbstractController
 {
+    use RedirectFromIsGrantedTrait;
+
     private $worksheetRepository;
     private $exerciseRepository;
     private $worksheetSessionRepository;
@@ -53,104 +56,111 @@ class WorksheetSessionController extends AbstractController
      * @isGranted("IS_OWNER_OR_OWNERDOC", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
     public function getCurrentWorksheetSession(
+        Request $request,
         Patient $patient,
         int $worksheetId,
         NotificationRepository $notificationRepository,
         NotificationService $notificationService,
         string $param = ''
-    ): JsonResponse {
-        $worksheet = $this->worksheetRepository->findOneBy(['id' => $worksheetId]);
-
-        if (!$worksheet) {
-            return $this->json("Aucune fiche ne correspond à cet Id", 500);
-        }
-
-        $currentWorksheetSession = $this->worksheetSessionRepository->findCurrentWorksheetSession($worksheet);
-        
-        $countOldWorksheetSessions = $this->worksheetSessionRepository->countOldWorksheetSessions($worksheet);
-
-        if ($currentWorksheetSession && $param === 'time-left-before-next') {
-            $now = new \DateTime();
-            $endDate = $currentWorksheetSession->getEndAt();
-            $differenceInSeconds = $endDate->format('U') - $now->format('U');
-
-            if (
-                $differenceInSeconds >= 3600
-                && $differenceInSeconds <= 43200
-                && !$currentWorksheetSession->getIsCompleted()
-            ) {
-                $notifTimeLeftExist = $notificationRepository->findOneBy([
-                    "type" => "timing-worksheet", "typeId" => 1 + $currentWorksheetSession->getId()
-                ]);
-
-                if (!$notifTimeLeftExist) {
-                    $notificationService->createTimingWorksheetNotification(
-                        $patient,
-                        'heures',
-                        $currentWorksheetSession->getWorksheet(),
-                        1 + $currentWorksheetSession->getId()
-                    );
-                    $notifTimeLeft = [
-                        'time' => 'heures',
-                        'worksheet' => $currentWorksheetSession->getWorksheet()->getTitle(),
-                        'worksheetId' => $currentWorksheetSession->getWorksheet()->getId(),
-                    ];
+    ) {
+        if ($request->isXmlHttpRequest()) {
+            $worksheet = $this->worksheetRepository->findOneBy(['id' => $worksheetId]);
+    
+            if (!$worksheet) {
+                return $this->json("Aucune fiche ne correspond à cet Id", 500);
+            }
+    
+            $currentWorksheetSession = $this->worksheetSessionRepository->findCurrentWorksheetSession($worksheet);
+            
+            $countOldWorksheetSessions = $this->worksheetSessionRepository->countOldWorksheetSessions($worksheet);
+    
+            if ($currentWorksheetSession && $param === 'time-left-before-next') {
+                $now = new \DateTime();
+                $endDate = $currentWorksheetSession->getEndAt();
+                $differenceInSeconds = $endDate->format('U') - $now->format('U');
+    
+                if (
+                    $differenceInSeconds >= 3600
+                    && $differenceInSeconds <= 43200
+                    && !$currentWorksheetSession->getIsCompleted()
+                ) {
+                    $notifTimeLeftExist = $notificationRepository->findOneBy([
+                        "type" => "timing-worksheet", "typeId" => 1 + $currentWorksheetSession->getId()
+                    ]);
+    
+                    if (!$notifTimeLeftExist) {
+                        $notificationService->createTimingWorksheetNotification(
+                            $patient,
+                            'heures',
+                            $currentWorksheetSession->getWorksheet(),
+                            1 + $currentWorksheetSession->getId()
+                        );
+                        $notifTimeLeft = [
+                            'time' => 'heures',
+                            'worksheet' => $currentWorksheetSession->getWorksheet()->getTitle(),
+                            'worksheetId' => $currentWorksheetSession->getWorksheet()->getId(),
+                        ];
+                    }
                 }
-            }
-
-            if (
-                $differenceInSeconds >= 60
-                && $differenceInSeconds <= 3599
-                && !$currentWorksheetSession->getIsCompleted()
-            ) {
-                $notifTimeLeftExist = $notificationRepository->findOneBy([
-                    "type" => "timing-worksheet", "typeId" => 2 + $currentWorksheetSession->getId()
-                ]);
-
-                if (!$notifTimeLeftExist) {
-                    $notificationService->createTimingWorksheetNotification(
-                        $patient,
-                        'minutes',
-                        $currentWorksheetSession->getWorksheet(),
-                        2 + $currentWorksheetSession->getId()
-                    );
-                    $notifTimeLeft = [
-                        'time' => 'minutes',
-                        'worksheet' => $currentWorksheetSession->getWorksheet()->getTitle(),
-                        'worksheetId' => $currentWorksheetSession->getWorksheet()->getId(),
-                    ];
+    
+                if (
+                    $differenceInSeconds >= 60
+                    && $differenceInSeconds <= 3599
+                    && !$currentWorksheetSession->getIsCompleted()
+                ) {
+                    $notifTimeLeftExist = $notificationRepository->findOneBy([
+                        "type" => "timing-worksheet", "typeId" => 2 + $currentWorksheetSession->getId()
+                    ]);
+    
+                    if (!$notifTimeLeftExist) {
+                        $notificationService->createTimingWorksheetNotification(
+                            $patient,
+                            'minutes',
+                            $currentWorksheetSession->getWorksheet(),
+                            2 + $currentWorksheetSession->getId()
+                        );
+                        $notifTimeLeft = [
+                            'time' => 'minutes',
+                            'worksheet' => $currentWorksheetSession->getWorksheet()->getTitle(),
+                            'worksheetId' => $currentWorksheetSession->getWorksheet()->getId(),
+                        ];
+                    }
                 }
+    
+                $this->em->flush();
             }
-
-            $this->em->flush();
-        }
-
-        if (!$currentWorksheetSession && $param != 'doctorview' && $param != 'time-left-before-next') {
-            $firstGenerateWorksheetSession =
-                $this->worksheetSessionService->generateWorksheetSessionsAndGetFirst($worksheet);
-
-            if (!$firstGenerateWorksheetSession) {
-                return $this->json(
-                    false,
-                    200
-                );
+    
+            if (!$currentWorksheetSession && $param != 'doctorview' && $param != 'time-left-before-next') {
+                $firstGenerateWorksheetSession =
+                    $this->worksheetSessionService->generateWorksheetSessionsAndGetFirst($worksheet);
+    
+                if (!$firstGenerateWorksheetSession) {
+                    return $this->json(
+                        false,
+                        200
+                    );
+                }
+    
+                $currentWorksheetSession = $firstGenerateWorksheetSession;
             }
-
-            $currentWorksheetSession = $firstGenerateWorksheetSession;
-        }
-
-        $notifTimeLeft = $notifTimeLeft ?? null;
-
-        return $this->json(
-            [
-                'currentWorksheetSession' => $currentWorksheetSession,
-                'notifTimeLeft' => $notifTimeLeft,
-                'countOldWorksheetSessions' => $countOldWorksheetSessions,
-            ],
-            200,
-            [],
-            ['groups' => 'session_read']
-        );
+    
+            $notifTimeLeft = $notifTimeLeft ?? null;
+    
+            return $this->json(
+                [
+                    'currentWorksheetSession' => $currentWorksheetSession,
+                    'notifTimeLeft' => $notifTimeLeft,
+                    'countOldWorksheetSessions' => $countOldWorksheetSessions,
+                ],
+                200,
+                [],
+                ['groups' => 'session_read']
+            );
+        } else {
+            if ($this->getUser()) {
+                return $this->redirectFromIsGranted();
+            }
+        }    
     }
 
     /**
@@ -158,21 +168,27 @@ class WorksheetSessionController extends AbstractController
      * name="app_get_worksheet_progression", methods={"GET"})
      * @isGranted("IS_OWNER_OR_OWNERDOC", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
-    public function getWorksheetProgression(int $worksheetId): JsonResponse {
-        $currentWorksheetSession = $this->worksheetSessionRepository->findCurrentWorksheetSessionByWorksheetId($worksheetId);
-        $countWorksheetSessions = $this->worksheetSessionRepository->countWorksheetSessionsByWorksheetId($worksheetId);
-        $countCompletedWorksheetSessions = $this->worksheetSessionRepository->countCompletedWorksheetSessionsByWorksheetId($worksheetId);
-        
-        return $this->json(
-            [
-                'currentWorksheetSession' => $currentWorksheetSession,
-                'countWorksheetSessions' => $countWorksheetSessions,
-                'countCompletedWorksheetSessions' => $countCompletedWorksheetSessions,
-            ],
-            200,
-            [],
-            ['groups' => 'session_read']
-        );
+    public function getWorksheetProgression(Request $request, int $worksheetId) {
+        if ($request->isXmlHttpRequest()) {
+            $currentWorksheetSession = $this->worksheetSessionRepository->findCurrentWorksheetSessionByWorksheetId($worksheetId);
+            $countWorksheetSessions = $this->worksheetSessionRepository->countWorksheetSessionsByWorksheetId($worksheetId);
+            $countCompletedWorksheetSessions = $this->worksheetSessionRepository->countCompletedWorksheetSessionsByWorksheetId($worksheetId);
+            
+            return $this->json(
+                [
+                    'currentWorksheetSession' => $currentWorksheetSession,
+                    'countWorksheetSessions' => $countWorksheetSessions,
+                    'countCompletedWorksheetSessions' => $countCompletedWorksheetSessions,
+                ],
+                200,
+                [],
+                ['groups' => 'session_read']
+            );
+        } else {
+            if ($this->getUser()) {
+                return $this->redirectFromIsGranted();
+            }
+        }    
     }
 
     /**
@@ -180,18 +196,24 @@ class WorksheetSessionController extends AbstractController
      * name="app_patient_get_total_worksheet_sessions", methods={"GET"})
      * @isGranted("IS_OWNER_OR_OWNERDOC", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
-    public function getTotalWorksheetSessions(Patient $patient, int $worksheetId): JsonResponse
+    public function getTotalWorksheetSessions(Request $request, Patient $patient, int $worksheetId)
     {
-        $worksheet = $this->worksheetRepository->findOneBy(['id' => $worksheetId]);
-
-        if (!$worksheet) {
-            return $this->json("Aucune fiche ne correspond à cet Id", 500);
-        }
-
-        return $this->json(
-            $this->worksheetSessionRepository->countWorksheetSessions($worksheet),
-            200
-        );
+        if ($request->isXmlHttpRequest()) {
+            $worksheet = $this->worksheetRepository->findOneBy(['id' => $worksheetId]);
+    
+            if (!$worksheet) {
+                return $this->json("Aucune fiche ne correspond à cet Id", 500);
+            }
+    
+            return $this->json(
+                $this->worksheetSessionRepository->countWorksheetSessions($worksheet),
+                200
+            );
+        } else {
+            if ($this->getUser()) {
+                return $this->redirectFromIsGranted();
+            }
+        }    
     }
 
     /**
@@ -199,18 +221,24 @@ class WorksheetSessionController extends AbstractController
      * name="app_patient_get_total_completed_worksheet_sessions", methods={"GET"})
      * @isGranted("IS_OWNER_OR_OWNERDOC", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
-    public function getTotalCompletedWorksheetSessions(Patient $patient, int $worksheetId): JsonResponse
+    public function getTotalCompletedWorksheetSessions(Request $request,Patient $patient, int $worksheetId)
     {
-        $worksheet = $this->worksheetRepository->findOneBy(['id' => $worksheetId]);
-
-        if (!$worksheet) {
-            return $this->json("Aucune fiche ne correspond à cet Id", 500);
-        }
-
-        return $this->json(
-            $this->worksheetSessionRepository->countCompletedWorksheetSessions($worksheet),
-            200
-        );
+        if ($request->isXmlHttpRequest()) {
+            $worksheet = $this->worksheetRepository->findOneBy(['id' => $worksheetId]);
+    
+            if (!$worksheet) {
+                return $this->json("Aucune fiche ne correspond à cet Id", 500);
+            }
+    
+            return $this->json(
+                $this->worksheetSessionRepository->countCompletedWorksheetSessions($worksheet),
+                200
+            );
+        } else {
+            if ($this->getUser()) {
+                return $this->redirectFromIsGranted();
+            }
+        }    
     }
 
     /**

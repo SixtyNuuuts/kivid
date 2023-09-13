@@ -59,6 +59,34 @@
             </div>
         </transition>
         <transition name="fade">
+            <div class="doctor-commentary" v-if="videoFrame && getDoctorCommentary && doctorCommentaryActive">
+                <button
+                    class="vs-dialog__close btn-close-modal"
+                    @click="doctorCommentaryActive=false"
+                >
+                    <i class="vs-icon-close vs-icon-hover-x"></i>
+                </button>
+                <vs-avatar
+                    size="25"
+                    class="commentary-user-avatar"
+                    circle
+                >
+                    <img
+                        v-if="getDoctorCommentary && getDoctorCommentary.doctor"
+                        :src="
+                            getDoctorCommentary.doctor.avatarUrl
+                                ? getDoctorCommentary.doctor.avatarUrl
+                                : '/img/avatar-default.svg'
+                        "
+                        :alt="`Avatar de ${getDoctorCommentary.doctor.firstname} ${getDoctorCommentary.doctor.lastname}`"
+                    />
+                </vs-avatar>
+                <div>
+                    {{getDoctorCommentary ? getDoctorCommentary.content : ''}}
+                </div>
+            </div>
+        </transition>
+        <transition name="fade">
             <div v-if="videoFrame" class="bottom-bar">
                 <div
                     class="bottom-bar-content"
@@ -158,6 +186,7 @@ export default {
             switchExeAnimationIsInProgress: false,
             scoreFrame: false,
             loadingBtnNextExercise: false,
+            doctorCommentaryActive: true
         };
     },
     computed: {
@@ -173,6 +202,10 @@ export default {
         getTheLastExercise() {
             return this.lastExercise;
         },
+        getDoctorCommentary()
+        {
+            return this.getExercise.commentaries.find(c=>c.doctor&&c.content);
+        }
     },
     methods: {
         videoEnded() {
@@ -684,6 +717,74 @@ export default {
                 }
             }
         }
+    }
+
+    .doctor-commentary
+    {
+        background-color: #ffffff;
+        position: absolute;
+        bottom: 36.5vh;
+        left: 50%;
+        transform: translateX(-50%) translateY(0);
+        padding: 1.2rem 1.9rem;
+        border-radius: 1.7rem;
+        display: flex;
+        align-items: center;
+        font-size: 1.3rem;
+        box-shadow: 0px 0rem 1.5rem rgba(40, 33, 31, 0.25);
+        z-index: 2;
+        width: 89.5vw;
+
+        .vs-dialog__close {
+            background-color: #faf8f4;
+            top: -4px;
+            right: -3px;
+
+            &:hover {
+                transform: none !important;
+            }
+        }
+        .vs-dialog__close i {
+            width: 17px;
+            height: 17px;
+        }
+        .vs-icon-close::before,.vs-icon-close::after {
+            width: 10px;
+        }
+
+        @media (max-height: 800px) and (max-width: 500px) {
+            bottom: 41vh;
+        }
+
+        @media (max-height: 800px) and (min-width: 500px) and (max-width: 750px) {
+            bottom: 34vh;
+        }
+
+        @media (min-width: 560px) {
+            bottom: 12vh;
+        }
+
+        @media (min-width: 700px) {
+            width: initial;
+        }
+
+        .vs-avatar-content
+        {
+            margin-right: 1.5rem;
+            flex: none;
+        }
+
+        div:not(.vs-avatar-content)
+        {
+            max-height: 6.9vh;
+            overflow-y: auto;
+            padding: 0.4vh 0;
+
+            @media (min-width: 560px) {
+                max-height: 5.7vh;
+            }
+        }
+
     }
 
     .bottom-bar {

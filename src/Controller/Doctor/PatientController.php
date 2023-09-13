@@ -8,19 +8,22 @@ use App\Service\UserService;
 use App\Service\NotificationService;
 use App\Repository\PatientRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Controller\RedirectFromIsGrantedTrait;
 
 /**
  * @Route("/doctor")
  */
 class PatientController extends AbstractController
 {
+    use RedirectFromIsGrantedTrait;
+    
     private $patientRepository;
     private $userService;
     private $notificationService;
@@ -42,27 +45,39 @@ class PatientController extends AbstractController
      * @Route("/{id}/get/patients/{maxresult}/{firstresult}", name="app_doctor_get_patients", methods={"GET"})
      * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
-    public function getPatients(Doctor $doctor, ?int $maxresult = null, ?int $firstresult = null): JsonResponse
+    public function getPatients(Request $request, Doctor $doctor, ?int $maxresult = null, ?int $firstresult = null)
     {
-        return $this->json(
-            $this->patientRepository->findByDoctor($doctor, $maxresult, $firstresult),
-            200,
-            [],
-            ['groups' => 'patient_read']
-        );
+        if ($request->isXmlHttpRequest()) {
+            return $this->json(
+                $this->patientRepository->findByDoctor($doctor, $maxresult, $firstresult),
+                200,
+                [],
+                ['groups' => 'patient_read']
+            );
+        } else {
+            if ($this->getUser()) {
+                return $this->redirectFromIsGranted();
+            }
+        }    
     }
 
     /**
      * @Route("/{id}/get/all/patients", name="app_doctor_get_all_patients", methods={"GET"})
      */
-    public function getAllPatients(Doctor $doctor): JsonResponse
+    public function getAllPatients(Request $request, Doctor $doctor)
     {
-        return $this->json(
-            $this->patientRepository->findPatientsCreatedLastFourWeeks(),
-            200,
-            [],
-            ['groups' => 'patient_read']
-        );
+        if ($request->isXmlHttpRequest()) {
+            return $this->json(
+                $this->patientRepository->findPatientsCreatedLastFourWeeks(),
+                200,
+                [],
+                ['groups' => 'patient_read']
+            );
+        } else {
+            if ($this->getUser()) {
+                return $this->redirectFromIsGranted();
+            }
+        }    
     }
 
     /**

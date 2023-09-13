@@ -15,12 +15,15 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use App\Controller\RedirectFromIsGrantedTrait;
 
 /**
  * @Route("/ffmkr")
  */
 class AdhesionController extends AbstractController
 {
+    use RedirectFromIsGrantedTrait;
+
     private $doctorRepository;
     private $FFMKRAdhesionRepository;
     private $userService;
@@ -69,14 +72,23 @@ class AdhesionController extends AbstractController
     /**
      * @Route("/get/adhesions", name="app_ffmkr_get_adhesions", methods={"GET"})
      */
-    public function getAdhesions(): JsonResponse
+    public function getAdhesions(Request $request)
     {
-        return $this->json(
-            $this->FFMKRAdhesionRepository->findAll(),
-            200,
-            [],
-            ['groups' => 'ffmkr_adhesion_read']
-        );
+        if ($request->isXmlHttpRequest()) {
+            return $this->json(
+                $this->FFMKRAdhesionRepository->findAll(),
+                200,
+                [],
+                ['groups' => 'ffmkr_adhesion_read']
+            );
+        } else {
+            if ($this->getUser()) {
+                return $this->redirectFromIsGranted();
+            }
+            else {
+                return $this->redirectToRoute('app_home');
+            }
+        }    
     }
 
     /**
