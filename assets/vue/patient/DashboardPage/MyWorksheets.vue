@@ -223,10 +223,15 @@
                             </vs-button>
                             <vs-button
                                 v-if="doctorView"
-                                @click="redirectToDoctorView(worksheet.id)"
-                                class="btn-consult"
+                                @click="doctorViewRedirectToWorksheetPage(worksheet.id)"
+                                class="btn-consult btn-consult-doctorview"
                             >
                                 Voir
+                                <div v-if="worksheet.commentaries && worksheet.commentaries.filter((c) => !c.doctor).length" class="worksheet-commentaries">
+                                    <span class="count-commentaries">
+                                        {{ worksheet.commentaries.filter((c) => !c.doctor).length }}
+                                    </span>
+                                </div>
                             </vs-button>
                         </div>
                         <div v-else class="worksheet-content">
@@ -469,9 +474,6 @@ export default {
         redirectToWorksheetPage(worksheetId) {
             document.location.href = `/patient/${this.patient.id}/fiche/${worksheetId}`;
         },
-        redirectToDoctorView(worksheetId) {
-            document.location.href = `/doctor/${this.doctor.id}/voir/${worksheetId}/${this.patient.id}/?ref=dashp`;
-        },
         doctorViewRedirectToEditPage(worksheetId) {
             document.location.href = `/doctor/${this.doctor.id}/fiche/edition/${worksheetId}/${this.patient.id}`;
         },
@@ -564,6 +566,11 @@ export default {
     {
         overflow: visible !important;
         position: relative;
+    }
+
+    .btn-consult-doctorview
+    {
+        overflow: visible;
     }
 
     .worksheet-commentaries
