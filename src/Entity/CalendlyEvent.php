@@ -26,6 +26,12 @@ class CalendlyEvent
     private $createdAt;
 
     /**
+     * @ORM\Column(type="datetime")
+     * @Groups({"patient_read"})
+     */
+    private $updatedAt;
+
+    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"patient_read"})
      */
@@ -69,6 +75,18 @@ class CalendlyEvent
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getUpdatedAt(): ?\DateTime
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTime $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
     }
 
     public function setId(int $id): self

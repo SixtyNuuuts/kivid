@@ -51,6 +51,7 @@ class WebhookController extends AbstractController
             }
 
             $calendlyEvent
+                ->setUpdatedAt(new \DateTime())
                 ->setUserEmail($calendlyData['payload']['email']??null)
                 ->setScheduledEventStatus($calendlyData['payload']['scheduled_event']['status']??null)   
                 ->setScheduledEventStartTime(new \DateTime($calendlyData['payload']['scheduled_event']['start_time'])??null)
