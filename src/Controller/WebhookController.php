@@ -28,7 +28,7 @@ class WebhookController extends AbstractController
         return $this->handleCalendlyWebhook($request);
     }
 
-    public function handleCalendlyWebhook(Request $request): Response
+    public function handleCalendlyWebhook(Request $request): JsonResponse
     {
         // Récupérez le contenu du payload JSON de la requête
         // $payload = json_decode($request->getContent(), true);
@@ -48,6 +48,6 @@ class WebhookController extends AbstractController
         // // Faites ce que vous devez faire avec les données du webhook ici
 
         // Répondez au webhook Calendly avec une réponse HTTP 200 OK
-        return new Response('Webhook Calendly reçu avec succès.', Response::HTTP_OK);
+        return new JsonResponse(['status' => 'success'], 200);
     }
 }
