@@ -124,6 +124,7 @@
         <div
             v-if="patientHasNoDoctorChoice"
         >
+            <CalendlyRdV></CalendlyRdV>
             <div class="calendly-container">
                 <vue-calendly url="https://calendly.com/rendez-vous-kivid/30min"></vue-calendly>
                 <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
@@ -136,6 +137,7 @@
 import f from "../../services/function";
 import ClickOutside from "vue-click-outside";
 import VuePhoneNumberInput from "vue-phone-number-input";
+import CalendlyRdV from "../../components/CalendlyRdV.vue";
 
 export default {
     props: {
@@ -148,6 +150,7 @@ export default {
     },
     components: {
         VuePhoneNumberInput,
+        CalendlyRdV
     },
     data() {
         return {
@@ -340,25 +343,6 @@ export default {
             });
 
         this.selectInput = document.getElementById("doctor-choice-select");
-
-
-        const apiKey = 'eyJraWQiOiIxY2UxZTEzNjE3ZGNmNzY2YjNjZWJjY2Y4ZGM1YmFmYThhNjVlNjg0MDIzZjdjMzJiZTgzNDliMjM4MDEzNWI0IiwidHlwIjoiUEFUIiwiYWxnIjoiRVMyNTYifQ.eyJpc3MiOiJodHRwczovL2F1dGguY2FsZW5kbHkuY29tIiwiaWF0IjoxNjk0NjI5MjcwLCJqdGkiOiI5ODkwZDM2NS00NDlkLTRiMjMtYjg4OS0xNjBjNDdhNmE1OTYiLCJ1c2VyX3V1aWQiOiIyNzMxNjdjOS0zZjY1LTQ3MzktOTIwYy1hMTFiM2YwZTUyMzIifQ.mA6ZghQCFMqrtRTj1MSNRzLIVe9TLI-cgrIulAmMbU7-ugVqiLYv6MyxFtK0gPOvO-AYJvePTjAhRyGB-Rc1wQ';
-        // const eventUUID = 'L'UUID_DE_VOTRE_EVENEMENT'; // Vous pouvez trouver l'UUID dans votre compte Calendly
-
-        // this.axios.get(`https://api.calendly.com/scheduled_events/${eventUUID}`, {
-        this.axios.get(`https://api.calendly.com/event_types`, {
-        headers: {
-            'Authorization': `Bearer ${apiKey}`,
-        },
-        })
-        .then(response => {
-            // Traitez ici les données de confirmation de rendez-vous
-            const appointmentData = response.data;
-            console.log(appointmentData);
-        })
-        .catch(error => {
-            console.error(error);
-        });
     },
 };
 </script>
