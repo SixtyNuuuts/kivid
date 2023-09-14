@@ -200,10 +200,34 @@ class DoctorController extends AbstractController
 
             if($data->eventUrl)
             {
+                $calendlyEvent = $this->calendlyEventRepository->findOneBy([
+                    'eventUrl' => $data->eventUrl
+                ]);
+    
+                if(!$calendlyEvent)
+                {
+                    $calendlyEvent = new CalendlyEvent();
+                    $calendlyEvent
+                        ->setEventUrl($data->eventUrl)
+                    ;
+                }
+    
+                $calendlyEvent
+                    ->setPatient($patient)
+                ;
+    
+                $this->em->persist($calendlyEvent);
+    
+                $doctor = $this->doctorRepository->findOneBy(['id' => 1]);
+                $patient->setAddRequestDoctor(true);
+                $patient->setDoctor($doctor);
+
+                $this->em->flush();
+
                 return $this->json(
                     'calendlyEvent create',
                     200
-                );    
+                );
             }
         }
 
