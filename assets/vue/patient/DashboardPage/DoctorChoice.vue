@@ -124,9 +124,11 @@
         <div
             v-if="patientHasNoDoctorChoice"
         >
-            <CalendlyRdV></CalendlyRdV>
+            <!-- <CalendlyRdV></CalendlyRdV> -->
+                <!-- <vue-calendly url="https://calendly.com/rendez-vous-kivid/30min?hide_gdpr_banner=1" :height="1200"></vue-calendly> -->
+
             <div class="calendly-container">
-                <vue-calendly url="https://calendly.com/rendez-vous-kivid/30min"></vue-calendly>
+                <vue-calendly url="https://calendly.com/sixty-nuuuts/30min?hide_gdpr_banner=1" :height="1200"></vue-calendly>
                 <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
             </div>
         </div>
@@ -343,6 +345,20 @@ export default {
             });
 
         this.selectInput = document.getElementById("doctor-choice-select");
+
+        function isCalendlyEvent(e) {
+            return e.origin === "https://calendly.com" && e.data.event && e.data.event.indexOf("calendly.") === 0;
+        };
+        
+        window.addEventListener("message", function(e) {
+            if(isCalendlyEvent(e)) {
+                /* Example to get the name of the event */
+                console.log("Event name:", e.data.event);
+                
+                /* Example to get the payload of the event */
+                console.log("Event details:", e.data.payload);
+            }
+        });
     },
 };
 </script>
@@ -354,12 +370,15 @@ export default {
 {
     border-radius: 0.8rem;
     overflow: hidden;
-    box-shadow: 0px 1.5rem 3rem rgba(31, 6, 6, 0.096);
     position: relative;
+    width: 88vw;
 
-    .calendly
-    {
-
+    @media (max-width: 730px) {
+        box-shadow: 0px 1.5rem 3rem rgba(31, 6, 6, 0.096);
+        > :first-child
+        {
+            max-height: 1089px;
+        }
     }
 
     .lds-ring {
@@ -369,7 +388,7 @@ export default {
         height: 80px;
         position: absolute;
         z-index: -1;
-        top: 50%;
+        top: 25%;
         left: 50%;
         transform: translate(-50%, -50%);
         pointer-events: none;
