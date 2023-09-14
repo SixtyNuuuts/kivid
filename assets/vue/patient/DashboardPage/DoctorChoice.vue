@@ -124,13 +124,9 @@
         <div
             v-if="patientHasNoDoctorChoice"
         >
-            <!-- <CalendlyRdV></CalendlyRdV> -->
-                <!-- <vue-calendly url="https://calendly.com/rendez-vous-kivid/30min?hide_gdpr_banner=1" :height="1200"></vue-calendly> -->
-
-            <div class="calendly-container">
-                <vue-calendly url="https://calendly.com/sixty-nuuuts/30min?hide_gdpr_banner=1" :height="1200"></vue-calendly>
-                <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
-            </div>
+            <CalendlyRdV
+                :patient="patient"
+            ></CalendlyRdV>
         </div>
     </section>
 </template>
@@ -345,84 +341,12 @@ export default {
             });
 
         this.selectInput = document.getElementById("doctor-choice-select");
-
-        function isCalendlyEvent(e) {
-            return e.origin === "https://calendly.com" && e.data.event && e.data.event.indexOf("calendly.") === 0;
-        };
-        
-        window.addEventListener("message", function(e) {
-            if(isCalendlyEvent(e)) {
-                /* Example to get the name of the event */
-                console.log("Event name:", e.data.event);
-                
-                /* Example to get the payload of the event */
-                console.log("Event details:", e.data.payload);
-            }
-        });
     },
 };
 </script>
 
 <style lang="scss">
 @import "../../../scss/variables";
-
-.calendly-container
-{
-    border-radius: 0.8rem;
-    overflow: hidden;
-    position: relative;
-    width: 88vw;
-
-    @media (max-width: 730px) {
-        box-shadow: 0px 1.5rem 3rem rgba(31, 6, 6, 0.096);
-        > :first-child
-        {
-            max-height: 1089px;
-        }
-    }
-
-    .lds-ring {
-        display: inline-block;
-        position: relative;
-        width: 80px;
-        height: 80px;
-        position: absolute;
-        z-index: -1;
-        top: 25%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        pointer-events: none;
-    }
-    .lds-ring div {
-        box-sizing: border-box;
-        display: block;
-        position: absolute;
-        width: 64px;
-        height: 64px;
-        margin: 8px;
-        border: 8px solid #fb8b68;
-        border-radius: 50%;
-        animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-        border-color: #fb8b68 transparent transparent transparent;
-    }
-    .lds-ring div:nth-child(1) {
-        animation-delay: -0.45s;
-    }
-    .lds-ring div:nth-child(2) {
-        animation-delay: -0.3s;
-    }
-    .lds-ring div:nth-child(3) {
-        animation-delay: -0.15s;
-    }
-    @keyframes lds-ring {
-        0% {
-            transform: rotate(0deg);
-        }
-        100% {
-            transform: rotate(360deg);
-        }
-    }
-}
 
 #doctor-choice {
     max-width: 34rem;

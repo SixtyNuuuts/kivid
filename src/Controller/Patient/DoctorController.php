@@ -188,4 +188,28 @@ class DoctorController extends AbstractController
             500
         );
     }
+
+    /**
+     * @Route("/{id}/calendlyevent", name="app_patient_calendlyevent", methods={"POST"})
+     * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
+     */
+    public function calendlyEvent(Request $request, Patient $patient): JsonResponse
+    {
+        if ($request->isMethod('post')) {
+            $data = json_decode($request->getContent());
+
+            if($data->eventUrl)
+            {
+                return $this->json(
+                    'calendlyEvent create',
+                    200
+                );    
+            }
+        }
+
+        return $this->json(
+            "Une erreur s'est produite lors de calendlyEvent",
+            500
+        );
+    }
 }
