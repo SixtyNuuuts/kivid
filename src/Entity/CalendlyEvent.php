@@ -20,10 +20,51 @@ class CalendlyEvent
     private $id;
 
     /**
-     * @ORM\Column(type="text", nullable=true)
+     * @ORM\Column(type="datetime_immutable")
      * @Groups({"patient_read"})
      */
-    private $payload;
+    private $createdAt;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"patient_read"})
+     */
+    private $eventUrl;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"patient_read"})
+     */
+    private $userEmail;
+
+    /**
+     * @ORM\Column(type="string", length=10, nullable=true)
+     * @Groups({"patient_read"})
+     */
+    private $scheduledEventStatus;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"patient_read"})
+     */
+    private $scheduledEventStartTime;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"patient_read"})
+     */
+    private $scheduledEventEndTime;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Patient::class, inversedBy="calendlyEvent")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $patient;
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTimeImmutable();
+    }
 
     public function getId(): ?int
     {
@@ -37,14 +78,74 @@ class CalendlyEvent
         return $this;
     }
 
-    public function getPayload(): ?string
+    public function getEventUrl(): ?string
     {
-        return $this->payload;
+        return $this->eventUrl;
     }
 
-    public function setPayload(?string $payload): self
+    public function setEventUrl(?string $eventUrl): self
     {
-        $this->payload = $payload;
+        $this->eventUrl = $eventUrl;
+
+        return $this;
+    }
+
+    public function getUserEmail(): ?string
+    {
+        return $this->userEmail;
+    }
+
+    public function setUserEmail(?string $userEmail): self
+    {
+        $this->userEmail = $userEmail;
+
+        return $this;
+    }
+
+    public function getScheduledEventStatus(): ?string
+    {
+        return $this->scheduledEventStatus;
+    }
+
+    public function setScheduledEventStatus(?string $scheduledEventStatus): self
+    {
+        $this->scheduledEventStatus = $scheduledEventStatus;
+
+        return $this;
+    }
+
+    public function getScheduledEventStartTime(): ?\DateTime
+    {
+        return $this->scheduledEventStartTime;
+    }
+
+    public function setScheduledEventStartTime(?\DateTime $scheduledEventStartTime): self
+    {
+        $this->scheduledEventStartTime = $scheduledEventStartTime;
+
+        return $this;
+    }
+
+    public function getScheduledEventEndTime(): ?\DateTime
+    {
+        return $this->scheduledEventEndTime;
+    }
+
+    public function setScheduledEventEndTime(?\DateTime $scheduledEventEndTime): self
+    {
+        $this->scheduledEventEndTime = $scheduledEventEndTime;
+
+        return $this;
+    }
+
+    public function getPatient(): ?Patient
+    {
+        return $this->patient;
+    }
+
+    public function setPatient(?Patient $patient): self
+    {
+        $this->patient = $patient;
 
         return $this;
     }

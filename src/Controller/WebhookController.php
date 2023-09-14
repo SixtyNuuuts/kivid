@@ -3,9 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\CalendlyEvent;
+use App\Repository\CalendlyEventRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -13,10 +13,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class WebhookController extends AbstractController
 {
     private $em;
+    private $calendlyEventRepository;
 
     public function __construct(
-        EntityManagerInterface $em
+        EntityManagerInterface $em,
+        CalendlyEventRepository $calendlyEventRepository
     ) {
+        $this->calendlyEventRepository = $calendlyEventRepository;
         $this->em = $em;
     }
 
@@ -30,24 +33,45 @@ class WebhookController extends AbstractController
 
     public function handleCalendlyWebhook(Request $request): JsonResponse
     {
-        // Récupérez le contenu du payload JSON de la requête
-        // $payload = json_decode($request->getContent(), true);
+        $calendlyData = json_decode($request->getContent(), true);
 
-        $newCalendlyEvent = new CalendlyEvent();
+        if(isset($calendlyData['event'])&&isset($calendlyData['payload']))
+        {
+            $eventUrl = $calendlyData['payload']['event']??null;
+            $calendlyEvent = $this->calendlyEventRepository->findOneBy([
+                'eventUrl' => $eventUrl
+            ]);
 
-        $newCalendlyEvent->setPayload($request->getContent()??'pfff');
-        
-        $this->em->persist($newCalendlyEvent);
+            if(!$calendlyEvent)
+            {
+                $calendlyEvent = new CalendlyEvent();
+                $calendlyEvent
+                    ->setEventUrl($eventUrl)
+                ;
+            }
 
-        $this->em->flush();
+            $calendlyEvent
+                ->setUserEmail($calendlyData['payload']['email']??null)
+                ->setScheduledEventStatus($calendlyData['payload']['scheduled_event']['status']??null)   
+                ->setScheduledEventStartTime(new \DateTime($calendlyData['payload']['scheduled_event']['start_time'])??null)
+                ->setScheduledEventEndTime(new \DateTime($calendlyData['payload']['scheduled_event']['end_time'])??null)
+            ;
 
-        // // Maintenant, vous pouvez accéder aux données du payload
-        // // Par exemple, pour accéder à l'ID de l'événement Calendly :
-        // $eventId = $payload['event']['uuid'];
+            $this->em->persist($calendlyEvent);
 
-        // // Faites ce que vous devez faire avec les données du webhook ici
+            $this->em->flush();
 
-        // Répondez au webhook Calendly avec une réponse HTTP 200 OK
-        return new JsonResponse(['status' => 'success'], 200);
+            // switch ($calendlyData['event']) {
+            //     case 'invitee.created':                    
+            //         break;
+            //     case 'invitee.canceled':
+            //         break;
+            //     default:
+            // }
+
+            return new JsonResponse(['status' => 'success'], 200);    
+        }
+
+        return new JsonResponse(['status' => 'error'], 400);
     }
 }

@@ -45,6 +45,12 @@ class Patient extends User
     private $subscriptions;
 
     /**
+     * @ORM\OneToMany(targetEntity=CalendlyEvent::class, mappedBy="patient", orphanRemoval=true)
+     * @Groups({"patient_read"})
+     */
+    private $calendlyEvent;
+
+    /**
      * @ORM\OneToMany(targetEntity=Notification::class, mappedBy="patient")
      */
     private $notifications;
