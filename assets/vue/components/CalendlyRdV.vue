@@ -1,12 +1,13 @@
 <template>
   <div>
     <h1>Vos rendez-vous Calendly</h1>
-    <ul>
+    <!-- <ul>
       <li v-for="event in events" :key="event.id">
         {{ event.start_time }} - {{ event.end_time }} : {{ event.name }}
       </li>
-    </ul>
-    <button @click="authenticateWithCalendly">Se connecter à Calendly</button>
+    </ul> -->
+    <button v-if="!isAuthenticated" @click="authenticateWithCalendly">Se connecter à Calendly</button>
+    <button v-else @click="fetchWithAccessToken">Effectuer code</button>
   </div>
 </template>
 
@@ -14,7 +15,7 @@
 export default {
   data() {
     return {
-      events: [],
+      // events: [],
       isAuthenticated: false,
       authorizationCode: null,
       accessToken: null,
@@ -29,7 +30,7 @@ export default {
 
       window.location.href = authorizationUrl;
     },
-    async fetchCalendlyEvents() {
+    async fetchCalendly() {
       // Étape 2 : Échangez le code d'autorisation contre un token d'accès
       if (!this.authorizationCode) {
         console.error("Code d'autorisation manquant.");
@@ -56,15 +57,12 @@ export default {
           },
           body: JSON.stringify(authData),
         });
-          console.error(response);
 
         if (response.ok) {
           const data = await response.json();
           this.accessToken = data.access_token;
+            console.log(this.accessToken);
           this.isAuthenticated = true;
-
-          // Étape 3 : Utilisez le token d'accès pour récupérer les rendez-vous
-          await this.fetchEventsWithAccessToken();
         } else {
           console.error("Erreur lors de l'obtention du token d'accès.");
         }
@@ -72,7 +70,7 @@ export default {
         console.error("Erreur inattendue :", error);
       }
     },
-    async fetchEventsWithAccessToken() {
+    async fetchWithAccessToken() {
       if (!this.accessToken) {
         console.error("Token d'accès manquant.");
         return;
@@ -80,23 +78,46 @@ export default {
 
       const headers = {
         Authorization: `Bearer ${this.accessToken}`,
+        'Content-Type': 'application/json',
       };
 
-      try {
-        const response = await fetch("https://api.calendly.com/scheduled_events", {
-          method: "GET",
-          headers: headers,
-        });
+      // Obtenir Infos Users ou Orga
+      // this.axios
+      //   .get(
+      //     'https://api.calendly.com/users/me',
+      //     {
+      //       headers: headers,
+      //     }
+      //   )
+      //   .then((response) => {
+      //     console.log(response);
+      //   })
+      //   .catch((error) => {
+      //     console.error(error);
+      //   });
 
-        if (response.ok) {
-          const data = await response.json();
-          this.events = data.collection;
-        } else {
-          console.error("Erreur lors de la récupération des rendez-vous.");
-        }
-      } catch (error) {
-        console.error("Erreur inattendue :", error);
-      }
+      // Webhook Subscription
+      this.axios
+        .post(
+          'https://api.calendly.com/webhook_subscriptions',
+          {
+            url: 'https://blah.foo/bar',
+            events: ['invitee.created', 'invitee.canceled'],
+            organization: 'https://api.calendly.com/organizations/0c4f1811-ac28-4ebb-bc98-eb9b551094fa',
+            user: 'https://api.calendly.com/users/273167c9-3f65-4739-920c-a11b3f0e5232',
+            scope: 'user',
+            signing_key: 'ExzNlHRanU8zgMvdjsjukjkcI0ie0H4CXQayO6p-QoI',
+          },
+          {
+            headers: headers,
+          }
+        )
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     },
   },
   created() {
@@ -105,7 +126,7 @@ export default {
     if (urlParams.has("code")) {
       this.authorizationCode = urlParams.get("code");
       // Étape 2 : Échangez le code d'autorisation contre un token d'accès
-      this.fetchCalendlyEvents();
+      this.fetchCalendly();
     }
   },
 };
