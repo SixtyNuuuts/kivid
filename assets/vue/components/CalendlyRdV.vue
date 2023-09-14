@@ -19,12 +19,8 @@ export default {
         };
     },
     mounted() {
-        function isCalendlyEvent(e) {
-            return e.origin === 'https://calendly.com' && e.data.event && e.data.event.indexOf('calendly.') === 0;
-        };
-        
-        window.addEventListener('message', function(e) {
-            if(isCalendlyEvent(e)) {
+        window.addEventListener('message', (e) => {
+            if(e.origin === 'https://calendly.com' && e.data.event && e.data.event.indexOf('calendly.') === 0) {
 				switch (e.data.event) {
 					// case 'calendly.event_type_viewed':
 					// 	console.log('Event name:', e.data.event, 'Event details:', e.data.payload);
@@ -32,11 +28,11 @@ export default {
 					case 'calendly.event_scheduled':
 						if(e.data?.payload?.event?.uri)
 							this.axios
-								.post(`/patient/${this.patient.id}/calendlyevent/`, {
+								.post(`/patient/${this.patient.id}/calendlyevent`, {
 									eventUrl: e.data.payload.event.uri,
 								})
 								.then((response) => {
-									console.log(response);
+									console.log(response.data);
 								})
 								.catch((error) => {
 									console.error(error);

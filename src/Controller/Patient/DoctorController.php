@@ -5,16 +5,18 @@ namespace App\Controller\Patient;
 use App\Entity\Doctor;
 use App\Entity\Patient;
 use App\Service\UserService;
+use App\Entity\CalendlyEvent;
 use App\Repository\DoctorRepository;
 use App\Service\NotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\NotificationRepository;
+use App\Repository\CalendlyEventRepository;
 use Symfony\Component\HttpFoundation\Request;
+use App\Controller\RedirectFromIsGrantedTrait;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Controller\RedirectFromIsGrantedTrait;
 
 /**
  * @Route("/patient")
@@ -28,19 +30,22 @@ class DoctorController extends AbstractController
     private $notificationRepository;
     private $userService;
     private $em;
+    private $calendlyEventRepository;
 
     public function __construct(
         DoctorRepository $doctorRepository,
         NotificationService $notificationService,
         NotificationRepository $notificationRepository,
         UserService $userService,
-        EntityManagerInterface $em
+        EntityManagerInterface $em,
+        CalendlyEventRepository $calendlyEventRepository
     ) {
         $this->doctorRepository = $doctorRepository;
         $this->notificationService = $notificationService;
         $this->notificationRepository = $notificationRepository;
         $this->userService = $userService;
         $this->em = $em;
+        $this->calendlyEventRepository = $calendlyEventRepository;
     }
 
     /**
