@@ -35,7 +35,7 @@ class WebhookController extends AbstractController
     {
         $calendlyData = json_decode($request->getContent(), true);
         $calendlyEventTest = new CalendlyEvent();
-        $calendlyEventTest->setEventUrl('dd'+isset($calendlyData['event'])&&isset($calendlyData['payload'])+'dd'+$calendlyData['payload']['event']);
+        $calendlyEventTest->setEventUrl('dd----'+isset($calendlyData['event'])&&isset($calendlyData['payload'])+'dd'+$calendlyData['payload']['event']??'---');
         $this->em->persist($calendlyEventTest);
         $this->em->flush();
 
