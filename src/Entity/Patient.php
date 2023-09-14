@@ -48,7 +48,7 @@ class Patient extends User
      * @ORM\OneToMany(targetEntity=CalendlyEvent::class, mappedBy="patient", orphanRemoval=true)
      * @Groups({"patient_read"})
      */
-    private $calendlyEvent;
+    private $calendlyEvents;
 
     /**
      * @ORM\OneToMany(targetEntity=Notification::class, mappedBy="patient")
@@ -75,6 +75,7 @@ class Patient extends User
     {
         parent::__construct(['ROLE_PATIENT']);
         $this->subscriptions = new ArrayCollection();
+        $this->calendlyEvents = new ArrayCollection();
         $this->notifications = new ArrayCollection();
         $this->commentaries = new ArrayCollection();
         $this->worksheets = new ArrayCollection();
@@ -141,6 +142,36 @@ class Patient extends User
             // set the owning side to null (unless already changed)
             if ($subscription->getPatient() === $this) {
                 $subscription->setPatient(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|CalendlyEvent[]
+     */
+    public function getCalendlyEvents(): Collection
+    {
+        return $this->calendlyEvents;
+    }
+
+    public function addCalendlyEvent(CalendlyEvent $calendlyEvent): self
+    {
+        if (!$this->calendlyEvents->contains($calendlyEvent)) {
+            $this->calendlyEvents[] = $calendlyEvent;
+            $calendlyEvent->setPatient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCalendlyEvent(CalendlyEvent $calendlyEvent): self
+    {
+        if ($this->calendlyEvents->removeElement($calendlyEvent)) {
+            // set the owning side to null (unless already changed)
+            if ($calendlyEvent->getPatient() === $this) {
+                $calendlyEvent->setPatient(null);
             }
         }
 

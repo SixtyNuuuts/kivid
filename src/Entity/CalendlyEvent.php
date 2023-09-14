@@ -56,7 +56,7 @@ class CalendlyEvent
     private $scheduledEventEndTime;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Patient::class, inversedBy="calendlyEvent")
+     * @ORM\ManyToOne(targetEntity=Patient::class, inversedBy="calendlyEvents")
      * @ORM\JoinColumn(nullable=false)
      */
     private $patient;
