@@ -1,16 +1,16 @@
 <template>
     <section id="doctor-choice">
         <vs-button
-            v-if="patientHasDoctorChoice !== null"
-            @click="patientHasDoctorChoice = null"
+            v-if="patientHasDoctorChoice !== null || patientHasNoDoctorChoice !== null"
+            @click="resetPatientDoctorChoice"
             class="btn-prev"
             circle
             floating
         >
             <i class="kiv-arrow-left icon-31"></i>
         </vs-button>
-        <h1>Bienvenue sur Kivid !</h1>
-        <div v-if="patientHasDoctorChoice === null" class="btn-container">
+        <h1 v-if="!patientHasNoDoctorChoice">Bienvenue sur Kivid !</h1>
+        <div v-if="patientHasDoctorChoice === null && patientHasNoDoctorChoice === null" class="btn-container">
             <h4> Avez-vous&nbsp;un&nbsp;praticien ?</h4>
             <vs-button
                 class="w-100"
@@ -20,7 +20,7 @@
             </vs-button>
             <vs-button
                 class="w-100"
-                @click="patientHasNoDoctorChoice"
+                @click="patientHasNoDoctorChoice = true"
             >
                 Non, je n'en ai pas
             </vs-button>
@@ -118,7 +118,15 @@
             </div>
             <div class="valid-doctor-container">
                 <vs-button @click="valideDoctorChoice">Valider</vs-button>
-                <a class="contact" @click="patientHasNoDoctorChoice">Je n'ai pas de praticien</a>
+                <a class="contact" @click="patientHasNoDoctorChoice = true">Je n'ai pas de praticien</a>
+            </div>
+        </div>
+        <div
+            v-if="patientHasNoDoctorChoice"
+        >
+            <div class="calendly-container">
+                <vue-calendly url="https://calendly.com/rendez-vous-kivid/30min"></vue-calendly>
+                <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
             </div>
         </div>
     </section>
@@ -157,6 +165,7 @@ export default {
             },
             contactTel: null,
             patientHasDoctorChoice: null,
+            patientHasNoDoctorChoice: null,
         };
     },
     computed: {
@@ -208,7 +217,7 @@ export default {
                         f.openErrorNotification("Erreur", errorMess);
                     });
         },
-        patientHasNoDoctorChoice() {
+        validPatientHasNoDoctorChoice() {
             this.$emit("patientHasNoDoctorChoice", true);
         },
         toggleSelectBox() {
@@ -243,6 +252,11 @@ export default {
         },
         getUserName(user) {
             return f.getUserName(user);
+        },
+        resetPatientDoctorChoice()
+        {
+            this.patientHasDoctorChoice = null;
+            this.patientHasNoDoctorChoice = null;
         },
         validContact() {
             this.btnLoadingValidContact = true;
@@ -326,12 +340,86 @@ export default {
             });
 
         this.selectInput = document.getElementById("doctor-choice-select");
+
+
+        const apiKey = 'eyJraWQiOiIxY2UxZTEzNjE3ZGNmNzY2YjNjZWJjY2Y4ZGM1YmFmYThhNjVlNjg0MDIzZjdjMzJiZTgzNDliMjM4MDEzNWI0IiwidHlwIjoiUEFUIiwiYWxnIjoiRVMyNTYifQ.eyJpc3MiOiJodHRwczovL2F1dGguY2FsZW5kbHkuY29tIiwiaWF0IjoxNjk0NjI5MjcwLCJqdGkiOiI5ODkwZDM2NS00NDlkLTRiMjMtYjg4OS0xNjBjNDdhNmE1OTYiLCJ1c2VyX3V1aWQiOiIyNzMxNjdjOS0zZjY1LTQ3MzktOTIwYy1hMTFiM2YwZTUyMzIifQ.mA6ZghQCFMqrtRTj1MSNRzLIVe9TLI-cgrIulAmMbU7-ugVqiLYv6MyxFtK0gPOvO-AYJvePTjAhRyGB-Rc1wQ';
+        // const eventUUID = 'L'UUID_DE_VOTRE_EVENEMENT'; // Vous pouvez trouver l'UUID dans votre compte Calendly
+
+        // this.axios.get(`https://api.calendly.com/scheduled_events/${eventUUID}`, {
+        this.axios.get(`https://api.calendly.com/event_types`, {
+        headers: {
+            'Authorization': `Bearer ${apiKey}`,
+        },
+        })
+        .then(response => {
+            // Traitez ici les données de confirmation de rendez-vous
+            const appointmentData = response.data;
+            console.log(appointmentData);
+        })
+        .catch(error => {
+            console.error(error);
+        });
     },
 };
 </script>
 
 <style lang="scss">
 @import "../../../scss/variables";
+
+.calendly-container
+{
+    border-radius: 0.8rem;
+    overflow: hidden;
+    box-shadow: 0px 1.5rem 3rem rgba(31, 6, 6, 0.096);
+    position: relative;
+
+    .calendly
+    {
+
+    }
+
+    .lds-ring {
+        display: inline-block;
+        position: relative;
+        width: 80px;
+        height: 80px;
+        position: absolute;
+        z-index: -1;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+    }
+    .lds-ring div {
+        box-sizing: border-box;
+        display: block;
+        position: absolute;
+        width: 64px;
+        height: 64px;
+        margin: 8px;
+        border: 8px solid #fb8b68;
+        border-radius: 50%;
+        animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+        border-color: #fb8b68 transparent transparent transparent;
+    }
+    .lds-ring div:nth-child(1) {
+        animation-delay: -0.45s;
+    }
+    .lds-ring div:nth-child(2) {
+        animation-delay: -0.3s;
+    }
+    .lds-ring div:nth-child(3) {
+        animation-delay: -0.15s;
+    }
+    @keyframes lds-ring {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+}
 
 #doctor-choice {
     max-width: 34rem;

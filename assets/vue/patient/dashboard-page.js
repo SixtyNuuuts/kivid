@@ -25,6 +25,10 @@ Vue.use(require('vue-chartist'), {
     classNoData: "empty"
 })
 
+// Vue-Calendly
+import VueCalendly from 'vue-calendly';
+Vue.use(VueCalendly);
+
 new Vue({
     render: h => h(DashboardPage)
 }).$mount('#vue')
