@@ -57,7 +57,7 @@ class CalendlyEvent
 
     /**
      * @ORM\ManyToOne(targetEntity=Patient::class, inversedBy="calendlyEvents")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      */
     private $patient;
 
