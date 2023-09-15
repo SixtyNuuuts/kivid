@@ -20,20 +20,15 @@ class CalendlyEventRepository extends ServiceEntityRepository
         parent::__construct($registry, CalendlyEvent::class);
     }
 
-    // public function findCurrentCalendlyEvent(User $user): ?CalendlyEvent
-    // {
-    //     $now = new \DateTime();
-
-    //     return $this->createQueryBuilder('s')
-    //         ->where('s.currentPeriodStart <= :now')
-    //         ->andWhere('s.currentPeriodEnd >= :now')
-    //         ->andWhere('s.patient = :user')
-    //         ->setParameter('now', $now)
-    //         ->setParameter('user', $user)
-    //         ->orderBy('s.currentPeriodEnd', 'DESC')
-    //         ->setMaxResults(1)
-    //         ->getQuery()
-    //         ->getOneOrNullResult()
-    //     ;
-    // }
+    public function getEntitiesWithEmailAndPatient(String $email): ?CalendlyEvent
+    {
+        return $this->createQueryBuilder('c')
+            ->where('c.userEmail = :email')
+            ->andWhere('c.patient IS NOT NULL')
+            ->setParameter('email', $email)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
 }

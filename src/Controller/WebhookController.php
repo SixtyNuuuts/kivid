@@ -50,6 +50,15 @@ class WebhookController extends AbstractController
                 ;
             }
 
+            if(!$calendlyEvent->getPatient()&&isset($calendlyData['payload']['email']))
+            {
+                $calendlyEventBySameEmail = $this->calendlyEventRepository->getEntitiesWithEmailAndPatient($calendlyData['payload']['email']);
+                if($calendlyEventBySameEmail)
+                {
+                    $calendlyEvent->setPatient($calendlyEventBySameEmail->getPatient());
+                }    
+            }
+
             $calendlyEvent
                 ->setUpdatedAt(new \DateTime())
                 ->setUserEmail($calendlyData['payload']['email']??null)
