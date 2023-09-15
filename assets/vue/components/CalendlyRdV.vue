@@ -28,7 +28,7 @@ export default {
 					case 'calendly.event_scheduled':
 						if(e.data?.payload?.event?.uri)
 							this.axios
-								.post(`/patient/${this.patient.id}/calendlyevent`, {
+								.post(`/patient/${this.patient.id}/calendly/event`, {
 									eventUrl: e.data.payload.event.uri,
 								})
 								.then((response) => {

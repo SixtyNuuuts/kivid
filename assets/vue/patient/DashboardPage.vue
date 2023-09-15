@@ -180,6 +180,32 @@
                                                 patient.doctor.city
                                             }}</span>
                                         </div>
+                                        <div class="doctor-kivid-details" v-if="patient.doctor.id == 1">
+                                            <div class="doctor-kivid-details-rdv" v-if="patient.calendlyEvents.length && getPatientCalendlyEvents.length">
+                                                <p class="p">Mes rendez-vous</p>
+                                                <ul>
+                                                    <!-- <li
+                                                        v-for="(notif, i) in getNavbarNotifications"
+                                                        :key="i"
+                                                        :class="{
+                                                            active: !notif.isViewed,
+                                                        }"
+                                                        @click="ifClickableRedirectTo(notif)"
+                                                    >
+                                                    </li> -->
+                                                    <li
+                                                        v-for="(calendlyEvent, i) in getPatientCalendlyEvents"
+                                                        :key="i"
+                                                    >
+                                                        {{ calendlyEvent.eventUrl }}
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <p class="subp">
+                                                Vous avez une question ou demande ?
+                                                <a @click="rederictToHelpSupport">contactez-nous</a>
+                                            </p>
+                                        </div>
                                     </div>
                                     <div
                                         v-if="
@@ -196,7 +222,7 @@
                                            pour&nbsp;élaborer le traitement approprié.
                                         </p>
                                         <p class="subp">
-                                            Vous avez une question ?
+                                            Vous avez une question ou demande ?
                                             <a @click="rederictToHelpSupport">contactez-nous</a>
                                         </p>
                                     </div>
@@ -326,6 +352,11 @@ export default {
             loadingChangeDoctor: false,
             patientHasNoDoctorChoice: false,
         };
+    },
+    computed: {
+        getPatientCalendlyEvents() {
+            return this.patient.calendlyEvents.filter(ce=>ce.eventUrl.length>3&&ce.scheduledEventStatus)
+        }
     },
     methods: {
         openModalChangeDoctor() {
@@ -782,6 +813,13 @@ export default {
             text-decoration: underline;
             color: #a4a29f;
             cursor: pointer;
+        }
+    }
+    .doctor-kivid-details
+    {
+        .subp {
+            max-width: 34rem;
+            margin-top: 1.1rem;
         }
     }
     .change-doctor-modal {

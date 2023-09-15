@@ -5,12 +5,10 @@ namespace App\Controller\Patient;
 use App\Entity\Doctor;
 use App\Entity\Patient;
 use App\Service\UserService;
-use App\Entity\CalendlyEvent;
 use App\Repository\DoctorRepository;
 use App\Service\NotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\NotificationRepository;
-use App\Repository\CalendlyEventRepository;
 use Symfony\Component\HttpFoundation\Request;
 use App\Controller\RedirectFromIsGrantedTrait;
 use Symfony\Component\Routing\Annotation\Route;
@@ -30,22 +28,19 @@ class DoctorController extends AbstractController
     private $notificationRepository;
     private $userService;
     private $em;
-    private $calendlyEventRepository;
 
     public function __construct(
         DoctorRepository $doctorRepository,
         NotificationService $notificationService,
         NotificationRepository $notificationRepository,
         UserService $userService,
-        EntityManagerInterface $em,
-        CalendlyEventRepository $calendlyEventRepository
+        EntityManagerInterface $em
     ) {
         $this->doctorRepository = $doctorRepository;
         $this->notificationService = $notificationService;
         $this->notificationRepository = $notificationRepository;
         $this->userService = $userService;
         $this->em = $em;
-        $this->calendlyEventRepository = $calendlyEventRepository;
     }
 
     /**
@@ -190,54 +185,6 @@ class DoctorController extends AbstractController
 
         return $this->json(
             "Une erreur s'est produite lors du refus de la demande d'ajout du praticien",
-            500
-        );
-    }
-
-    /**
-     * @Route("/{id}/calendlyevent", name="app_patient_calendlyevent", methods={"POST"})
-     * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
-     */
-    public function calendlyEvent(Request $request, Patient $patient): JsonResponse
-    {
-        if ($request->isMethod('post')) {
-            $data = json_decode($request->getContent());
-
-            if($data->eventUrl)
-            {
-                $calendlyEvent = $this->calendlyEventRepository->findOneBy([
-                    'eventUrl' => $data->eventUrl
-                ]);
-    
-                if(!$calendlyEvent)
-                {
-                    $calendlyEvent = new CalendlyEvent();
-                    $calendlyEvent
-                        ->setEventUrl($data->eventUrl)
-                    ;
-                }
-    
-                $calendlyEvent
-                    ->setPatient($patient)
-                ;
-    
-                $this->em->persist($calendlyEvent);
-    
-                $doctor = $this->doctorRepository->findOneBy(['id' => 1]);
-                $patient->setAddRequestDoctor(true);
-                $patient->setDoctor($doctor);
-
-                $this->em->flush();
-
-                return $this->json(
-                    'calendlyEvent create',
-                    200
-                );
-            }
-        }
-
-        return $this->json(
-            "Une erreur s'est produite lors de calendlyEvent",
             500
         );
     }
