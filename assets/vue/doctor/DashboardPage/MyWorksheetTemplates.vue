@@ -2,6 +2,7 @@
     <section
         id="my-worksheets"
         class="kiv-block s-worksheet-templates"
+        :class="{'pb':prescriProcess && !getWorksheetTemplates.length}"
     >
         <div class="tabs">
             <div class="inactive" :class="{disabled:this.$parent.prescriProcess&&this.$parent.prescriProcessWorksheet}" @click="activeTab(1)">
@@ -22,7 +23,7 @@
                 </span> -->
                 <span class="step-num"
                     ><i class="fas fa-folder-plus"></i>
-                    <span>Prescription 
+                    <span class="step-title">Prescription 
                         <span v-if="$parent.prescriProcessPatientSelected"> pour 
                             <strong>
                                 <span
@@ -51,6 +52,7 @@
             <div
                 v-if="prescriProcess"
                 class="prescri-process-dialog pp-create-worksheet prescri-process-dialog-create-worksheet"
+                :class="{'no-ws':!getWorksheetTemplates.length}"
             >
                 <!-- <span class="step-num"
                     ><i class="fas fa-folder-plus"></i>Etape
@@ -58,7 +60,7 @@
                 </span> -->
                 <p>
                     <span v-if="getWorksheetTemplates.length">et / ou sélectionnez</span
-                    ><span v-else>Sélectionnez</span> le nombre de prescriptions que vous souhaitez créer&nbsp;de&nbsp;zéro 
+                    ><span v-else>Sélectionnez</span> <span class="only-mobile">avec le bouton "+"</span> le nombre de prescriptions que vous souhaitez créer&nbsp;de&nbsp;zéro<span v-if="!getWorksheetTemplates.length">, puis validez avec l'un des boutons de précription</span>
                 </p>
             </div>
         </transition>
@@ -573,7 +575,6 @@
                         </div>
                         <div
                             class="not-found"
-                            :class="{'prescri-process':prescriProcess}"
                             v-if="
                                 !loadingDoctorFirstsWorksheets &&
                                 !getWorksheetTemplates.length &&
@@ -582,13 +583,8 @@
                             "
                         >
                             <p>
-                                <i class="fas fa-folder-minus" v-if="!prescriProcess"></i>
-                                <span v-if="!prescriProcess">Vous n'avez pas de fiche</span>
-                                <span v-else>
-                                    Pour créer une prescription, Vous&nbsp;devez&nbsp;avoir préalablement créé des&nbsp;modèles&nbsp;de&nbsp;fiche,<br>
-                                    mais vous pouvez également en&nbsp;créer&nbsp;de&nbsp;zéro en utilisant le&nbsp;bouton&nbsp;"+"&nbsp;ci-dessus,<br>
-                                    puis valider avec le bouton "Paramétrer&nbsp;puis&nbsp;Prescrire".
-                                </span>
+                                <i class="fas fa-folder-minus"></i>
+                                <span>Vous n'avez pas de fiche</span>
                             </p>
                         </div>
                         <div
@@ -1398,9 +1394,15 @@ body .kiv-block .prescri-process-dialog.prescri-process-dialog-select-worksheet 
 }
 
 body .kiv-block .prescri-process-dialog.prescri-process-dialog-create-worksheet {
-    top: -3.8rem;
-    right: -4.9rem;
+    top: -9rem;
+    right: -2.4rem;
     padding-top: 0.5rem;
+}
+body .kiv-block .prescri-process-dialog.prescri-process-dialog-create-worksheet.no-ws {
+    top: -13.3rem;
+    right: -2.4rem;
+    padding-top: 0.5rem;
+    z-index: 55555;
 }
 
 body .btn-create-action .vs-button 
@@ -1410,6 +1412,13 @@ body .btn-create-action .vs-button
 
 #my-worksheets.s-worksheet-templates {
     padding-top: 6.7rem;
+     
+     &.pb {
+        @media (min-width: 1100px) {
+            padding-bottom: 8.8rem;
+        }
+     }
+     
 
     &.reduced {
         padding-top: 4.4rem;

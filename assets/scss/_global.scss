@@ -460,7 +460,7 @@ body {
                 top: 1.9rem;
                 left: auto;
                 right: 3.4rem;
-                width: 17.5rem;
+                width: 12.5rem;
 
                 @media (min-width: 576px) {
                     top: -3.5rem;
@@ -495,11 +495,23 @@ body {
 
                 @media (max-width: 799px) {
                     font-size: 1.3rem;
+                    display: flex;
                 }
 
                 i {
                     font-size: 1.3rem;
                     margin-right: 0.6rem;
+                }
+            }
+
+            .step-title
+            {
+                @media (max-width: 799px) {
+                    white-space: nowrap;
+                    display: block;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    max-width: 74vw;               
                 }
             }
 
@@ -1768,8 +1780,8 @@ p.alert {
                     }
                 }
 
-                @media (min-width: 576px) {
-                    font-size: 1.2rem;
+                @media (max-width: 576px) {
+                    font-size: 1.2rem!important;
                 }
 
                 i {

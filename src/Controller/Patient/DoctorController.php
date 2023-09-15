@@ -10,11 +10,11 @@ use App\Service\NotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\NotificationRepository;
 use Symfony\Component\HttpFoundation\Request;
+use App\Controller\RedirectFromIsGrantedTrait;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Controller\RedirectFromIsGrantedTrait;
 
 /**
  * @Route("/patient")
