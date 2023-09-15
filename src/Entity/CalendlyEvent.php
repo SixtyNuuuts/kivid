@@ -41,6 +41,18 @@ class CalendlyEvent
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"patient_read"})
      */
+    private $eventCancelUrl;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"patient_read"})
+     */
+    private $eventRescheduleUrl;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"patient_read"})
+     */
     private $userEmail;
 
     /**
@@ -89,6 +101,18 @@ class CalendlyEvent
         return $this;
     }
 
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
     public function getUpdatedAt(): ?\DateTime
     {
         return $this->updatedAt;
@@ -116,6 +140,30 @@ class CalendlyEvent
     public function setEventUrl(?string $eventUrl): self
     {
         $this->eventUrl = $eventUrl;
+
+        return $this;
+    }
+
+    public function getEventCancelUrl(): ?string
+    {
+        return $this->eventCancelUrl;
+    }
+
+    public function setEventCancelUrl(?string $eventCancelUrl): self
+    {
+        $this->eventCancelUrl = $eventCancelUrl;
+
+        return $this;
+    }
+
+    public function getEventRescheduleUrl(): ?string
+    {
+        return $this->eventRescheduleUrl;
+    }
+
+    public function setEventRescheduleUrl(?string $eventRescheduleUrl): self
+    {
+        $this->eventRescheduleUrl = $eventRescheduleUrl;
 
         return $this;
     }
