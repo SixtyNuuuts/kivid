@@ -89,6 +89,13 @@ class CalendlyEvent
         return $this->id;
     }
 
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
     public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
@@ -109,13 +116,6 @@ class CalendlyEvent
     public function setUpdatedAt(?\DateTime $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
-
-    public function setId(int $id): self
-    {
-        $this->id = $id;
 
         return $this;
     }
