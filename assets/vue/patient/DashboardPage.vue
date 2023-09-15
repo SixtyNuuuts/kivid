@@ -5,7 +5,6 @@
             :patient="patient"
             :csrfTokenSelectDoctor="csrfTokenSelectDoctor"
             :csrfTokenContact="csrfTokenContact"
-            @patientHasNoDoctorChoice="setPatientHasNoDoctorChoice"
         />
         <section
             v-else
@@ -92,7 +91,7 @@
                         </button>
                         <h2>Mon praticien</h2>
                         <transition name="height2">
-                            <div v-if="myDoctorContent" class="doctor-details">
+                            <div v-if="myDoctorContent" class="doctor-details" :class="{'avatar-doctor-rdv':patient.doctor.id == 1 && patient.calendlyEvents.length && getPatientCalendlyEvents.length}">
                                 <div class="doctor-avatar">
                                     <div
                                         v-if="loadingDoctor"
@@ -182,22 +181,56 @@
                                         </div>
                                         <div class="doctor-kivid-details" v-if="patient.doctor.id == 1">
                                             <div class="doctor-kivid-details-rdv" v-if="patient.calendlyEvents.length && getPatientCalendlyEvents.length">
-                                                <p class="p">Mes rendez-vous</p>
+                                                <p class="p">Mon rendez-vous</p>
                                                 <ul>
-                                                    <!-- <li
-                                                        v-for="(notif, i) in getNavbarNotifications"
-                                                        :key="i"
-                                                        :class="{
-                                                            active: !notif.isViewed,
-                                                        }"
-                                                        @click="ifClickableRedirectTo(notif)"
-                                                    >
-                                                    </li> -->
                                                     <li
                                                         v-for="(calendlyEvent, i) in getPatientCalendlyEvents"
                                                         :key="i"
+                                                        :class="{
+                                                            canceled: calendlyEvent.scheduledEventStatus === 'canceled',
+                                                        }"
                                                     >
-                                                        {{ calendlyEvent.eventUrl }}
+                                                        <div class="user-date">
+                                                            <vs-avatar
+                                                                class="avatar"
+                                                                circle
+                                                                size="30"
+                                                            >
+                                                                <img 
+                                                                    src="https://lh3.googleusercontent.com/a-/AOh14GgcsxH83V0AjWDcnnTU1TCZEE2HGY2eAJ-I1xhVrw=s96-c" 
+                                                                    alt="Avatar de Fabrice Ponsoda"
+                                                                />
+                                                            </vs-avatar>
+                                                            <div>
+                                                                <div class="name">Fabrice Ponsoda</div>
+                                                                <div class="date" v-html="getScheduledEventDateTime(calendlyEvent.scheduledEventStartTime, calendlyEvent.scheduledEventEndTime)"></div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="btns-actions">
+                                                            <vs-tooltip>
+                                                                <vs-button
+                                                                    size="mini"
+                                                                    @click="openModalCancelRescheduleCalendlyEvent(calendlyEvent.eventRescheduleUrl)"
+                                                                >
+                                                                    <i class="fas fa-sync-alt"></i>
+                                                                </vs-button>
+                                                                <template #tooltip>
+                                                                    Reprogrammer le rendez-vous
+                                                                </template>
+                                                            </vs-tooltip>
+                                                            <vs-tooltip>
+                                                                <vs-button
+                                                                    size="mini"
+                                                                    class="btn-cancel"
+                                                                    @click="openModalCancelRescheduleCalendlyEvent(calendlyEvent.eventCancelUrl)"
+                                                                >
+                                                                    <i class="vs-icon-close vs-icon-hover-x"></i>
+                                                                </vs-button>
+                                                                <template #tooltip>
+                                                                    Annuler le rendez-vous
+                                                                </template>
+                                                            </vs-tooltip>
+                                                        </div>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -305,6 +338,19 @@
                     </section>
                 </div>
             </div>
+            <div class="calendly-event-modal" v-if="modalCancelRescheduleCalendlyEvent && cancelRescheduleCalendlyEventUrl">
+                <button
+                    class="vs-dialog__close btn-close-modal"
+                    @click="closeModalCancelRescheduleCalendlyEvent"
+                >
+                    <i class="vs-icon-close vs-icon-hover-x"></i>
+                </button>
+                <CalendlyRdV
+                    :patient="patient"
+                    :eventUrl="`${cancelRescheduleCalendlyEventUrl}?hide_gdpr_banner=1`"
+                    :height="1200"
+                ></CalendlyRdV>
+            </div>
         </section>
     </div>
 </template>
@@ -319,6 +365,7 @@ import MyDashboardNotifications from "./DashboardPage/MyDashboardNotifications.v
 import MyWorksheets from "./DashboardPage/MyWorksheets.vue";
 import MyExerciseStats from "./DashboardPage/MyExerciseStats.vue";
 import DoctorSelectBox from "../components/DoctorSelectBox.vue";
+import CalendlyRdV from "../components/CalendlyRdV.vue";
 
 export default {
     components: {
@@ -328,6 +375,7 @@ export default {
         MyWorksheets,
         MyExerciseStats,
         DoctorSelectBox,
+        CalendlyRdV
     },
     data() {
         return {
@@ -350,12 +398,13 @@ export default {
             modalChangeDoctor: false,
             doctorSelected: null,
             loadingChangeDoctor: false,
-            patientHasNoDoctorChoice: false,
+            modalCancelRescheduleCalendlyEvent: false,
+            cancelRescheduleCalendlyEventUrl: null,
         };
     },
     computed: {
         getPatientCalendlyEvents() {
-            return this.patient.calendlyEvents.filter(ce=>ce.eventUrl.length>3&&ce.scheduledEventStatus)
+            return this.patient.calendlyEvents.filter(ce=>ce.eventUrl.length>3&&ce.scheduledEventStatus==='active')
         }
     },
     methods: {
@@ -364,9 +413,22 @@ export default {
 
             document.body.classList.add("no-scrollbar");
         },
-        setPatientHasNoDoctorChoice(patientHasNoDoctorChoice) {
-            this.patientHasNoDoctorChoice = patientHasNoDoctorChoice;
-            this.valideChangeDoctor();
+        openModalCancelRescheduleCalendlyEvent(eventUrl) 
+        {
+            this.modalCancelRescheduleCalendlyEvent = true;
+            this.cancelRescheduleCalendlyEventUrl = eventUrl;
+        },
+        closeModalCancelRescheduleCalendlyEvent() {
+            this.modalCancelRescheduleCalendlyEvent = false;
+
+            this.axios
+                .get(`/patient/${this.patient.id}/calendly/event/getall`)
+                .then((response) => {
+                    this.patient.calendlyEvents = response.data;
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
         },
         closeModalChangeDoctor() {
             this.modalChangeDoctor = false;
@@ -479,10 +541,22 @@ export default {
                     f.openErrorNotification("Erreur", errorMess);
                 });
         },
+        getScheduledEventDateTime(scheduledEventStartTime, scheduledEventEndTime)
+        {
+            const 
+                scheduledEventStartTimeDay = moment(scheduledEventStartTime).format("DD/MM/YYYY"),
+                scheduledEventEndTimeDay = moment(scheduledEventEndTime).format("DD/MM/YYYY"),
+                scheduledEventStartTimeHour = moment(scheduledEventStartTime).format("HH:mm"),
+                scheduledEventEndTimeHour = moment(scheduledEventEndTime).format("HH:mm")
+            ;
+
+            return `${scheduledEventStartTimeDay===scheduledEventEndTimeDay?`le <strong>${scheduledEventStartTimeDay}</strong>`:`du <strong>${scheduledEventStartTimeDay}</strong> au <strong>${scheduledEventEndTimeDay}`}</strong>, <strong>${scheduledEventStartTimeHour}</strong>-<strong>${scheduledEventEndTimeHour}</strong>.`;
+        }
     },
     created() {
         Vue.prototype.$vs = this.$vs;
         document.body.classList.add("fuzzy-balls");
+        document.body.classList.add("dbpatient");
         window.addEventListener("resize", this.onResize);
 
         moment.locale("fr-FR");
@@ -821,6 +895,137 @@ export default {
             max-width: 34rem;
             margin-top: 1.1rem;
         }
+
+        .doctor-kivid-details-rdv
+        {
+            li 
+            {
+                box-shadow: 0rem 0.1rem 0.1rem 0rem rgba(34, 46, 84, 0.1) !important;
+                border-radius: 0.6rem;
+                background: #fbfbfb;
+                padding: 1rem 1.2rem;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                max-width: 24.5rem;
+
+                &.canceled
+                {
+                    opacity: 0.3;
+                    pointer-events: none;
+                    user-select: none;
+                    .btns-actions
+                    {
+                        .vs-tooltip-content
+                        {
+                            
+                            .vs-button
+                            {
+                                background-color: #ededed;
+
+                                &.btn-cancel
+                                {
+                                    background-color: #ededed;
+                                }
+
+                                .vs-button__content
+                                {
+                                    i {
+                                        color: transparent;
+                                    }
+
+                                    .vs-icon-close::before, .vs-icon-close::after {
+                                        background: transparent;
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+                }
+
+                .user-date
+                {
+                    display: flex;
+                    align-items: center;
+                    font-size: 1.3rem;
+                    line-height: 1.3;
+
+                    .vs-avatar-content
+                    {
+                        margin-right: 1.2rem;
+                        flex: none;
+                    }
+
+                    .name 
+                    {
+
+                    }
+
+                    .date
+                    {
+                        font-size: 1.2rem;
+                        white-space: nowrap;
+                    }
+                }
+
+                .btns-actions
+                {
+                    min-height: 3rem;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
+                    z-index: 1;
+                    margin-left: 0.7rem;
+
+                    .vs-tooltip-content
+                    {
+                        padding: 0;
+                        
+                        .vs-button
+                        {
+                            width: 1.4rem;
+                            height: 1.4rem;
+                            border-radius: 50%;
+                            transform: none !important;
+                            box-shadow: 0rem 0.1rem 0.1rem 0rem rgba(34, 46, 84, 0.1) !important;
+                            background-color: #207ccd;
+
+                            &.btn-cancel
+                            {
+                                width: 1.3rem;
+                                height: 1.3rem;
+                                background-color: #ff564b;
+                            }
+
+                            &:hover
+                            {
+                                transform: none !important;
+                            }
+
+                            .vs-button__content
+                            {
+                                i {
+                                    font-size: 1rem;
+                                    margin-right: 0;
+
+                                    &.fa-sync-alt
+                                    {
+                                        font-size: 0.8rem;
+                                    }
+                                }
+
+                                .vs-icon-close::before, .vs-icon-close::after {
+                                    background: #fff;
+                                    width: 8px;
+                                }
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
     }
     .change-doctor-modal {
         position: fixed;
@@ -918,5 +1123,84 @@ export default {
             }
         }
     }
+
+    .calendly-event-modal {
+        position: fixed;
+        z-index: 11111;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        backdrop-filter: blur(0.5rem);
+        background: rgba(34, 46, 84, 0.8);
+        overflow: auto;
+        &::-webkit-scrollbar-thumb {
+            background: #2d3555;
+            border: 2px solid transparent;
+            border-radius: 4px;
+        }
+
+        @media (min-width: 1150px) {
+            overflow: hidden;
+        }
+
+        // &::after {
+        //     content: "";
+        //     position: absolute;
+        //     z-index: -1;
+        //     top: 0;
+        //     left: 0;
+        //     right: 0;
+        //     bottom: 0;
+        //     backdrop-filter: blur(0.5rem);
+        //     background: rgba(34, 46, 84, 0.8);
+        //     height: 100vh;
+        //     width: 100%;
+        // }
+
+        .vs-dialog__close {
+            --vs-color: 255, 255, 255;
+            // position: absolute;
+                top: 0;
+                right: 0;
+            background: transparent;
+
+            i::before, i::after {
+                width: 20px;
+                height: 2px;
+            }
+
+             @media (min-width: 740px) {
+                top: 8px;
+                right: 26px;
+
+                i::before, i::after {
+                    width: 30px;
+                    height: 3px;
+                }
+            }
+
+            // padding: 0px;
+            // margin: 0px;
+            // display: -webkit-box;
+            // display: -ms-flexbox;
+            // display: flex;
+            // -webkit-box-align: center;
+            // -ms-flex-align: center;
+            // align-items: center;
+            // -webkit-box-pack: center;
+            // -ms-flex-pack: center;
+            // justify-content: center;
+            // background: inherit;
+            // border-radius: 12px;
+            // -webkit-box-shadow: 0px 5px 20px 0px rgba(0, 0, 0, var(--vs-shadow-opacity));
+            // box-shadow: 0px 5px 20px 0px rgba(0, 0, 0, var(--vs-shadow-opacity));
+            // -webkit-transition: all 0.25s ease;
+            // transition: all 0.25s ease;
+            // z-index: 200;
+            // border: 0px;
+        }
+    }
+
 }
 </style>

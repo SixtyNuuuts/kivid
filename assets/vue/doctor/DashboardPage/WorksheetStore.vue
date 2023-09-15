@@ -598,9 +598,9 @@ export default {
             }
 
             .vs-button__content {
-                padding: 0.1rem 0.9rem;
+                padding: 0.2rem 0.9rem;
                 padding-left: 0.7rem;
-                padding-top: 0.25rem;
+                padding-top: 0.35rem;
                 display: flex;
                 align-items: center;
             }

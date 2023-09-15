@@ -1,8 +1,7 @@
 <template>
 	<div>
-		<!-- <vue-calendly url="https://calendly.com/rendez-vous-kivid/30min?hide_gdpr_banner=1" :height="1200"></vue-calendly> -->
 		<div class="calendly-container">
-			<vue-calendly url="https://calendly.com/sixty-nuuuts/30min?hide_gdpr_banner=1" :height="1200"></vue-calendly>
+			<vue-calendly :url="eventUrl" :height="height"></vue-calendly>
 			<div class="lds-ring"><div></div><div></div><div></div><div></div></div>
 		</div>
 	</div>
@@ -13,6 +12,8 @@
 export default {
 	props: {
         patient: Object,
+        eventUrl: String,
+        height: Number,
     },
     data() {
         return {
@@ -21,23 +22,28 @@ export default {
     mounted() {
         window.addEventListener('message', (e) => {
             if(e.origin === 'https://calendly.com' && e.data.event && e.data.event.indexOf('calendly.') === 0) {
-				switch (e.data.event) {
+                    switch (e.data.event) {
 					// case 'calendly.event_type_viewed':
 					// 	console.log('Event name:', e.data.event, 'Event details:', e.data.payload);
 					// 	break;
 					case 'calendly.event_scheduled':
 						if(e.data?.payload?.event?.uri)
+                        {
 							this.axios
 								.post(`/patient/${this.patient.id}/calendly/event`, {
 									eventUrl: e.data.payload.event.uri,
 								})
 								.then((response) => {
-									console.log(response.data);
+                                    setTimeout(() => {
+                                        document.location.href = `/patient/${this.patient.id}/dashboard`;
+                                    }, 3000);
 								})
 								.catch((error) => {
 									console.error(error);
 								});
-					}
+                        }
+                    break;
+				}
             }
         });
     },
@@ -45,12 +51,17 @@ export default {
 </script>
 
 <style lang="scss">
+.calendly-event-create .calendly-container 
+{
+    margin: 0 auto;
+}
 .calendly-container
 {
     border-radius: 0.8rem;
     overflow: hidden;
     position: relative;
     width: 88vw;
+    margin: 3rem auto;
 
     @media (max-width: 730px) {
         box-shadow: 0px 1.5rem 3rem rgba(31, 6, 6, 0.096);

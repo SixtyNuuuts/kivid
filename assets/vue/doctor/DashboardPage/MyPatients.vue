@@ -294,11 +294,7 @@
                     >
                         <p>
                             <i class="fas fa-user-minus"></i>
-                            <span v-if="!prescriProcess">Vous n'avez pas de patient</span>
-                            <span v-else>
-                                Pour créer une prescription, vous&nbsp;devez sélectionner un patient,<br>
-                                vous pouvez en créer un en utilisant le bouton "+" ci-dessus.<br>
-                            </span>
+                            <span>Vous n'avez pas de patient</span>
                         </p>
                     </div>
                     <div

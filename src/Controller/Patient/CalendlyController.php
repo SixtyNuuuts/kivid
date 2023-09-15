@@ -82,4 +82,19 @@ class CalendlyController extends AbstractController
             500
         );
     }
+
+    /**
+     * @Route("/{id}/calendly/event/getall", name="app_patient_calendly_event_getall", methods={"GET"})
+     * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
+     */
+    public function calendlyEventGetAll(Request $request, Patient $patient)
+    {
+        if ($request->isXmlHttpRequest()) {
+            return $this->json($this->calendlyEventRepository->findBy(['patient'=>$patient]), 200, [], ['groups' => 'patient_read']);
+        } else {
+            if ($this->getUser()) {
+                return $this->redirectFromIsGranted();
+            }
+        }    
+    }
 }
