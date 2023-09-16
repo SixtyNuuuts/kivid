@@ -1132,6 +1132,8 @@ export default {
                     });
             } else {
                 this.loading = false;
+                this.currentOpenWorksheet =
+                    this.worksheets[this.worksheets.length - 1].id;
             }
         } else {
             this.currentOpenWorksheet =

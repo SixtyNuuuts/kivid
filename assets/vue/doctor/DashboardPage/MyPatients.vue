@@ -1459,7 +1459,8 @@ body .kiv-block .prescri-process-dialog::after {
 
                         .progressbar-thumb
                         {
-                            background: linear-gradient(270deg, #ffa387 9.29%, #f4b4a0 100%);
+                            background: linear-gradient(270deg, #fee4bd 9.29%, #f7d7ad 100%);
+                            // background: linear-gradient(270deg, #ffa387 9.29%, #f4b4a0 100%);
                             @media (min-width: 800px) {
                                 background: linear-gradient(270deg, #fee4bd 9.29%, #f7d7ad 100%);
                             }
