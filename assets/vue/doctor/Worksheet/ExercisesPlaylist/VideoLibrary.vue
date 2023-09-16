@@ -1248,6 +1248,10 @@ export default {
                 margin-top: 2.5rem;
                 margin-bottom: 1rem;
 
+                @media (max-width: 849px) {
+                    margin-bottom: 5rem;
+                }
+
                 @media (min-width: 450px) {
                     margin-top: 1rem;
                 }
