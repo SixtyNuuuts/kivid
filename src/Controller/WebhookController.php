@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\CalendlyEvent;
 use App\Repository\CalendlyEventRepository;
+use App\Repository\PatientRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -14,12 +15,15 @@ class WebhookController extends AbstractController
 {
     private $em;
     private $calendlyEventRepository;
+    private $patientRepository;
 
     public function __construct(
         EntityManagerInterface $em,
-        CalendlyEventRepository $calendlyEventRepository
+        CalendlyEventRepository $calendlyEventRepository,
+        PatientRepository $patientRepository
     ) {
         $this->calendlyEventRepository = $calendlyEventRepository;
+        $this->patientRepository = $patientRepository;
         $this->em = $em;
     }
 
@@ -56,7 +60,14 @@ class WebhookController extends AbstractController
                 if($calendlyEventBySameEmail)
                 {
                     $calendlyEvent->setPatient($calendlyEventBySameEmail->getPatient());
-                }    
+                }
+                else {
+                    $patientKivid = $this->patientRepository->findOneBy(['email'=>$calendlyData['payload']['email']]);
+                    if($patientKivid)
+                    {
+                        $calendlyEvent->setPatient($patientKivid);
+                    }
+                }
             }
 
             $calendlyEvent

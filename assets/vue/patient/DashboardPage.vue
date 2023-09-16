@@ -144,8 +144,11 @@
                                         "
                                     >
                                         <div class="name">
-                                            <span>{{
+                                            <span v-if="patient.doctor.id != 1">{{
                                                 getUserName(patient.doctor)
+                                            }}</span>
+                                            <span v-else>{{
+                                                (patient.doctor.firstname ? patient.doctor.firstname : (patient.doctor.lastname ? patient.doctor.lastname : '---'))
                                             }}</span>
                                             <vs-button
                                                 size="mini"
@@ -210,7 +213,7 @@
                                                             <vs-tooltip>
                                                                 <vs-button
                                                                     size="mini"
-                                                                    @click="openModalCancelRescheduleCalendlyEvent(calendlyEvent.eventRescheduleUrl)"
+                                                                    @click="openModalCalendlyEvent(calendlyEvent.eventRescheduleUrl)"
                                                                 >
                                                                     <i class="fas fa-sync-alt"></i>
                                                                 </vs-button>
@@ -222,7 +225,7 @@
                                                                 <vs-button
                                                                     size="mini"
                                                                     class="btn-cancel"
-                                                                    @click="openModalCancelRescheduleCalendlyEvent(calendlyEvent.eventCancelUrl)"
+                                                                    @click="openModalCalendlyEvent(calendlyEvent.eventCancelUrl)"
                                                                 >
                                                                     <i class="vs-icon-close vs-icon-hover-x"></i>
                                                                 </vs-button>
@@ -233,6 +236,16 @@
                                                         </div>
                                                     </li>
                                                 </ul>
+                                            </div>
+                                            <div class="doctor-kivid-details-rdv" v-else>
+                                                <!-- https://calendly.com/rendez-vous-kivid/30min -->
+                                                <vs-button
+                                                    size="mini"
+                                                    class="calendly-create-event"
+                                                    @click="openModalCalendlyEvent('https://calendly.com/sixty-nuuuts/30min')"
+                                                >
+                                                    <i class="far fa-calendar-plus"></i> Prendre un rendez-vous
+                                                </vs-button>
                                             </div>
                                             <p class="subp">
                                                 Vous avez une question ou demande ?
@@ -338,16 +351,16 @@
                     </section>
                 </div>
             </div>
-            <div class="calendly-event-modal" v-if="modalCancelRescheduleCalendlyEvent && cancelRescheduleCalendlyEventUrl">
+            <div class="calendly-event-modal" v-if="modalCalendlyEvent && calendlyEventUrl">
                 <button
                     class="vs-dialog__close btn-close-modal"
-                    @click="closeModalCancelRescheduleCalendlyEvent"
+                    @click="closeModalCalendlyEvent"
                 >
                     <i class="vs-icon-close vs-icon-hover-x"></i>
                 </button>
                 <CalendlyRdV
                     :patient="patient"
-                    :eventUrl="`${cancelRescheduleCalendlyEventUrl}?hide_gdpr_banner=1`"
+                    :eventUrl="`${calendlyEventUrl}?hide_gdpr_banner=1`"
                     :height="1200"
                 ></CalendlyRdV>
             </div>
@@ -398,13 +411,13 @@ export default {
             modalChangeDoctor: false,
             doctorSelected: null,
             loadingChangeDoctor: false,
-            modalCancelRescheduleCalendlyEvent: false,
-            cancelRescheduleCalendlyEventUrl: null,
+            modalCalendlyEvent: false,
+            calendlyEventUrl: null,
         };
     },
     computed: {
         getPatientCalendlyEvents() {
-            return this.patient.calendlyEvents.filter(ce=>ce.eventUrl.length>3&&ce.scheduledEventStatus==='active')
+            return this.patient.calendlyEvents.filter(ce=>ce.eventUrl.length>3&&ce.scheduledEventStatus==='active'&&moment(ce.scheduledEventEndTime).isSameOrAfter(moment().format("YYYY-MM-DDTHH:mm:ssZ")));
         }
     },
     methods: {
@@ -413,13 +426,13 @@ export default {
 
             document.body.classList.add("no-scrollbar");
         },
-        openModalCancelRescheduleCalendlyEvent(eventUrl) 
+        openModalCalendlyEvent(eventUrl) 
         {
-            this.modalCancelRescheduleCalendlyEvent = true;
-            this.cancelRescheduleCalendlyEventUrl = eventUrl;
+            this.modalCalendlyEvent = true;
+            this.calendlyEventUrl = eventUrl;
         },
-        closeModalCancelRescheduleCalendlyEvent() {
-            this.modalCancelRescheduleCalendlyEvent = false;
+        closeModalCalendlyEvent() {
+            this.modalCalendlyEvent = false;
 
             this.axios
                 .get(`/patient/${this.patient.id}/calendly/event/getall`)
@@ -894,10 +907,43 @@ export default {
         .subp {
             max-width: 34rem;
             margin-top: 1.1rem;
+            font-size: 1.3rem;
         }
 
         .doctor-kivid-details-rdv
         {
+            .calendly-create-event.vs-button
+            {
+                box-shadow: 0rem 0.2rem 0.3rem 0rem
+                    rgba(34, 46, 84, 0.14) !important;
+                border-radius: 0.6rem;
+                background: #324ea6;
+                margin-top: 1.4rem;
+                color: #FFF;
+                white-space: nowrap;
+                font-size: 1.1rem;
+                transform: none !important;
+                transition: 0.25s;
+                
+                &:hover {
+                    background: #2d4698;
+                    transform: none !important;
+                }
+
+                .vs-button__content
+                {
+                    // padding-top: 0.7rem !important;
+                    // padding: 0.6rem 1.3rem;
+
+                    i {
+                        font-size: 0.9rem;
+                        margin-right: 0.5rem;
+                        // position: relative;
+                        // top: -0.1rem;
+                    }
+                }
+            }
+
             li 
             {
                 box-shadow: 0rem 0.1rem 0.1rem 0rem rgba(34, 46, 84, 0.1) !important;
@@ -908,6 +954,7 @@ export default {
                 align-items: center;
                 justify-content: space-between;
                 max-width: 24.5rem;
+                position: relative;
 
                 &.canceled
                 {
@@ -977,6 +1024,12 @@ export default {
                     justify-content: space-between;
                     z-index: 1;
                     margin-left: 0.7rem;
+                    
+                    @media (max-width: 799px) {
+                        min-height: 5.3rem;
+                        position: absolute;
+                        right: -0.3rem;
+                    }
 
                     .vs-tooltip-content
                     {
@@ -991,10 +1044,19 @@ export default {
                             box-shadow: 0rem 0.1rem 0.1rem 0rem rgba(34, 46, 84, 0.1) !important;
                             background-color: #207ccd;
 
+                            @media (max-width: 799px) {
+                                width: 2.4rem;
+                                height: 2.4rem;
+                            }
+
                             &.btn-cancel
                             {
                                 width: 1.3rem;
                                 height: 1.3rem;
+                                @media (max-width: 799px) {
+                                    width: 2.4rem;
+                                    height: 2.4rem;
+                                }
                                 background-color: #ff564b;
                             }
 
@@ -1008,16 +1070,29 @@ export default {
                                 i {
                                     font-size: 1rem;
                                     margin-right: 0;
+                                    @media (max-width: 799px) 
+                                    {
+                                        font-size: 1.2rem;
+                                    }
 
                                     &.fa-sync-alt
                                     {
                                         font-size: 0.8rem;
+                                        @media (max-width: 799px) 
+                                        {
+                                            font-size: 1.1rem;
+                                        }
+
                                     }
                                 }
 
                                 .vs-icon-close::before, .vs-icon-close::after {
                                     background: #fff;
                                     width: 8px;
+                                    @media (max-width: 799px) 
+                                    {
+                                        width: 12px;
+                                    }
                                 }
                             }
                         }
