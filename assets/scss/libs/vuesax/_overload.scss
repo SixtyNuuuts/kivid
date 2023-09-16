@@ -820,6 +820,9 @@
             padding: 0.3rem 0.9rem;
             padding-right: 1.5rem;
             font-size: 1.24rem;
+            max-height: 3.2rem;
+            line-height: 1;
+            padding-top: 0.35rem;
         }
 
         .vs-select__input:hover ~ .vs-select__label {
