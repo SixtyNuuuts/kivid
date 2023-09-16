@@ -22,7 +22,7 @@ export default {
     },
     mounted() {
         window.addEventListener('message', (e) => {
-            if(this.context === 'inscription' && e.origin === 'https://calendly.com' && e.data.event && e.data.event.indexOf('calendly.') === 0) {
+            if(e.origin === 'https://calendly.com' && e.data.event && e.data.event.indexOf('calendly.') === 0) {
                     switch (e.data.event) {
 					// case 'calendly.event_type_viewed':
 					// 	console.log('Event name:', e.data.event, 'Event details:', e.data.payload);
@@ -35,9 +35,10 @@ export default {
 									eventUrl: e.data.payload.event.uri,
 								})
 								.then((response) => {
-                                    setTimeout(() => {
-                                        document.location.href = `/patient/${this.patient.id}/dashboard`;
-                                    }, 3000);
+                                    if(this.context === 'inscription' )
+                                        setTimeout(() => {
+                                            document.location.href = `/patient/${this.patient.id}/dashboard`;
+                                        }, 3000);
 								})
 								.catch((error) => {
 									console.error(error);

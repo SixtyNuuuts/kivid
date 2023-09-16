@@ -161,7 +161,6 @@ export default {
             if (!this.selectBoxThrottle) {
                 this.selectBoxThrottle = true;
                 this.selectBox = true;
-                console.log("selectBox");
 
                 setTimeout(() => {
                     this.selectBoxThrottle = false;
