@@ -249,7 +249,7 @@
                                                     <div
                                                         class="progressbar-thumb"
                                                         :style="{
-                                                            width: worksheet.worksheetTotalProgression > 3 ? `${worksheet.worksheetTotalProgression}%` : `${0}%`,
+                                                            width: worksheet.worksheetTotalProgression ? (worksheet.worksheetTotalProgression < 7 ? '7%' : `${worksheet.worksheetTotalProgression}%`) : '0%',
                                                         }"
                                                     ></div>
                                                 </div>

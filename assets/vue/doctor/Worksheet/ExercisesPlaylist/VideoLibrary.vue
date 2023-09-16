@@ -605,6 +605,12 @@ export default {
     right: 0;
     bottom: 0;
 
+    @media (max-width: 849px) {
+        .kiv-block {
+            border-radius: 0;
+        }
+    }
+
     h2 span.count-videos {
         padding: 0.2rem 0.7rem;
         padding-bottom: 0.1rem;
@@ -743,17 +749,24 @@ export default {
     }
 
     .content {
-        height: 100%;
+        height: 100vh;
         width: 100%;
-        padding: 6%;
+        padding: 0;
         overflow: hidden;
         display: flex;
         justify-content: center;
         align-items: flex-start;
-        overflow-y: auto;
+        // overflow-y: auto;
+
+        @media (max-width: 849px) {
+            .vs-dialog__close {
+                top: 9px;
+                right: 9px;
+            }
+        }
 
         @media (min-width: 850px) {
-            padding: 7vh;
+            padding: 3vh;
         }
 
         @media (min-height: 840px) {
@@ -785,6 +798,7 @@ export default {
             flex-direction: column;
             justify-content: space-between;
             max-width: 99rem;
+            height: 100%;
 
             @media (min-width: 1619px) {
                 max-width: 122rem;
@@ -820,6 +834,7 @@ export default {
             }
             .video-library-content {
                 flex-grow: 1;
+                overflow-y: auto;
 
                 .videos-list {
                     display: flex;
@@ -828,6 +843,7 @@ export default {
                         0 0 3.9rem #1b3a692b inset;
                     background: #b9c7da85;
                     overflow: hidden;
+                    overflow-y: auto;
                     padding: 1em 0.4em;
                     height: 100%;
                     align-items: center;
@@ -1222,11 +1238,20 @@ export default {
                 }
             }
 
+            .pagination {
+                margin-top: 1rem;
+            }
+
             .btn-valid-selection {
                 display: flex;
                 justify-content: center;
-                margin-top: 3rem;
+                margin-top: 2.5rem;
                 margin-bottom: 1rem;
+
+                @media (min-width: 450px) {
+                    margin-top: 1rem;
+                }
+
             }
         }
 
