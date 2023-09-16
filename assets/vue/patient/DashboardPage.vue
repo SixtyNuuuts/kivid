@@ -911,8 +911,7 @@ export default {
         {
             .calendly-create-event.vs-button
             {
-                box-shadow: 0rem 0.2rem 0.3rem 0rem
-                    rgba(34, 46, 84, 0.14) !important;
+                box-shadow: 0rem 0.1rem 0.5rem 0rem rgba(34, 46, 84, 0.54) !important;
                 border-radius: 0.6rem;
                 background: #324ea6;
                 margin-top: 1.4rem;
