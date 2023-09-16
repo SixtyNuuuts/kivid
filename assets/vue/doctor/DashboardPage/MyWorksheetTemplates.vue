@@ -60,7 +60,17 @@
                 </span> -->
                 <p>
                     <span v-if="getWorksheetTemplates.length">et / ou sélectionnez</span
-                    ><span v-else>Sélectionnez</span> <span class="only-mobile">avec le bouton "+"</span> le nombre de prescriptions que vous souhaitez créer&nbsp;de&nbsp;zéro<span v-if="!getWorksheetTemplates.length">, puis validez avec l'un des boutons de précription</span>
+                    ><span v-else>Sélectionnez</span> <span class="only-mobile">avec le bouton "+"</span> le nombre de prescriptions que vous souhaitez créer&nbsp;de&nbsp;zéro<span class="only-mobile"> ou ajoutez des fiches du magasin</span><span v-if="!getWorksheetTemplates.length">, puis&nbsp;validez avec l'un des boutons de prescription</span>
+                </p>
+            </div>
+        </transition>
+        <transition name="fade">
+            <div
+                v-if="prescriProcess && !getWorksheetTemplates.length"
+                class="prescri-process-dialog pp-create-worksheet prescri-process-dialog-create-worksheet no-ws-store"
+            >
+                <p>
+                    <span>Ou ajoutez des fiches du magasin</span>
                 </p>
             </div>
         </transition>
@@ -1394,15 +1404,48 @@ body .kiv-block .prescri-process-dialog.prescri-process-dialog-select-worksheet 
 }
 
 body .kiv-block .prescri-process-dialog.prescri-process-dialog-create-worksheet {
-    top: -9rem;
-    right: -2.4rem;
-    padding-top: 0.5rem;
+    top: -5.3rem;
+    right: 1.6rem;
+    padding-top: 0.2rem;
+    width: 14.5rem;
+
+    &::after {
+        left: 85%;
+    }
 }
+
 body .kiv-block .prescri-process-dialog.prescri-process-dialog-create-worksheet.no-ws {
-    top: -13.3rem;
-    right: -2.4rem;
-    padding-top: 0.5rem;
-    z-index: 55555;
+    top: -6.9rem;
+    right: 1.2rem;
+    padding-top: 0.2rem;
+    width: 17.4rem;
+
+    &::after {
+        left: 85%;
+    }
+}
+
+body .kiv-block .prescri-process-dialog.prescri-process-dialog-create-worksheet.no-ws-store {
+    display: none;
+
+    @media (min-width: 799px) {
+        padding-top: 0.2rem;
+        width: 15.5rem;
+        display: block;
+        top: 23.3rem;
+        right: 1rem;
+    }
+
+    @media (min-width: 1100px) {
+        top: 35.3rem;
+        right: 0rem;
+
+        &::after {
+            bottom: 1.8rem;
+            left: 99%;
+            transform: translateX(-50%) rotate(270deg);
+        }
+    }
 }
 
 body .btn-create-action .vs-button 

@@ -4,6 +4,7 @@
             v-if="patientHasDoctorChoice !== null || patientHasNoDoctorChoice !== null"
             @click="resetPatientDoctorChoice"
             class="btn-prev"
+            :class="{'btn-prev-calendly':patientHasNoDoctorChoice}"
             circle
             floating
         >
@@ -124,14 +125,12 @@
         <div
             v-if="patientHasNoDoctorChoice"
         >
-
-        		<!-- <vue-calendly url="https://calendly.com/rendez-vous-kivid/30min?hide_gdpr_banner=1" :height="1200"></vue-calendly> -->
-
+        	<!-- <vue-calendly url="https://calendly.com/rendez-vous-kivid/30min?hide_gdpr_banner=1" :height="1200"></vue-calendly> -->
             <CalendlyRdV
                 :patient="patient"
                 :eventUrl="'https://calendly.com/sixty-nuuuts/30min?hide_gdpr_banner=1'"
                 :height="1200"
-                class="calendly-event-create"
+                :context="'inscription'"
             ></CalendlyRdV>
         </div>
     </section>
@@ -386,6 +385,14 @@ export default {
         @media (min-width: 450px) {
             left: 3.5rem;
             top: 9.5rem;
+        }
+
+        &.btn-prev-calendly
+        {
+            @media (max-width: 730px) {
+                left: 1rem;
+                top: 7.2rem;
+            }
         }
     }
 

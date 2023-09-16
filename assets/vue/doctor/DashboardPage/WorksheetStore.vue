@@ -590,7 +590,9 @@ export default {
             letter-spacing: 0;
             z-index: 2;
             margin-top: 0.3rem;
-            
+            position: relative;
+            top: -0.2rem;
+
             &:not(.loading)
             {
                 background-color: #fff;

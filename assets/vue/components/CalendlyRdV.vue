@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<div class="calendly-container">
+		<div class="calendly-container" :class="{'calendly-event-inscription':context==='inscription'}">
 			<vue-calendly :url="eventUrl" :height="height"></vue-calendly>
 			<div class="lds-ring"><div></div><div></div><div></div><div></div></div>
 		</div>
@@ -14,6 +14,7 @@ export default {
         patient: Object,
         eventUrl: String,
         height: Number,
+        context: String,
     },
     data() {
         return {
@@ -21,7 +22,7 @@ export default {
     },
     mounted() {
         window.addEventListener('message', (e) => {
-            if(e.origin === 'https://calendly.com' && e.data.event && e.data.event.indexOf('calendly.') === 0) {
+            if(this.context === 'inscription' && e.origin === 'https://calendly.com' && e.data.event && e.data.event.indexOf('calendly.') === 0) {
                     switch (e.data.event) {
 					// case 'calendly.event_type_viewed':
 					// 	console.log('Event name:', e.data.event, 'Event details:', e.data.payload);
@@ -51,17 +52,18 @@ export default {
 </script>
 
 <style lang="scss">
-.calendly-event-create .calendly-container 
-{
-    margin: 0 auto;
-}
 .calendly-container
 {
     border-radius: 0.8rem;
     overflow: hidden;
     position: relative;
     width: 88vw;
-    margin: 3rem auto;
+    margin: 4.4rem auto;
+    
+    &.calendly-event-inscription 
+    {
+        margin: 0 auto;
+    }
 
     @media (max-width: 730px) {
         box-shadow: 0px 1.5rem 3rem rgba(31, 6, 6, 0.096);
