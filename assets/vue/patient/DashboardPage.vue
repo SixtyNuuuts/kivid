@@ -144,11 +144,8 @@
                                         "
                                     >
                                         <div class="name">
-                                            <span v-if="patient.doctor.id != 1">{{
+                                            <span>{{
                                                 getUserName(patient.doctor)
-                                            }}</span>
-                                            <span v-else>{{
-                                                (patient.doctor.firstname ? patient.doctor.firstname : (patient.doctor.lastname ? patient.doctor.lastname : '---'))
                                             }}</span>
                                             <vs-button
                                                 size="mini"

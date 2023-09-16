@@ -214,18 +214,24 @@ export default {
   },
 
   getUserName(user) {
-    const firstname = user.firstname ? user.firstname : '';
-    const space = user.firstname && user.lastname ? ' ' : '';
-    const lastname = user.lastname ? user.lastname : '';
-    const name = `${firstname}${space}${lastname}`;
-
-    const username = user.firstname || user.lastname
-      ? `${name}`
-      : user.email;
-
-    const civility = this.getCivility(user.gender);
-
-    return civility != '' ? `${civility} ${username}` : `${username}`;
+    if(user.id==1)
+    {
+      return user.firstname ? user.firstname : (user.lastname ? user.lastname : '---');  
+    }
+    else {
+      const firstname = user.firstname ? user.firstname : '';
+      const space = user.firstname && user.lastname ? ' ' : '';
+      const lastname = user.lastname ? user.lastname : '';
+      const name = `${firstname}${space}${lastname}`;
+  
+      const username = user.firstname || user.lastname
+        ? `${name}`
+        : user.email;
+  
+      const civility = this.getCivility(user.gender);
+  
+      return civility != '' ? `${civility} ${username}` : `${username}`;  
+    }
   },
 
   // Vuesax functions
