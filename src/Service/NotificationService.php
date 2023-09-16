@@ -10,9 +10,10 @@ use App\Entity\Notification;
 use App\Service\UserService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
-use Symfony\Component\Mime\Address;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Mime\Address;
+use Symfony\Component\Mime\Header\PathHeader;
 
 class NotificationService
 {
@@ -196,6 +197,9 @@ class NotificationService
                 'patientPrescriptionUrl' => $patientPrescriptionUrl,
             ])
         ;
+        
+        $email->getHeaders()->addTextHeader('List-Unsubscribe', '<mailto:contact@kivid.fr>');
+        $email->getHeaders()->add(new PathHeader('Return-Path', new Address('contact@kivid.fr', '"Kivid Contact"')));
 
         $this->mailer->send($email);
     }
