@@ -2,11 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\TagRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Symfony\Component\Serializer\Annotation\Groups;
+use App\Entity\TagGroup;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\TagRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=TagRepository::class)
@@ -31,6 +32,13 @@ class Tag
      * @ORM\ManyToMany(targetEntity=Video::class, mappedBy="tags")
      */
     private $videos;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity=TagGroup::class, inversedBy="tags")
+     * @Groups({"video_read", "dashboard_worksheet_read"})
+     * @ORM\JoinColumn(nullable=true)
+     */
+    private $tagGroup;
 
     public function __construct()
     {
@@ -84,6 +92,18 @@ class Tag
         if ($this->videos->removeElement($video)) {
             $video->removeTag($this);
         }
+
+        return $this;
+    }
+
+    public function getTagGroup(): ?TagGroup
+    {
+        return $this->tagGroup;
+    }
+
+    public function setTagGroup(?TagGroup $tagGroup): self
+    {
+        $this->tagGroup = $tagGroup;
 
         return $this;
     }

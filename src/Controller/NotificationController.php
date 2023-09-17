@@ -13,9 +13,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use App\Controller\RedirectFromIsGrantedTrait;
 
 class NotificationController extends AbstractController
 {
+    use RedirectFromIsGrantedTrait;
+    
     private $patientRepository;
     private $doctorRepository;
     private $notificationRepository;
@@ -79,24 +82,31 @@ class NotificationController extends AbstractController
      * @Route("{userType}/{id}/get/notifications", name="app_user_get_notifications", methods={"GET"})
      * @isGranted("IS_AUTHENTICATED_FULLY")
      */
-    public function getNotifications(
+    public function getNotifications( 
+        Request $request,
         string $userType,
         int $id
-    ): JsonResponse {
-        $repository = $this->patientRepository;
+    ) {
+        if ($request->isXmlHttpRequest()) {
+            $repository = $this->patientRepository;
 
-        if ('doctor' === $userType) {
-            $repository = $this->doctorRepository;
+            if ('doctor' === $userType) {
+                $repository = $this->doctorRepository;
+            }
+    
+            $user = $repository->findOneById($id);
+    
+            return $this->json(
+                $this->notificationRepository->findBy([$userType => $user], ['createdAt' => 'DESC']),
+                200,
+                [],
+                ['groups' => 'user_read']
+            );
+        } else {
+            if ($this->getUser()) {
+                return $this->redirectFromIsGranted();
+            }
         }
-
-        $user = $repository->findOneById($id);
-
-        return $this->json(
-            $this->notificationRepository->findBy([$userType => $user], ['createdAt' => 'DESC']),
-            200,
-            [],
-            ['groups' => 'user_read']
-        );
     }
 
     /**
@@ -105,13 +115,20 @@ class NotificationController extends AbstractController
      * @isGranted("IS_AUTHENTICATED_FULLY")
      */
     public function getPatientDashboardNotifications(
+        Request $request,
         Patient $patient
-    ): JsonResponse {
-        return $this->json(
-            $this->notificationRepository->findBy(['patient' => $patient, 'type' => 'dashboard']),
-            200,
-            [],
-            ['groups' => 'user_read']
-        );
+    ) {
+        if ($request->isXmlHttpRequest()) {
+            return $this->json(
+                $this->notificationRepository->findBy(['patient' => $patient, 'type' => 'dashboard']),
+                200,
+                [],
+                ['groups' => 'user_read']
+            );    
+        } else {
+            if ($this->getUser()) {
+                return $this->redirectFromIsGranted();
+            }
+        }
     }
 }

@@ -3,6 +3,10 @@ import DashboardPage from './DashboardPage.vue'
 
 // Axios
 import axios from 'axios'
+axios.interceptors.request.use((config) => {
+  config.headers['X-Requested-With'] = 'XMLHttpRequest';
+  return config;
+});
 import VueAxios from 'vue-axios'
 Vue.use(VueAxios, axios)
 
@@ -20,6 +24,10 @@ Vue.use(require('vue-chartist'), {
     messageNoData: "Aucune donnée",
     classNoData: "empty"
 })
+
+// Vue-Calendly
+import VueCalendly from 'vue-calendly';
+Vue.use(VueCalendly);
 
 new Vue({
     render: h => h(DashboardPage)

@@ -17,13 +17,13 @@ class Worksheet
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"worksheet_read", "dashboard_worksheet_read", "patient_read", "public_worksheet_read"})
+     * @Groups({"worksheet_read", "worksheet_doctor_read", "dashboard_worksheet_read", "patient_read", "public_worksheet_read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"worksheet_read", "dashboard_worksheet_read", "patient_read", "public_worksheet_read"})
+     * @Groups({"worksheet_read", "worksheet_doctor_read", "dashboard_worksheet_read", "patient_read", "public_worksheet_read"})
      */
     private $title;
 
@@ -35,31 +35,31 @@ class Worksheet
 
     /**
      * @ORM\OneToMany(targetEntity=Exercise::class, mappedBy="worksheet", orphanRemoval=true)
-     * @Groups({"dashboard_worksheet_read", "public_worksheet_read"})
+     * @Groups({"dashboard_worksheet_read", "worksheet_doctor_read", "public_worksheet_read"})
      */
     private $exercises;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"worksheet_read", "dashboard_worksheet_read", "public_worksheet_read"})
+     * @Groups({"worksheet_read", "worksheet_doctor_read", "dashboard_worksheet_read", "public_worksheet_read"})
      */
     private $duration;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"worksheet_read", "dashboard_worksheet_read", "public_worksheet_read"})
+     * @Groups({"worksheet_read", "worksheet_doctor_read", "dashboard_worksheet_read", "public_worksheet_read"})
      */
     private $perDay;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"worksheet_read", "dashboard_worksheet_read", "public_worksheet_read"})
+     * @Groups({"worksheet_read", "worksheet_doctor_read", "dashboard_worksheet_read", "public_worksheet_read"})
      */
     private $perWeek;
 
     /**
      * @ORM\OneToMany(targetEntity=Commentary::class, mappedBy="worksheet")
-     * @Groups({"dashboard_worksheet_read"})
+     * @Groups({"dashboard_worksheet_read", "patient_read"})
      */
     private $commentaries;
 
@@ -88,7 +88,7 @@ class Worksheet
 
     /**
      * @ORM\ManyToOne(targetEntity=PartOfBody::class, inversedBy="worksheets")
-     * @Groups({"worksheet_read", "dashboard_worksheet_read", "patient_read", "public_worksheet_read"})
+     * @Groups({"worksheet_read", "worksheet_doctor_read", "dashboard_worksheet_read", "patient_read", "public_worksheet_read"})
      */
     private $partOfBody;
 

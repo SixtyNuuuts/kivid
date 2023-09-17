@@ -25,6 +25,7 @@
 		"csrfTokenContact": {{ csrf_token('contact')|serialize('json')|raw }},
 		"csrfTokenSelectDoctor": {{ csrf_token('select_doctor' ~ patient.id)|serialize('json')|raw }},
 		"csrfTokenAcceptDoctor": {{ csrf_token('accept_doctor' ~ patient.id)|serialize('json')|raw }},
-		"csrfTokenDeclineDoctor": {{ csrf_token('decline_doctor' ~ patient.id)|serialize('json')|raw }}
+		"csrfTokenDeclineDoctor": {{ csrf_token('decline_doctor' ~ patient.id)|serialize('json')|raw }},
+		"csrfTokenRemoveWorksheet": {{ doctorView ? csrf_token('remove_worksheet' ~ patient.doctor.id)|serialize('json')|raw : ''|serialize('json')|raw }}
 	}
 {% endblock %}

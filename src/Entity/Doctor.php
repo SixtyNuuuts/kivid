@@ -78,6 +78,12 @@ class Doctor extends User
     private $giveAccessPublicWorksheetGeneration;
 
     /**
+    * @ORM\Column(type="boolean", nullable=true)
+    * @Groups({"doctor_read"})
+    */
+    private $giveAccessAddFreePatient;
+
+    /**
      * @ORM\OneToOne(targetEntity=FFMKRAdhesion::class, inversedBy="doctor", cascade={"persist", "remove"})
      * @Groups({"doctor_read"})
      */
@@ -292,6 +298,18 @@ class Doctor extends User
     public function setGiveAccessPublicWorksheetGeneration(?bool $giveAccessPublicWorksheetGeneration): self
     {
         $this->giveAccessPublicWorksheetGeneration = $giveAccessPublicWorksheetGeneration;
+
+        return $this;
+    }
+
+    public function isGiveAccessAddFreePatient(): ?bool
+    {
+        return $this->giveAccessAddFreePatient;
+    }
+
+    public function setGiveAccessAddFreePatient(?bool $giveAccessAddFreePatient): self
+    {
+        $this->giveAccessAddFreePatient = $giveAccessAddFreePatient;
 
         return $this;
     }

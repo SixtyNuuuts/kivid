@@ -44,7 +44,7 @@ class DoctorCrudController extends AbstractCrudController
             TextField::new('lastname', 'Nom'),
             TextField::new('firstname', 'Prénom'),
             TextField::new('email', 'Email'),
-            TextField::new('numRppsAmeli', 'Numéro RPPS ou ADELI')->setSortable(true),
+            TextField::new('numRppsAmeli', 'Numéro RPPS ou AMELI')->setSortable(true),
             TextField::new('entityName', 'Cabinet')->setSortable(true),
             TextField::new('city', 'Ville')->setSortable(true),
             TextField::new('gender', 'Civilité')->onlyOnIndex(),
@@ -53,6 +53,7 @@ class DoctorCrudController extends AbstractCrudController
             AssociationField::new('worksheets', 'Fiche(s)')->onlyOnIndex(),
             // BooleanField::new('giveFreeAccessPrescri', 'Donner l\'accès gratuit à ses prescriptions ?')->onlyOnForms(),
             BooleanField::new('giveAccessPublicWorksheetGeneration', 'Donner l\'accès à la génération de fiches publiques ?')->onlyOnForms(),
+            BooleanField::new('giveAccessAddFreePatient', 'Donner l\'accès à l\'ajout des patients sans praticien ?')->onlyOnForms(),
         ];
     }
 }

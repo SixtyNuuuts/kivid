@@ -197,22 +197,22 @@
                             v-if="currentUserMenu"
                         >
                             <ul>
-                                <li class="md" @click="myProfil()">
+                                <li @click="myProfil()">
                                     <i class="kiv-profil icon-12"></i>
                                     Mon Profil
                                 </li>
-                                <li
+                                <!-- <li
                                     v-if="'patient' === currentUserType"
                                     class="md"
                                     @click="mySubscription()"
                                 >
                                     <i class="kiv-subscription icon-20"></i> Mon
                                     Abonnement
-                                </li>
-                                <li @click="myProfil()" class="desktop">
+                                </li> -->
+                                <!-- <li @click="myProfil()" class="desktop">
                                     <i class="kiv-settings icon-16"></i>
                                     Paramètres
-                                </li>
+                                </li> -->
                                 <li @click="helpSupport()">
                                     <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 30 30" width="60px" height="60px">    <path d="M 15 3 C 7.82 3 2 7.925 2 14 C 2 17.368 3.7933281 20.378484 6.6113281 22.396484 C 6.6832805 23.932468 6.4452784 26.053382 4.3261719 27.03125 A 0.5 0.5 0 0 0 4.3222656 27.033203 A 0.5 0.5 0 0 0 4 27.5 A 0.5 0.5 0 0 0 4.5 28 A 0.5 0.5 0 0 0 4.5429688 27.998047 C 6.9769949 27.982445 9.0432734 26.667034 10.46875 25.277344 C 10.92075 24.836344 11.550875 24.619328 12.171875 24.736328 C 13.081875 24.909328 14.028 25 15 25 C 22.18 25 28 20.075 28 14 C 28 7.925 22.18 3 15 3 z M 15 7 C 17.206 7 19 8.794 19 11 C 19 12.715 17.929359 13.704 17.068359 14.5 C 16.406359 15.111 16 15.512 16 16 L 14 16 C 14 14.611 14.948937 13.734297 15.710938 13.029297 C 16.509937 12.291297 17 11.799 17 11 C 17 9.897 16.103 9 15 9 C 13.897 9 13 9.897 13 11 L 11 11 C 11 8.794 12.794 7 15 7 z M 15 18.5 C 15.828 18.5 16.5 19.172 16.5 20 C 16.5 20.828 15.828 21.5 15 21.5 C 14.172 21.5 13.5 20.828 13.5 20 C 13.5 19.172 14.172 18.5 15 18.5 z"/></svg>
                                     Aide et Support
@@ -487,7 +487,7 @@ export default {
     font-weight: 600;
     position: sticky;
     top: 0;
-    z-index: 1111;
+    z-index: 9999;
 
     @media (min-width: 576px) {
         padding: 1.25rem 3rem;
@@ -896,7 +896,10 @@ export default {
                                     }
 
                                     &.kiv-profil {
-                                        font-size: 1.7rem;
+                                        font-size: 1.8rem;
+                                        @media (min-width: 850px) {
+                                            font-size: 1.7rem;
+                                        }
                                     }
 
                                     &.kiv-logout {

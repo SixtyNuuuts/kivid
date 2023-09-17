@@ -18,12 +18,15 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use App\Controller\RedirectFromIsGrantedTrait;
 
 /**
  * @Route("/patient")
  */
 class WorksheetController extends AbstractController
 {
+    use RedirectFromIsGrantedTrait;
+
     private $exerciseRepository;
     private $commentaryRepository;
     private $worksheetRepository;
@@ -107,62 +110,80 @@ class WorksheetController extends AbstractController
      * @Route("/{id}/get/worksheet/{worksheetId}", name="app_patient_get_worksheet", methods={"GET"})
      * @isGranted("IS_OWNER_OR_OWNERDOC", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
-    public function getWorksheet(Patient $patient, int $worksheetId): JsonResponse
+    public function getWorksheet(Request $request, Patient $patient, int $worksheetId)
     {
-        $worksheet = $this->worksheetRepository->findOneBy(['id' => $worksheetId]);
-
-        return $this->json(
-            $worksheet,
-            200,
-            [],
-            ['groups' => 'worksheet_read']
-        );
+        if ($request->isXmlHttpRequest()) {
+            $worksheet = $this->worksheetRepository->findOneBy(['id' => $worksheetId]);
+    
+            return $this->json(
+                $worksheet,
+                200,
+                [],
+                ['groups' => 'worksheet_read']
+            );
+        } else {
+            if ($this->getUser()) {
+                return $this->redirectFromIsGranted();
+            }
+        }    
     }
 
     /**
      * @Route("/{id}/get/worksheets", name="app_patient_get_worksheets", methods={"GET"})
      * @isGranted("IS_OWNER_OR_OWNERDOC", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
-    public function getWorksheets(Patient $patient): JsonResponse
+    public function getWorksheets(Request $request, Patient $patient)
     {
-        $worksheets = $this->worksheetRepository->findBy(['patient' => $patient]);
-
-        return $this->json(
-            $worksheets,
-            200,
-            [],
-            ['groups' => 'dashboard_worksheet_read']
-        );
+        if ($request->isXmlHttpRequest()) {
+            $worksheets = $this->worksheetRepository->findBy(['patient' => $patient]);
+    
+            return $this->json(
+                $worksheets,
+                200,
+                [],
+                ['groups' => 'dashboard_worksheet_read']
+            );
+        } else {
+            if ($this->getUser()) {
+                return $this->redirectFromIsGranted();
+            }
+        }    
     }
 
     /**
      * @Route("/{id}/get/exercises/{worksheetId}", name="app_patient_get_exercises", methods={"GET"})
      * @isGranted("IS_OWNER_OR_OWNERDOC", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
-    public function getExercises(Patient $patient, int $worksheetId): JsonResponse
+    public function getExercises(Request $request, Patient $patient, int $worksheetId)
     {
-        $exercises = $this->exerciseRepository->findBy(
-            ['worksheet' => $worksheetId],
-            ['position' => 'ASC']
-        );
-
-        // 15/01/2023 : remove Subscription for read worksheet 15/01/2023
-        // $patientHasCurrentSubscription = $this->subscriptionRepository->findCurrentSubscription($patient);
-
-        // if (!$patient->getDoctor()->isGiveFreeAccessPrescri() && !$patientHasCurrentSubscription) {
-        //     foreach ($exercises as $key => $exercise) {
-        //         if ($key > 1) {
-        //             $exercise->getVideo()->setYoutubeId(null)->setUrl('');
-        //         }
-        //     }
-        // }
-
-        return $this->json(
-            $exercises,
-            200,
-            [],
-            ['groups' => 'worksheet_read']
-        );
+        if ($request->isXmlHttpRequest()) {
+            $exercises = $this->exerciseRepository->findBy(
+                ['worksheet' => $worksheetId],
+                ['position' => 'ASC']
+            );
+    
+            // 15/01/2023 : remove Subscription for read worksheet 15/01/2023
+            // $patientHasCurrentSubscription = $this->subscriptionRepository->findCurrentSubscription($patient);
+    
+            // if (!$patient->getDoctor()->isGiveFreeAccessPrescri() && !$patientHasCurrentSubscription) {
+            //     foreach ($exercises as $key => $exercise) {
+            //         if ($key > 1) {
+            //             $exercise->getVideo()->setYoutubeId(null)->setUrl('');
+            //         }
+            //     }
+            // }
+    
+            return $this->json(
+                $exercises,
+                200,
+                [],
+                ['groups' => 'worksheet_read']
+            );
+        } else {
+            if ($this->getUser()) {
+                return $this->redirectFromIsGranted();
+            }
+        }    
     }
 
     /**
@@ -234,6 +255,35 @@ class WorksheetController extends AbstractController
 
                 return $this->json(
                     ['message' => 'Commentaire créé', 'commentaryId' => $commentary->getId()],
+                    200
+                );
+            }
+        }
+
+        return $this->json(
+            "Une erreur s'est produite lors de la création du commentaire",
+            500
+        );
+    }
+
+    /**
+     * @Route("/{id}/remove/commentary", name="app_patient_remove_commentary", methods={"POST"})
+     * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
+     */
+    public function removeCommentary(Request $request): JsonResponse
+    {
+        if ($request->isMethod('post')) {
+            $data = json_decode($request->getContent());
+
+            if ($data->commentaryId) {
+                $commentary = $this->commentaryRepository->findOneBy(['id' => $data->commentaryId]);
+
+                $this->em->remove($commentary);
+
+                $this->em->flush();
+
+                return $this->json(
+                    ['message' => 'Commentaire supprimé', 'commentaryId' => $data->commentaryId],
                     200
                 );
             }

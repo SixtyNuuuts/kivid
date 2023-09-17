@@ -1,16 +1,17 @@
 <template>
     <section id="doctor-choice">
         <vs-button
-            v-if="patientHasDoctorChoice !== null"
-            @click="patientHasDoctorChoice = null"
+            v-if="patientHasDoctorChoice !== null || patientHasNoDoctorChoice !== null"
+            @click="resetPatientDoctorChoice"
             class="btn-prev"
+            :class="{'btn-prev-calendly':patientHasNoDoctorChoice}"
             circle
             floating
         >
             <i class="kiv-arrow-left icon-31"></i>
         </vs-button>
-        <h1>Bienvenue sur Kivid !</h1>
-        <div v-if="patientHasDoctorChoice === null" class="btn-container">
+        <h1 v-if="!patientHasNoDoctorChoice">Bienvenue sur Kivid !</h1>
+        <div v-if="patientHasDoctorChoice === null && patientHasNoDoctorChoice === null" class="btn-container">
             <h4> Avez-vous&nbsp;un&nbsp;praticien ?</h4>
             <vs-button
                 class="w-100"
@@ -20,13 +21,13 @@
             </vs-button>
             <vs-button
                 class="w-100"
-                @click="patientHasNoDoctorChoice"
+                @click="patientHasNoDoctorChoice = true"
             >
                 Non, je n'en ai pas
             </vs-button>
         </div>
         <div
-            v-if="patientHasDoctorChoice"
+            v-if="patientHasDoctorChoice && !patientHasNoDoctorChoice"
             v-click-outside="hideSelectBox"
             class="select-filter"
             :class="{ loading: loading }"
@@ -118,8 +119,19 @@
             </div>
             <div class="valid-doctor-container">
                 <vs-button @click="valideDoctorChoice">Valider</vs-button>
-                <a class="contact" @click="patientHasNoDoctorChoice">Je n'ai pas de praticien</a>
+                <a class="contact" @click="patientHasNoDoctorChoice = true">Je n'ai pas de praticien</a>
             </div>
+        </div>
+        <div
+            v-if="patientHasNoDoctorChoice"
+        >
+        	<!-- <vue-calendly url="https://calendly.com/rendez-vous-kivid/30min?hide_gdpr_banner=1" :height="1200"></vue-calendly> -->
+            <CalendlyRdV
+                :patient="patient"
+                :eventUrl="'https://calendly.com/sixty-nuuuts/30min?hide_gdpr_banner=1'"
+                :height="1200"
+                :context="'inscription'"
+            ></CalendlyRdV>
         </div>
     </section>
 </template>
@@ -128,6 +140,7 @@
 import f from "../../services/function";
 import ClickOutside from "vue-click-outside";
 import VuePhoneNumberInput from "vue-phone-number-input";
+import CalendlyRdV from "../../components/CalendlyRdV.vue";
 
 export default {
     props: {
@@ -140,6 +153,7 @@ export default {
     },
     components: {
         VuePhoneNumberInput,
+        CalendlyRdV
     },
     data() {
         return {
@@ -157,6 +171,7 @@ export default {
             },
             contactTel: null,
             patientHasDoctorChoice: null,
+            patientHasNoDoctorChoice: null,
         };
     },
     computed: {
@@ -208,9 +223,6 @@ export default {
                         f.openErrorNotification("Erreur", errorMess);
                     });
         },
-        patientHasNoDoctorChoice() {
-            this.$emit("patientHasNoDoctorChoice", true);
-        },
         toggleSelectBox() {
             this.selectBox = !this.selectBox;
             if (this.doctorSelected) {
@@ -243,6 +255,11 @@ export default {
         },
         getUserName(user) {
             return f.getUserName(user);
+        },
+        resetPatientDoctorChoice()
+        {
+            this.patientHasDoctorChoice = null;
+            this.patientHasNoDoctorChoice = null;
         },
         validContact() {
             this.btnLoadingValidContact = true;
@@ -368,6 +385,14 @@ export default {
         @media (min-width: 450px) {
             left: 3.5rem;
             top: 9.5rem;
+        }
+
+        &.btn-prev-calendly
+        {
+            @media (max-width: 730px) {
+                left: 1rem;
+                top: 7.2rem;
+            }
         }
     }
 

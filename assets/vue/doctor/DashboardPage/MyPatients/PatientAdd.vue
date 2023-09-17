@@ -1,146 +1,147 @@
 <template>
     <div>
         <h2>Ajout d'un patient</h2>
-        <div
-            v-click-outside="hideSelectBox"
-            class="select-filter"
-            :class="{ loading: loadingAllPatients }"
-        >
-            <div v-if="!loadingAllPatients">
-                <div
-                    v-show="userSelected.email"
-                    class="user-selected user"
-                    @click="resetSelect"
-                >
-                    <vs-avatar class="avatar" circle size="35">
-                        <img
-                            :src="
-                                userSelected.avatarUrl
-                                    ? userSelected.avatarUrl
-                                    : '/img/avatar-default.svg'
-                            "
-                            :alt="`Avatar de ${userSelected.firstname} ${userSelected.lastname}`"
-                        />
-                    </vs-avatar>
-                    <div class="text">
-                        <div class="name">
-                            {{ getUserName(userSelected) }}
-                            <span
-                                class="birthdate"
-                                v-show="userSelected.birthdate"
-                            >
-                                {{ getAge(userSelected.birthdate) }}
-                                ans</span
-                            >
-                        </div>
-                        <!-- <div class="email">
-                            {{ userSelected.email }}
-                        </div> -->
-                    </div>
-                </div>
-                <input
-                    v-show="!userSelected.email"
-                    v-model="filter"
-                    @click="selectBox = true"
-                    @keyup="selectBoxWithThrottle"
-                    id="user-choice-select"
-                    :class="{
-                        'b-r-b-zero': selectBox,
-                        'placeholder-gray': selectBox,
-                    }"
-                    :placeholder="
-                        !selectBox
-                            ? 'Sélectionnez un patient kivid'
-                            : 'Recherchez un patient kivid'
-                    "
-                    autocomplete="off"
-                />
-                <div
-                    class="arrow-toggle-box"
-                    :class="{ active: selectBox }"
-                    @click="toggleSelectBox"
-                >
-                    <!-- <i class="kiv-chevron-down icon-3"></i> -->
-                    <i class="vs-icon-arrow"></i>
-                </div>
-                <transition name="height">
+        <div v-if="doctor.giveAccessAddFreePatient">
+            <div
+                v-click-outside="hideSelectBox"
+                class="select-filter"
+                :class="{ loading: loadingAllPatients }"
+            >
+                <div v-if="!loadingAllPatients">
                     <div
-                        v-show="selectBox"
-                        class="select-box"
-                        @click="focusInputSelect"
+                        v-show="userSelected.email"
+                        class="user-selected user"
+                        @click="resetSelect"
                     >
-                        <ul v-if="allPatientsFiltered.length">
-                            <li
-                                v-for="(patient, i) in allPatientsFiltered"
-                                :key="i"
-                            >
-                                <div class="user" @click="selectUser(patient)">
-                                    <vs-avatar class="avatar" circle size="35">
-                                        <img
-                                            :src="
-                                                patient.avatarUrl
-                                                    ? patient.avatarUrl
-                                                    : '/img/avatar-default.svg'
-                                            "
-                                            :alt="`Avatar de ${patient.firstname} ${patient.lastname}`"
-                                        />
-                                    </vs-avatar>
-                                    <div class="text">
-                                        <div class="name">
-                                            {{ getUserName(patient) }}
-                                            <span
-                                                class="birthdate"
-                                                v-show="patient.birthdate"
-                                            >
-                                                {{ getAge(patient.birthdate) }}
-                                                ans</span
-                                            >
-                                        </div>
-                                        <!-- <div class="email">
-                                            {{ patient.email }}
-                                        </div> -->
-                                    </div>
-                                </div>
-                            </li>
-                        </ul>
-                        <div v-if="!allPatientsFiltered.length && filter">
-                            <p class="not-found">
-                                <i class="fas fa-users-slash"></i>
-                                <span>
-                                    Aucun patient n'a été trouvé avec "<strong
-                                        >{{ filter }}</strong
-                                    >"
-                                </span>
-                            </p>
-                        </div>
-                        <div v-if="!allPatientsFiltered.length && !filter">
-                            <p class="not-found">
-                                <i class="fas fa-users-slash"></i>
-                                Aucun patient n'a été trouvé
-                            </p>
+                        <vs-avatar class="avatar" circle size="35">
+                            <img
+                                :src="
+                                    userSelected.avatarUrl
+                                        ? userSelected.avatarUrl
+                                        : '/img/avatar-default.svg'
+                                "
+                                :alt="`Avatar de ${userSelected.firstname} ${userSelected.lastname}`"
+                            />
+                        </vs-avatar>
+                        <div class="text">
+                            <div class="name">
+                                {{ getUserName(userSelected) }}
+                                <span
+                                    class="birthdate"
+                                    v-show="userSelected.birthdate"
+                                >
+                                    {{ getAge(userSelected.birthdate) }}
+                                    ans</span
+                                >
+                            </div>
+                            <div class="email">
+                                {{ userSelected.email }}
+                            </div>
                         </div>
                     </div>
-                </transition>
+                    <input
+                        v-show="!userSelected.email"
+                        v-model="filter"
+                        @click="selectBox = true"
+                        @keyup="selectBoxWithThrottle"
+                        id="user-choice-select"
+                        :class="{
+                            'b-r-b-zero': selectBox,
+                            'placeholder-gray': selectBox,
+                        }"
+                        :placeholder="
+                            !selectBox
+                                ? 'Sélectionnez un patient sans praticien'
+                                : 'Recherchez un patient sans praticien'
+                        "
+                        autocomplete="off"
+                    />
+                    <div
+                        class="arrow-toggle-box"
+                        :class="{ active: selectBox }"
+                        @click="toggleSelectBox"
+                    >
+                        <!-- <i class="kiv-chevron-down icon-3"></i> -->
+                        <i class="vs-icon-arrow"></i>
+                    </div>
+                    <transition name="height">
+                        <div
+                            v-show="selectBox"
+                            class="select-box"
+                            @click="focusInputSelect"
+                        >
+                            <ul v-if="allPatientsFiltered.length">
+                                <li
+                                    v-for="(patient, i) in allPatientsFiltered"
+                                    :key="i"
+                                >
+                                    <div class="user" @click="selectUser(patient)">
+                                        <vs-avatar class="avatar" circle size="35">
+                                            <img
+                                                :src="
+                                                    patient.avatarUrl
+                                                        ? patient.avatarUrl
+                                                        : '/img/avatar-default.svg'
+                                                "
+                                                :alt="`Avatar de ${patient.firstname} ${patient.lastname}`"
+                                            />
+                                        </vs-avatar>
+                                        <div class="text">
+                                            <div class="name">
+                                                {{ getUserName(patient) }}
+                                                <span
+                                                    class="birthdate"
+                                                    v-show="patient.birthdate"
+                                                >
+                                                    {{ getAge(patient.birthdate) }}
+                                                    ans</span
+                                                >
+                                            </div>
+                                            <!-- <div class="email">
+                                                {{ patient.email }}
+                                            </div> -->
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                            <div v-if="!allPatientsFiltered.length && filter">
+                                <p class="not-found">
+                                    <i class="fas fa-users-slash"></i>
+                                    <span>
+                                        Aucun patient n'a été trouvé avec "<strong
+                                            >{{ filter }}</strong
+                                        >"
+                                    </span>
+                                </p>
+                            </div>
+                            <div v-if="!allPatientsFiltered.length && !filter">
+                                <p class="not-found">
+                                    <i class="fas fa-users-slash"></i>
+                                    Aucun patient n'a été trouvé
+                                </p>
+                            </div>
+                        </div>
+                    </transition>
+                </div>
+            </div>
+
+            <div
+                class="btn-container"
+                :class="{ disabled: btnLoadingValidAddPatient }"
+            >
+                <vs-button
+                    :loading="btnLoadingValidAddPatient"
+                    :disabled="!userSelected.email || btnLoadingValidAddPatient"
+                    class="w-100"
+                    @click="validAddPatient"
+                    >Valider la sélection</vs-button
+                >
+            </div>
+
+            <div class="divider">
+                <div class="divider-text">ou</div>
             </div>
         </div>
-
-        <div
-            class="btn-container"
-            :class="{ disabled: btnLoadingValidAddPatient }"
-        >
-            <vs-button
-                :loading="btnLoadingValidAddPatient"
-                :disabled="!userSelected.email || btnLoadingValidAddPatient"
-                class="w-100"
-                @click="validAddPatient"
-                >Valider la sélection</vs-button
-            >
-        </div>
-
-        <div class="divider">
-            <div class="divider-text">ou</div>
-        </div>
-
         <div class="create-patient-form">
             <vs-select
                 v-model="createPatientDetails.gender"
@@ -275,7 +276,7 @@ export default {
                 .then((response) => {
                     f.openSuccessNotification(
                         "Ajout du patient",
-                        response.data
+                        response.data.message
                     );
 
                     this.userSelected.addRequestDoctor = false;
@@ -334,9 +335,45 @@ export default {
                             ? error.response.data.detail
                             : error.response.data;
 
-                    f.openErrorNotification("Erreur", errorMess);
-                    this.btnLoadingValidCreatePatient = false;
-                    this.$emit("closeModalAddPatient", true);
+                    if(error.response?.data)
+                        this.axios
+                            .post(`/doctor/${this.doctor.id}/add/patient`, {
+                                _token: this.csrfTokenAddPatient,
+                                patientEmail: this.createPatientDetails.email,
+                            })
+                            .then((response) => {
+                                f.openSuccessNotification(
+                                    "Ajout du patient",
+                                    response.data.message
+                                );
+
+                                this.$emit("addPatient", response.data.patient);
+
+                                this.createPatientDetails = {
+                                    firstname: "",
+                                    lastname: "",
+                                    email: "",
+                                    gender: "",
+                                };
+                                this.btnLoadingValidCreatePatient = false;
+                                this.$emit("closeModalAddPatient", true);
+                            })
+                            .catch((error) => {
+                                const errorMess =
+                                    "object" === typeof error.response.data
+                                        ? error.response.data.detail
+                                        : error.response.data;
+
+                                f.openErrorNotification("Erreur", errorMess);
+                                this.btnLoadingValidAddPatient = false;
+                                this.$emit("closeModalAddPatient", true);
+                            });
+                    else
+                    {
+                        f.openErrorNotification("Erreur", errorMess);
+                        this.btnLoadingValidCreatePatient = false;
+                        this.$emit("closeModalAddPatient", true);
+                    }
                 });
         },
         validationEmail() {

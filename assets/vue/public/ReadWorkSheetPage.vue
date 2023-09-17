@@ -3,17 +3,18 @@
         <header>
             <div v-if="loading" class="loading-block">
                 <div class="title">
-                    <i class="kiv-arrow-left icon-31"></i>
+                    <!-- <i class="kiv-arrow-left icon-31"></i> -->
                     <div class="loading-gray h1"></div>
                 </div>
                 <div class="loading-gray part-of-body"></div>
             </div>
-            <div v-else>
+            <div v-else class="read-worksheet-title">
                 <div class="title">
                     <h1>{{ getWorksheet.title }}</h1>
                 </div>
                 <TagPartOfBody
                     v-if="getWorksheet.partOfBody"
+                    class="btn-light btn-light-plus"
                     :class="{ completed: allExercisesIsCompleted }"
                     :partOfBody="getWorksheet.partOfBody"
                 />
@@ -115,38 +116,6 @@ export default {
         },
     },
     methods: {
-        // getCurrentCommentary(exerciseCommentaries) {
-        //     let commentary = {
-        //         content: "",
-        //         id: null,
-        //     };
-
-        //     if (
-        //         exerciseCommentaries.length &&
-        //         this.getCurrentWorksheetSession &&
-        //         exerciseCommentaries.find(
-        //             (c) =>
-        //                 c.worksheetSession.id ===
-        //                 this.getCurrentWorksheetSession.id
-        //         )
-        //     ) {
-        //         commentary = exerciseCommentaries.find(
-        //             (c) =>
-        //                 c.worksheetSession.id ===
-        //                 this.getCurrentWorksheetSession.id
-        //         );
-        //     }
-
-        //     if (
-        //         exerciseCommentaries.length &&
-        //         !this.getCurrentWorksheetSession
-        //     ) {
-        //         commentary =
-        //             exerciseCommentaries[exerciseCommentaries.length - 1];
-        //     }
-
-        //     return commentary;
-        // },
     },
     created() {
         Vue.prototype.$vs = this.$vs;
@@ -163,7 +132,18 @@ export default {
             )
             .then((response) => {
                 this.worksheet = response.data;
-                this.exercises = this.worksheet.exercises.map(e=>e={...e,isCompleted:false});
+                this.exercises = f.sortByPosition(
+                    this.worksheet.exercises.map((exercise) => {
+                        return {
+                            ...exercise,
+                            isCompleted:false,
+                            commentaries: f.sortByCreatedAtAsc(
+                                exercise.commentaries
+                            ),
+                        };
+                    })
+                );
+
                 this.loading = false;
             })
             .catch((error) => {
@@ -182,6 +162,10 @@ export default {
 @import "../../scss/variables";
 
 #worksheet {
+    @media (max-width: 790px) {
+        padding-top: 1.8rem;
+    }
+
     .btn-timing-frieze-mobile {
         width: 100%;
         margin-bottom: 2.5rem;
@@ -210,6 +194,38 @@ export default {
 
             @media (min-width: 1300px) {
                 max-width: 31rem;
+            }
+        }
+    }
+
+    .read-worksheet-title
+    {
+        position: relative;
+    }
+
+    header > div .title
+    {
+        max-width: initial;
+        width: 100%;
+        margin-bottom: 2.5rem;
+
+        h1 
+        {
+            max-width: 87.6%;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.1;
+            padding-top: 0.4rem;
+            padding-bottom: 0.5rem;
+            margin: 0;
+            white-space: initial;
+            max-height: 8rem;
+            @media (max-width: 790px) {
+                font-size: 2.4rem;
+                max-height: 5.8rem;
             }
         }
     }

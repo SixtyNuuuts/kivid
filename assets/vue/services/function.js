@@ -6,12 +6,26 @@ export default {
   getTagsFromAllVideos(videos) {
     return videos.reduce((r, video) => {
       video.tags.forEach((tag) => {
-        if (!r.includes(tag.name)) {
-          r.push(tag.name);
+        if(tag && tag.tagGroup && !(tag.tagGroup.name in r))
+          r[tag.tagGroup.name] = [];
+        if(tag && tag.tagGroup && !r[tag.tagGroup.name].includes(tag.name)) {
+          r[tag.tagGroup.name].push(tag.name);
         }
       });
-      return r;
-    }, []);
+
+      const 
+        keyOrder = ['Objectif', 'Cible', 'Type de contraction', 'Type de mouvement', 'Spécialité'],
+        rSorted = {}
+      ;
+
+      keyOrder.forEach(key => {
+        if (r[key]) {
+          rSorted[key] = r[key];
+        }
+      });
+
+      return rSorted;
+    }, {});
   },
 
   getLibrariesFromAllVideos(videos) {
@@ -25,13 +39,28 @@ export default {
 
   getTagsFromAll(tagsFromExercises) {
     return tagsFromExercises.reduce((r, exercise) => {
-      exercise.forEach((tag) => {
-        if (!r.includes(tag)) {
-          r.push(tag);
+      Object.keys(exercise).forEach((tagKey) => {
+        const tag = exercise[tagKey];
+        if(tag.tagGroup && !(tag.tagGroup.name in r))
+          r[tag.tagGroup.name] = [];
+        if(tag.tagGroup && !r[tag.tagGroup.name].includes(tag.name)) {
+          r[tag.tagGroup.name].push(tag.name);
         }
       });
-      return r;
-    }, []);
+
+      const 
+        keyOrder = ['Objectif', 'Cible', 'Type de contraction', 'Type de mouvement', 'Spécialité'],
+        rSorted = {}
+      ;
+
+      keyOrder.forEach(key => {
+        if (r[key]) {
+          rSorted[key] = r[key];
+        }
+      });
+
+      return rSorted;
+    }, {});
   },
 
   generateTagsFromExercises(worksheets) {
@@ -39,13 +68,12 @@ export default {
       return (worksheet.exercisesTags = worksheet.exercises.reduce(
         (r, exercise) => {
           exercise.video.tags.forEach((tag) => {
-            if (!r.includes(tag.name)) {
-              r.push(tag.name);
-            }
-          });
+            if(tag && !(tag.name in r))
+              r[tag.name] = tag;
+            });
           return r;
         },
-        []
+        {}
       ));
     });
   },
@@ -161,6 +189,13 @@ export default {
     return array;
   },
 
+  sortByCreatedAtAsc(array) {
+    array.sort(function (a, b) {
+      return new Date(a.createdAt) - new Date(b.createdAt);
+    });
+    return array;
+  },
+
   hexToRgbA(hex, alpha) {
     let c;
     if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
@@ -207,18 +242,24 @@ export default {
   },
 
   getUserName(user) {
-    const firstname = user.firstname ? user.firstname : '';
-    const space = user.firstname && user.lastname ? ' ' : '';
-    const lastname = user.lastname ? user.lastname : '';
-    const name = `${firstname}${space}${lastname}`;
-
-    const username = user.firstname || user.lastname
-      ? `${name}`
-      : user.email;
-
-    const civility = this.getCivility(user.gender);
-
-    return civility != '' ? `${civility} ${username}` : `${username}`;
+    if(user.id==1)
+    {
+      return user.firstname ? user.firstname : (user.lastname ? user.lastname : '---');  
+    }
+    else {
+      const firstname = user.firstname ? user.firstname : '';
+      const space = user.firstname && user.lastname ? ' ' : '';
+      const lastname = user.lastname ? user.lastname : '';
+      const name = `${firstname}${space}${lastname}`;
+  
+      const username = user.firstname || user.lastname
+        ? `${name}`
+        : user.email;
+  
+      const civility = this.getCivility(user.gender);
+  
+      return civility != '' ? `${civility} ${username}` : `${username}`;  
+    }
   },
 
   // Vuesax functions

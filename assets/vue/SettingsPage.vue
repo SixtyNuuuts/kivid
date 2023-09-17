@@ -21,13 +21,13 @@
                     >
                         Mon Profil
                     </li>
-                    <li
+                    <!-- <li
                         v-if="'patient' === userType"
                         @click="mySubscription()"
                         :class="{ active: activeTab === '2' }"
                     >
                         Mon Abonnement
-                    </li>
+                    </li> -->
                 </ul>
             </section>
             <transition name="fade">
@@ -102,7 +102,7 @@
                                 v-if="'doctor' === userType"
                                 class="num-rpps-ameli"
                                 v-model="currentUser.numRppsAmeli"
-                                label-placeholder="Numéro RPPS ou ADELI"
+                                label-placeholder="Numéro RPPS ou AMELI"
                                 type="text"
                             >
                             </vs-input>
@@ -259,7 +259,7 @@
                         </div>
                     </div>
                 </section>
-                <section
+                <!-- <section
                     v-if="'patient' === userType && activeTab === '2'"
                     id="my-subscription"
                     class="kiv-block"
@@ -417,7 +417,7 @@
                             </div>
                         </div>
                     </div>
-                </section>
+                </section> -->
             </transition>
         </main>
         <div class="cropper-modal" v-if="modalAvatar">
@@ -642,27 +642,27 @@ export default {
             return moment(datetime).format("DD/MM/YYYY");
         },
         stripeCheckout(indice) {
-            this.axios
-                .post(`/subscription/checkout`, {
-                    stripeSubPlanId: this.stripeSubPlans[indice].planId,
-                    stripeCustomerId: this.stripeSubscription
-                        ? this.stripeSubscription.customer
-                        : null,
-                    successUrl: "abonnement/success",
-                    cancelUrl: "abonnement/cancel",
-                    userId: `${this.currentUser.id}`,
-                })
-                .then((response) => {
-                    window.location.href = response.data;
-                })
-                .catch((error) => {
-                    console.log(error);
+            // this.axios
+            //     .post(`/subscription/checkout`, {
+            //         stripeSubPlanId: this.stripeSubPlans[indice].planId,
+            //         stripeCustomerId: this.stripeSubscription
+            //             ? this.stripeSubscription.customer
+            //             : null,
+            //         successUrl: "abonnement/success",
+            //         cancelUrl: "abonnement/cancel",
+            //         userId: `${this.currentUser.id}`,
+            //     })
+            //     .then((response) => {
+            //         window.location.href = response.data;
+            //     })
+            //     .catch((error) => {
+            //         console.log(error);
 
-                    f.openErrorNotification(
-                        "Erreur",
-                        "Erreur lors du processus d'abonnement"
-                    );
-                });
+            //         f.openErrorNotification(
+            //             "Erreur",
+            //             "Erreur lors du processus d'abonnement"
+            //         );
+            //     });
         },
         stripeCustomerPortalSession(stripeCustomerId) {
             this.axios
@@ -1399,6 +1399,9 @@ export default {
             background: transparent;
             border-radius: 4px;
         }
+
+        scrollbar-width: thin;
+        scrollbar-color: #2e3858a1;
 
         &::-webkit-scrollbar-thumb {
             background: #2e3858a1;

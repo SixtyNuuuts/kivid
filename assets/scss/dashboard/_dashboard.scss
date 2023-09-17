@@ -19,7 +19,7 @@
             }
 
             @media (min-width: 992px) {
-                margin-bottom: 2rem;
+                // margin-bottom: 2rem;
                 flex-direction: column;
             }
         }
@@ -80,9 +80,9 @@
 
                     span {
                         display: inline-block;
-                        white-space: nowrap;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
+                        // white-space: nowrap;
+                        // overflow: hidden;
+                        // text-overflow: ellipsis;
                         max-width: 28vw;
 
                         @media (min-width: 360px) {
@@ -298,6 +298,44 @@
 
                     &.loading {
                         height: 1.8rem;
+                    }
+                }
+            }
+
+            &.avatar-doctor-rdv {
+                align-items: flex-start;
+
+                .doctor-avatar {
+                    .avatar {
+                        @media (max-width: 420px) {
+                            width: 30px!important;
+                            height: 30px!important;
+                            margin-right: 0.8rem !important;
+                            position: relative;
+                            top: -0.6rem;
+                        }
+
+                        @media (min-width: 420px) and (max-width: 550px) {
+                            width: 87px !important;
+                            height: 87px !important;
+                        }
+
+                        @media (min-width: 650px) and (max-width: 740px) {
+                            width: 20px !important;
+                            height: 20px !important;
+                            margin-right: 0.8rem !important;
+                        }
+
+                        @media (min-width: 740px) and (max-width: 830px) {
+                            width: 50px !important;
+                            height: 50px !important;
+                            margin-right: 0.8rem !important;
+                        }
+
+                        @media (min-width: 830px) and (max-width: 915px) {
+                            width: 87px !important;
+                            height: 87px !important;
+                        }
                     }
                 }
             }

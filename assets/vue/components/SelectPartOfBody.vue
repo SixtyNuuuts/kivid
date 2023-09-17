@@ -1,5 +1,5 @@
 <template>
-    <div v-click-outside="hideSelectBox" class="select-filter">
+    <div v-click-outside="hideSelectBox" class="select-filter" :class="{active:selectBox,partofbodyselected:getPartOfBodySelected}">
         <div v-show="!loadingPartsOfBody">
             <div
                 v-show="getPartOfBodySelected"
@@ -60,12 +60,18 @@
                     alt="Icone Thoracique"
                     class="icon-thoracique"
                 />
+                <img
+                    v-if="getPartOfBodySelected.icon === 'global'"
+                    src="../../img/icons/part-of-body/global.svg"
+                    alt="Icone Thoracique"
+                    class="icon-global"
+                />
                 <span class="text wsnw">{{ getPartOfBodySelected.name }}</span>
             </div>
             <input
                 v-show="!getPartOfBodySelected"
                 v-model="filter"
-                @click="selectBox = true"
+                @click="toggleSelectBox"
                 @keyup="selectBoxWithThrottle"
                 id="partofbody-choice-select"
                 :class="{ 'b-r-b-zero': selectBox }"
@@ -145,6 +151,12 @@
                                     alt="Icone Thoracique"
                                     class="icon-thoracique"
                                 />
+                                <img
+                                    v-if="part.icon === 'global'"
+                                    src="../../img/icons/part-of-body/global.svg"
+                                    alt="Icone Thoracique"
+                                    class="icon-global"
+                                />
                                 <span class="text wsnw">{{ part.name }}</span>
                             </div>
                         </li>
@@ -189,7 +201,7 @@ export default {
             return this.partOfBody;
         },
         partsOfBodyFiltered() {
-            return this.sortedPoBNameByAlphabet(
+            return this.sortByPosition(
                 this.partsOfBody.filter((p) =>
                     p.name
                         .normalize("NFD")
@@ -240,7 +252,6 @@ export default {
             if (!this.selectBoxThrottle) {
                 this.selectBoxThrottle = true;
                 this.selectBox = true;
-                console.log("selectBox");
 
                 setTimeout(() => {
                     this.selectBoxThrottle = false;
@@ -252,6 +263,12 @@ export default {
                 return a.name.localeCompare(b.name);
             });
             return array;
+        },
+        sortByPosition(array) {
+            array.sort(function (a, b) {
+            return a.position - b.position
+            })
+            return array
         },
     },
     created() {
@@ -500,6 +517,11 @@ export default {
             }
 
             &.icon-thoracique {
+                top: -0.1rem;
+                height: 1.6rem;
+            }
+
+            &.icon-global {
                 top: -0.1rem;
                 height: 1.6rem;
             }

@@ -11,9 +11,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Controller\RedirectFromIsGrantedTrait;
 
 class HomeController extends AbstractController
 {
+    use RedirectFromIsGrantedTrait;
+
     /**
      * @Route("/", name="app_home")
      */
@@ -49,9 +52,18 @@ class HomeController extends AbstractController
     /**
      * @Route("/get/doctors", name="app_get_doctors", methods={"GET"})
      */
-    public function getDoctors(DoctorRepository $doctorRepository): JsonResponse
+    public function getDoctors(Request $request, DoctorRepository $doctorRepository)
     {
-        return $this->json($doctorRepository->findAll(), 200, [], ['groups' => 'doctor_read']);
+        if ($request->isXmlHttpRequest()) {
+            return $this->json($doctorRepository->findAll(), 200, [], ['groups' => 'doctor_read']);
+        } else {
+            if ($this->getUser()) {
+                return $this->redirectFromIsGranted();
+            }
+            else {
+                return $this->redirectToRoute('app_home');
+            }
+        } 
     }
 
     /**

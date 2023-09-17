@@ -3,21 +3,22 @@
         <header>
             <div v-if="loading" class="loading-block">
                 <div class="title">
-                    <i class="kiv-arrow-left icon-31"></i>
+                    <!-- <i class="kiv-arrow-left icon-31"></i> -->
                     <div class="loading-gray h1"></div>
                 </div>
                 <div class="loading-gray part-of-body"></div>
             </div>
-            <div v-else>
+            <div v-else class="read-worksheet-title">
                 <div class="title">
-                    <i
+                    <!-- <i
                         class="kiv-arrow-left icon-31"
                         @click="rederictToDashboard()"
-                    ></i>
+                    ></i> -->
                     <h1>{{ getWorksheet.title }}</h1>
                 </div>
                 <TagPartOfBody
                     v-if="getWorksheet.partOfBody"
+                    class="btn-light btn-light-plus"
                     :class="{ completed: allExercisesIsCompleted }"
                     :partOfBody="getWorksheet.partOfBody"
                 />
@@ -32,7 +33,10 @@
                             alt="Icone de confettis"
                         />
                     </i>
-                    <p>
+                    <p v-if="doctorView">
+                        Super ! Le patient a terminé tous les exercices de la fiche.
+                    </p>
+                    <p v-else>
                         Félicitations, vous avez fait tous les exercices de la
                         fiche.
                         <span v-if="currentWorksheetSession"
@@ -43,7 +47,10 @@
                 </div>
                 <div v-if="!loading && !allExercisesIsCompleted">
                     <i class="kiv-info icon-17"></i>
-                    <p>
+                    <p v-if="doctorView">
+                       N'hésitez pas à laisser un commentaire pour guider le patient dans ses exercices ou répondre à ses questions.
+                    </p>
+                    <p v-else>
                         À la fin de vos exercices, vous aurez la possiblité
                         d’écrire un bref commentaire.
                     </p>
@@ -84,6 +91,7 @@
             <section id="exercises-playlist">
                 <ExercisesPlaylist
                     :patient="patient"
+                    :doctor="doctor"
                     :loading="loading"
                     :doctorView="doctorView"
                     :worksheet="getWorksheet"
@@ -138,6 +146,13 @@ export default {
             stripeSubPlans: null,
             status: null,
             stripeSubscription: null,
+            commentaryModel: {
+                content: '',
+                id: null,
+                doctor:null,
+                patient:null,
+                worksheetSession:null
+            }
         };
     },
     computed: {
@@ -160,38 +175,6 @@ export default {
         },
     },
     methods: {
-        getCurrentCommentary(exerciseCommentaries) {
-            let commentary = {
-                content: "",
-                id: null,
-            };
-
-            if (
-                exerciseCommentaries.length &&
-                this.getCurrentWorksheetSession &&
-                exerciseCommentaries.find(
-                    (c) =>
-                        c.worksheetSession.id ===
-                        this.getCurrentWorksheetSession.id
-                )
-            ) {
-                commentary = exerciseCommentaries.find(
-                    (c) =>
-                        c.worksheetSession.id ===
-                        this.getCurrentWorksheetSession.id
-                );
-            }
-
-            if (
-                exerciseCommentaries.length &&
-                !this.getCurrentWorksheetSession
-            ) {
-                commentary =
-                    exerciseCommentaries[exerciseCommentaries.length - 1];
-            }
-
-            return commentary;
-        },
         rederictToDashboard() {
             if (this.doctorView && this.doctor) {
                 const queryString = window.location.search;
@@ -207,27 +190,27 @@ export default {
             }
         },
         stripeCheckout(indice) {
-            this.axios
-                .post(`/subscription/checkout`, {
-                    stripeSubPlanId: this.stripeSubPlans[indice].planId,
-                    stripeCustomerId: this.stripeSubscription
-                        ? this.stripeSubscription.customer
-                        : null,
-                    successUrl: `patient/${this.patient.id}/fiche/${this.getWorksheet.id}/success`,
-                    cancelUrl: `patient/${this.patient.id}/fiche/${this.getWorksheet.id}/cancel`,
-                    userId: `${this.patient.id}`,
-                })
-                .then((response) => {
-                    window.location.href = response.data;
-                })
-                .catch((error) => {
-                    console.log(error);
+            // this.axios
+            //     .post(`/subscription/checkout`, {
+            //         stripeSubPlanId: this.stripeSubPlans[indice].planId,
+            //         stripeCustomerId: this.stripeSubscription
+            //             ? this.stripeSubscription.customer
+            //             : null,
+            //         successUrl: `patient/${this.patient.id}/fiche/${this.getWorksheet.id}/success`,
+            //         cancelUrl: `patient/${this.patient.id}/fiche/${this.getWorksheet.id}/cancel`,
+            //         userId: `${this.patient.id}`,
+            //     })
+            //     .then((response) => {
+            //         window.location.href = response.data;
+            //     })
+            //     .catch((error) => {
+            //         console.log(error);
 
-                    f.openErrorNotification(
-                        "Erreur",
-                        "Erreur lors du processus d'abonnement"
-                    );
-                });
+            //         f.openErrorNotification(
+            //             "Erreur",
+            //             "Erreur lors du processus d'abonnement"
+            //         );
+            //     });
         },
     },
     created() {
@@ -290,18 +273,16 @@ export default {
                             )
                             .then((response) => {
                                 this.exercises = response.data;
+                                this.loading = false;
 
                                 this.exercises = f.sortByPosition(
                                     this.exercises.map((exercise) => {
                                         return {
                                             ...exercise,
-                                            commentaries: f.sortByCreatedAtDesc(
+                                            commentaries: f.sortByCreatedAtAsc(
                                                 exercise.commentaries
                                             ),
-                                            commentary:
-                                                this.getCurrentCommentary(
-                                                    exercise.commentaries
-                                                ),
+                                            commentary: {...this.commentaryModel,doctor:this.doctorView?this.doctor:null,patient:this.doctorView?null:this.patient,worksheetSession:this.getCurrentWorksheetSession??null}
                                         };
                                     })
                                 );
@@ -410,6 +391,10 @@ export default {
 @import "../../scss/variables";
 
 #worksheet {
+    @media (max-width: 790px) {
+        padding-top: 1.8rem;
+    }
+
     .btn-timing-frieze-mobile {
         width: 100%;
         margin-bottom: 2.5rem;
@@ -441,5 +426,38 @@ export default {
             }
         }
     }
+
+    .read-worksheet-title
+    {
+        position: relative;
+    }
+
+    header > div .title
+    {
+        max-width: initial;
+        width: 100%;
+        margin-bottom: 2.5rem;
+
+        h1 
+        {
+            max-width: 87.6%;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.1;
+            padding-top: 0.4rem;
+            padding-bottom: 0.5rem;
+            margin: 0;
+            white-space: initial;
+            max-height: 8rem;
+            @media (max-width: 790px) {
+                font-size: 2.4rem;
+                max-height: 5.8rem;
+            }
+        }
+    }
+
 }
 </style>

@@ -25,6 +25,17 @@ class PatientRepository extends ServiceEntityRepository
         parent::__construct($registry, Patient::class);
     }
 
+    public function findByDoctor(Doctor $doctor, ?int $maxresult, ?int $firstresult)
+    {
+        return $this->createQueryBuilder('p')
+                ->where('p.doctor = :doctor')
+                ->setParameter(':doctor', $doctor)
+                ->setMaxResults($maxresult)
+                ->setFirstResult($firstresult)
+                ->orderBy('p.createdAt', 'DESC')
+                ->getQuery()->getResult();
+    }
+    
     public function findByDoctorOpti(Doctor $doctor, ?int $maxresult, ?int $firstresult)
     {
         return $this->createQueryBuilder('p')

@@ -5,7 +5,6 @@
             :patient="patient"
             :csrfTokenSelectDoctor="csrfTokenSelectDoctor"
             :csrfTokenContact="csrfTokenContact"
-            @patientHasNoDoctorChoice="setPatientHasNoDoctorChoice"
         />
         <section
             v-else
@@ -14,11 +13,11 @@
             :class="{ 'doctor-view': doctorView }"
         >
             <div>
-                <i
+                <!-- <i
                     v-if="doctorView"
                     class="kiv-arrow-left icon-31"
                     @click="rederictToDashboard()"
-                ></i>
+                ></i> -->
                 <h1>
                     <span v-if="!doctorView">
                         Bienvenue sur votre dashboard !
@@ -29,28 +28,9 @@
                             />
                         </i>
                     </span>
-                    <span v-if="doctorView">
-                        Dashboard de
-                        <span v-if="patient.firstname || patient.lastname">
-                            {{ patient.firstname }}
-                            {{ patient.lastname }}
-                        </span>
-                        <span v-else>
-                            {{ patient.email }}
-                        </span>
-                    </span>
-                </h1>
-            </div>
-            <main>
-                <section
-                    v-if="doctorView"
-                    class="kiv-block mobile-view"
-                    id="patient"
-                >
-                    <h2>Le patient</h2>
-                    <div v-if="myDoctorContent" class="patient-details">
-                        <div class="patient-avatar">
-                            <vs-avatar class="avatar" circle size="116">
+                    <span v-if="doctorView" class="h1-doctor-view">
+                        <span class="patient-avatar">
+                            <vs-avatar class="avatar" circle size="65">
                                 <img
                                     :src="
                                         patient.avatarUrl
@@ -60,19 +40,21 @@
                                     :alt="`Avatar de ${patient.firstname} ${patient.lastname}`"
                                 />
                             </vs-avatar>
-                        </div>
-                        <div class="patient-infos">
-                            <div>
-                                <p class="name">
-                                    {{ getUserName(patient) }}
-                                </p>
-                                <p v-if="patient.birthdate" class="birthdate">
-                                    {{ getAge(patient.birthdate) }} ans
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
+                        </span>
+                        <span>
+                            Dashboard de
+                            <span class="patient-name" v-if="patient.firstname || patient.lastname">
+                                {{ patient.firstname }}
+                                {{ patient.lastname }}
+                            </span>
+                            <span class="patient-name" v-else>
+                                {{ patient.email }}
+                            </span>
+                        </span>
+                    </span>
+                </h1>
+            </div>
+            <main>
                 <MyScores
                     :patient="patient"
                     :doctorView="doctorView"
@@ -85,6 +67,8 @@
                     :doctor="currentUser"
                     :patientWorksheets="patientWorksheets"
                     :loadingPatientWorksheets="loadingPatientWorksheets"
+                    :loadingPatientWorksheetsProgression="loadingPatientWorksheetsProgression"
+                    :csrfTokenRemoveWorksheet="csrfTokenRemoveWorksheet"
                 />
                 <aside>
                     <MyDashboardNotifications
@@ -107,7 +91,7 @@
                         </button>
                         <h2>Mon praticien</h2>
                         <transition name="height2">
-                            <div v-if="myDoctorContent" class="doctor-details">
+                            <div v-if="myDoctorContent" class="doctor-details" :class="{'avatar-doctor-rdv':patient.doctor.id == 1 && patient.calendlyEvents.length && getPatientCalendlyEvents.length}">
                                 <div class="doctor-avatar">
                                     <div
                                         v-if="loadingDoctor"
@@ -195,6 +179,76 @@
                                                 patient.doctor.city
                                             }}</span>
                                         </div>
+                                        <div class="doctor-kivid-details" v-if="patient.doctor.id == 1">
+                                            <div class="doctor-kivid-details-rdv" v-if="patient.calendlyEvents.length && getPatientCalendlyEvents.length">
+                                                <p class="p">Mon rendez-vous</p>
+                                                <ul>
+                                                    <li
+                                                        v-for="(calendlyEvent, i) in getPatientCalendlyEvents"
+                                                        :key="i"
+                                                        :class="{
+                                                            canceled: calendlyEvent.scheduledEventStatus === 'canceled',
+                                                        }"
+                                                    >
+                                                        <div class="user-date">
+                                                            <vs-avatar
+                                                                class="avatar"
+                                                                circle
+                                                                size="30"
+                                                            >
+                                                                <img 
+                                                                    src="https://lh3.googleusercontent.com/a-/AOh14GgcsxH83V0AjWDcnnTU1TCZEE2HGY2eAJ-I1xhVrw=s96-c" 
+                                                                    alt="Avatar de Fabrice Ponsoda"
+                                                                />
+                                                            </vs-avatar>
+                                                            <div>
+                                                                <div class="name">Fabrice Ponsoda</div>
+                                                                <div class="date" v-html="getScheduledEventDateTime(calendlyEvent.scheduledEventStartTime, calendlyEvent.scheduledEventEndTime)"></div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="btns-actions">
+                                                            <vs-tooltip>
+                                                                <vs-button
+                                                                    size="mini"
+                                                                    @click="openModalCalendlyEvent(calendlyEvent.eventRescheduleUrl)"
+                                                                >
+                                                                    <i class="fas fa-sync-alt"></i>
+                                                                </vs-button>
+                                                                <template #tooltip>
+                                                                    Reprogrammer le rendez-vous
+                                                                </template>
+                                                            </vs-tooltip>
+                                                            <vs-tooltip>
+                                                                <vs-button
+                                                                    size="mini"
+                                                                    class="btn-cancel"
+                                                                    @click="openModalCalendlyEvent(calendlyEvent.eventCancelUrl)"
+                                                                >
+                                                                    <i class="vs-icon-close vs-icon-hover-x"></i>
+                                                                </vs-button>
+                                                                <template #tooltip>
+                                                                    Annuler le rendez-vous
+                                                                </template>
+                                                            </vs-tooltip>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="doctor-kivid-details-rdv" v-else>
+                                                <!-- https://calendly.com/rendez-vous-kivid/30min -->
+                                                <vs-button
+                                                    size="mini"
+                                                    class="calendly-create-event"
+                                                    @click="openModalCalendlyEvent('https://calendly.com/sixty-nuuuts/30min')"
+                                                >
+                                                    <i class="far fa-calendar-plus"></i> Prendre un rendez-vous
+                                                </vs-button>
+                                            </div>
+                                            <p class="subp">
+                                                Vous avez une question ou demande ?
+                                                <a @click="rederictToHelpSupport">contactez-nous</a>
+                                            </p>
+                                        </div>
                                     </div>
                                     <div
                                         v-if="
@@ -211,7 +265,7 @@
                                            pour&nbsp;élaborer le traitement approprié.
                                         </p>
                                         <p class="subp">
-                                            Vous avez une question ?
+                                            Vous avez une question ou demande ?
                                             <a @click="rederictToHelpSupport">contactez-nous</a>
                                         </p>
                                     </div>
@@ -294,6 +348,19 @@
                     </section>
                 </div>
             </div>
+            <div class="calendly-event-modal" v-if="modalCalendlyEvent && calendlyEventUrl">
+                <button
+                    class="vs-dialog__close btn-close-modal"
+                    @click="closeModalCalendlyEvent"
+                >
+                    <i class="vs-icon-close vs-icon-hover-x"></i>
+                </button>
+                <CalendlyRdV
+                    :patient="patient"
+                    :eventUrl="`${calendlyEventUrl}?hide_gdpr_banner=1`"
+                    :height="1200"
+                ></CalendlyRdV>
+            </div>
         </section>
     </div>
 </template>
@@ -308,6 +375,7 @@ import MyDashboardNotifications from "./DashboardPage/MyDashboardNotifications.v
 import MyWorksheets from "./DashboardPage/MyWorksheets.vue";
 import MyExerciseStats from "./DashboardPage/MyExerciseStats.vue";
 import DoctorSelectBox from "../components/DoctorSelectBox.vue";
+import CalendlyRdV from "../components/CalendlyRdV.vue";
 
 export default {
     components: {
@@ -317,6 +385,7 @@ export default {
         MyWorksheets,
         MyExerciseStats,
         DoctorSelectBox,
+        CalendlyRdV
     },
     data() {
         return {
@@ -327,18 +396,26 @@ export default {
             csrfTokenSelectDoctor: null,
             csrfTokenAcceptDoctor: null,
             csrfTokenDeclineDoctor: null,
+            csrfTokenRemoveWorksheet: null,
             myDBNotificationsContent: true,
             myScoresContent: true,
             myDoctorContent: true,
             myWorksheetsContent: true,
             loadingDoctor: false,
             loadingPatientWorksheets: false,
+            loadingPatientWorksheetsProgression: false,
             patientWorksheets: [],
             modalChangeDoctor: false,
             doctorSelected: null,
             loadingChangeDoctor: false,
-            patientHasNoDoctorChoice: false,
+            modalCalendlyEvent: false,
+            calendlyEventUrl: null,
         };
+    },
+    computed: {
+        getPatientCalendlyEvents() {
+            return this.patient.calendlyEvents.filter(ce=>ce.eventUrl.length>3&&ce.scheduledEventStatus==='active'&&moment(ce.scheduledEventEndTime).isSameOrAfter(moment().format("YYYY-MM-DDTHH:mm:ssZ")));
+        }
     },
     methods: {
         openModalChangeDoctor() {
@@ -346,9 +423,22 @@ export default {
 
             document.body.classList.add("no-scrollbar");
         },
-        setPatientHasNoDoctorChoice(patientHasNoDoctorChoice) {
-            this.patientHasNoDoctorChoice = patientHasNoDoctorChoice;
-            this.valideChangeDoctor();
+        openModalCalendlyEvent(eventUrl) 
+        {
+            this.modalCalendlyEvent = true;
+            this.calendlyEventUrl = eventUrl;
+        },
+        closeModalCalendlyEvent() {
+            this.modalCalendlyEvent = false;
+
+            this.axios
+                .get(`/patient/${this.patient.id}/calendly/event/getall`)
+                .then((response) => {
+                    this.patient.calendlyEvents = response.data;
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
         },
         closeModalChangeDoctor() {
             this.modalChangeDoctor = false;
@@ -461,10 +551,22 @@ export default {
                     f.openErrorNotification("Erreur", errorMess);
                 });
         },
+        getScheduledEventDateTime(scheduledEventStartTime, scheduledEventEndTime)
+        {
+            const 
+                scheduledEventStartTimeDay = moment(scheduledEventStartTime).format("DD/MM/YYYY"),
+                scheduledEventEndTimeDay = moment(scheduledEventEndTime).format("DD/MM/YYYY"),
+                scheduledEventStartTimeHour = moment(scheduledEventStartTime).format("HH:mm"),
+                scheduledEventEndTimeHour = moment(scheduledEventEndTime).format("HH:mm")
+            ;
+
+            return `${scheduledEventStartTimeDay===scheduledEventEndTimeDay?`le <strong>${scheduledEventStartTimeDay}</strong>`:`du <strong>${scheduledEventStartTimeDay}</strong> au <strong>${scheduledEventEndTimeDay}`}</strong>, <strong>${scheduledEventStartTimeHour}</strong>-<strong>${scheduledEventEndTimeHour}</strong>.`;
+        }
     },
     created() {
         Vue.prototype.$vs = this.$vs;
         document.body.classList.add("fuzzy-balls");
+        document.body.classList.add("dbpatient");
         window.addEventListener("resize", this.onResize);
 
         moment.locale("fr-FR");
@@ -477,6 +579,7 @@ export default {
         this.csrfTokenAcceptDoctor = data.csrfTokenAcceptDoctor;
         this.csrfTokenContact = data.csrfTokenContact;
         this.csrfTokenDeclineDoctor = data.csrfTokenDeclineDoctor;
+        this.csrfTokenRemoveWorksheet = data.csrfTokenRemoveWorksheet;
         this.csrfTokenSelectDoctor = data.csrfTokenSelectDoctor;
         this.doctorSelected = this.patient.doctor;
 
@@ -485,7 +588,11 @@ export default {
         this.axios
             .get(`/patient/${this.patient.id}/get/worksheets`)
             .then((response) => {
-                this.patientWorksheets = response.data.map((worksheet) => {
+                this.patientWorksheets = response.data;
+                this.loadingPatientWorksheets = false;
+
+                this.loadingPatientWorksheetsProgression = true;
+                this.patientWorksheets = this.patientWorksheets.map((worksheet) => {
                     return {
                         ...worksheet,
                         worksheetProgression:
@@ -495,7 +602,6 @@ export default {
                         currentWorksheetSession: {},
                     };
                 });
-
                 if (this.patientWorksheets.length) {
                     this.patientWorksheets.forEach((worksheet) => {
                         this.axios
@@ -581,7 +687,7 @@ export default {
                                     .then((response) => {
                                         worksheet.totalWorksheetSessions =
                                             response.data;
-                                        this.loadingPatientWorksheets = false;
+                                        this.loadingPatientWorksheetsProgression = false;
                                     })
                                     .catch((error) => {
                                         const errorMess =
@@ -602,8 +708,6 @@ export default {
                                 console.error(errorMess);
                             });
                     });
-                } else {
-                    this.loadingPatientWorksheets = false;
                 }
             })
             .catch((error) => {
@@ -615,6 +719,22 @@ export default {
                 console.error(errorMess);
             });
     },
+    mounted() {
+        const params = new URLSearchParams(window.location.search);
+        if(params.size)
+        {
+            const elementToScrollTo = document.getElementById(params.get('st'));
+            const offset = 90;
+
+            if (elementToScrollTo) {
+                const offsetTop = elementToScrollTo.offsetTop - offset;
+                window.scrollTo({
+                    top: offsetTop,
+                    behavior: 'smooth',
+                });
+            }
+        }
+    },
     beforeDestroy() {
         window.removeEventListener("resize", this.onResize);
     },
@@ -622,8 +742,66 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@media (max-width: 991px) {
+    body .container 
+    {
+        padding: 2rem;
+    }
+}
+
 #dashboard.db-patient {
     &.doctor-view {
+        h1 {
+            margin-bottom: 1rem !important;
+            .h1-doctor-view
+            {
+                font-size: 2.7rem;
+                display: flex;
+                align-items: center;
+
+                > *:not(:last-child) {
+                    margin-right: 1.5rem;
+                }
+
+                > span:not(.patient-avatar)
+                {
+                    display: flex;
+                    flex-direction: column;
+                    margin-top: 0.5rem;
+                }
+
+                .patient-name
+                {
+                    white-space: nowrap;
+                    display: inline-block;
+                    max-width: 72vw;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    // font-size: 3.2rem;
+                }
+
+                @media (min-width: 992px) {
+                    .patient-avatar {
+                        display: none;
+                    }
+
+                    > span:not(.patient-avatar)
+                    {
+                        display: flex;
+                        flex-direction: row;
+                        margin-bottom: 1.5rem;
+                        margin-left: 0.5rem;
+                        font-size: 3.2rem;
+
+                        .patient-name
+                        {
+                            max-width: initial;
+                            margin-left: 0.75rem;
+                        }
+                    }
+                }
+            }
+        }
         > div:first-child {
             display: flex;
             margin-top: 0.5rem;
@@ -647,7 +825,6 @@ export default {
                 margin-bottom: 2rem;
             }
         }
-
         main {
             #patient {
                 grid-template-areas: patient;
@@ -722,6 +899,205 @@ export default {
             cursor: pointer;
         }
     }
+    .doctor-kivid-details
+    {
+        .subp {
+            max-width: 34rem;
+            margin-top: 1.1rem;
+            font-size: 1.3rem;
+        }
+
+        .doctor-kivid-details-rdv
+        {
+            .calendly-create-event.vs-button
+            {
+                box-shadow: 0rem 0.1rem 0.5rem 0rem rgba(34, 46, 84, 0.54) !important;
+                border-radius: 0.6rem;
+                background: #324ea6;
+                margin-top: 1.4rem;
+                color: #FFF;
+                white-space: nowrap;
+                font-size: 1.1rem;
+                transform: none !important;
+                transition: 0.25s;
+                
+                &:hover {
+                    background: #2d4698;
+                    transform: none !important;
+                }
+
+                .vs-button__content
+                {
+                    // padding-top: 0.7rem !important;
+                    // padding: 0.6rem 1.3rem;
+
+                    i {
+                        font-size: 0.9rem;
+                        margin-right: 0.5rem;
+                        // position: relative;
+                        // top: -0.1rem;
+                    }
+                }
+            }
+
+            li 
+            {
+                box-shadow: 0rem 0.1rem 0.1rem 0rem rgba(34, 46, 84, 0.1) !important;
+                border-radius: 0.6rem;
+                background: #fbfbfb;
+                padding: 1rem 1.2rem;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                max-width: 24.5rem;
+                position: relative;
+
+                &.canceled
+                {
+                    opacity: 0.3;
+                    pointer-events: none;
+                    user-select: none;
+                    .btns-actions
+                    {
+                        .vs-tooltip-content
+                        {
+                            
+                            .vs-button
+                            {
+                                background-color: #ededed;
+
+                                &.btn-cancel
+                                {
+                                    background-color: #ededed;
+                                }
+
+                                .vs-button__content
+                                {
+                                    i {
+                                        color: transparent;
+                                    }
+
+                                    .vs-icon-close::before, .vs-icon-close::after {
+                                        background: transparent;
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+                }
+
+                .user-date
+                {
+                    display: flex;
+                    align-items: center;
+                    font-size: 1.3rem;
+                    line-height: 1.3;
+
+                    .vs-avatar-content
+                    {
+                        margin-right: 1.2rem;
+                        flex: none;
+                    }
+
+                    .name 
+                    {
+
+                    }
+
+                    .date
+                    {
+                        font-size: 1.2rem;
+                        white-space: nowrap;
+                    }
+                }
+
+                .btns-actions
+                {
+                    min-height: 3rem;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
+                    z-index: 1;
+                    margin-left: 0.7rem;
+                    
+                    @media (max-width: 799px) {
+                        min-height: 5.3rem;
+                        position: absolute;
+                        right: -0.3rem;
+                    }
+
+                    .vs-tooltip-content
+                    {
+                        padding: 0;
+                        
+                        .vs-button
+                        {
+                            width: 1.4rem;
+                            height: 1.4rem;
+                            border-radius: 50%;
+                            transform: none !important;
+                            box-shadow: 0rem 0.1rem 0.1rem 0rem rgba(34, 46, 84, 0.1) !important;
+                            background-color: #207ccd;
+
+                            @media (max-width: 799px) {
+                                width: 2.4rem;
+                                height: 2.4rem;
+                            }
+
+                            &.btn-cancel
+                            {
+                                width: 1.3rem;
+                                height: 1.3rem;
+                                @media (max-width: 799px) {
+                                    width: 2.4rem;
+                                    height: 2.4rem;
+                                }
+                                background-color: #ff564b;
+                            }
+
+                            &:hover
+                            {
+                                transform: none !important;
+                            }
+
+                            .vs-button__content
+                            {
+                                i {
+                                    font-size: 1rem;
+                                    margin-right: 0;
+                                    @media (max-width: 799px) 
+                                    {
+                                        font-size: 1.2rem;
+                                    }
+
+                                    &.fa-sync-alt
+                                    {
+                                        font-size: 0.8rem;
+                                        @media (max-width: 799px) 
+                                        {
+                                            font-size: 1.1rem;
+                                        }
+
+                                    }
+                                }
+
+                                .vs-icon-close::before, .vs-icon-close::after {
+                                    background: #fff;
+                                    width: 8px;
+                                    @media (max-width: 799px) 
+                                    {
+                                        width: 12px;
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+    }
     .change-doctor-modal {
         position: fixed;
         z-index: 11111;
@@ -774,6 +1150,9 @@ export default {
                 border-radius: 4px;
             }
 
+            scrollbar-width: thin;
+            scrollbar-color: #2e3858a1;
+
             &::-webkit-scrollbar-thumb {
                 background: #2e3858a1;
                 border: 1px solid transparent;
@@ -818,5 +1197,86 @@ export default {
             }
         }
     }
+
+    .calendly-event-modal {
+        position: fixed;
+        z-index: 11111;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        backdrop-filter: blur(0.5rem);
+        background: rgba(34, 46, 84, 0.8);
+        overflow: auto;
+        &::-webkit-scrollbar-thumb {
+            background: #2d3555;
+            border: 2px solid transparent;
+            border-radius: 4px;
+        }
+        scrollbar-width: thin;
+        scrollbar-color: #2d3555;
+
+        @media (min-width: 1150px) {
+            overflow: hidden;
+        }
+
+        // &::after {
+        //     content: "";
+        //     position: absolute;
+        //     z-index: -1;
+        //     top: 0;
+        //     left: 0;
+        //     right: 0;
+        //     bottom: 0;
+        //     backdrop-filter: blur(0.5rem);
+        //     background: rgba(34, 46, 84, 0.8);
+        //     height: 100vh;
+        //     width: 100%;
+        // }
+
+        .vs-dialog__close {
+            --vs-color: 255, 255, 255;
+            // position: absolute;
+                top: 0;
+                right: 0;
+            background: transparent;
+
+            i::before, i::after {
+                width: 20px;
+                height: 2px;
+            }
+
+             @media (min-width: 740px) {
+                top: 8px;
+                right: 26px;
+
+                i::before, i::after {
+                    width: 30px;
+                    height: 3px;
+                }
+            }
+
+            // padding: 0px;
+            // margin: 0px;
+            // display: -webkit-box;
+            // display: -ms-flexbox;
+            // display: flex;
+            // -webkit-box-align: center;
+            // -ms-flex-align: center;
+            // align-items: center;
+            // -webkit-box-pack: center;
+            // -ms-flex-pack: center;
+            // justify-content: center;
+            // background: inherit;
+            // border-radius: 12px;
+            // -webkit-box-shadow: 0px 5px 20px 0px rgba(0, 0, 0, var(--vs-shadow-opacity));
+            // box-shadow: 0px 5px 20px 0px rgba(0, 0, 0, var(--vs-shadow-opacity));
+            // -webkit-transition: all 0.25s ease;
+            // transition: all 0.25s ease;
+            // z-index: 200;
+            // border: 0px;
+        }
+    }
+
 }
 </style>

@@ -67,6 +67,7 @@
                     class="exercise"
                     :class="{
                         disabled:
+                            !doctorView &&
                             getCurrentWorksheetSession &&
                             exercise !== getCurrentExercise &&
                             !exercise.isCompleted,
@@ -101,6 +102,14 @@
                         >
                             <vs-button @click="openVideoPlayer(exercise)">
                                 <span>Revoir</span>
+                            </vs-button>
+                        </div>
+                        <div
+                            v-if="doctorView"
+                            class="btn-playlist"
+                        >
+                            <vs-button @click="viewVideo(exercise.video)">
+                                <span>Voir</span>
                             </vs-button>
                         </div>
                         <div
@@ -154,127 +163,170 @@
                             </div>
                         </div>
                         <div class="commentary">
-                            <p
-                                v-if="
-                                    ((getCurrentWorksheetSession &&
-                                        exercise.commentary) ||
-                                        (!getCurrentWorksheetSession &&
-                                            exercise.commentary.id)) &&
-                                    !doctorView
-                                "
-                            >
-                                Commentaire
-                            </p>
-                            <transition name="fade" mode="out-in">
-                                <div
-                                    class="commentary-create"
-                                    v-if="
-                                        exercise.commentary &&
-                                        !doctorView &&
-                                        getCurrentWorksheetSession &&
-                                        (!exercise.commentary.id ||
-                                            (exercise.commentary.id &&
-                                                isCommentaryBeingEdited(
-                                                    exercise.commentary.id
-                                                )))
-                                    "
-                                    key="1"
-                                >
-                                    <vs-input
-                                        class="commentary"
-                                        placeholder="Tapez votre commentaire"
-                                        v-model="exercise.commentary.content"
-                                    />
-                                    <vs-button
-                                        :class="{
-                                            disactived:
-                                                exercise.commentary.content ==
-                                                '',
-                                        }"
-                                        @click="setCommentary(exercise)"
-                                        class="btn-send-commentary"
-                                        floating
-                                        :disabled="loadingSetCommentary"
-                                        :loading="loadingSetCommentary"
-                                    >
-                                        <i class="fas fa-paper-plane"></i>
-                                    </vs-button>
-                                </div>
-                                <div
-                                    class="commentary-edit"
-                                    v-if="
-                                        exercise.commentary &&
-                                        !doctorView &&
-                                        exercise.commentary.id &&
-                                        !isCommentaryBeingEdited(
-                                            exercise.commentary.id
-                                        )
-                                    "
-                                    key="2"
-                                >
+                            <div class="commentary-doc-read">
+                                <p class="commentary-label">
+                                    <i class="far fa-comment-alt"></i>
+                                    Commentaire<span v-if="exercise.commentaries.length && exercise.commentaries.filter(c=>c.content!='').length>1">s</span>
+                                </p>
+                                <div class="commentary-history-list" v-if="exercise.commentaries.length && exercise.commentaries.filter(c=>c.content!='').length">
                                     <div
-                                        class="commentary-edit-read"
-                                        :class="{
-                                            'full-border-radius':
-                                                !getCurrentWorksheetSession,
-                                        }"
+                                        v-for="(
+                                            commentary, i
+                                        ) in exercise.commentaries"
+                                        :key="i"
+                                        class="commentary-history"
                                     >
-                                        <span
-                                            v-if="exercise.commentary.content"
-                                            >{{
-                                                exercise.commentary.content
-                                            }}</span
-                                        >
-                                        <span
-                                            v-if="
-                                                !exercise.commentary.content.trim()
-                                            "
-                                            class="light"
-                                            >Vide</span
-                                        >
+                                        <div v-if="commentary.content!=''">
+                                            <h5>
+                                                <span class="commentary-user">
+                                                    <vs-avatar
+                                                        size="14"
+                                                        class="commentary-user-avatar"
+                                                        circle
+                                                    >
+                                                        <img
+                                                            v-if="commentary.doctor"
+                                                            :src="
+                                                                commentary.doctor.avatarUrl
+                                                                    ? commentary.doctor.avatarUrl
+                                                                    : '/img/avatar-default.svg'
+                                                            "
+                                                            :alt="`Avatar de ${commentary.doctor.firstname} ${commentary.doctor.lastname}`"
+                                                        />
+                                                        <img
+                                                            v-if="commentary.patient"
+                                                            :src="
+                                                                commentary.patient.avatarUrl
+                                                                    ? commentary.patient.avatarUrl
+                                                                    : '/img/avatar-default.svg'
+                                                            "
+                                                            :alt="`Avatar de ${commentary.patient.firstname} ${commentary.patient.lastname}`"
+                                                        />
+                                                    </vs-avatar>
+                                                    <span class="commentary-user-name">
+                                                        <span
+                                                            v-if="
+                                                                commentary.doctor &&
+                                                                (commentary.doctor.firstname ||
+                                                                commentary.doctor.lastname)
+                                                            "
+                                                        >
+                                                            {{ commentary.doctor.firstname }}
+                                                            {{ commentary.doctor.lastname }}
+                                                        </span>
+                                                        <span
+                                                            v-if="
+                                                                commentary.patient &&
+                                                                (commentary.patient.firstname ||
+                                                                commentary.patient.lastname)
+                                                            "
+                                                        >
+                                                            {{ commentary.patient.firstname }}
+                                                            {{ commentary.patient.lastname }}
+                                                        </span>
+                                                    </span>
+                                                </span><span class="sepa-comm-label-title">|</span><span>{{ formatDate(commentary.createdAt) }}</span>
+                                                <span v-if="commentary.worksheetSession" class="commentary-worksheet-session">
+                                                    <span class="sepa-comm-label-title">|</span><span>Session {{ commentary.worksheetSession.execOrder }}</span>
+                                                </span>
+                                            </h5>
+                                            <div 
+                                                class="commentary-zone"
+                                            >
+                                                <div 
+                                                    class="commentary-zone-read"
+                                                    :class="{nobtns:!((doctorView && commentary.doctor && doctor.id == commentary.doctor.id)
+                                                        ||(!doctorView && commentary.patient && patient.id == commentary.patient.id)),'btns-edit':isCommentaryBeingEdited(commentary.id)}"
+                                                >
+                                                    <p>{{ commentary.content }}</p>
+                                                </div>
+                                                <div
+                                                    class="commentary-zone-btns"
+                                                    v-if="
+                                                        ((doctorView && commentary.doctor && doctor.id == commentary.doctor.id)
+                                                        ||(!doctorView && commentary.patient && patient.id == commentary.patient.id))
+                                                        && !isCommentaryBeingEdited(
+                                                            commentary.id
+                                                        )
+                                                    "
+                                                >
+                                                    <vs-button
+                                                        @click="
+                                                            editCommentary(
+                                                                commentary,
+                                                                exercise
+                                                            )
+                                                        "
+                                                        class="btn-edit-commentary"
+                                                        floating
+                                                    >
+                                                        <i class="fas fa-pen"></i>
+                                                    </vs-button>
+                                                    <vs-button
+                                                        @click="removeCommentary(
+                                                                commentary,
+                                                                exercise)
+                                                                "
+                                                        floating
+                                                    >
+                                                        <i class="fas fa-trash"></i>
+                                                    </vs-button>  
+                                                </div>
+                                                <div
+                                                    class="commentary-zone-btns-inprogress"
+                                                    v-if="
+                                                        ((doctorView && commentary.doctor && doctor.id == commentary.doctor.id)
+                                                        ||(!doctorView && commentary.patient && patient.id == commentary.patient.id))
+                                                        && isCommentaryBeingEdited(
+                                                            commentary.id
+                                                        )
+                                                    "
+                                                >
+                                                    <vs-button
+                                                        class="btn-edit-commentary"
+                                                        @click="
+                                                            closeEditCommentary(commentary, exercise)
+                                                        "
+                                                        floating
+                                                    >
+                                                        <i class="vs-icon-close vs-icon-hover-x"></i>
+                                                    </vs-button>
+                                                    <div class="icon-edit-active">
+                                                        <i class="fas fa-pen"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <vs-button
-                                        v-if="getCurrentWorksheetSession"
-                                        @click="
-                                            editCommentary(
-                                                exercise.commentary.id
-                                            )
-                                        "
-                                        class="btn-edit-commentary"
-                                        floating
-                                    >
-                                        <i class="fas fa-pen"></i>
-                                    </vs-button>
                                 </div>
-                            </transition>
-                            <p
-                                v-if="
-                                    exercise.commentaries.length > 0 &&
-                                    doctorView
-                                "
-                            >
-                                Commentaire<span
-                                    v-if="exercise.commentaries.length > 1"
-                                    >s</span
-                                >
-                            </p>
-                            <div v-if="exercise.commentaries && doctorView">
-                                <div
-                                    v-for="(
-                                        commentary, i
-                                    ) in exercise.commentaries"
-                                    :key="i"
-                                    class="commentary-doc-read"
-                                >
-                                    <h5>
-                                        {{ formatDate(commentary.createdAt) }} |
-                                        Session
-                                        {{
-                                            commentary.worksheetSession
-                                                .execOrder
-                                        }}
-                                    </h5>
-                                    <p>{{ commentary.content }}</p>
+                                <div>
+                                    <div
+                                        class="commentary-create"
+                                    >
+                                        <label v-if="!exercise.commentary.content">Tapez votre commentaire</label>
+                                        <vs-input
+                                            class="commentary"
+                                            v-model="exercise.commentary.content"
+                                            :class="{
+                                                active:
+                                                    exercise.commentary.content.length
+                                            }"
+                                        />
+                                        <vs-button
+                                            :class="{
+                                                disactived:
+                                                    exercise.commentary.content ==
+                                                    '',
+                                            }"
+                                            @click="setCommentary(exercise)"
+                                            class="btn-send-commentary"
+                                            floating
+                                            :disabled="loadingSetCommentary==exercise.id"
+                                            :loading="loadingSetCommentary==exercise.id"
+                                        >
+                                            <i class="fas fa-paper-plane"></i>
+                                        </vs-button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -301,6 +353,12 @@
                 </div>
             </div> -->
         </div>
+        <vs-dialog class="view-video" v-model="modalViewVideo">
+            <youtube
+                :player-vars="playerVars"
+                :video-id="selectedViewVideo.youtubeId"
+            ></youtube>
+        </vs-dialog>
         <transition name="fade">
             <VideoPlayer
                 v-if="videoPlayerToggle && !doctorView"
@@ -320,6 +378,38 @@
                 @stripeCheckout="stripeCheckout()"
             />
         </transition>
+        <vs-dialog v-model="modalConfirmRemoveCommentary">
+            <p class="modal-confirm-text">Confirmer la suppression de</p>
+
+            <div class="modal-confirm-detail remove-item">
+                <div class="modal-confirm-icon remove-item">
+                    <i class="fas fa-trash"></i>
+                </div>
+                <p>
+                    <span>
+                        {{ removeCommentaryDetails.commentary.content }}
+                    </span>
+                </p>
+            </div>
+
+            <div class="modal-confirm-buttons">
+                <vs-button
+                    class="secondary"
+                    @click="modalConfirmRemoveCommentary = false"
+                >
+                    Annuler
+                </vs-button>
+                <vs-button
+                    @click="validRemoveCommentary"
+                    :loading="loadingRemoveCommentary"
+                    :class="{
+                        disabled: loadingRemoveCommentary,
+                    }"
+                >
+                    Confirmer
+                </vs-button>
+            </div>
+        </vs-dialog>
     </div>
 </template>
 
@@ -333,6 +423,7 @@ export default {
     },
     props: {
         patient: Object,
+        doctor: Object,
         loading: Boolean,
         worksheet: Object,
         exercises: Array,
@@ -358,9 +449,20 @@ export default {
             },
             loadingBtnStartSession: false,
             timeoutSetCommentary: null,
-            commentariesBeingEdited: [],
-            loadingSetCommentary: false,
+            commentariesBeingEdited: null,
+            loadingSetCommentary: null,
+            loadingRemoveCommentary: false,
             exerciseForRePlaying: null,
+            modalViewVideo: false,
+            selectedViewVideo: false,
+            playerVars: {
+                rel: 0,
+                showinfo: 0,
+                ecver: 2,
+                modestbranding: 1,
+            },
+            modalConfirmRemoveCommentary: false,
+            removeCommentaryDetails: { commentary: {},  exercise: {}},
         };
     },
     computed: {
@@ -396,6 +498,11 @@ export default {
         },
     },
     methods: {
+        viewVideo(video) {
+            this.selectedViewVideo = video;
+
+            return (this.modalViewVideo = !this.modalViewVideo);
+        },
         openVideoPlayer(exercise) {
             this.exerciseForRePlaying = exercise;
             this.videoPlayerToggle = true;
@@ -411,32 +518,40 @@ export default {
         },
         setCommentary(exercise) {
             if (exercise.commentary.content) {
-                this.loadingSetCommentary = true;
+                this.loadingSetCommentary = exercise.id;
 
                 this.axios
-                    .post(`/patient/${this.patient.id}/create/commentary`, {
+                    .post(`/${this.doctorView?`doctor/${this.doctor.id}`:`patient/${this.patient.id}`}/create/commentary`, {
                         _token: this.csrfTokenCreateCommentary,
                         exerciseId: exercise.id,
                         worksheetId: this.getWorksheet.id,
-                        worksheetSessionId: this.getCurrentWorksheetSession.id,
+                        worksheetSessionId: this.getCurrentWorksheetSession ? this.getCurrentWorksheetSession.id : null,
                         commentaryId: exercise.commentary.id,
                         commentaryContent: exercise.commentary.content.trim(),
                     })
                     .then((response) => {
-                        // console.log(response.data);
+                        this.commentariesBeingEdited = null;
 
-                        if (exercise.commentary.id) {
-                            this.commentariesBeingEdited.splice(
-                                this.commentariesBeingEdited.indexOf(
-                                    exercise.commentary.id
-                                ),
-                                1
-                            );
-                        } else {
+                        if (!exercise.commentary.id) {
                             exercise.commentary.id = response.data.commentaryId;
                         }
 
-                        this.loadingSetCommentary = false;
+                        const commentaryAlreadyInCommentaries = exercise.commentaries.find(c=>c.id==exercise.commentary.id);
+                        if(!commentaryAlreadyInCommentaries)
+                        {
+                            exercise.commentaries.push(exercise.commentary);
+                        }
+                        else
+                        {
+                            commentaryAlreadyInCommentaries.content = exercise.commentary.content;
+                        }
+
+                        this.$nextTick(() => {
+                            this.scrollToListElements();
+                            exercise.commentary = {...this.$parent.commentaryModel,doctor:this.doctorView?this.doctor:null,patient:this.doctorView?null:this.patient,worksheetSession:this.$parent.getCurrentWorksheetSession??null};
+                        });
+
+                        this.loadingSetCommentary = null;
                     })
                     .catch((error) => {
                         const errorMess =
@@ -444,23 +559,65 @@ export default {
                                 ? error.response.data.detail
                                 : error.response.data;
 
-                        this.loadingSetCommentary = false;
+                        this.loadingSetCommentary = null;
 
                         console.error(errorMess);
                     });
             }
         },
-        editCommentary(commentaryId) {
-            this.commentariesBeingEdited.push(commentaryId);
+        validRemoveCommentary() {
+            const 
+                commentary = this.removeCommentaryDetails.commentary,
+                exercise = this.removeCommentaryDetails.exercise
+            ;
+            if (commentary.id) {
+                this.loadingRemoveCommentary = true;
+                this.axios
+                    .post(`/${this.doctorView?`doctor/${this.doctor.id}`:`patient/${this.patient.id}`}/remove/commentary`, {
+                        commentaryId: commentary.id,
+                    })
+                    .then((response) => {
+                        exercise.commentaries.splice(
+                            exercise.commentaries.indexOf(exercise.commentaries.find(c=>c.id==commentary.id)),
+                            1
+                        );
+
+                        this.$nextTick(() => {
+                            this.scrollToListElements();
+                        });
+
+                        this.loadingRemoveCommentary = false;
+                        this.modalConfirmRemoveCommentary = false;
+                    })
+                    .catch((error) => {
+                        const errorMess =
+                            "object" === typeof error.response.data
+                                ? error.response.data.detail
+                                : error.response.data;
+
+                        this.loadingRemoveCommentary = false;
+                        this.modalConfirmRemoveCommentary = false;
+                        console.error(errorMess);
+                    });
+            }
+        },
+        removeCommentary(commentary,exercise) {
+            this.removeCommentaryDetails = {commentary,exercise};
+
+            return (this.modalConfirmRemoveCommentary =
+                !this.modalConfirmRemoveCommentary);
+        },
+        editCommentary(commentary, exercise) {
+            this.commentariesBeingEdited = commentary.id;
+            exercise.commentary.id = commentary.id;
+            exercise.commentary.content = commentary.content;
+        },
+        closeEditCommentary(commentary, exercise) {
+            this.commentariesBeingEdited = null;
+            exercise.commentary = {...this.$parent.commentaryModel,doctor:this.doctorView?this.doctor:null,patient:this.doctorView?null:this.patient,worksheetSession:this.$parent.getCurrentWorksheetSession??null};
         },
         isCommentaryBeingEdited(commentaryId) {
-            return this.commentariesBeingEdited.find((k) => k === commentaryId);
-        },
-        setCommentaryWithDebounce(exercise, e) {
-            clearTimeout(this.timeoutSetCommentary);
-            this.timeoutSetCommentary = setTimeout(() => {
-                this.setCommentary(exercise, e);
-            }, 1500);
+            return this.commentariesBeingEdited == commentaryId;
         },
         stripeCheckout() {
             this.$emit("stripeCheckout", 0);
@@ -468,13 +625,30 @@ export default {
         formatDate(datetime) {
             return moment(datetime).format("DD/MM/YYYY");
         },
+        scrollToListElements() {
+            const listeElements = document.querySelectorAll('.commentary-history-list');
+
+            listeElements.forEach((element) => {
+                element.scrollTop = element.scrollHeight;
+            });
+        }
+    },
+    watch: {
+        getExercises: {
+            handler() {
+                // Une fois que la computed exercises est mise à jour, exécutez le code de défilement
+                this.$nextTick(() => {
+                    this.scrollToListElements();
+                });
+            },
+            immediate: true // Exécutez le gestionnaire immédiatement lors de la création du composant
+        }
     },
 };
 </script>
 
 <style lang="scss" scoped>
 @import "../../../scss/variables";
-
 .exercises-list {
     width: 100%;
 
@@ -876,7 +1050,7 @@ export default {
                 }
 
                 .commentary-create,
-                .commentary-edit {
+                .commentary-zone {
                     display: flex;
 
                     .vs-button {
@@ -896,16 +1070,35 @@ export default {
                     }
                 }
 
-                .commentary-edit {
-                    .commentary-edit-read {
+                .commentary-create {
+                    margin-top: 1.25rem;
+                    position: relative;
+                    margin-right: 0.75rem;
+
+                    label
+                    {
+                        position: absolute;
+                        left: 1.9rem;
+                        top: 1.7rem;
+                        z-index: 1;
+                        color: #cfc6b0;
+                        pointer-events: none;
+                    }
+                }
+
+                .commentary-zone {
+                    .commentary-zone-read {
                         flex: 1;
+                        padding: 1.005rem 1.5rem;
+                        border: 0.1rem solid #e7dfcd;
                         border-radius: 0.8rem 0 0 0.8rem;
-                        border: 1px solid #ebe4d5;
+                        // border: 1px solid #ebe4d5;
                         overflow-y: auto;
-                        padding: 1.6rem 1.7rem;
+                        // padding: 1.6rem 1.7rem;
                         line-height: 1.3;
-                        font-weight: 700;
+                        // font-weight: 700;
                         font-style: italic;
+                        font-size: 1.3rem;
 
                         &.full-border-radius {
                             border-radius: 0.8rem;
@@ -915,32 +1108,172 @@ export default {
                             font-weight: 400;
                             color: $gray-dark;
                         }
+
+                        &.nobtns
+                        {
+                            border-radius: 0.8rem;
+                        }
+                        &.btns-edit
+                        {
+                            border-radius: 0.8rem;
+                            padding-right: 6rem;
+                        }
                     }
 
-                    .vs-button {
-                        transform: none;
-                        border-radius: 0 0.8rem 0.8rem 0;
-                        background-color: #ebe4d5;
-                        box-shadow: none;
+                    .commentary-zone-btns
+                    {
+                        display: flex;
+                        .vs-button {
+                            transform: none;
+                            border-radius: 0 0.8rem 0.8rem 0;
+                            background-color: #fff;
+                            box-shadow: none;
+                            border: 0.1rem solid #e7dfcd;
+                            border-left: none;
+                            --vs-button-padding: 1.2rem 1rem;
+                            display: flex;
+                            align-items: flex-start;
 
-                        &:hover {
-                            background-color: $orange;
+                            &.btn-edit-commentary
+                            {
+                                border-radius: 0;
+                            }
 
-                            i {
-                                color: $white;
+                            &:hover {
+                                background-color: #fff;
+
+                                i {
+                                    color: $gray-dark;
+                                }
+                            }
+
+                            i {                                
+                                font-size: 1.3rem;
+                                color: $gray-dark;
+
+                                &.fa-trash
+                                {
+                                    font-size: 1.2rem;
+                                }
                             }
                         }
 
-                        i {
-                            color: $gray-dark;
+                    }
+                    
+                    .commentary-zone-btns-inprogress
+                    {
+                        display: flex;
+                        position: relative;
+
+                        .icon-edit-active
+                        {
+                            position: absolute;
+                            top: 0.8rem;
+                            right: 3.6rem;
+                            width: 2.3rem;
+                            height: 2.3rem;
+                            color: #fff;
+                            background-color: #fb8b68;
+                            border-radius: 50%;
+                            z-index: 2;
+                            display: flex;
+                            align-items: center;
+                            justify-content: flex-end;
+
+                            i {
+                                position: relative;
+                                left: -0.5rem;
+                                font-size: 1.2rem;
+                            }
+                        }
+                        .vs-button {
+                            transform: none;
+                            border-radius: 0 0.8rem 0.8rem 0;
+                            background-color: #fff;
+                            box-shadow: none;
+                            border-left: none;
+                            --vs-button-padding: 0rem 0rem;
+                            position: absolute;
+                            top: 0.4rem;
+                            right: 0.5rem;
+
+                            &:disabled {
+                                opacity: 1;
+                                background: #fff !important;
+                                color: $orange !important;
+                            }
+
+                            &:hover {
+                                background-color: #fff;
+
+                                i {
+                                    color: $orange;
+                                }
+                            }
+
+                            i {
+                                font-size: 1.5rem;
+                                color: $orange;
+                            }
                         }
                     }
+
                 }
 
                 .commentary-doc-read {
                     background: $white;
                     padding: 1.2rem;
-                    border-radius: 0.8rem;
+                    border-radius: 0 0 0.8rem 0.8rem;
+                    padding-left: 1.8rem;
+
+                    .commentary-label
+                    {
+                        margin-bottom: 0.5rem;
+                        margin-top: 0.3rem;
+                        color: #c1b79d;
+                        font-weight: bold;
+
+                        i {
+                            font-size: 1.3rem;
+                            position: relative;
+                            top: 0.08rem;
+                            margin-right: 0.3rem;
+                        }
+                    }
+
+                    .commentary-history-list
+                    {
+                        max-height: 27.2rem;
+                        overflow: auto;
+                        /* box-shadow: inset 0 0 8px 0 rgba(0, 0, 0, 0.05); */
+                        padding-right: 0.8rem;
+                        padding-bottom: 0.8rem;
+                        border-radius: 0.4rem;
+
+                        .commentary-history
+                        {
+                            margin-top: 1.2rem;
+
+                            &:first-child 
+                            {
+                                margin-top: 0.8rem;
+                            }
+
+                            .commentary-history-message
+                            {
+                                border-radius: 0.8rem;
+                                padding: 1.1rem 1.5rem;
+                                border: 0.1rem solid #e7dfcd;
+
+                                p
+                                {
+                                    margin-top: 0;
+                                    font-style: italic;
+                                    font-size: 1.3rem;
+                                }
+                            }
+                        }
+                    }
 
                     &:not(:last-child) {
                         margin-bottom: 1.2rem;
@@ -950,11 +1283,42 @@ export default {
                         color: $gray-dark;
                         margin: 0;
                         font-size: 1rem;
+                        display: flex;
+                        align-items: center;
+                        white-space: nowrap;
+                        margin-bottom: 0.15rem;
+
+                        .commentary-user
+                        {
+                            display: flex;
+                            align-items: center;
+
+                            .commentary-user-avatar {
+                                position: relative;
+                                top: -0.15rem;
+                                margin-right: 0.1rem;
+                                flex: none;
+                                min-width: 14px;
+                            }
+                        }
+
+                        .commentary-user-name,
+                        .commentary-worksheet-session
+                        {
+                            margin: 0 0.3rem;
+                        }
+
+                        .sepa-comm-label-title
+                        {
+                            display: inline-block;
+                            margin: 0 0.4rem;
+                            margin-left: 0.25rem;
+                            font-weight: normal;
+                        }
                     }
 
                     p {
                         margin: 0;
-                        margin-top: 0.5rem;
                         overflow: hidden;
                         text-overflow: ellipsis;
                     }

@@ -2,7 +2,6 @@
     <section
         id="dashboard-notifications"
         class="kiv-block"
-        :class="{ reduced: !$parent.myDBNotificationsContent }"
         v-if="
             !doctor.city ||
             !doctor.gender ||
@@ -11,19 +10,9 @@
             !doctor.isVerified
         "
     >
-        <button
-            class="toggle-content"
-            @click="
-                $parent.myDBNotificationsContent =
-                    !$parent.myDBNotificationsContent
-            "
-        >
-            <i class="kiv-chevron-down icon-3"></i>
-        </button>
         <h2>Notifications</h2>
         <transition name="height">
             <div
-                v-if="$parent.myDBNotificationsContent"
                 class="notifications-list"
             >
                 <div
@@ -129,7 +118,16 @@ export default {
     margin-bottom: 0;
     width: 100%;
 
+    margin-top: 1rem;
+    margin-bottom: 0;
+
+    @media (min-width: 799px) {
+        margin-top: 2rem;
+        margin-bottom: 0;
+    }
+
     @media (min-width: 1100px) {
+        margin-top: 0;
         margin-bottom: 2rem;
     }
 
