@@ -39,47 +39,45 @@
                             label-placeholder="Filtrer par nom de video"
                         />
                     </div>
-                    <div class="kiv-select tags-containers">
-                        <div class="kiv-select tags">
-                            <vs-select
-                                class="tags-context"
-                                v-if="Object.keys(getTagsFromAllVideos).length"
-                                filter
-                                multiple
-                                placeholder="Mots-Clés"
-                                v-model="selectedTags"
-                                @change="page = 1"
-                                @input="selectTag()"
-                            >
-                                    <vs-option-group
-                                        v-for="(tags, tagGroupName) in getTagsFromAllVideos"
-                                        :key="tagGroupName"
-                                    >
-                                        <div slot="title">
-                                            {{tagGroupName}}
-                                        </div>
-                                        <vs-option
-                                            v-for="(tag, i) in tags"
-                                            :key="i"
-                                            :label="tag"
-                                            :value="tag"
-                                        >
-                                            {{ tag }}
-                                        </vs-option>
-                                    </vs-option-group>
-                                <template slot="notData">
-                                    Aucun mot-clé ne correspond.</template
+                    <div class="kiv-select tags">
+                        <vs-select
+                            class="tags-context"
+                            v-if="Object.keys(getTagsFromAllVideos).length"
+                            filter
+                            multiple
+                            placeholder="Mots-Clés"
+                            v-model="selectedTags"
+                            @change="page = 1"
+                            @input="selectTag()"
+                        >
+                                <vs-option-group
+                                    v-for="(tags, tagGroupName) in getTagsFromAllVideos"
+                                    :key="tagGroupName"
                                 >
-                            </vs-select>
-                            <div v-else class="loading select-tags"></div>
-                        </div>
-                        <div class="kiv-select tags">
+                                    <div slot="title">
+                                        {{tagGroupName}}
+                                    </div>
+                                    <vs-option
+                                        v-for="(tag, i) in tags"
+                                        :key="i"
+                                        :label="tag"
+                                        :value="tag"
+                                    >
+                                        {{ tag }}
+                                    </vs-option>
+                                </vs-option-group>
+                            <template slot="notData">
+                                Aucun mot-clé ne correspond.</template
+                            >
+                        </vs-select>
+                        <div v-else class="loading select-tags"></div>
+                    </div>
+                    <div class="kiv-select tags">
                             <vs-select
                                 class="tags-context"
                                 v-if="getLibrariesFromAllVideos.length"
                                 filter
                                 multiple
-                                collapse-chips
                                 placeholder="Bibliothèque"
                                 v-model="selectedVideoLibraries"
                                 @change="page = 1"
@@ -98,7 +96,6 @@
                                 >
                             </vs-select>
                             <div v-else class="loading select-tags"></div>
-                    </div>
                     </div>
                     <SelectPartOfBody
                         :partOfBody="selectedPoB"
@@ -672,31 +669,31 @@ export default {
             }
         }
 
-        .tags-containers
-        {
-            display: flex;
-            width: 100%;
-            max-width: 55rem;
-        }
+        // .tags-containers
+        // {
+        //     display: flex;
+        //     width: 100%;
+        //     max-width: 55rem;
+        // }
 
         .kiv-select.tags {
             width: 100%;
             margin-bottom: 1rem;
             margin-right: 0;
 
-            &:first-child
-            {
-                flex-grow: 1;
-            }
+            // &:first-child
+            // {
+            //     flex-grow: 1;
+            // }
 
-            &:last-child
-            {
-                @media (max-width: 575px) {
-                    margin-left: 1rem;
-                }
+            // &:last-child
+            // {
+            //     @media (max-width: 575px) {
+            //         margin-left: 1rem;
+            //     }
 
-                width: 30%;
-            }
+            //     width: 30%;
+            // }
 
             .loading.select-tags {
                 border-radius: 0.5rem;
