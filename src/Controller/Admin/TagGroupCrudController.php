@@ -2,25 +2,23 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\Tag;
+use App\Entity\TagGroup;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
-class TagCrudController extends AbstractCrudController
+class TagGroupCrudController extends AbstractCrudController
 {
     use ConfigureActionsTrait;
 
     public static function getEntityFqcn(): string
     {
-        return Tag::class;
+        return TagGroup::class;
     }
 
     public function configureFields(string $pageName): iterable
     {
         return [
             TextField::new('name', 'Nom'),
-            AssociationField::new('tagGroup', 'Tag Groupe'),
         ];
     }
 }

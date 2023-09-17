@@ -262,6 +262,8 @@ export default {
         background: #ede9e0;
         border: none;
     }
+    scrollbar-width: thin;
+    scrollbar-color: #ede9e0;
 
     @media (min-width: 768px) {
         justify-content: space-between;

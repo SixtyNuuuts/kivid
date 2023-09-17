@@ -80,6 +80,9 @@ body {
             }
         }
 
+        scrollbar-width: thin;
+        scrollbar-color: #dad3c3;
+      
         &::-webkit-scrollbar-thumb {
             background: #dad3c3;
             border: 2px solid $white;

@@ -673,6 +673,17 @@
     transform: translateY(3px);
 }
 
+.vs-select__option-group
+{
+    color: #fb8b68;
+
+    h5 {
+        opacity: 1;
+        margin-top: 0.5rem;
+        font-size: 1.5rem;
+    }    
+}
+
 .kiv-select {
     .vs-select-content {
         max-width: none;
@@ -757,6 +768,29 @@
                 margin-top: -0.5rem !important;
             }
         }
+    }
+
+    .vs-select__chips {
+        overflow: hidden;
+        overflow-x: auto;
+        z-index: 0;
+        width: 98.5%;
+        padding-bottom: 0.4rem;
+    }
+
+    .vs-select-content.tags-context .vs-select {
+        position: relative;
+        &::after {
+            content: '';
+            display: block;
+            width: 2.95rem;
+            height: 3.95rem;
+            position: absolute;
+            top: 0.2rem;
+            right: 0.15rem;
+            border-radius: 0.3rem;
+            background-color: #fff;
+        }    
     }
 
     .vs-select.activeOptions .vs-select__chips,
@@ -951,6 +985,9 @@
         background: transparent;
         border-radius: 4px;
     }
+
+    scrollbar-width: thin;
+    scrollbar-color: #2e3858a1;
 
     &::-webkit-scrollbar-thumb {
         background: #2e3858a1;
