@@ -1150,6 +1150,9 @@ export default {
                 border-radius: 4px;
             }
 
+            scrollbar-width: thin;
+            scrollbar-color: #2e3858a1;
+
             &::-webkit-scrollbar-thumb {
                 background: #2e3858a1;
                 border: 1px solid transparent;
@@ -1210,6 +1213,8 @@ export default {
             border: 2px solid transparent;
             border-radius: 4px;
         }
+        scrollbar-width: thin;
+        scrollbar-color: #2d3555;
 
         @media (min-width: 1150px) {
             overflow: hidden;

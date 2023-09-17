@@ -1305,6 +1305,9 @@ export default {};
         border-radius: 4px;
     }
 
+    scrollbar-width: thin;
+    scrollbar-color: #b7bdc2;
+
     &::-webkit-scrollbar-thumb {
         background: #b7bdc2;
         border: 1px solid transparent;

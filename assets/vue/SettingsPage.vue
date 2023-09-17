@@ -1400,6 +1400,9 @@ export default {
             border-radius: 4px;
         }
 
+        scrollbar-width: thin;
+        scrollbar-color: #2e3858a1;
+
         &::-webkit-scrollbar-thumb {
             background: #2e3858a1;
             border: 1px solid transparent;

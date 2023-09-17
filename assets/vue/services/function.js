@@ -6,12 +6,26 @@ export default {
   getTagsFromAllVideos(videos) {
     return videos.reduce((r, video) => {
       video.tags.forEach((tag) => {
-        if (!r.includes(tag.name)) {
-          r.push(tag.name);
+        if(tag && tag.tagGroup && !(tag.tagGroup.name in r))
+          r[tag.tagGroup.name] = [];
+        if(tag && tag.tagGroup && !r[tag.tagGroup.name].includes(tag.name)) {
+          r[tag.tagGroup.name].push(tag.name);
         }
       });
-      return r;
-    }, []);
+
+      const 
+        keyOrder = ['Objectif', 'Cible', 'Type de contraction', 'Type de mouvement', 'Spécialité'],
+        rSorted = {}
+      ;
+
+      keyOrder.forEach(key => {
+        if (r[key]) {
+          rSorted[key] = r[key];
+        }
+      });
+
+      return rSorted;
+    }, {});
   },
 
   getLibrariesFromAllVideos(videos) {
@@ -25,13 +39,28 @@ export default {
 
   getTagsFromAll(tagsFromExercises) {
     return tagsFromExercises.reduce((r, exercise) => {
-      exercise.forEach((tag) => {
-        if (!r.includes(tag)) {
-          r.push(tag);
+      Object.keys(exercise).forEach((tagKey) => {
+        const tag = exercise[tagKey];
+        if(tag.tagGroup && !(tag.tagGroup.name in r))
+          r[tag.tagGroup.name] = [];
+        if(tag.tagGroup && !r[tag.tagGroup.name].includes(tag.name)) {
+          r[tag.tagGroup.name].push(tag.name);
         }
       });
-      return r;
-    }, []);
+
+      const 
+        keyOrder = ['Objectif', 'Cible', 'Type de contraction', 'Type de mouvement', 'Spécialité'],
+        rSorted = {}
+      ;
+
+      keyOrder.forEach(key => {
+        if (r[key]) {
+          rSorted[key] = r[key];
+        }
+      });
+
+      return rSorted;
+    }, {});
   },
 
   generateTagsFromExercises(worksheets) {
@@ -39,13 +68,12 @@ export default {
       return (worksheet.exercisesTags = worksheet.exercises.reduce(
         (r, exercise) => {
           exercise.video.tags.forEach((tag) => {
-            if (!r.includes(tag.name)) {
-              r.push(tag.name);
-            }
-          });
+            if(tag && !(tag.name in r))
+              r[tag.name] = tag;
+            });
           return r;
         },
-        []
+        {}
       ));
     });
   },

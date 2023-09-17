@@ -156,7 +156,8 @@
                     </div>
                     <div class="kiv-select tags" v-if="getWorksheetTemplates.length">
                         <vs-select
-                            v-if="getTagsFromAll.length"
+                            class="tags-context"
+                            v-if="Object.keys(getTagsFromAll).length"
                             filter
                             multiple
                             placeholder="Mots-Clés"
@@ -164,14 +165,22 @@
                             @change="page = 1"
                             @input="selectTag()"
                         >
-                            <vs-option
-                                v-for="(tag, i) in getTagsFromAll"
-                                :key="i"
-                                :label="tag"
-                                :value="tag"
+                            <vs-option-group
+                                v-for="(tags, tagGroupName) in getTagsFromAll"
+                                :key="tagGroupName"
                             >
-                                {{ tag }}
-                            </vs-option>
+                                <div slot="title">
+                                    {{tagGroupName}}
+                                </div>
+                                <vs-option
+                                    v-for="(tag, i) in tags"
+                                    :key="i"
+                                    :label="tag"
+                                    :value="tag"
+                                >
+                                    {{ tag }}
+                                </vs-option>
+                            </vs-option-group>
                             <template slot="notData">
                                 Aucun mot-clé
                             </template>
@@ -449,7 +458,7 @@
                                                                 ) in worksheet.exercisesTags"
                                                                 :key="i"
                                                             >
-                                                                {{ tag }}
+                                                                {{ tag.name }}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1262,8 +1271,8 @@ export default {
                             this.selectedTags.forEach((tag) => {
                                 let result = false;
 
-                                w.exercisesTags.forEach((wtag) => {
-                                    if (wtag === tag) {
+                                Object.keys(w.exercisesTags).forEach((tagKey) => {
+                                    if (w.exercisesTags[tagKey].name === tag) {
                                         result = true;
                                     }
                                 });

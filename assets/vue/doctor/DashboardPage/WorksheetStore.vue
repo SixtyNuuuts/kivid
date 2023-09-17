@@ -125,7 +125,7 @@
                                                     ) in worksheet.exercisesTags"
                                                     :key="i"
                                                 >
-                                                    {{ tag }}
+                                                    {{ tag.name }}
                                                 </div>
                                             </div>
                                             <vs-button
