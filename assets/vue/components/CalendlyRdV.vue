@@ -55,24 +55,42 @@ export default {
 <style lang="scss">
 .calendly-container
 {
-    border-radius: 0.8rem;
+    // border-radius: 0.8rem;
     overflow: hidden;
     position: relative;
-    width: 88vw;
+    width: 100vw;
     margin: 4.4rem auto;
-    
-    &.calendly-event-inscription 
-    {
-        margin: 0 auto;
+    margin-top: -0.8rem;
+
+    @media (min-width: 643px) {
+        margin-top: -6.2rem;
     }
 
-    @media (max-width: 730px) {
-        box-shadow: 0px 1.5rem 3rem rgba(31, 6, 6, 0.096);
-        > :first-child
-        {
-            max-height: 1089px;
-        }
+    @media (min-width: 990px) {
+        margin-top: -4.9rem;
     }
+
+    // &::before{
+    //     content:'';
+    //     display: block;
+    //     width: 100%;
+    //     height: 3rem;
+    //     background-color: red;
+    //     position: absolute;
+    //     top: 0;
+    //     left: 0;
+    // }
+    
+    // &.calendly-event-inscription 
+    // {
+        // @media (max-width: 730px) {
+            // box-shadow: 0px 1.5rem 3rem rgba(31, 6, 6, 0.096);
+        //     > :first-child
+        //     {
+        //         // max-height: 1089px;
+        //     }
+        // }
+    // }
 
     .lds-ring {
         display: inline-block;

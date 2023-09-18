@@ -426,10 +426,11 @@ export default {
         {
             this.modalCalendlyEvent = true;
             this.calendlyEventUrl = eventUrl;
+            document.body.classList.add("no-scrollbar"); 
         },
         closeModalCalendlyEvent() {
             this.modalCalendlyEvent = false;
-
+            document.body.classList.remove("no-scrollbar");
             this.axios
                 .get(`/patient/${this.patient.id}/calendly/event/getall`)
                 .then((response) => {
@@ -1207,6 +1208,8 @@ export default {
         backdrop-filter: blur(0.5rem);
         background: rgba(34, 46, 84, 0.8);
         overflow: auto;
+            overflow-x: hidden;
+
         &::-webkit-scrollbar-thumb {
             background: #2d3555;
             border: 2px solid transparent;
@@ -1217,6 +1220,13 @@ export default {
 
         @media (min-width: 1150px) {
             overflow: hidden;
+        }
+
+        > div
+        {
+            @media (min-width: 650px) {
+                margin-top: 5rem;
+            }
         }
 
         // &::after {
@@ -1235,13 +1245,41 @@ export default {
 
         .vs-dialog__close {
             --vs-color: 255, 255, 255;
-            // position: absolute;
-                top: 0;
-                right: 0;
+            top: 4px;
+            right: 9px;
             background: transparent;
+            transform: none!important;
+
+            &:hover
+            {
+            transform: none!important;
+
+            }
+
+            &::after
+            {
+                content: "";
+                display: block;
+                background-color: #505960;
+                width: 17rem;
+                height: 10rem;
+                position: absolute;
+                top: -10px;
+                left: 0;
+                transform: skew(44deg, 0deg);
+                z-index: -1;
+
+                @media (min-width: 650px) {
+                    display: none;
+                }
+            }
+
+            i {
+                opacity: 1;
+            }
 
             i::before, i::after {
-                width: 20px;
+                width: 26px;
                 height: 2px;
             }
 
