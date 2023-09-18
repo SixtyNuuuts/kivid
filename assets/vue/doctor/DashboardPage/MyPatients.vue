@@ -1405,6 +1405,7 @@ body .kiv-block .prescri-process-dialog::after {
                         background: #ece8e0;
                         min-width: 7.5rem;
                         max-width: 9.8rem;
+                        overflow: hidden;
 
                         @media (min-width: 500px) {
                             max-width: 11.8rem;

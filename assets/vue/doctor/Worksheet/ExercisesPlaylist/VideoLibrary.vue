@@ -355,7 +355,7 @@ export default {
             selectedTags: [],
             selectedPoB: null,
             selectedVideos: [],
-            selectedVideoLibraries: ['kivid','ffmkr','chevreul'],
+            selectedVideoLibraries: [],
             modalAddVideo: false,
             modalViewVideo: false,
             selectedViewVideo: false,
@@ -391,6 +391,16 @@ export default {
         getDoctorIsFFMKRAdherent() {
             return this.doctor.FFMKRAdhesion && this.doctor.FFMKRAdhesion.numcli && !this.doctor.FFMKRAdhesion.numcli.includes('NUMCLITEMP');
         },
+    },
+    watch: {
+        getLibrariesFromAllVideos: {
+            handler(librariesFromAllVideos) {
+                librariesFromAllVideos.forEach(bv => {
+                    this.selectedVideoLibraries.push(bv.reference)
+                });
+            },
+            immediate: true // Exécutez le gestionnaire immédiatement lors de la création du composant
+        }
     },
     methods: {
         selectTag() {
@@ -481,7 +491,6 @@ export default {
             setTimeout(() => {
                 this.search = "";
                 this.selectedTags = [];
-                this.selectedVideoLibraries = ['kivid','ffmkr'];
                 this.selectedVideos = [];
                 this.selectedPoB = null;
             }, 300);
@@ -1289,7 +1298,8 @@ export default {
                 margin-bottom: 1rem;
 
                 @media (max-width: 849px) {
-                    margin-bottom: 1.5rem;
+                    margin-top: 1rem;
+                    margin-bottom: 0.3rem;
                 }
 
                 @media (min-width: 450px) {
