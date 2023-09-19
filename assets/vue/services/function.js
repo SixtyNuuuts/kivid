@@ -405,8 +405,8 @@ export default {
         valueB = valueB.length;
       }
 
-      let valueAOrNull = valueA !== null ? valueA : 'z';
-      let valueBOrNull = valueB !== null ? valueB : 'z';
+      let valueAOrNull = valueA == null ? 'a' : ('object' == typeof valueA ? 'z' : valueA);
+      let valueBOrNull = valueB == null ? 'a' : ('object' == typeof valueB ? 'z' : valueB);
 
       let valueAToLowerCaseOrBool = ('boolean' == typeof valueAOrNull) || ('number' == typeof valueAOrNull) ? valueAOrNull : valueAOrNull.toLowerCase();
       let valueBToLowerCaseOrBool = ('boolean' == typeof valueBOrNull) || ('number' == typeof valueBOrNull) ? valueBOrNull : valueBOrNull.toLowerCase();

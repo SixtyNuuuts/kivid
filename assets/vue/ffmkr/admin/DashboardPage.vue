@@ -78,7 +78,7 @@
                                                 <!-- <vs-th sort @click="sortData($event, FFMKRAdhesions, 'dateOf')">
                                                     Date De
                                                 </vs-th> -->
-                                                <vs-th sort @click="sortData($event, FFMKRAdhesions, 'dateOf')" class="max-w-12rem">
+                                                <vs-th sort @click="sortData($event, FFMKRAdhesions, 'doctor')" class="max-w-12rem">
                                                     Statut Kivid
                                                 </vs-th>
                                                 <vs-th sort @click="sortData($event, FFMKRAdhesions, 'requestToken')" class="max-w-6-5rem">
