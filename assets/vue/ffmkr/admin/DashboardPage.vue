@@ -75,9 +75,9 @@
                                                 <vs-th sort @click="sortData($event, FFMKRAdhesions, 'numRpps')">
                                                     Num RPPS
                                                 </vs-th>
-                                                <vs-th sort @click="sortData($event, FFMKRAdhesions, 'dateOf')">
+                                                <!-- <vs-th sort @click="sortData($event, FFMKRAdhesions, 'dateOf')">
                                                     Date De
-                                                </vs-th>
+                                                </vs-th> -->
                                                 <vs-th sort @click="sortData($event, FFMKRAdhesions, 'dateOf')" class="max-w-12rem">
                                                     Statut Kivid
                                                 </vs-th>
@@ -107,9 +107,9 @@
                                                 <vs-td>
                                                     {{ adhesion.numRpps ? adhesion.numRpps : '---' }}
                                                 </vs-td>
-                                                <vs-td>
+                                                <!-- <vs-td>
                                                     {{ adhesion.dateOf ? adhesion.dateOf : '---' }}
-                                                </vs-td>
+                                                </vs-td> -->
                                                 <vs-td>
                                                     <div class="status" v-if="adhesion.doctor">
                                                         <div class="icon-active-status"></div>

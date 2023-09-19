@@ -382,11 +382,6 @@ export default {
     });
 
     function compare(a, b) {
-      if ('numcli' === sortKey) {
-        a[sortKey] = parseInt(a[sortKey]);
-        b[sortKey] = parseInt(b[sortKey]);
-      }
-
       let sortKeyA = sortKey;
       let sortKeyB = sortKey;
       let sortKeySplitA = sortKey.split('.');
@@ -415,6 +410,14 @@ export default {
 
       let valueAToLowerCaseOrBool = ('boolean' == typeof valueAOrNull) || ('number' == typeof valueAOrNull) ? valueAOrNull : valueAOrNull.toLowerCase();
       let valueBToLowerCaseOrBool = ('boolean' == typeof valueBOrNull) || ('number' == typeof valueBOrNull) ? valueBOrNull : valueBOrNull.toLowerCase();
+
+      if ('numcli' === sortKey && parseInt(valueAToLowerCaseOrBool) < parseInt(valueBToLowerCaseOrBool)) {
+        return sortType !== 'desc' ? 1 : -1;
+      }
+
+      if ('numcli' === sortKey && parseInt(valueAToLowerCaseOrBool) > parseInt(valueBToLowerCaseOrBool)) {
+        return sortType !== 'desc' ? -1 : 1;
+      }
 
       if (valueAToLowerCaseOrBool < valueBToLowerCaseOrBool) {
         return sortType !== 'desc' ? 1 : -1;
