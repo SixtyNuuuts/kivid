@@ -335,7 +335,7 @@ export default {
                             ? error.response.data.detail
                             : error.response.data;
 
-                    if(error.response?.data)
+                    if(error.response?.data && error.response?.data != 'Cet email est déjà utilisé par un praticien')
                         this.axios
                             .post(`/doctor/${this.doctor.id}/add/patient`, {
                                 _token: this.csrfTokenAddPatient,

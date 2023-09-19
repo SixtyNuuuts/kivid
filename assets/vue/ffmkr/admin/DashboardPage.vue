@@ -25,7 +25,8 @@
                     >
                         <i class="kiv-chevron-down icon-3"></i>
                     </button>
-                    <h2>Adhesions FFMKR <span v-if="!loadingFFMKRAdhesions">({{ FFMKRAdhesions.length }} adhérents)</span></h2>
+                    <!-- <h2>Adhesions FFMKR <span v-if="!loadingFFMKRAdhesions">({{ FFMKRAdhesions.length }} adhérents - {{ getFFMKRAdhInscrits }} inscrits sur Kivid - {{ getFFMKRAdhDepuisKivid }} adhesions depuis Kivid)</span></h2> -->
+                    <h2>Adhesions FFMKR <span v-if="!loadingFFMKRAdhesions">({{ FFMKRAdhesions.length }} adhérents - {{ getFFMKRAdhInscrits }} inscrits)</span></h2>
                     <transition name="height">
                         <div v-if="FFMKRAdhesionsContent">
                             <div class="primary-actions">
@@ -228,6 +229,12 @@ export default {
                 this.max
             );
         },
+        getFFMKRAdhInscrits() {
+            return this.FFMKRAdhesions.filter(a=>a.doctor).length;
+        },
+        getFFMKRAdhDepuisKivid() {
+            return this.FFMKRAdhesions.filter(a=>a.requestToken).length;
+        }
     },
     methods: {
         getFFMKRAdhesionsData() {

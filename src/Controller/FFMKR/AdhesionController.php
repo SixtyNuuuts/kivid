@@ -257,8 +257,13 @@ class AdhesionController extends AbstractController
                                 {
                                     if(!empty($doctor->getFFMKRAdhesion()))
                                         $FFMKRAdhesion = $doctor->getFFMKRAdhesion();
-                                    else    
-                                        $FFMKRAdhesion->setDoctor($doctor);
+                                    else
+                                    {
+                                        $FFMKRAdhesion
+                                            ->setDoctor($doctor)
+                                            ->setRequestToken('present-chez-kivid-avant')
+                                        ;
+                                    }
                                 }
         
                                 $isFFMKRAdhesionCreation = true;   
