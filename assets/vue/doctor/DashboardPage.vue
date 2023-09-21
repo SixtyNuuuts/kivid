@@ -78,6 +78,13 @@
                     />
                 </transition>
                 <aside>
+                    <div>
+                        <vs-button
+                            class="secondary w-100"
+                        >
+                            Créer ma première fiche
+                        </vs-button>
+                    </div>
                     <MyDashboardNotifications
                         :doctor="doctor"
                         class="desktop-view"
