@@ -389,7 +389,7 @@ export default {
             return f.getLibrariesFromAllVideos(this.videos);
         },
         getDoctorIsFFMKRAdherent() {
-            return this.doctor.FFMKRAdhesion && this.doctor.FFMKRAdhesion.numcli && !this.doctor.FFMKRAdhesion.numcli.includes('NUMCLITEMP');
+            return (this.doctor.FFMKRAdhesion && this.doctor.FFMKRAdhesion.numcli && !this.doctor.FFMKRAdhesion.numcli.includes('NUMCLITEMP')) || this.doctor.premium;
         },
     },
     watch: {
@@ -431,7 +431,7 @@ export default {
                                     {
                                         clearInterval(checkAdhesion);
                                         this.btnLoadingFFMKRAdhesion = false;
-                                        this.doctor.FFMKRAdhesion.numcli = response.data.ffmkrAdhesionNumCli;
+                                        this.doctor.FFMKRAdhesion = {numcli:response.data.ffmkrAdhesionNumCli};
                                         this.modalRequestFFMKRAdhesion = false;
                                     }
                                 })

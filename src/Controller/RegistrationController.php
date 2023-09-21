@@ -71,7 +71,7 @@ class RegistrationController extends AbstractController
 
                 if ('doctor' === $data->userType) {                    
                     $userFFMKRAdhesion = $FFMKRAdhesionRepository->findOneBy(['email'=> $data->email]);
-                    if($userFFMKRAdhesion instanceof FFMKRAdhesion) {
+                    if($userFFMKRAdhesion instanceof FFMKRAdhesion && !$userFFMKRAdhesion->getDoctor()) {
                         if($data->registerType === 'ffmkr') {
                             $data->firstname = ucwords(strtolower($userFFMKRAdhesion->getFirstname()));
                             $data->lastname = ucwords(strtolower($userFFMKRAdhesion->getLastName()));
