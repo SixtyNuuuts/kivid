@@ -384,7 +384,7 @@ export default {
             return this.getSearch(this.videos, this.search).length;
         },
         getTagsFromAllVideos() {
-            return f.getTagsFromAllVideos(this.getVideos);
+            return f.getTagsFromAllVideos(this.videos);
         },
         getLibrariesFromAllVideos() {
             return f.getLibrariesFromAllVideos(this.videos);
@@ -402,27 +402,27 @@ export default {
             },
             immediate: true // Exécutez le gestionnaire immédiatement lors de la création du composant
         },
-        getTagsFromAllVideos: {
-            handler() {
-                this.$nextTick(() => {
-                    const chips = document.querySelectorAll('.worksheet-keywords .vs-select__chips > span');
-                    const uniqueValues = new Set();
+        // getTagsFromAllVideos: {
+        //     handler() {
+        //         this.$nextTick(() => {
+        //             const chips = document.querySelectorAll('.worksheet-keywords .vs-select__chips > span');
+        //             const uniqueValues = new Set();
 
-                    chips.forEach(chip => {
-                        const dataValue = chip.getAttribute('data-value');
+        //             chips.forEach(chip => {
+        //                 const dataValue = chip.getAttribute('data-value');
                         
-                        if (uniqueValues.has(dataValue)) {
-                            // Si la valeur est déjà dans le Set, supprimez l'élément
-                            chip.remove();
-                        } else {
-                            // Sinon, ajoutez la valeur au Set pour la suivre
-                            uniqueValues.add(dataValue);
-                        }
-                    });
-                });
-            },
-            immediate: true // Exécutez le gestionnaire immédiatement lors de la création du composant
-        }
+        //                 if (uniqueValues.has(dataValue)) {
+        //                     // Si la valeur est déjà dans le Set, supprimez l'élément
+        //                     chip.remove();
+        //                 } else {
+        //                     // Sinon, ajoutez la valeur au Set pour la suivre
+        //                     uniqueValues.add(dataValue);
+        //                 }
+        //             });
+        //         });
+        //     },
+        //     immediate: true // Exécutez le gestionnaire immédiatement lors de la création du composant
+        // }
     },
     methods: {
         selectTag() {
@@ -462,7 +462,7 @@ export default {
                         }
                 });
             }
-            
+
             this.inputChipsLib.classList.add('fix-bug')
         },
         validFFMKRAdhesion() {

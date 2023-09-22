@@ -268,6 +268,10 @@ export default {
         {
             this.worksheetStoreAdded = true,
             this.doctorWorksheets = [...worksheets,...this.doctorWorksheets];
+            
+            this.tagsFromExercises = f.generateTagsFromExercises(
+                this.doctorWorksheets
+            );
 
             setTimeout(() => {
                 this.worksheetStoreAdded = false;

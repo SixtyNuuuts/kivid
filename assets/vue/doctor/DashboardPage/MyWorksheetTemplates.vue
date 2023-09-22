@@ -1156,29 +1156,29 @@ export default {
         },
         getWorksheetTemplates(v) {
             this.page = 1;
-            this.$parent.tagsFromExercises = f.generateTagsFromExercises(
-                v
-            );
+            // this.$parent.tagsFromExercises = f.generateTagsFromExercises(
+            //     v
+            // );
 
             if(this.selectedTags.length || this.$parent.worksheetStoreAdded)
                 this.currentOpenWorksheet = this.getWorksheetTemplates.length ? this.getWorksheetTemplates[0].id : null;
 
-            this.$nextTick(() => {
-                const chips = document.querySelectorAll('.worksheet-keywords .vs-select__chips > span');
-                const uniqueValues = new Set();
+            // this.$nextTick(() => {
+            //     const chips = document.querySelectorAll('.worksheet-keywords .vs-select__chips > span');
+            //     const uniqueValues = new Set();
 
-                chips.forEach(chip => {
-                    const dataValue = chip.getAttribute('data-value');
+            //     chips.forEach(chip => {
+            //         const dataValue = chip.getAttribute('data-value');
                     
-                    if (uniqueValues.has(dataValue)) {
-                        // Si la valeur est déjà dans le Set, supprimez l'élément
-                        chip.remove();
-                    } else {
-                        // Sinon, ajoutez la valeur au Set pour la suivre
-                        uniqueValues.add(dataValue);
-                    }
-                });
-            });
+            //         if (uniqueValues.has(dataValue)) {
+            //             // Si la valeur est déjà dans le Set, supprimez l'élément
+            //             chip.remove();
+            //         } else {
+            //             // Sinon, ajoutez la valeur au Set pour la suivre
+            //             uniqueValues.add(dataValue);
+            //         }
+            //     });
+            // });
         },
     },
     methods: {
