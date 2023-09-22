@@ -1540,6 +1540,13 @@ body .btn-create-action .vs-button
         }
     }
 
+    .worksheet-keywords
+    {
+        @media (max-width: 799px) {
+            order: 3;
+        }
+    }
+
     .search {
         display: flex;
         align-items: center;
