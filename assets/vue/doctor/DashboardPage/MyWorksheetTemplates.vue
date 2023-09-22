@@ -1185,7 +1185,7 @@ export default {
         selectTag() {
             if (!this.inputChips) {
                 this.inputChips = document.querySelector(
-                    ".vs-icon-arrow"
+                    ".worksheet-keywords .vs-icon-arrow"
                 );
                 this.inputChips.addEventListener('click', function() {
                         const selectParent = this.parentElement;

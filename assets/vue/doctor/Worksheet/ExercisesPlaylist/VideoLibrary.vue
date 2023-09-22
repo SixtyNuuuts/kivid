@@ -72,7 +72,7 @@
                         </vs-select>
                         <div v-else class="loading select-tags"></div>
                     </div>
-                    <div class="kiv-select tags">
+                    <div class="kiv-select tags lib-keywords">
                             <vs-select
                                 class="tags-context"
                                 v-if="getLibrariesFromAllVideos.length"
@@ -81,7 +81,7 @@
                                 placeholder="Bibliothèque"
                                 v-model="selectedVideoLibraries"
                                 @change="page = 1"
-                                @input="selectTag()"
+                                @input="selectTagLib()"
                             >
                                 <vs-option
                                     v-for="(library, i) in getLibrariesFromAllVideos"
@@ -361,6 +361,7 @@ export default {
             selectedViewVideo: false,
             btnLoadingValidVideosSelection: false,
             inputChips: null,
+            inputChipsLib: null,
             modalRequestFFMKRAdhesion: false,
             btnLoadingFFMKRAdhesion: false,
         };
@@ -427,7 +428,7 @@ export default {
         selectTag() {
             if (!this.inputChips) {
                 this.inputChips = document.querySelector(
-                    ".vs-icon-arrow"
+                    ".worksheet-keywords .vs-icon-arrow"
                 );
                 this.inputChips.addEventListener('click', function() {
                         const selectParent = this.parentElement;
@@ -443,6 +444,26 @@ export default {
             }
 
             this.inputChips.classList.add('fix-bug')
+        },
+        selectTagLib() {
+            if (!this.inputChipsLib) {
+                this.inputChipsLib = document.querySelector(
+                    ".lib-keywords .vs-icon-arrow"
+                );
+                this.inputChipsLib.addEventListener('click', function() {
+                        const selectParent = this.parentElement;
+                        const inputChipsInput = selectParent.querySelector('.vs-select__chips__input');
+
+                        if(this.classList.contains('fix-bug') && inputChipsInput && selectParent.classList.contains('activeOptions'))
+                        {
+                            inputChipsInput.focus();
+                            inputChipsInput.blur();
+                            this.classList.remove('fix-bug');
+                        }
+                });
+            }
+            
+            this.inputChipsLib.classList.add('fix-bug')
         },
         validFFMKRAdhesion() {
             this.btnLoadingFFMKRAdhesion = true;
