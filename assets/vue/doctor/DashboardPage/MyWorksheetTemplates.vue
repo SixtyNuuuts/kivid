@@ -154,39 +154,7 @@
                             />
                         </div> -->
                     </div>
-                    <div class="kiv-select tags worksheet-keywords" v-if="this.$parent.doctorWorksheets.length">
-                        <vs-select
-                            class="tags-context"
-                            v-if="Object.keys(getTagsFromAll).length"
-                            filter
-                            multiple
-                            placeholder="Mots-Clés"
-                            v-model="selectedTags"
-                            @change="page = 1"
-                            @input="selectTag()"
-                        >
-                            <vs-option-group
-                                v-for="(tags, tagGroupName) in getTagsFromAll"
-                                :key="tagGroupName"
-                            >
-                                <div slot="title">
-                                    {{tagGroupName}}
-                                </div>
-                                <vs-option
-                                    v-for="(tag, i) in tags"
-                                    :key="i"
-                                    :label="tag"
-                                    :value="tag"
-                                >
-                                    {{ tag }}
-                                </vs-option>
-                            </vs-option-group>
-                            <template slot="notData">
-                                Aucun mot-clé
-                            </template>
-                        </vs-select>
-                        <div v-else class="loading select-tags"></div>
-                    </div>  
+                    <treeselect @input="page = 1" v-if="this.$parent.doctorWorksheets.length" class="worksheet-keywords" v-model="selectedTags" :multiple="true" :disable-branch-nodes="true" :options="getTagsFromAll" noResultsText="Aucun mot-clé ne correspond." placeholder="Mots-Clés"/>
                     <div class="btn-primary-action add">
                         <transition name="fade" mode="out-in">
                             <vs-tooltip v-if="!$parent.prescriProcess">
@@ -1100,6 +1068,7 @@ import f from "../../services/function";
 import TagPartOfBody from "../../components/TagPartOfBody.vue";
 import moment from "moment";
 import { PlusIcon } from "vue-feather-icons";
+import Treeselect from '@riophae/vue-treeselect'
 
 export default {
     props: {
@@ -1115,6 +1084,7 @@ export default {
     components: {
         TagPartOfBody,
         PlusIcon,
+        Treeselect
     },
     data() {
         return {
@@ -1155,58 +1125,13 @@ export default {
             this.page = 1;
         },
         getWorksheetTemplates(v) {
-            this.page = 1;
-            // this.$parent.tagsFromExercises = f.generateTagsFromExercises(
-            //     v
-            // );
-
             if(this.selectedTags.length || this.$parent.worksheetStoreAdded)
-                this.currentOpenWorksheet = this.getWorksheetTemplates.length ? this.getWorksheetTemplates[0].id : null;
-
-            // this.$nextTick(() => {
-            //     const chips = document.querySelectorAll('.worksheet-keywords .vs-select__chips > span');
-            //     const uniqueValues = new Set();
-
-            //     chips.forEach(chip => {
-            //         const dataValue = chip.getAttribute('data-value');
-                    
-            //         if (uniqueValues.has(dataValue)) {
-            //             // Si la valeur est déjà dans le Set, supprimez l'élément
-            //             chip.remove();
-            //         } else {
-            //             // Sinon, ajoutez la valeur au Set pour la suivre
-            //             uniqueValues.add(dataValue);
-            //         }
-            //     });
-            // });
-        },
+                this.currentOpenWorksheet = this.getWorksheetTemplates.length ? this.getWorksheetTemplates[0].id : null;        },
     },
     methods: {
-        selectTag() {
-            if (!this.inputChips) {
-                this.inputChips = document.querySelector(
-                    ".worksheet-keywords .vs-icon-arrow"
-                );
-                this.inputChips.addEventListener('click', function() {
-                        const selectParent = this.parentElement;
-                        const inputChipsInput = selectParent.querySelector('.vs-select__chips__input');
-
-                        if(this.classList.contains('fix-bug') && inputChipsInput && selectParent.classList.contains('activeOptions'))
-                        {
-                            inputChipsInput.focus();
-                            inputChipsInput.blur();
-                            this.classList.remove('fix-bug');
-                        }
-                });
-            }
-
-            this.inputChips.classList.add('fix-bug')
-        },
         prescriProcessWorksheetChoice(worksheetsIds,prescriptionType=null) {
             if(this.$parent.prescriProcessPatientSelected&&(!prescriptionType||(prescriptionType==='direct'&&!worksheetsIds.filter(w=>w==null).length)))
                 this.$emit("prescriProcessWorksheetChoice", {worksheetsIds,prescriptionType});
-            // else
-            //     this.activeTab(1); 
         },
         redirectToEditPage(worksheetId) {
             document.location.href = `/doctor/${this.doctor.id}/fiche/edition/${worksheetId}`;

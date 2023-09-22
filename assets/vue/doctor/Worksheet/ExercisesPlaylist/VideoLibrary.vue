@@ -39,64 +39,8 @@
                             label-placeholder="Filtrer par nom de video"
                         />
                     </div>
-                    <div class="kiv-select tags worksheet-keywords">
-                        <vs-select
-                            class="tags-context"
-                            v-if="Object.keys(getTagsFromAllVideos).length"
-                            filter
-                            multiple
-                            placeholder="Mots-Clés"
-                            v-model="selectedTags"
-                            @change="page = 1"
-                            @input="selectTag()"
-                        >
-                                <vs-option-group
-                                    v-for="(tags, tagGroupName) in getTagsFromAllVideos"
-                                    :key="tagGroupName"
-                                >
-                                    <div slot="title">
-                                        {{tagGroupName}}
-                                    </div>
-                                    <vs-option
-                                        v-for="(tag, i) in tags"
-                                        :key="i"
-                                        :label="tag"
-                                        :value="tag"
-                                    >
-                                        {{ tag }}
-                                    </vs-option>
-                                </vs-option-group>
-                            <template slot="notData">
-                                Aucun mot-clé ne correspond.</template
-                            >
-                        </vs-select>
-                        <div v-else class="loading select-tags"></div>
-                    </div>
-                    <div class="kiv-select tags lib-keywords">
-                            <vs-select
-                                class="tags-context"
-                                v-if="getLibrariesFromAllVideos.length"
-                                filter
-                                multiple
-                                placeholder="Bibliothèque"
-                                v-model="selectedVideoLibraries"
-                                @change="page = 1"
-                                @input="selectTagLib()"
-                            >
-                                <vs-option
-                                    v-for="(library, i) in getLibrariesFromAllVideos"
-                                    :key="i"
-                                    :label="library.name"
-                                    :value="library.reference"
-                                >
-                                    {{ library.name }}
-                                </vs-option>
-                                <template slot="notData">
-                                    Aucune bibliothèque ne correspond.</template
-                                >
-                            </vs-select>
-                            <div v-else class="loading select-tags"></div>
-                    </div>
+                    <treeselect @input="page = 1" class="worksheet-keywords" v-model="selectedTags" :multiple="true" :disable-branch-nodes="true" :options="getTagsFromAllVideos" noResultsText="Aucun mot-clé ne correspond." placeholder="Mots-Clés"/>
+                    <treeselect @input="page = 1" v-model="selectedVideoLibraries" :multiple="true" :options="getLibrariesFromAllVideos" noResultsText="Aucune bibliothèque ne correspond." placeholder="Bibliothèques"/>
                     <SelectPartOfBody
                         :partOfBody="selectedPoB"
                         @partOfBodySelected="filterByPartOfBody"
@@ -326,6 +270,7 @@
 import f from "../../../services/function";
 import { PlusIcon, CheckIcon, XIcon } from "vue-feather-icons";
 import SelectPartOfBody from "../../../components/SelectPartOfBody.vue";
+import Treeselect from '@riophae/vue-treeselect'
 
 export default {
     props: {
@@ -339,6 +284,7 @@ export default {
         CheckIcon,
         XIcon,
         SelectPartOfBody,
+        Treeselect
     },
     data() {
         return {
@@ -360,8 +306,6 @@ export default {
             modalViewVideo: false,
             selectedViewVideo: false,
             btnLoadingValidVideosSelection: false,
-            inputChips: null,
-            inputChipsLib: null,
             modalRequestFFMKRAdhesion: false,
             btnLoadingFFMKRAdhesion: false,
         };
@@ -397,74 +341,13 @@ export default {
         getLibrariesFromAllVideos: {
             handler(librariesFromAllVideos) {
                 librariesFromAllVideos.forEach(bv => {
-                    this.selectedVideoLibraries.push(bv.reference)
+                    this.selectedVideoLibraries.push(bv.id)
                 });
             },
             immediate: true // Exécutez le gestionnaire immédiatement lors de la création du composant
         },
-        // getTagsFromAllVideos: {
-        //     handler() {
-        //         this.$nextTick(() => {
-        //             const chips = document.querySelectorAll('.worksheet-keywords .vs-select__chips > span');
-        //             const uniqueValues = new Set();
-
-        //             chips.forEach(chip => {
-        //                 const dataValue = chip.getAttribute('data-value');
-                        
-        //                 if (uniqueValues.has(dataValue)) {
-        //                     // Si la valeur est déjà dans le Set, supprimez l'élément
-        //                     chip.remove();
-        //                 } else {
-        //                     // Sinon, ajoutez la valeur au Set pour la suivre
-        //                     uniqueValues.add(dataValue);
-        //                 }
-        //             });
-        //         });
-        //     },
-        //     immediate: true // Exécutez le gestionnaire immédiatement lors de la création du composant
-        // }
     },
     methods: {
-        selectTag() {
-            if (!this.inputChips) {
-                this.inputChips = document.querySelector(
-                    ".worksheet-keywords .vs-icon-arrow"
-                );
-                this.inputChips.addEventListener('click', function() {
-                        const selectParent = this.parentElement;
-                        const inputChipsInput = selectParent.querySelector('.vs-select__chips__input');
-
-                        if(this.classList.contains('fix-bug') && inputChipsInput && selectParent.classList.contains('activeOptions'))
-                        {
-                            inputChipsInput.focus();
-                            inputChipsInput.blur();
-                            this.classList.remove('fix-bug');
-                        }
-                });
-            }
-
-            this.inputChips.classList.add('fix-bug')
-        },
-        selectTagLib() {
-            if (!this.inputChipsLib) {
-                this.inputChipsLib = document.querySelector(
-                    ".lib-keywords .vs-icon-arrow"
-                );
-                this.inputChipsLib.addEventListener('click', function() {
-                        const selectParent = this.parentElement;
-                        const inputChipsInput = selectParent.querySelector('.vs-select__chips__input');
-
-                        if(this.classList.contains('fix-bug') && inputChipsInput && selectParent.classList.contains('activeOptions'))
-                        {
-                            inputChipsInput.focus();
-                            inputChipsInput.blur();
-                            this.classList.remove('fix-bug');
-                        }
-                });
-            }
-
-            this.inputChipsLib.classList.add('fix-bug')
-        },
         validFFMKRAdhesion() {
             this.btnLoadingFFMKRAdhesion = true;
             this.axios
@@ -580,7 +463,7 @@ export default {
 
             if (this.selectedVideoLibraries.length) {
                 videosListFiltered = videosListFiltered.filter((v) => {
-                    return this.selectedVideoLibraries.includes(v.videoLibrary.reference);
+                    return this.selectedVideoLibraries.includes(v.videoLibrary.name);
                 });
             }
 
@@ -725,9 +608,76 @@ export default {
         .search {
             width: 100%;
             margin-bottom: 1rem;
+
             @media (min-width: 576px) {
-                margin-right: 1rem;
+                margin-right: 0;
             }
+
+            @media (min-width: 850px) {
+                margin-right: 1rem;
+                margin-bottom: 0;
+            }
+        }
+
+        .select-filter {
+            width: 100%;
+            .arrow-toggle-box.active {
+                transform: rotate(180deg);
+                top: 0.7rem;
+                i {
+                    top: 1.4rem;
+                    transform: rotate(-135deg);
+
+                    // &.vs-icon-arrow::after {
+                    //     transform: rotate(-135deg);
+                    //     top: -0.1rem;
+                    //     left: -0.9rem;
+                    // }
+                }
+            }
+            
+            .part-of-body .text {
+                position: relative;
+                top: 0.1rem;
+                font-size: 1.4rem;
+            }
+
+            &:hover
+            {
+                .arrow-toggle-box i.vs-icon-arrow::after {
+                    opacity: 0.5;
+                }
+            }
+
+            .arrow-toggle-box i.vs-icon-arrow::before, .arrow-toggle-box i.vs-icon-arrow::after {
+                display: none
+            }
+            .arrow-toggle-box i.vs-icon-arrow::after {
+                content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 292.362 292.362' class='vue-treeselect__control-arrow'%3E%3Cpath d='M286.935 69.377c-3.614-3.617-7.898-5.424-12.848-5.424H18.274c-4.952 0-9.233 1.807-12.85 5.424C1.807 72.998 0 77.279 0 82.228c0 4.948 1.807 9.229 5.424 12.847l127.907 127.907c3.621 3.617 7.902 5.428 12.85 5.428s9.233-1.811 12.847-5.428L286.935 95.074c3.613-3.617 5.427-7.898 5.427-12.847 0-4.948-1.814-9.229-5.427-12.85z'%3E%3C/path%3E%3C/svg%3E");
+                display: block;
+                background: none;
+                transform: rotate(135deg);
+                top: 0.8rem;
+                opacity: 0.2;
+                width: 0.88rem;
+                left: 0.2rem;
+                transition: 0.25s;
+           }
+
+        }
+
+        .vue-treeselect {
+            margin-bottom: 1rem;
+            @media (min-width: 850px) {
+                margin-bottom: 0;
+            }
+        }
+
+        @media (min-width: 576px) {
+            flex-direction: column;
+        }
+        @media (min-width: 850px) {
+            flex-direction: row;
         }
 
         // .tags-containers
@@ -822,23 +772,6 @@ export default {
 
             .select-box {
                 top: 4.3rem;
-            }
-        }
-
-        @media (min-width: 576px) {
-            .search {
-                width: 33%;
-                margin-bottom: 0;
-            }
-
-            .kiv-select.tags {
-                width: 33%;
-                margin-bottom: 0;
-                margin-right: 1rem;
-            }
-
-            .select-filter {
-                width: 33%;
             }
         }
     }
@@ -1417,4 +1350,5 @@ export default {
         margin-left: 0.2rem;
     }
 }
+
 </style>
