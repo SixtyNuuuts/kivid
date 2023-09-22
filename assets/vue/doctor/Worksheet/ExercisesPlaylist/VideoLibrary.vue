@@ -39,7 +39,7 @@
                             label-placeholder="Filtrer par nom de video"
                         />
                     </div>
-                    <div class="kiv-select tags">
+                    <div class="kiv-select tags worksheet-keywords">
                         <vs-select
                             class="tags-context"
                             v-if="Object.keys(getTagsFromAllVideos).length"
@@ -383,7 +383,7 @@ export default {
             return this.getSearch(this.videos, this.search).length;
         },
         getTagsFromAllVideos() {
-            return f.getTagsFromAllVideos(this.videos);
+            return f.getTagsFromAllVideos(this.getVideos);
         },
         getLibrariesFromAllVideos() {
             return f.getLibrariesFromAllVideos(this.videos);
@@ -400,18 +400,49 @@ export default {
                 });
             },
             immediate: true // Exécutez le gestionnaire immédiatement lors de la création du composant
+        },
+        getTagsFromAllVideos: {
+            handler() {
+                this.$nextTick(() => {
+                    const chips = document.querySelectorAll('.worksheet-keywords .vs-select__chips > span');
+                    const uniqueValues = new Set();
+
+                    chips.forEach(chip => {
+                        const dataValue = chip.getAttribute('data-value');
+                        
+                        if (uniqueValues.has(dataValue)) {
+                            // Si la valeur est déjà dans le Set, supprimez l'élément
+                            chip.remove();
+                        } else {
+                            // Sinon, ajoutez la valeur au Set pour la suivre
+                            uniqueValues.add(dataValue);
+                        }
+                    });
+                });
+            },
+            immediate: true // Exécutez le gestionnaire immédiatement lors de la création du composant
         }
     },
     methods: {
         selectTag() {
             if (!this.inputChips) {
                 this.inputChips = document.querySelector(
-                    ".vs-select__chips__input"
+                    ".vs-icon-arrow"
                 );
+                this.inputChips.addEventListener('click', function() {
+                        const selectParent = this.parentElement;
+                        const inputChipsInput = selectParent.querySelector('.vs-select__chips__input');
+
+                        if(this.classList.contains('fix-bug') && inputChipsInput && selectParent.classList.contains('activeOptions'))
+                        {
+                            inputChipsInput.focus();
+                            inputChipsInput.blur();
+                            this.classList.remove('fix-bug');
+                        }
+                });
             }
 
-            this.inputChips.focus();
-            this.inputChips.blur();
+            this.inputChips.classList.add('fix-bug')
         },
         validFFMKRAdhesion() {
             this.btnLoadingFFMKRAdhesion = true;

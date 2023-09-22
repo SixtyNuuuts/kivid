@@ -20,7 +20,7 @@ export default {
 
       keyOrder.forEach(key => {
         if (r[key]) {
-          rSorted[key] = r[key];
+          rSorted[key] = r[key].sort();
         }
       });
 
@@ -55,7 +55,7 @@ export default {
 
       keyOrder.forEach(key => {
         if (r[key]) {
-          rSorted[key] = r[key];
+          rSorted[key] = r[key].sort();
         }
       });
 
