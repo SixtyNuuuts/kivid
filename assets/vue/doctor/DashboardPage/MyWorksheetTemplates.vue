@@ -60,7 +60,7 @@
                 </span> -->
                 <p>
                     <span v-if="getWorksheetTemplates.length">et / ou sélectionnez</span
-                    ><span v-else>Sélectionnez</span> <span class="only-mobile">avec le bouton "+"</span> le nombre de prescriptions que vous souhaitez créer&nbsp;de&nbsp;zéro<span class="only-mobile"> ou ajoutez des fiches du magasin</span><span v-if="!getWorksheetTemplates.length">, puis&nbsp;validez avec l'un des boutons de prescription</span>
+                    ><span v-else>Sélectionnez</span> <span class="only-mobile">avec le bouton "+"</span> le nombre de prescriptions que vous souhaitez créer&nbsp;de&nbsp;zéro<span class="only-mobile"> ou ajoutez des fiches du magasin</span><span v-if="!getWorksheetTemplates.length">, puis&nbsp;validez avec l'un des boutons de prescription <span class="only-mobile">ci-dessous</span></span>
                 </p>
             </div>
         </transition>
@@ -1374,24 +1374,28 @@ body .kiv-block .prescri-process-dialog.prescri-process-dialog-select-worksheet 
 }
 
 body .kiv-block .prescri-process-dialog.prescri-process-dialog-create-worksheet {
-    top: -5.3rem;
-    right: 1.6rem;
-    padding-top: 0.2rem;
-    width: 14.5rem;
+    @media (min-width: 799px) {
+        top: -5.3rem;
+        right: 1.6rem;
+        padding-top: 0.2rem;
+        width: 14.5rem;
 
-    &::after {
-        left: 85%;
+        &::after {
+            left: 85%;
+        }
     }
 }
 
 body .kiv-block .prescri-process-dialog.prescri-process-dialog-create-worksheet.no-ws {
-    top: -6.9rem;
-    right: 1.2rem;
-    padding-top: 0.2rem;
-    width: 17.4rem;
+    @media (min-width: 799px) {
+        top: -6.9rem;
+        right: 1.2rem;
+        padding-top: 0.2rem;
+        width: 17.4rem;
 
-    &::after {
-        left: 85%;
+        &::after {
+            left: 85%;
+        }
     }
 }
 
