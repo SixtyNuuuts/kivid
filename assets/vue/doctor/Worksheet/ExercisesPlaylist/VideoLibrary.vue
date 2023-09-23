@@ -39,7 +39,22 @@
                             label-placeholder="Filtrer par nom de video"
                         />
                     </div>
-                    <treeselect @input="page = 1" class="worksheet-keywords" v-model="selectedTags" :multiple="true" :disable-branch-nodes="true" :options="getTagsFromAllVideos" noResultsText="Aucun mot-clé ne correspond." placeholder="Mots-Clés"/>
+                    <treeselect 
+                        @input="page = 1" 
+                        class="worksheet-keywords" 
+                        v-model="selectedTags" 
+                        :multiple="true" 
+                        :disable-branch-nodes="true" 
+                        :options="getTagsFromAllVideos" 
+                        noResultsText="Aucun mot-clé ne correspond." 
+                        placeholder="Mots-Clés"
+                        :show-count="true"
+                    >
+                        <label slot="option-label" slot-scope="{ node, shouldShowCount, count, labelClassName, countClassName }" :class="labelClassName">
+                            {{ node.label }}
+                            <span v-if="shouldShowCount"><span class="selected-tags-nb" :class="{'selected-tags-nb-disabled': getNbChildOptionSelected(node.label)==0}">{{ getNbChildOptionSelected(node.label) }}</span></span>
+                        </label>
+                    </treeselect>
                     <treeselect @input="page = 1" v-model="selectedVideoLibraries" :multiple="true" :options="getLibrariesFromAllVideos" noResultsText="Aucune bibliothèque ne correspond." placeholder="Bibliothèques"/>
                     <SelectPartOfBody
                         :partOfBody="selectedPoB"
@@ -336,18 +351,40 @@ export default {
         getDoctorIsFFMKRAdherent() {
             return (this.doctor.FFMKRAdhesion && this.doctor.FFMKRAdhesion.numcli && !this.doctor.FFMKRAdhesion.numcli.includes('NUMCLITEMP')) || this.doctor.premium;
         },
+        totalSelectedChildrenForObjectif() {
+            return this.getNbChildOptionSelectedByParentOptionLabel('Objectif');
+        },
+        totalSelectedChildrenForCible() {
+            return this.getNbChildOptionSelectedByParentOptionLabel('Cible');
+        },
+        totalSelectedChildrenForTypeDeContraction() {
+            return this.getNbChildOptionSelectedByParentOptionLabel('Type de contraction');
+        },
+        totalSelectedChildrenForTypeDeMouvement() {
+            return this.getNbChildOptionSelectedByParentOptionLabel('Type de mouvement');
+        },
+        totalSelectedChildrenForSpecialite() {
+            return this.getNbChildOptionSelectedByParentOptionLabel('Spécialité');
+        }
     },
     watch: {
         getLibrariesFromAllVideos: {
             handler(librariesFromAllVideos) {
                 librariesFromAllVideos.forEach(bv => {
-                    this.selectedVideoLibraries.push(bv.id)
+                    if(bv.id != 'FFT')
+                        this.selectedVideoLibraries.push(bv.id)
                 });
             },
             immediate: true // Exécutez le gestionnaire immédiatement lors de la création du composant
         },
     },
     methods: {
+        getNbChildOptionSelected(nodeLabel) {
+            return nodeLabel == 'Objectif' ? this.totalSelectedChildrenForObjectif : (nodeLabel == 'Cible' ? this.totalSelectedChildrenForCible : (nodeLabel == 'Type de contraction' ? this.totalSelectedChildrenForTypeDeContraction : (nodeLabel == 'Type de mouvement' ? this.totalSelectedChildrenForTypeDeMouvement : (nodeLabel == 'Spécialité' ? this.totalSelectedChildrenForSpecialite : '...'))));
+        },
+        getNbChildOptionSelectedByParentOptionLabel(parentOptionLabel) {
+            return this.getTagsFromAllVideos.find(o => o.label === parentOptionLabel).children.filter(co => this.selectedTags.includes(co.id)).length;
+        },
         validFFMKRAdhesion() {
             this.btnLoadingFFMKRAdhesion = true;
             this.axios

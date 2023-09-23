@@ -154,7 +154,23 @@
                             />
                         </div> -->
                     </div>
-                    <treeselect @input="page = 1" v-if="this.$parent.doctorWorksheets.length" class="worksheet-keywords" v-model="selectedTags" :multiple="true" :disable-branch-nodes="true" :options="getTagsFromAll" noResultsText="Aucun mot-clé ne correspond." placeholder="Mots-Clés"/>
+                    <treeselect 
+                        @input="page = 1" 
+                        v-if="this.$parent.doctorWorksheets.length" 
+                        class="worksheet-keywords" 
+                        v-model="selectedTags" 
+                        :multiple="true" 
+                        :disable-branch-nodes="true" 
+                        :options="getTagsFromAll" 
+                        noResultsText="Aucun mot-clé ne correspond." 
+                        placeholder="Mots-Clés"
+                        :show-count="true"
+                    >
+                        <label slot="option-label" slot-scope="{ node, shouldShowCount, count, labelClassName, countClassName }" :class="labelClassName">
+                            {{ node.label }}
+                            <span v-if="shouldShowCount"><span class="selected-tags-nb" :class="{'selected-tags-nb-disabled': getNbChildOptionSelected(node.label)==0}">{{ getNbChildOptionSelected(node.label) }}</span></span>
+                        </label>
+                    </treeselect>
                     <div class="btn-primary-action add">
                         <transition name="fade" mode="out-in">
                             <vs-tooltip v-if="!$parent.prescriProcess">
@@ -1118,6 +1134,21 @@ export default {
         publicWorksheetBaseUrl()
         {
             return `${window.location.protocol}//${window.location.host}/fiche`;
+        },
+        totalSelectedChildrenForObjectif() {
+            return this.getNbChildOptionSelectedByParentOptionLabel('Objectif');
+        },
+        totalSelectedChildrenForCible() {
+            return this.getNbChildOptionSelectedByParentOptionLabel('Cible');
+        },
+        totalSelectedChildrenForTypeDeContraction() {
+            return this.getNbChildOptionSelectedByParentOptionLabel('Type de contraction');
+        },
+        totalSelectedChildrenForTypeDeMouvement() {
+            return this.getNbChildOptionSelectedByParentOptionLabel('Type de mouvement');
+        },
+        totalSelectedChildrenForSpecialite() {
+            return this.getNbChildOptionSelectedByParentOptionLabel('Spécialité');
         }
     },
     watch: {
@@ -1129,6 +1160,12 @@ export default {
                 this.currentOpenWorksheet = this.getWorksheetTemplates.length ? this.getWorksheetTemplates[0].id : null;        },
     },
     methods: {
+        getNbChildOptionSelected(nodeLabel) {
+            return nodeLabel == 'Objectif' ? this.totalSelectedChildrenForObjectif : (nodeLabel == 'Cible' ? this.totalSelectedChildrenForCible : (nodeLabel == 'Type de contraction' ? this.totalSelectedChildrenForTypeDeContraction : (nodeLabel == 'Type de mouvement' ? this.totalSelectedChildrenForTypeDeMouvement : (nodeLabel == 'Spécialité' ? this.totalSelectedChildrenForSpecialite : '...'))));
+        },
+        getNbChildOptionSelectedByParentOptionLabel(parentOptionLabel) {
+            return this.getTagsFromAll.find(o => o.label === parentOptionLabel).children.filter(co => this.selectedTags.includes(co.id)).length;
+        },
         prescriProcessWorksheetChoice(worksheetsIds,prescriptionType=null) {
             if(this.$parent.prescriProcessPatientSelected&&(!prescriptionType||(prescriptionType==='direct'&&!worksheetsIds.filter(w=>w==null).length)))
                 this.$emit("prescriProcessWorksheetChoice", {worksheetsIds,prescriptionType});

@@ -680,6 +680,8 @@
         .tags {
             display: inline-flex;
             top: -0.1rem;
+            flex-wrap: wrap;
+            justify-content: center;
 
             .tag-chip {
                 font-size: 1.1rem;
