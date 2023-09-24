@@ -273,6 +273,8 @@ export default {
                 this.doctorWorksheets
             );
 
+            this.$bus.$emit('addWorksheetStoreTriggered', true);
+
             setTimeout(() => {
                 this.worksheetStoreAdded = false;
             }, 2000);

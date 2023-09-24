@@ -1364,7 +1364,17 @@ export default {
                 })
                 .catch((e)=>console.log(e));
             }
+        },
+        handleEventAddWorksheetStore() {
+            this.page = 1;
+            this.selectedTags = [];
         }
+    },
+    created() {
+        this.$bus.$on('addWorksheetStoreTriggered', this.handleEventAddWorksheetStore);
+    },
+    beforeDestroy() {
+        this.$bus.$off('addWorksheetStoreTriggered', this.handleEventAddWorksheetStore);
     },
 };
 </script>
