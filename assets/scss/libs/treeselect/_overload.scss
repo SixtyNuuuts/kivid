@@ -47,12 +47,27 @@
     // transition-property: border-color, box-shadow, width, height, background-color, opacity;
     // transition-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
     padding-left: 0.9rem;
+    padding-right: 1px;
 
     :focus-visible {
         outline-offset: 0px;
         box-shadow: 0px 5px 25px -4px rgba(0, 0, 0, 0.1);
 
     }
+}
+
+#video-library .vue-treeselect__control {
+  @media (max-width: 849px) {
+    height: 4.39rem;
+  } 
+}
+
+.vue-treeselect__control-arrow-container {
+  width: 30px;
+}
+
+.vue-treeselect__multi-value-item-container {
+  padding-top: 3px;
 }
 
 .vue-treeselect:not(.vue-treeselect--disabled):not(.vue-treeselect--focused) .vue-treeselect__control:hover {

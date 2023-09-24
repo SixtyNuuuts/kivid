@@ -658,18 +658,18 @@ export default {
 
         .select-filter {
             width: 100%;
-            .arrow-toggle-box.active {
-                transform: rotate(180deg);
-                top: 0.7rem;
+            .arrow-toggle-box {
                 i {
-                    top: 1.4rem;
-                    transform: rotate(-135deg);
+                    right: 17px;
+                }
 
-                    // &.vs-icon-arrow::after {
-                    //     transform: rotate(-135deg);
-                    //     top: -0.1rem;
-                    //     left: -0.9rem;
-                    // }
+                &.active {
+                    transform: rotate(180deg);
+                    top: 0.7rem;
+                    i {
+                        top: 1.4rem;
+                        transform: rotate(-135deg);
+                    }
                 }
             }
             
