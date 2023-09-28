@@ -261,7 +261,7 @@ class AdhesionController extends AbstractController
                                     {
                                         $FFMKRAdhesion
                                             ->setDoctor($doctor)
-                                            ->setRequestToken('present-chez-kivid-avant')
+                                            ->setRequestToken('chez-kivid-avant')
                                         ;
                                     }
                                 }

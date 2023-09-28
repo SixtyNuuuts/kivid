@@ -143,7 +143,8 @@ export default {
             prescriProcessWorksheetsSelected: null,
             btnLoadingPatientPrescriProcessRedirect: null,
             btnLoadingWorksheetPrescriProcessRedirect: false,
-            prescriProcessStartOrigin: 'patient'
+            prescriProcessStartOrigin: 'patient',
+            worksheetStoreAdded: false,
         };
     },
     computed: {
@@ -272,11 +273,18 @@ export default {
         },
         addWorksheetStore(worksheets)
         {
+            this.worksheetStoreAdded = true,
             this.doctorWorksheets = [...worksheets,...this.doctorWorksheets];
-
+            
             this.tagsFromExercises = f.generateTagsFromExercises(
                 this.doctorWorksheets
             );
+
+            this.$bus.$emit('addWorksheetStoreTriggered', true);
+
+            setTimeout(() => {
+                this.worksheetStoreAdded = false;
+            }, 2000);
         }
     },
     created() {
