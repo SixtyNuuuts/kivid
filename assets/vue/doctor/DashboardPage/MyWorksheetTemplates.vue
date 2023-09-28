@@ -1415,6 +1415,12 @@ export default {
 }
 
 @import "../../../scss/variables";
+
+@media (min-width: 650px) {
+    #dashboard main aside {
+        flex-direction: column;
+    }
+}
 body .kiv-block .prescri-process-dialog.prescri-process-dialog-select-worksheet {
     top: -2.8rem;
     width: 33rem;
