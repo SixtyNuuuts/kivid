@@ -784,7 +784,7 @@
             content: '';
             display: block;
             width: 2.95rem;
-            height: 3.95rem;
+            height: 3.92rem;
             position: absolute;
             top: 0.2rem;
             right: 0.15rem;
@@ -1108,6 +1108,7 @@
     padding-top: 0.85rem;
     border-radius: 0.5rem;
     font-size: 1.3rem;
+    z-index: 11110;
 }
 
 .dbpatient .vs-tooltip {

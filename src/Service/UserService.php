@@ -13,8 +13,9 @@ use SymfonyCasts\Bundle\ResetPassword\Generator\ResetPasswordTokenGenerator;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Address;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Mime\Address;
+use Symfony\Component\Mime\Header\PathHeader;
 
 class UserService
 {
@@ -76,6 +77,9 @@ class UserService
                 'doctor' => $doctor,
             ])
         ;
+    
+        $email->getHeaders()->addTextHeader('List-Unsubscribe', '<mailto:contact@kivid.fr>');
+        $email->getHeaders()->add(new PathHeader('Return-Path', new Address('contact@kivid.fr', '"Kivid Contact"')));
 
         $this->mailer->send($email);
 

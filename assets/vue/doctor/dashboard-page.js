@@ -13,6 +13,9 @@ Vue.use(VueAxios, axios)
 // Vuesax (UX lib)
 import Vuesax from 'vuesax'
 
+// EventBus
+Vue.prototype.$bus = new Vue();
+
 new Vue({
     render: h => h(DashboardPage)
 }).$mount('#vue')

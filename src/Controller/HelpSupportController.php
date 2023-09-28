@@ -38,7 +38,7 @@ class HelpSupportController extends AbstractController
             if ($this->isCsrfTokenValid('support_contact' . $user->getId(), $data->_token)) {
                 $email = (new TemplatedEmail())
                 ->from(new Address($user->getEmail(), "{$user->getFirstname()} {$user->getLastname()}}"))
-                ->to('ponsoda.fabrice@gmail.com')
+                ->to('contact@kivid.fr')
                 ->subject($data->contactSubject)
                 ->htmlTemplate('help-support/contact_email.html.twig')
                 ->context([

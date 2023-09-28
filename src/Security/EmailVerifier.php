@@ -4,11 +4,13 @@ namespace App\Security;
 
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface;
-use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
+use SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface;
+use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
+use Symfony\Component\Mime\Address;
+use Symfony\Component\Mime\Header\PathHeader;
 
 class EmailVerifier
 {
@@ -42,6 +44,9 @@ class EmailVerifier
         $context['signedUrl'] = $signatureComponents->getSignedUrl();
         $context['expiresAtMessageKey'] = $signatureComponents->getExpirationMessageKey();
         $context['expiresAtMessageData'] = $signatureComponents->getExpirationMessageData();
+
+        $email->getHeaders()->addTextHeader('List-Unsubscribe', '<mailto:contact@kivid.fr>');
+        $email->getHeaders()->add(new PathHeader('Return-Path', new Address('contact@kivid.fr', '"Kivid Contact"')));
 
         $email->context($context);
 

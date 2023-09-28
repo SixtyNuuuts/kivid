@@ -196,37 +196,45 @@ class AdhesionController extends AbstractController
                 // 'MOBILE' => 'mobile',
                 // 'EMAIL' => 'email',
                 // 'DATE NAISSANCE' => 'birthdate',
+                // $columnsHeaders = 
+                // [
+                //     0 => 'numcli',
+                //     1 => 'civility',
+                //     2 => 'lastname',
+                //     3 => 'maidenName',
+                //     4 => 'firstname',
+                //     5 => 'suiteName',
+                //     6 => 'entityName',
+                //     7 => 'streetNumber',
+                //     8 => 'streetName',
+                //     9 => 'streetComplement',
+                //     10 => 'postalCode',
+                //     11 => 'city',
+                //     12 => 'country',
+                //     13 => '',
+                //     14 => 'dateOf',
+                //     15 => '',
+                //     16 => '',
+                //     17 => 'numRpps',
+                //     18 => 'tel',
+                //     19 => '',
+                //     20 => 'mobile',
+                //     21 => 'email',
+                //     22 => '',
+                //     23 => '',
+                //     24 => '',
+                //     25 => '',
+                //     26 => 'birthdate',  
+                // ];
                 $columnsHeaders = 
                 [
                     0 => 'numcli',
-                    1 => 'civility',
+                    1 => 'firstname',
                     2 => 'lastname',
-                    3 => 'maidenName',
-                    4 => 'firstname',
-                    5 => 'suiteName',
-                    6 => 'entityName',
-                    7 => 'streetNumber',
-                    8 => 'streetName',
-                    9 => 'streetComplement',
-                    10 => 'postalCode',
-                    11 => 'city',
-                    12 => 'country',
-                    13 => '',
-                    14 => 'dateOf',
-                    15 => '',
-                    16 => '',
-                    17 => 'numRpps',
-                    18 => 'tel',
-                    19 => '',
-                    20 => 'mobile',
-                    21 => 'email',
-                    22 => '',
-                    23 => '',
-                    24 => '',
-                    25 => '',
-                    26 => 'birthdate',  
+                    3 => 'email',
+                    4 => 'numRpps',
                 ];
-                
+
                 $updatedFFMKRAdhesionsCount = 0;
                 $createdFFMKRAdhesionsCount = 0;
 
@@ -249,8 +257,13 @@ class AdhesionController extends AbstractController
                                 {
                                     if(!empty($doctor->getFFMKRAdhesion()))
                                         $FFMKRAdhesion = $doctor->getFFMKRAdhesion();
-                                    else    
-                                        $FFMKRAdhesion->setDoctor($doctor);
+                                    else
+                                    {
+                                        $FFMKRAdhesion
+                                            ->setDoctor($doctor)
+                                            ->setRequestToken('chez-kivid-avant')
+                                        ;
+                                    }
                                 }
         
                                 $isFFMKRAdhesionCreation = true;   

@@ -1167,7 +1167,7 @@ body .kiv-block .prescri-process-dialog.prescri-process-dialog-patient {
     top: -2.8rem;
 }
 
-body .kiv-block .prescri-process-dialog::after {
+body .kiv-block .prescri-process-dialog:not(.click-to-tab):not(.click-to-plus)::after {
     @media (max-width: 799px) {
         border-top: none;
         border-bottom: 20px solid #222e54;
@@ -1405,6 +1405,7 @@ body .kiv-block .prescri-process-dialog::after {
                         background: #ece8e0;
                         min-width: 7.5rem;
                         max-width: 9.8rem;
+                        overflow: hidden;
 
                         @media (min-width: 500px) {
                             max-width: 11.8rem;

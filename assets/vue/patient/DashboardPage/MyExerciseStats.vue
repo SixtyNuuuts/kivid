@@ -1207,6 +1207,7 @@ export default {
             cursor: pointer;
             border: none;
             background: transparent;
+            white-space: nowrap;
 
             .line-color {
                 width: 10px;

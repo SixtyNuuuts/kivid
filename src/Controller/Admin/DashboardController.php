@@ -59,7 +59,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Patients', 'fas fa-user', Patient::class);
         yield MenuItem::linkToCrud('Praticiens', 'fas fa-user-nurse', Doctor::class);
         yield MenuItem::linkToCrud('Tags', 'fas fa-tags', Tag::class);
-        yield MenuItem::linkToCrud('Tags Groupes', 'fas fa-tags', TagGroup::class);
+        // yield MenuItem::linkToCrud('Tags Groupes', 'fas fa-tags', TagGroup::class);
         yield MenuItem::linkToCrud('Options', 'fas fa-list-ul', Option::class);
         yield MenuItem::linkToCrud('Parties du corps', 'fas fa-child', PartOfBody::class);
         yield MenuItem::linkToCrud('Vidéos', 'fab fa-youtube', Video::class);

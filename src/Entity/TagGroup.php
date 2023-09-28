@@ -17,7 +17,7 @@ class TagGroup
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"video_read"})
+     * @Groups({"video_read", "dashboard_worksheet_read"})
      */
     private $id;
 

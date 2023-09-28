@@ -125,10 +125,9 @@
         <div
             v-if="patientHasNoDoctorChoice"
         >
-        	<!-- <vue-calendly url="https://calendly.com/rendez-vous-kivid/30min?hide_gdpr_banner=1" :height="1200"></vue-calendly> -->
             <CalendlyRdV
                 :patient="patient"
-                :eventUrl="'https://calendly.com/sixty-nuuuts/30min?hide_gdpr_banner=1'"
+                :eventUrl="'https://calendly.com/rendez-vous-kivid/30min?hide_gdpr_banner=1'"
                 :height="1200"
                 :context="'inscription'"
             ></CalendlyRdV>

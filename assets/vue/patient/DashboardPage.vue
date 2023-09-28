@@ -235,11 +235,10 @@
                                                 </ul>
                                             </div>
                                             <div class="doctor-kivid-details-rdv" v-else>
-                                                <!-- https://calendly.com/rendez-vous-kivid/30min -->
                                                 <vs-button
                                                     size="mini"
                                                     class="calendly-create-event"
-                                                    @click="openModalCalendlyEvent('https://calendly.com/sixty-nuuuts/30min')"
+                                                    @click="openModalCalendlyEvent('https://calendly.com/rendez-vous-kivid/30min')"
                                                 >
                                                     <i class="far fa-calendar-plus"></i> Prendre un rendez-vous
                                                 </vs-button>

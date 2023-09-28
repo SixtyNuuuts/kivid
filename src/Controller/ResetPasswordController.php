@@ -9,12 +9,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
 use SymfonyCasts\Bundle\ResetPassword\Controller\ResetPasswordControllerTrait;
 use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
-use Symfony\Component\Mime\Address;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Mime\Address;
+use Symfony\Component\Mime\Header\PathHeader;
 
 /**
  * @Route("/reset-password")
@@ -156,6 +157,9 @@ class ResetPasswordController extends AbstractController
                 ])
             ;
 
+            $email->getHeaders()->addTextHeader('List-Unsubscribe', '<mailto:contact@kivid.fr>');
+            $email->getHeaders()->add(new PathHeader('Return-Path', new Address('contact@kivid.fr', '"Kivid Contact"')));
+    
             $mailer->send($email);
 
             // Store the token object in session for retrieval in check-email route.

@@ -78,6 +78,60 @@
                     />
                 </transition>
                 <aside>
+                    <section class="kiv-block first-worksheet-process" v-if="!loadingDoctorFirstsWorksheets && !getWorksheetTemplates.length">
+                        <transition name="fade">
+                            <div
+                                v-if="firstWorksheetProcess && activeTab == 1"
+                                class="prescri-process-dialog click-to-tab"
+                            >
+                                <span class="step-num"
+                                    ><i class="fas fa-folder-plus"></i>
+                                    <span class="step-title">Créer ma première fiche</span>
+                                </span>
+                                <p>
+                                    Cliquez sur l'onglet "Mes&nbsp;fiches"
+                                </p>
+                            </div>
+                        </transition>
+                        <transition name="fade">
+                            <div
+                                v-if="firstWorksheetProcess && activeTab == 2"
+                                class="prescri-process-dialog click-to-plus"
+                            >
+                                <span class="step-num"
+                                    ><i class="fas fa-folder-plus"></i>
+                                    <span class="step-title">Créer ma première fiche</span>
+                                </span>
+                                <p>
+                                    Cliquez sur le bouton "+"
+                                </p>
+                            </div>
+                        </transition>
+                        <vs-button
+                            class="w-100 parallax-top"
+                            :class="{active:firstWorksheetProcess}"
+                            @click="toggleFirstWorksheetProcess"
+                        >
+                            <span v-if="!firstWorksheetProcess">Créer ma première fiche</span>
+                            <span v-else>Annuler</span>
+                        </vs-button>
+                    </section>
+                    <div class="kiv-block trigger-worksheet-store-process" v-if="!loadingDoctorFirstsWorksheets && getWorksheetTemplates.length < 4">
+                        <transition name="fade">
+                            <div
+                                v-if="firstWorksheetTriggerAfterStoreProcess && activeTab == 2"
+                                class="prescri-process-dialog click-to-plus"
+                            >
+                                <span class="step-num"
+                                    ><i class="fas fa-folder-plus"></i>
+                                    <span class="step-title">Créer une fiche</span>
+                                </span>
+                                <p>
+                                    Vous pouvez également créer une fiche
+                                </p>
+                            </div>
+                        </transition>
+                    </div>
                     <MyDashboardNotifications
                         :doctor="doctor"
                         class="desktop-view"
@@ -136,7 +190,10 @@ export default {
             prescriProcessWorksheetsSelected: null,
             btnLoadingPatientPrescriProcessRedirect: null,
             btnLoadingWorksheetPrescriProcessRedirect: false,
-            prescriProcessStartOrigin: 'patient'
+            prescriProcessStartOrigin: 'patient',
+            worksheetStoreAdded: false,
+            firstWorksheetProcess: false,
+            firstWorksheetTriggerAfterStoreProcess: false
         };
     },
     computed: {
@@ -265,11 +322,26 @@ export default {
         },
         addWorksheetStore(worksheets)
         {
+            this.worksheetStoreAdded = true;
+            this.firstWorksheetTriggerAfterStoreProcess = true;
+
             this.doctorWorksheets = [...worksheets,...this.doctorWorksheets];
 
             this.tagsFromExercises = f.generateTagsFromExercises(
                 this.doctorWorksheets
             );
+
+            this.$bus.$emit('addWorksheetStoreTriggered', true);
+
+            setTimeout(() => {
+                this.worksheetStoreAdded = false;
+            }, 2000);
+            setTimeout(() => {
+                this.firstWorksheetTriggerAfterStoreProcess = false;
+            }, 6000);
+        },
+        toggleFirstWorksheetProcess() {
+            this.firstWorksheetProcess = !this.firstWorksheetProcess;
         }
     },
     created() {

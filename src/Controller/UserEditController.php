@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\FFMKRAdhesion;
 use App\Repository\DoctorRepository;
 use App\Repository\PatientRepository;
+use App\Repository\FFMKRAdhesionRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -32,7 +34,8 @@ class UserEditController extends AbstractController
     public function settingsUserEdit(
         Request $request,
         SluggerInterface $slugger,
-        UserPasswordHasherInterface $passwordHasher
+        UserPasswordHasherInterface $passwordHasher,
+        FFMKRAdhesionRepository $FFMKRAdhesionRepository
     ): Response {
         $user = $this->getUser();
         $userType = null;
@@ -81,12 +84,19 @@ class UserEditController extends AbstractController
                 if ($data->email !== $user->getEmail()) {
                     $patientWithThisEmail = $this->patientRepository->findOneBy(['email' => $data->email]);
                     $doctorWithThisEmail = $this->doctorRepository->findOneBy(['email' => $data->email]);
-
+    
                     if ($patientWithThisEmail || $doctorWithThisEmail) {
                         return $this->json(
                             'Cet email est déjà utilisé par un membre, veuillez en entrer un autre',
                             500,
                         );
+                    }
+
+                    if ($userType === 'doctor') {
+                        $userFFMKRAdhesion = $FFMKRAdhesionRepository->findOneBy(['email'=> $data->email]);
+                        if($userFFMKRAdhesion instanceof FFMKRAdhesion && !$userFFMKRAdhesion->getDoctor()) {    
+                            $userFFMKRAdhesion->setDoctor($user);
+                        }
                     }
 
                     $user->setEmail($data->email);
