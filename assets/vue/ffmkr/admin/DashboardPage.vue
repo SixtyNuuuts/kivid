@@ -25,7 +25,8 @@
                     >
                         <i class="kiv-chevron-down icon-3"></i>
                     </button>
-                    <h2>Adhesions FFMKR <span v-if="!loadingFFMKRAdhesions">({{ FFMKRAdhesions.length }} adhérents)</span></h2>
+                    <!-- <h2>Adhesions FFMKR <span v-if="!loadingFFMKRAdhesions">({{ FFMKRAdhesions.length }} adhérents - {{ getFFMKRAdhInscrits }} inscrits sur Kivid - {{ getFFMKRAdhDepuisKivid }} adhesions depuis Kivid)</span></h2> -->
+                    <h2>Adhesions FFMKR <span v-if="!loadingFFMKRAdhesions">({{ FFMKRAdhesions.length }} adhérents - {{ getFFMKRAdhInscrits }} inscrits)</span></h2>
                     <transition name="height">
                         <div v-if="FFMKRAdhesionsContent">
                             <div class="primary-actions">
@@ -75,10 +76,10 @@
                                                 <vs-th sort @click="sortData($event, FFMKRAdhesions, 'numRpps')">
                                                     Num RPPS
                                                 </vs-th>
-                                                <vs-th sort @click="sortData($event, FFMKRAdhesions, 'dateOf')">
+                                                <!-- <vs-th sort @click="sortData($event, FFMKRAdhesions, 'dateOf')">
                                                     Date De
-                                                </vs-th>
-                                                <vs-th sort @click="sortData($event, FFMKRAdhesions, 'dateOf')" class="max-w-12rem">
+                                                </vs-th> -->
+                                                <vs-th sort @click="sortData($event, FFMKRAdhesions, 'doctor')" class="max-w-12rem">
                                                     Statut Kivid
                                                 </vs-th>
                                                 <vs-th sort @click="sortData($event, FFMKRAdhesions, 'requestToken')" class="max-w-6-5rem">
@@ -107,9 +108,9 @@
                                                 <vs-td>
                                                     {{ adhesion.numRpps ? adhesion.numRpps : '---' }}
                                                 </vs-td>
-                                                <vs-td>
+                                                <!-- <vs-td>
                                                     {{ adhesion.dateOf ? adhesion.dateOf : '---' }}
-                                                </vs-td>
+                                                </vs-td> -->
                                                 <vs-td>
                                                     <div class="status" v-if="adhesion.doctor">
                                                         <div class="icon-active-status"></div>
@@ -228,6 +229,12 @@ export default {
                 this.max
             );
         },
+        getFFMKRAdhInscrits() {
+            return this.FFMKRAdhesions.filter(a=>a.doctor).length;
+        },
+        getFFMKRAdhDepuisKivid() {
+            return this.FFMKRAdhesions.filter(a=>a.requestToken).length;
+        }
     },
     methods: {
         getFFMKRAdhesionsData() {

@@ -60,7 +60,7 @@
                 </span> -->
                 <p>
                     <span v-if="getWorksheetTemplates.length">et / ou sélectionnez</span
-                    ><span v-else>Sélectionnez</span> <span class="only-mobile">avec le bouton "+"</span> le nombre de prescriptions que vous souhaitez créer&nbsp;de&nbsp;zéro<span class="only-mobile"> ou ajoutez des fiches du magasin</span><span v-if="!getWorksheetTemplates.length">, puis&nbsp;validez avec l'un des boutons de prescription</span>
+                    ><span v-else>Sélectionnez</span> <span class="only-mobile">avec le bouton "+"</span> le nombre de prescriptions que vous souhaitez créer&nbsp;de&nbsp;zéro<span class="only-mobile"> ou ajoutez des fiches du magasin</span><span v-if="!getWorksheetTemplates.length">, puis&nbsp;validez avec l'un des boutons de prescription <span class="only-mobile">ci-dessous</span></span>
                 </p>
             </div>
         </transition>
@@ -154,39 +154,23 @@
                             />
                         </div> -->
                     </div>
-                    <div class="kiv-select tags" v-if="getWorksheetTemplates.length">
-                        <vs-select
-                            class="tags-context"
-                            v-if="Object.keys(getTagsFromAll).length"
-                            filter
-                            multiple
-                            placeholder="Mots-Clés"
-                            v-model="selectedTags"
-                            @change="page = 1"
-                            @input="selectTag()"
-                        >
-                            <vs-option-group
-                                v-for="(tags, tagGroupName) in getTagsFromAll"
-                                :key="tagGroupName"
-                            >
-                                <div slot="title">
-                                    {{tagGroupName}}
-                                </div>
-                                <vs-option
-                                    v-for="(tag, i) in tags"
-                                    :key="i"
-                                    :label="tag"
-                                    :value="tag"
-                                >
-                                    {{ tag }}
-                                </vs-option>
-                            </vs-option-group>
-                            <template slot="notData">
-                                Aucun mot-clé
-                            </template>
-                        </vs-select>
-                        <div v-else class="loading select-tags"></div>
-                    </div>  
+                    <treeselect 
+                        @input="page = 1" 
+                        v-if="this.$parent.doctorWorksheets.length" 
+                        class="worksheet-keywords" 
+                        v-model="selectedTags" 
+                        :multiple="true" 
+                        :disable-branch-nodes="true" 
+                        :options="getTagsFromAll" 
+                        noResultsText="Aucun mot-clé ne correspond." 
+                        placeholder="Mots-Clés"
+                        :show-count="true"
+                    >
+                        <label slot="option-label" slot-scope="{ node, shouldShowCount, count, labelClassName, countClassName }" :class="labelClassName">
+                            {{ node.label }}
+                            <span v-if="shouldShowCount"><span class="selected-tags-nb" :class="{'selected-tags-nb-disabled': getNbChildOptionSelected(node.label)==0}">{{ getNbChildOptionSelected(node.label) }}</span></span>
+                        </label>
+                    </treeselect>
                     <div class="btn-primary-action add">
                         <transition name="fade" mode="out-in">
                             <vs-tooltip v-if="!$parent.prescriProcess">
@@ -1100,6 +1084,7 @@ import f from "../../services/function";
 import TagPartOfBody from "../../components/TagPartOfBody.vue";
 import moment from "moment";
 import { PlusIcon } from "vue-feather-icons";
+import Treeselect from '@riophae/vue-treeselect'
 
 export default {
     props: {
@@ -1115,6 +1100,7 @@ export default {
     components: {
         TagPartOfBody,
         PlusIcon,
+        Treeselect
     },
     data() {
         return {
@@ -1148,29 +1134,41 @@ export default {
         publicWorksheetBaseUrl()
         {
             return `${window.location.protocol}//${window.location.host}/fiche`;
+        },
+        totalSelectedChildrenForObjectif() {
+            return this.getNbChildOptionSelectedByParentOptionLabel('Objectif');
+        },
+        totalSelectedChildrenForCible() {
+            return this.getNbChildOptionSelectedByParentOptionLabel('Cible');
+        },
+        totalSelectedChildrenForTypeDeContraction() {
+            return this.getNbChildOptionSelectedByParentOptionLabel('Type de contraction');
+        },
+        totalSelectedChildrenForTypeDeMouvement() {
+            return this.getNbChildOptionSelectedByParentOptionLabel('Type de mouvement');
+        },
+        totalSelectedChildrenForSpecialite() {
+            return this.getNbChildOptionSelectedByParentOptionLabel('Spécialité');
         }
     },
     watch: {
         worksheetTemplates() {
             this.page = 1;
         },
+        getWorksheetTemplates(v) {
+            if(this.selectedTags.length || this.$parent.worksheetStoreAdded)
+                this.currentOpenWorksheet = this.getWorksheetTemplates.length ? this.getWorksheetTemplates[0].id : null;        },
     },
     methods: {
-        selectTag() {
-            if (!this.inputChips) {
-                this.inputChips = document.querySelector(
-                    ".vs-select__chips__input"
-                );
-            }
-
-            this.inputChips.focus();
-            this.inputChips.blur();
+        getNbChildOptionSelected(nodeLabel) {
+            return nodeLabel == 'Objectif' ? this.totalSelectedChildrenForObjectif : (nodeLabel == 'Cible' ? this.totalSelectedChildrenForCible : (nodeLabel == 'Type de contraction' ? this.totalSelectedChildrenForTypeDeContraction : (nodeLabel == 'Type de mouvement' ? this.totalSelectedChildrenForTypeDeMouvement : (nodeLabel == 'Spécialité' ? this.totalSelectedChildrenForSpecialite : '...'))));
+        },
+        getNbChildOptionSelectedByParentOptionLabel(parentOptionLabel) {
+            return this.getTagsFromAll.find(o => o.label === parentOptionLabel).children.filter(co => this.selectedTags.includes(co.id)).length;
         },
         prescriProcessWorksheetChoice(worksheetsIds,prescriptionType=null) {
             if(this.$parent.prescriProcessPatientSelected&&(!prescriptionType||(prescriptionType==='direct'&&!worksheetsIds.filter(w=>w==null).length)))
                 this.$emit("prescriProcessWorksheetChoice", {worksheetsIds,prescriptionType});
-            // else
-            //     this.activeTab(1); 
         },
         redirectToEditPage(worksheetId) {
             document.location.href = `/doctor/${this.doctor.id}/fiche/edition/${worksheetId}`;
@@ -1366,7 +1364,17 @@ export default {
                 })
                 .catch((e)=>console.log(e));
             }
+        },
+        handleEventAddWorksheetStore() {
+            this.page = 1;
+            this.selectedTags = [];
         }
+    },
+    created() {
+        this.$bus.$on('addWorksheetStoreTriggered', this.handleEventAddWorksheetStore);
+    },
+    beforeDestroy() {
+        this.$bus.$off('addWorksheetStoreTriggered', this.handleEventAddWorksheetStore);
     },
 };
 </script>
@@ -1413,24 +1421,28 @@ body .kiv-block .prescri-process-dialog.prescri-process-dialog-select-worksheet 
 }
 
 body .kiv-block .prescri-process-dialog.prescri-process-dialog-create-worksheet {
-    top: -5.3rem;
-    right: 1.6rem;
-    padding-top: 0.2rem;
-    width: 14.5rem;
+    @media (min-width: 799px) {
+        top: -5.3rem;
+        right: 1.6rem;
+        padding-top: 0.2rem;
+        width: 14.5rem;
 
-    &::after {
-        left: 85%;
+        &::after {
+            left: 85%;
+        }
     }
 }
 
 body .kiv-block .prescri-process-dialog.prescri-process-dialog-create-worksheet.no-ws {
-    top: -6.9rem;
-    right: 1.2rem;
-    padding-top: 0.2rem;
-    width: 17.4rem;
+    @media (min-width: 799px) {
+        top: -6.9rem;
+        right: 1.2rem;
+        padding-top: 0.2rem;
+        width: 17.4rem;
 
-    &::after {
-        left: 85%;
+        &::after {
+            left: 85%;
+        }
     }
 }
 
@@ -1576,6 +1588,13 @@ body .btn-create-action .vs-button
             width: 100%;
             height: 4.3rem;
             background: #f9f9f9;
+        }
+    }
+
+    .worksheet-keywords
+    {
+        @media (max-width: 799px) {
+            order: 3;
         }
     }
 

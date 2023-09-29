@@ -16,6 +16,7 @@ use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Controller\RedirectFromIsGrantedTrait;
+use App\Repository\DoctorRepository;
 
 /**
  * @Route("/doctor")
@@ -102,12 +103,21 @@ class PatientController extends AbstractController
      * @Route("/{id}/create/patient", name="app_doctor_create_patient", methods={"POST"})
      * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
-    public function createPatient(Request $request, Doctor $doctor): JsonResponse
+    public function createPatient(Request $request, Doctor $doctor, DoctorRepository $doctorRepository): JsonResponse
     {
         if ($request->isMethod('post')) {
             $data = json_decode($request->getContent());
 
             if ($this->isCsrfTokenValid('create_patient' . $doctor->getId(), $data->_token)) {
+                $doctorWithThisEmail = $doctorRepository->findOneBy(['email' => $data->email]);
+
+                if ($doctorWithThisEmail) {
+                    return $this->json(
+                        'Cet email est déjà utilisé par un praticien',
+                        500,
+                    );
+                }
+
                 $patient = new Patient();
                 $patient->setFirstname($data->firstname);
                 $patient->setLastname($data->lastname);

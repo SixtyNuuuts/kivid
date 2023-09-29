@@ -84,6 +84,12 @@ class Doctor extends User
     private $giveAccessAddFreePatient;
 
     /**
+    * @ORM\Column(type="boolean", nullable=true)
+    * @Groups({"doctor_read"})
+    */
+    private $premium;
+
+    /**
      * @ORM\OneToOne(targetEntity=FFMKRAdhesion::class, inversedBy="doctor", cascade={"persist", "remove"})
      * @Groups({"doctor_read"})
      */
@@ -310,6 +316,18 @@ class Doctor extends User
     public function setGiveAccessAddFreePatient(?bool $giveAccessAddFreePatient): self
     {
         $this->giveAccessAddFreePatient = $giveAccessAddFreePatient;
+
+        return $this;
+    }
+
+    public function isPremium(): ?bool
+    {
+        return $this->premium;
+    }
+
+    public function setPremium(?bool $premium): self
+    {
+        $this->premium = $premium;
 
         return $this;
     }

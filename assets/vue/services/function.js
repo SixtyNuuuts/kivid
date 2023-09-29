@@ -5,35 +5,56 @@ export default {
 
   getTagsFromAllVideos(videos) {
     return videos.reduce((r, video) => {
-      video.tags.forEach((tag) => {
-        if(tag && tag.tagGroup && !(tag.tagGroup.name in r))
-          r[tag.tagGroup.name] = [];
-        if(tag && tag.tagGroup && !r[tag.tagGroup.name].includes(tag.name)) {
-          r[tag.tagGroup.name].push(tag.name);
-        }
-      });
-
-      const 
-        keyOrder = ['Objectif', 'Cible', 'Type de contraction', 'Type de mouvement', 'Spécialité'],
-        rSorted = {}
-      ;
-
-      keyOrder.forEach(key => {
-        if (r[key]) {
-          rSorted[key] = r[key];
-        }
-      });
-
-      return rSorted;
-    }, {});
+		video.tags.forEach((tag) => {
+		  if(tag && tag.tagGroup)
+		  {
+			  let tagGroupIntoR = r.length ? r.find(tg=>tg.id==tag.tagGroup.id) : null;
+  
+			  if(!tagGroupIntoR)
+			  {
+				  tagGroupIntoR = {
+					  id: tag.tagGroup.id,
+					  label: tag.tagGroup.name,
+					  children: [],
+				  };
+  
+				  r.push(tagGroupIntoR);
+			  }
+			  
+			  let tagIntotagGroup = tagGroupIntoR.children.length ? tagGroupIntoR.children.find(t=>t.id==tag.name) : null;
+			  if(!tagIntotagGroup)
+			  {
+				  tagGroupIntoR.children.push({
+					  id: tag.name,
+					  label: tag.name,
+				  });
+			  }
+			  }
+		  });
+  
+		  r.sort((a, b) => a.id - b.id);
+		  r.forEach(item => {
+			  item.children.sort((a, b) => a.label.localeCompare(b.label));
+		  });
+			
+		return r;
+	  }, []);
   },
 
   getLibrariesFromAllVideos(videos) {
     return videos.reduce((r, video) => {
-      if (!r.filter(vl=>vl.reference===video.videoLibrary.reference).length) {
-        r.push(video.videoLibrary);
-      }
-      return r;
+		let videoLibraryIntoR = r.length ? r.find(vl=>vl.id==video.videoLibrary.name) : null;
+		if(!videoLibraryIntoR)
+		{
+			r.push({
+				id: video.videoLibrary.name,
+				label: video.videoLibrary.name,
+				order: video.videoLibrary.reference === 'kivid' ? 1 : (video.videoLibrary.reference === 'ffmkr' ? 2 : 3)
+			});
+		}
+
+		r.sort((a, b) => a.order - b.order);
+		return r;
     }, []);
   },
 
@@ -41,26 +62,40 @@ export default {
     return tagsFromExercises.reduce((r, exercise) => {
       Object.keys(exercise).forEach((tagKey) => {
         const tag = exercise[tagKey];
-        if(tag.tagGroup && !(tag.tagGroup.name in r))
-          r[tag.tagGroup.name] = [];
-        if(tag.tagGroup && !r[tag.tagGroup.name].includes(tag.name)) {
-          r[tag.tagGroup.name].push(tag.name);
-        }
-      });
 
-      const 
-        keyOrder = ['Objectif', 'Cible', 'Type de contraction', 'Type de mouvement', 'Spécialité'],
-        rSorted = {}
-      ;
-
-      keyOrder.forEach(key => {
-        if (r[key]) {
-          rSorted[key] = r[key];
-        }
-      });
-
-      return rSorted;
-    }, {});
+        if(tag.tagGroup)
+        {
+          let tagGroupIntoR = r.length ? r.find(tg=>tg.id==tag.tagGroup.id) : null;
+    
+          if(!tagGroupIntoR)
+          {
+            tagGroupIntoR = {
+              id: tag.tagGroup.id,
+              label: tag.tagGroup.name,
+              children: [],
+            };
+    
+            r.push(tagGroupIntoR);
+          }
+          
+          let tagIntotagGroup = tagGroupIntoR.children.length ? tagGroupIntoR.children.find(t=>t.id==tag.name) : null;
+          if(!tagIntotagGroup)
+          {
+            tagGroupIntoR.children.push({
+              id: tag.name,
+              label: tag.name,
+            });
+          }
+          }
+        });
+    
+        r.sort((a, b) => a.id - b.id);
+        r.forEach(item => {
+          item.children.sort((a, b) => a.label.localeCompare(b.label));
+        });
+        
+      return r;
+    }, []);
   },
 
   generateTagsFromExercises(worksheets) {
@@ -382,11 +417,6 @@ export default {
     });
 
     function compare(a, b) {
-      if ('numcli' === sortKey) {
-        a[sortKey] = parseInt(a[sortKey]);
-        b[sortKey] = parseInt(b[sortKey]);
-      }
-
       let sortKeyA = sortKey;
       let sortKeyB = sortKey;
       let sortKeySplitA = sortKey.split('.');
@@ -410,11 +440,19 @@ export default {
         valueB = valueB.length;
       }
 
-      let valueAOrNull = valueA !== null ? valueA : 'z';
-      let valueBOrNull = valueB !== null ? valueB : 'z';
+      let valueAOrNull = valueA == null ? 'z' : ('object' == typeof valueA ? 'a' : valueA);
+      let valueBOrNull = valueB == null ? 'z' : ('object' == typeof valueB ? 'a' : valueB);
 
       let valueAToLowerCaseOrBool = ('boolean' == typeof valueAOrNull) || ('number' == typeof valueAOrNull) ? valueAOrNull : valueAOrNull.toLowerCase();
       let valueBToLowerCaseOrBool = ('boolean' == typeof valueBOrNull) || ('number' == typeof valueBOrNull) ? valueBOrNull : valueBOrNull.toLowerCase();
+
+      if ('numcli' === sortKey && parseInt(valueAToLowerCaseOrBool) < parseInt(valueBToLowerCaseOrBool)) {
+        return sortType !== 'desc' ? 1 : -1;
+      }
+
+      if ('numcli' === sortKey && parseInt(valueAToLowerCaseOrBool) > parseInt(valueBToLowerCaseOrBool)) {
+        return sortType !== 'desc' ? -1 : 1;
+      }
 
       if (valueAToLowerCaseOrBool < valueBToLowerCaseOrBool) {
         return sortType !== 'desc' ? 1 : -1;
