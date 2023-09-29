@@ -377,7 +377,7 @@
     }
 
     .primary-actions {
-        margin-bottom: 0.9rem;
+        margin-bottom: 1.2rem;
         .btn-primary-action.add
         {
             margin-top: 0.6rem !important;
@@ -419,15 +419,15 @@
     &.s-prescriptions,
     &.s-worksheet-templates
     {
-        @media (min-width: 580px) {
+        // @media (min-width: 580px) {
+        //     .primary-actions {
+        //         margin-bottom: 1.6rem;
+        //         margin-top: 1rem;
+        //     }
+        // }
+        @media (min-width: 799px) {
             .primary-actions {
-                margin-bottom: 1.6rem;
-                margin-top: 1rem;
-            }
-        }
-        @media (min-width: 800px) {
-            .primary-actions {
-                margin-bottom: 1.5rem;
+                margin-bottom: 1.5rem !important;
                 margin-top: 0;
             }
         }

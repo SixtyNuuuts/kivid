@@ -129,7 +129,7 @@ body {
         }
     }
 
-    .kiv-block .prescri-process-dialog {
+    .kiv-block .prescri-process-dialog:not(.click-to-tab):not(.click-to-plus) {
         @media (max-width: 799px) {
             position: fixed !important;
             top: auto !important;
@@ -442,6 +442,218 @@ body {
         position: relative;
         width: 100%;
         min-width: 48%;
+
+        &.first-worksheet-process, &.trigger-worksheet-store-process {
+            position: initial;
+            margin-top: 1.5rem;
+            margin-bottom: 0.9rem;
+
+            .vs-button {
+                background-image: url("../img/homepage/background2.png");
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                width: 100%;
+                height: 100%;
+                background-repeat: no-repeat;
+                background-size: cover;
+                background-position: 56% 55%;
+                animation: mymove2 3.5s infinite;
+
+                &.active
+                {
+                    background-color: #ffd2bf  !important;
+                    color: #fb8b68;
+                    animation: none;
+                    box-shadow: none !important;
+
+                    &:hover, &:focus {
+                        background-color: #ffd2bf  !important;
+                    }    
+                }
+
+                @keyframes mymove2 {
+                    50% {
+                        box-shadow: 0rem 0.4rem 2rem 0rem rgba(237, 87, 17, 0.7 );
+                    }
+                }
+            
+                &:hover, &:focus {
+                    background-color: #fb8b68 !important;
+                    transform: none !important;
+                }
+            }
+
+            @media (max-width: 799px) {
+                padding: 0;
+                padding-left: 2rem !important;
+                padding-right: 2rem !important;
+                margin-top: 1.2rem;
+                margin-bottom: 1rem;
+                background-color: transparent;
+                box-shadow: none;
+            }
+
+            @media (min-width: 1100px) {
+                position: relative;
+                padding: 2rem;
+                margin-top: 0;
+                margin-bottom: 1.9rem;
+            }
+
+            .prescri-process-dialog {
+                width: 19rem;   
+
+                @media (min-width: 799px) {
+                    width: 18.2rem                
+                }
+
+                .step-num i {
+                    margin-right: 0.5rem;
+
+                    @media (min-width: 799px) {
+                        margin-right: 0.2rem;
+                    }    
+                }
+
+                &.click-to-tab
+                {
+                    top: auto;
+                    left: 49%;
+                    bottom: 9rem;
+                    animation: rebond 5s linear;
+                    position: fixed;
+
+                    @media (max-width: 400px) {
+                        left: 43%;
+                    }   
+
+                    @media (min-width: 799px) {
+                        top: 7.3rem;
+                        bottom: auto;
+                        left: 65%;
+                        position: absolute;
+                    }   
+
+                    @media (min-width: 1100px) {
+                        top: -9.7rem;
+                        left: -74%;
+                    }
+        
+                }
+
+                &.click-to-plus
+                {
+                    top: 7.6rem;
+                    right: 7.8rem;
+                    left: auto;
+                    animation: rebondX 5s linear;
+
+                    &::after {
+                        bottom: 2rem;
+                        left: 99%;
+                        transform: translateX(-50%) rotate(270deg);
+                    }
+
+                    @media (min-width: 799px) {
+                        top: 23rem;
+                        right: 10.5rem;
+                    }
+                
+                    @media (min-width: 1100px) {
+                        top: 5.8rem;
+                        left: -27.9rem;
+                        right: auto;   
+                    }
+                }
+            
+                @keyframes rebond {
+                    0% {
+                        transform: translateY(0);
+                    }
+
+                    5% {
+                        transform: translateY(-10px);
+                    }
+
+                    10% {
+                        transform: translateY(0);
+                    }
+
+                    15% {
+                        transform: translateY(-10px);
+                    }
+
+
+                    20%, 100% {
+                        transform: translateY(0);
+                    }
+                }
+
+                @keyframes rebondX {
+                    0% {
+                        transform: translateX(0);
+                    }
+
+                    5% {
+                        transform: translateX(-10px);
+                    }
+
+                    10% {
+                        transform: translateX(0);
+                    }
+
+                    15% {
+                        transform: translateX(-10px);
+                    }
+
+
+                    20%, 100% {
+                        transform: translateX(0);
+                    }
+                }
+            }
+        }
+
+        &.trigger-worksheet-store-process
+        {
+            padding: 0;
+            background: transparent;
+            box-shadow: none;
+            margin: 0;
+
+            .prescri-process-dialog {
+                width: 17.2rem;
+
+                .step-num {
+                    @media (max-width: 799px) {
+                        display: inline-flex !important;
+                    }    
+                }
+
+                &.click-to-plus
+                {
+                    top: 6.9rem;
+                    right: 8rem;
+
+                    &::after {
+                        bottom: 2.8rem;
+                    }
+
+                    @media (min-width: 799px) {
+                        top: 22.3rem;
+                        right: 10.1rem;
+                    }
+                
+                    @media (min-width: 1100px) {
+                        top: 5rem;
+                        left: -26.9rem;
+                    }
+                }
+            }
+        }
+
 
         .prescri-process-dialog {
             position: absolute;
