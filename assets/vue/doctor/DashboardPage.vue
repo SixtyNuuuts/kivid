@@ -333,12 +333,14 @@ export default {
 
             this.$bus.$emit('addWorksheetStoreTriggered', true);
 
+            window.scrollTo({ top: 0, behavior: "smooth" });
+
             setTimeout(() => {
                 this.worksheetStoreAdded = false;
             }, 2000);
             setTimeout(() => {
                 this.firstWorksheetTriggerAfterStoreProcess = false;
-            }, 6000);
+            }, 7000);
         },
         toggleFirstWorksheetProcess() {
             this.firstWorksheetProcess = !this.firstWorksheetProcess;

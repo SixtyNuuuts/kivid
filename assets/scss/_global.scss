@@ -524,7 +524,11 @@ body {
                     bottom: 9rem;
                     animation: rebond 5s linear;
                     position: fixed;
-    
+
+                    @media (max-width: 400px) {
+                        left: 43%;
+                    }   
+
                     @media (min-width: 799px) {
                         top: 7.3rem;
                         bottom: auto;
