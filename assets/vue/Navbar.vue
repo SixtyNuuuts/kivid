@@ -136,6 +136,7 @@
                                                 <span v-if="'user' === e.type">
                                                     {{ e.content }}
                                                 </span>
+                                                <span v-if="'link' === e.type" v-html="e.content"></span>
                                             </span>
                                         </span>
                                     </p>
@@ -754,6 +755,10 @@ export default {
                                     display: flex;
                                     align-items: center;
                                     font-size: 1.4rem;
+                                }
+
+                                .link-btn {
+                                    color: #fb8b68;
                                 }
                             }
                         }

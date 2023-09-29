@@ -6,7 +6,9 @@ use App\Entity\Doctor;
 use App\Entity\Exercise;
 use App\Entity\Worksheet;
 use App\Entity\Commentary;
+use App\Service\UserService;
 use App\Repository\VideoRepository;
+use Symfony\Component\Mime\Address;
 use App\Repository\DoctorRepository;
 use App\Service\NotificationService;
 use App\Repository\PatientRepository;
@@ -15,14 +17,18 @@ use App\Repository\WorksheetRepository;
 use App\Repository\CommentaryRepository;
 use App\Repository\PartOfBodyRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Header\PathHeader;
+use App\Controller\RedirectFromIsGrantedTrait;
 use App\Repository\WorksheetSessionRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Controller\RedirectFromIsGrantedTrait;
 
 /**
  * @Route("/doctor")
@@ -40,6 +46,8 @@ class WorksheetController extends AbstractController
     private $notificationService;
     private $em;
     private $commentaryRepository;
+    private $mailer;
+    private $userService;
 
     public function __construct(
         PatientRepository $patientRepository,
@@ -50,6 +58,8 @@ class WorksheetController extends AbstractController
         NotificationService $notificationService,
         PartOfBodyRepository $partOfBodyRepository,
         EntityManagerInterface $em,
+        MailerInterface $mailer,
+        UserService $userService,
         CommentaryRepository $commentaryRepository
     ) {
         $this->patientRepository = $patientRepository;
@@ -60,6 +70,8 @@ class WorksheetController extends AbstractController
         $this->partOfBodyRepository = $partOfBodyRepository;
         $this->notificationService = $notificationService;
         $this->em = $em;
+        $this->mailer = $mailer;
+        $this->userService = $userService;
         $this->commentaryRepository = $commentaryRepository;
     }
 
@@ -303,55 +315,6 @@ class WorksheetController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/create/worksheet", name="app_doctor_create_worksheet", methods={"POST"})
-     * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
-     */
-    // public function createWorksheet(Request $request, Doctor $doctor): JsonResponse
-    // {
-    //     if ($request->isMethod('post')) {
-    //         $data = json_decode($request->getContent());
-
-    //         if ($this->isCsrfTokenValid('create_worksheet' . $doctor->getId(), $data->_token)) {
-    //             $patient = $this->patientRepository->findOneBy(['id' => $data->patientId]);
-    //             $partOfBody = $this->partOfBodyRepository->findOneBy(['id' => $data->partOfBodyId]);
-
-    //             $worksheet = new Worksheet();
-
-    //             $worksheet->setTitle($data->title)
-    //                       ->setPartOfBody($partOfBody)
-    //                       ->setDuration($data->duration)
-    //                       ->setPerWeek($data->perWeek)
-    //                       ->setPerDay($data->perDay)
-    //                       ->setPatient($patient)
-    //                       ->setDoctor($doctor)
-    //             ;
-
-    //             foreach ($data->exercises as $dataExercise) {
-    //                 $this->generateExercise($dataExercise, $worksheet, $doctor);
-    //             }
-
-    //             $this->em->persist($worksheet);
-
-    //             if ($patient) {
-    //                 $this->notificationService->createPrescriptionNotification($worksheet, $patient);
-    //             }
-
-    //             $this->em->flush();
-
-    //             return $this->json(
-    //                 "La fiche a bien été créée",
-    //                 200,
-    //             );
-    //         }
-    //     }
-
-    //     return $this->json(
-    //         "Une erreur s'est produite lors de la création de la fiche",
-    //         500,
-    //     );
-    // }
-
-    /**
      * @Route("/{id}/create/worksheets", name="app_doctor_create_worksheets", methods={"POST"})
      * @isGranted("IS_OWNER", subject="id", message="Vous n'êtes pas le propriétaire de cette ressource")
      */
@@ -445,6 +408,25 @@ class WorksheetController extends AbstractController
                     }
 
                 $this->em->flush();
+
+                if (sizeof($worksheets_for_json_response) > 0 && $patient) {
+                    $email = (new TemplatedEmail())
+                        ->from(new Address('contact@kivid.fr', '"Kivid Contact"'))
+                        ->to($patient->getEmail())
+                        ->subject((sizeof($worksheets_for_json_response) > 1 ? 'Vous avez de nouvelles fiches !' : 'Vous avez une nouvelle fiche !'))
+                        ->htmlTemplate('/patient/doctor_precri_worksheets_email.html.twig')
+                        ->context([
+                            'doctorName' => $this->userService->getUserName($doctor),
+                            'worksheets' => $worksheets_for_json_response,
+                            'patientDashboardUrl' => $this->generateUrl('app_patient_dashboard',['id' => $patient->getId(),],UrlGeneratorInterface::ABSOLUTE_URL)
+                        ])
+                    ;
+
+                    $email->getHeaders()->addTextHeader('List-Unsubscribe', '<mailto:contact@kivid.fr>');
+                    $email->getHeaders()->add(new PathHeader('Return-Path', new Address('contact@kivid.fr', '"Kivid Contact"')));
+
+                    $this->mailer->send($email);
+                }
     
                 return $this->json(
                     ['worksheets' => $worksheets_for_json_response, 'message' => (!empty($worksheets) ? sizeof($worksheets) > 1 : (!empty($data->worksheets) ? sizeof($data->worksheets) > 1 : false)) ? "Les prescriptions ont bien été créées"  : ($patient ? "La prescription a bien été créée" : "La fiche a bien été créée")]

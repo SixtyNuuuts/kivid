@@ -1,0 +1,34 @@
+{% extends 'email/emailBase.html.twig' %}
+
+{% block content %}
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tr>
+			<tr>
+				<td class="h1 pb25" style="color:#dcd4c1; font-family:'Muli', Arial,sans-serif; font-size:25px; line-height:23px; text-align:center; padding-bottom:5px;">
+				<strong>{{ doctorName }}</strong>
+				</td>
+			</tr>
+			<tr>
+				<td class="h1 pb25" style="color:#dcd4c1; font-family:'Muli', Arial,sans-serif; font-size:25px; line-height:23px; text-align:center; padding-bottom:20px;">
+					vous a prescrit {{ worksheets|length > 1 ? 'des fiches' : 'une fiche' }}
+				</td>
+			</tr>
+		</tr>
+		<tr>
+			<td class="text-center pb25" style="padding-bottom:20px;">
+				{% for worksheet in worksheets %}
+					<p class="text-center pb25" style="color:#0c2956; font-family:'Muli', Arial,sans-serif; font-size:16px; line-height:26px; text-align:center; padding-bottom:35px;">
+						- <strong>{{ worksheet.title }}</strong>
+					</p>
+				{% endfor %}
+			</td>
+		</tr>
+		<tr>
+            <td style="text-align: center;">
+				<a href="{{ patientDashboardUrl }}" target="_blank" class="link-white" style="text-decoration: none; display: inline-block; background: #fb8b68; color: #c1cddc; font-family: 'Muli', Arial,sans-serif; font-size: 14px; line-height: 18px; padding: 12px 30px; text-align: center; border-radius: 8px 8px 8px 8px; font-weight: bold;">
+					<span class="link-white" style="color:#ffffff; text-decoration:none;">Commencer</span>
+				</a>
+			</td>
+		</tr>
+	</table>
+{% endblock %}

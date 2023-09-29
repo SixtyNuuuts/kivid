@@ -128,7 +128,7 @@
             <CalendlyRdV
                 :patient="patient"
                 :eventUrl="'https://calendly.com/rendez-vous-kivid/30min?hide_gdpr_banner=1'"
-                :height="1200"
+                :height="1500"
                 :context="'inscription'"
             ></CalendlyRdV>
         </div>
@@ -388,9 +388,16 @@ export default {
 
         &.btn-prev-calendly
         {
-            @media (max-width: 730px) {
-                left: 1rem;
-                top: 7.2rem;
+            @media (max-width: 642px) {
+                left: -0.3rem;
+                top: 6.5rem;
+                background: #fff;
+                border: 1px solid #d8d8d8;         
+            }
+
+            @media (min-width: 642px) and (max-width: 799px) {
+                left: 2.3rem;
+                top: 8.9rem;
             }
         }
     }

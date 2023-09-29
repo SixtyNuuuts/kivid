@@ -161,21 +161,6 @@ class NotificationService
         Patient $patient,
         Doctor $doctor
     ): void {
-        $this->createNotification(
-            'select-doctor',
-            [
-                [
-                    'type' => 'user',
-                    'content' => "{$this->userService->getUserName($patient)}",
-                ],
-                [
-                    'type' => 'text',
-                    'content' => " vous a choisi comme praticien",
-                ],
-            ],
-            $doctor
-        );
-
         $patientPrescriptionUrl = $this->router->generate(
             'app_doctor_worksheet_action',
             [
@@ -185,6 +170,25 @@ class NotificationService
                 'patientId' => $patient->getId(),
             ],
             UrlGeneratorInterface::ABSOLUTE_URL
+        );
+
+        $this->createNotification(
+            'select-doctor',
+            [
+                [
+                    'type' => 'user',
+                    'content' => "{$this->userService->getUserName($patient)}",
+                ],
+                [
+                    'type' => 'text',
+                    'content' => " vous a choisi comme praticien ",
+                ],
+                [
+                    'type' => 'link',
+                    'content' => '<a href="'.$patientPrescriptionUrl.'" class="link-btn"><span>Prescrire</span></a>',
+                ],
+            ],
+            $doctor
         );
 
         $email = (new TemplatedEmail())
