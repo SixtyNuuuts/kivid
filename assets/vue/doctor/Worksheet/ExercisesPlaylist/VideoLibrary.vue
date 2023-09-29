@@ -560,11 +560,12 @@ export default {
     },
     created() {
         window.addEventListener("resize", this.resizeWindowEventHandler);
-
+        document.body.classList.add("vs-tooltip-inmodal");
         this.resizeWindowEventHandler();
     },
     destroyed() {
         window.removeEventListener("resize", this.resizeWindowEventHandler);
+        document.body.classList.remove("vs-tooltip-inmodal");
     },
 };
 </script>

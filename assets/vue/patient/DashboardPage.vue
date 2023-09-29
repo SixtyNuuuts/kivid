@@ -1218,10 +1218,6 @@ export default {
         scrollbar-width: thin;
         scrollbar-color: #2d3555;
 
-        @media (min-width: 1150px) {
-            overflow: hidden;
-        }
-
         > div
         {
             @media (min-width: 650px) {

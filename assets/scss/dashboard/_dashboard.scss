@@ -47,6 +47,11 @@
                 .avatar {
                     margin-right: 2rem;
 
+                    @media (max-width: 420px) {
+                        width: 96px!important;
+                        height: 96px!important;
+                    }
+
                     @media (min-width: 992px) {
                         margin-right: 1.5vw;
                     }

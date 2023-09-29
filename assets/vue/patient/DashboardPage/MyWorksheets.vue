@@ -75,7 +75,12 @@
                                 <div class="progressbar-steps">
                                     <div>
                                         <div class="point"></div>
-                                        <span>En cours</span>
+                                        <span>
+                                            <span v-if="worksheet.currentWorksheetSession && worksheet.totalWorksheetSessions">
+                                                Session n°{{ worksheet.currentWorksheetSession.execOrder }} / {{ worksheet.totalWorksheetSessions }} -
+                                            </span>
+                                            En cours
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -103,7 +108,12 @@
                                 <div class="progressbar-steps">
                                     <div>
                                         <div class="point"></div>
-                                        <span>Non démarrée</span>
+                                        <span>
+                                            <span v-if="worksheet.currentWorksheetSession && worksheet.totalWorksheetSessions">
+                                                Session n°{{ worksheet.currentWorksheetSession.execOrder }} / {{ worksheet.totalWorksheetSessions }} -
+                                            </span>
+                                            Non démarrée
+                                        </span>
                                     </div>
                                 </div>
                             </div>

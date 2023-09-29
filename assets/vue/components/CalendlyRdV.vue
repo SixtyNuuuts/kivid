@@ -53,6 +53,10 @@ export default {
 </script>
 
 <style lang="scss">
+body .container {
+    overflow-x: hidden;
+}
+
 .calendly-container
 {
     // border-radius: 0.8rem;

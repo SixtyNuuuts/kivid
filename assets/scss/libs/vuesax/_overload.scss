@@ -1111,6 +1111,10 @@
     z-index: 11110;
 }
 
+.vs-tooltip-inmodal .vs-tooltip {
+    z-index: 111111 !important;
+}
+
 .dbpatient .vs-tooltip {
     white-space: nowrap;
 }
