@@ -1900,11 +1900,11 @@ body .btn-create-action .vs-button
     {
             position: fixed;
             top: auto;
-            left: 0;
+            left: auto;
             right: 0;
             bottom: 0;
             z-index: 5555;
-            width: 100%;
+            width: 48%;
             /* min-height: 7.4875rem; */
             display: flex;
             align-items: center;
