@@ -560,7 +560,9 @@ export default {
     },
     created() {
         window.addEventListener("resize", this.resizeWindowEventHandler);
-        document.body.classList.add("vs-tooltip-inmodal");
+        setTimeout(() => {
+            document.body.classList.add("vs-tooltip-inmodal");
+        }, 500);
         this.resizeWindowEventHandler();
     },
     destroyed() {
