@@ -671,7 +671,7 @@ body {
             backface-visibility: hidden;
             -webkit-font-smoothing: subpixel-antialiased;
 
-            &.pp-create-worksheet {
+            &.pp-create-worksheet:not(.click-to-tab):not(.click-to-plus) {
                 top: 1.9rem;
                 left: auto;
                 right: 3.4rem;
