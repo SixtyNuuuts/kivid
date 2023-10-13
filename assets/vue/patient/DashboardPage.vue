@@ -238,7 +238,7 @@
                                                 <vs-button
                                                     size="mini"
                                                     class="calendly-create-event"
-                                                    @click="openModalCalendlyEvent('https://calendly.com/rendez-vous-kivid/30min')"
+                                                    @click="openModalCalendlyEvent('https://calendly.com/rendez-vous-kivid/decouverte')"
                                                 >
                                                     <i class="far fa-calendar-plus"></i> Prendre un rendez-vous
                                                 </vs-button>
