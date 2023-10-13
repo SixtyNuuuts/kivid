@@ -671,7 +671,7 @@ body {
             backface-visibility: hidden;
             -webkit-font-smoothing: subpixel-antialiased;
 
-            &.pp-create-worksheet {
+            &.pp-create-worksheet:not(.click-to-tab):not(.click-to-plus) {
                 top: 1.9rem;
                 left: auto;
                 right: 3.4rem;
@@ -684,15 +684,13 @@ body {
                     > p {
                         max-width: 83%;
                         line-height: 1.2 !important;
-                        margin-right: 4.5rem;
+                        margin-right: 5.5rem;
                     }
                     z-index: 443!important;
                 }
                 @media (min-width: 405px) and (max-width: 500px){
                     > p {
                         max-width: 70%;
-                        line-height: 1.2 !important;
-                        margin-right: 0;
                     }
                 }
 

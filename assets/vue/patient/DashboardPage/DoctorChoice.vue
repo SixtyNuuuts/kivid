@@ -127,7 +127,7 @@
         >
             <CalendlyRdV
                 :patient="patient"
-                :eventUrl="'https://calendly.com/rendez-vous-kivid/30min?hide_gdpr_banner=1'"
+                :eventUrl="'https://calendly.com/rendez-vous-kivid/decouverte?hide_gdpr_banner=1'"
                 :height="1500"
                 :context="'inscription'"
             ></CalendlyRdV>

@@ -59,8 +59,7 @@
                     {{ !$parent.prescriProcessPatientSelected ? 1 : 2 }}
                 </span> -->
                 <p>
-                    <span v-if="getWorksheetTemplates.length">et / ou sélectionnez</span
-                    ><span v-else>Sélectionnez</span> <span class="only-mobile">avec le bouton "+"</span> le nombre de prescriptions que vous souhaitez créer&nbsp;de&nbsp;zéro<span class="only-mobile"> ou ajoutez des fiches du magasin</span><span v-if="!getWorksheetTemplates.length">, puis&nbsp;validez avec l'un des boutons de prescription <span class="only-mobile">ci-dessous</span></span>
+                    <span v-if="getWorksheetTemplates.length">et / ou sélectionnez</span><span v-else>Sélectionnez</span> <span class="only-mobile">avec le bouton "+"</span> le nombre de prescriptions que vous souhaitez créer&nbsp;de&nbsp;zéro<span class="only-mobile"> ou ajoutez des fiches du magasin</span><span v-if="!getWorksheetTemplates.length">, puis&nbsp;validez avec l'un des boutons de prescription <span class="only-mobile">ci-dessous</span></span>
                 </p>
             </div>
         </transition>
@@ -1421,12 +1420,12 @@ export default {
         flex-direction: column;
     }
 }
-body .kiv-block .prescri-process-dialog.prescri-process-dialog-select-worksheet {
+body .kiv-block .prescri-process-dialog.prescri-process-dialog-select-worksheet:not(.click-to-tab):not(.click-to-plus) {
     top: -2.8rem;
     width: 33rem;
 }
 
-body .kiv-block .prescri-process-dialog.prescri-process-dialog-create-worksheet {
+body .kiv-block .prescri-process-dialog.prescri-process-dialog-create-worksheet:not(.click-to-tab):not(.click-to-plus) {
     @media (min-width: 799px) {
         top: -5.3rem;
         right: 1.6rem;
@@ -1439,7 +1438,7 @@ body .kiv-block .prescri-process-dialog.prescri-process-dialog-create-worksheet 
     }
 }
 
-body .kiv-block .prescri-process-dialog.prescri-process-dialog-create-worksheet.no-ws {
+body .kiv-block .prescri-process-dialog.prescri-process-dialog-create-worksheet.no-ws:not(.click-to-tab):not(.click-to-plus) {
     @media (min-width: 799px) {
         top: -6.9rem;
         right: 1.2rem;
@@ -1452,14 +1451,14 @@ body .kiv-block .prescri-process-dialog.prescri-process-dialog-create-worksheet.
     }
 }
 
-body .kiv-block .prescri-process-dialog.prescri-process-dialog-create-worksheet.no-ws-store {
+body .kiv-block .prescri-process-dialog.prescri-process-dialog-create-worksheet.no-ws-store:not(.click-to-tab):not(.click-to-plus) {
     display: none;
 
     @media (min-width: 799px) {
         padding-top: 0.2rem;
         width: 15.5rem;
         display: block;
-        top: 23.3rem;
+        top: 40.8rem;
         right: 1rem;
     }
 
@@ -1900,7 +1899,7 @@ body .btn-create-action .vs-button
     {
             position: fixed;
             top: auto;
-            left: 0;
+            left: auto;
             right: 0;
             bottom: 0;
             z-index: 5555;
@@ -1910,6 +1909,10 @@ body .btn-create-action .vs-button
             align-items: center;
             justify-content: center;
             height: 7.2125rem;
+
+            @media (min-width: 1100px) {
+                width: 48%;
+            }
 
             button
             {
