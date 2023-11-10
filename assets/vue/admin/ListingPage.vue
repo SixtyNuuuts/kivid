@@ -269,7 +269,7 @@ export default {
 
             let csvContent = '"id";"firstname";"lastname";"email";"num_rpps_ameli";"entity_name";"city";"worksheets";"patients";"ffmkradhesion_id"\n'; // Ligne d'en-tête
             itemsFiltered.forEach(item => {
-                let row = `${item.id};"${item.firstname}";"${item.lastname}";"${item.email}";"${item.numRppsAmeli}";"${item.entityName}";"${item.city}";"${item.worksheets}";"${item.patients}";"${item.ffmkradhesion_id}"`;
+                let row = `${item.id};"${item.firstname?item.firstname:''}";"${item.lastname?item.lastname:''}";"${item.email?item.email:''}";"${item.numRppsAmeli?item.numRppsAmeli:''}";"${item.entityName?item.entityName:''}";"${item.city?item.city:''}";"${item.worksheets}";"${item.patients}";"${item.FFMKRAdhesion?'Oui':'Non'}"`;
                 csvContent += row + '\n';
             });
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
