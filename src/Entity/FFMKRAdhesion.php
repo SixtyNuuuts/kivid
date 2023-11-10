@@ -17,7 +17,7 @@ class FFMKRAdhesion
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"ffmkr_adhesion_read", "doctor_read"})
+     * @Groups({"ffmkr_adhesion_read", "doctor_read", "doctor_listing_read"})
      */
     private $id;
 
