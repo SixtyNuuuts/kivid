@@ -333,7 +333,7 @@
                     </div>
                 </div>
             </div>
-            <!-- <div
+            <div
                 v-if="!$parent.stripeSubscription && !doctorView"
                 class="request-subscription"
             >
@@ -351,7 +351,7 @@
                         Je m’abonne
                     </vs-button>
                 </div>
-            </div> -->
+            </div>
         </div>
         <vs-dialog class="view-video" v-model="modalViewVideo">
             <youtube
