@@ -18,14 +18,14 @@ class SubscriptionService
     ) {
         $this->em = $entityManager;
         // $this->plans[] = new SubscriptionPlan(
-        //     'price_1JtvNNCvuRcL0li5gWxMmZKZ',
-        //     'TEST Abonnement Jour KIVID',
-        //     0.1 * 100
+        //     'price_1KfmuyCvuRcL0li5ogCMRBLw',
+        //     'Abonnement Mensuel KIVID',
+        //     9.90 * 100
         // );
-        $this->plans[] = new SubscriptionPlan(
-            'price_1KfmuyCvuRcL0li5ogCMRBLw',
-            'Abonnement Mensuel KIVID',
-            9.90 * 100
+        $this->plans[] = new SubscriptionPlan( //test
+            'price_1JfYRrC71RxKshwfHNB7BS3P',
+            'Kivid Speedy Premium',
+            0.1 * 100
         );
     }
 

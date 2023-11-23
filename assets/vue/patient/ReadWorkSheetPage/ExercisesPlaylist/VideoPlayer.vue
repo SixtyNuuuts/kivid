@@ -41,7 +41,7 @@
                     ></div>
                 </div>
                 <div
-                    v-if="!getExercise.video.youtubeId"
+                    v-if="patient.subscriptionRequired && !getExercise.video.youtubeId"
                     class="not-sub-message"
                     key="not-sub-message"
                 >

@@ -202,14 +202,13 @@
                                     <i class="kiv-profil icon-12"></i>
                                     Mon Profil
                                 </li>
-                                <!-- <li
-                                    v-if="'patient' === currentUserType"
-                                    class="md"
+                                <li
+                                    v-if="currentUser.subscriptionRequired"
                                     @click="mySubscription()"
                                 >
                                     <i class="kiv-subscription icon-20"></i> Mon
                                     Abonnement
-                                </li> -->
+                                </li>
                                 <!-- <li @click="myProfil()" class="desktop">
                                     <i class="kiv-settings icon-16"></i>
                                     Paramètres
@@ -898,6 +897,9 @@ export default {
 
                                     &.kiv-subscription {
                                         font-size: 1.8rem;
+                                        @media (min-width: 850px) {
+                                            font-size: 1.7rem;
+                                        }
                                     }
 
                                     &.kiv-profil {

@@ -162,7 +162,7 @@ class WorksheetController extends AbstractController
                 ['position' => 'ASC']
             );
         
-            if (!$patient->getDoctor()->isGiveFreeAccessPrescri()) {
+            if ($patient->isSubscriptionRequired()) {
                 $patientHasCurrentSubscription = $this->subscriptionRepository->findCurrentSubscription($patient);
 
                 if(!$patientHasCurrentSubscription)

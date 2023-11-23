@@ -334,7 +334,7 @@
                 </div>
             </div>
             <div
-                v-if="!$parent.stripeSubscription && !doctorView"
+                v-if="patient.subscriptionRequired && !$parent.stripeSubscription && !doctorView"
                 class="request-subscription"
             >
                 <div class="icon-request-subscription">
