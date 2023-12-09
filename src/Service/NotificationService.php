@@ -161,16 +161,26 @@ class NotificationService
         Patient $patient,
         Doctor $doctor
     ): void {
+        // $patientPrescriptionUrl = $this->router->generate(
+        //     'app_doctor_worksheet_action',
+        //     [
+        //         'id' => $doctor->getId(),
+        //         'action' => 'creation',
+        //         'worksheetId' => 0,
+        //         'patientId' => $patient->getId(),
+        //     ],
+        //     UrlGeneratorInterface::ABSOLUTE_URL
+        // );
+        //
+        // new:
+        // https://127.0.0.1:8000/doctor/4/dashboard?pp=933
         $patientPrescriptionUrl = $this->router->generate(
-            'app_doctor_worksheet_action',
+            'app_doctor_dashboard',
             [
                 'id' => $doctor->getId(),
-                'action' => 'creation',
-                'worksheetId' => 0,
-                'patientId' => $patient->getId(),
             ],
             UrlGeneratorInterface::ABSOLUTE_URL
-        );
+        ).'?pp='.$patient->getId();
 
         $this->createNotification(
             'select-doctor',

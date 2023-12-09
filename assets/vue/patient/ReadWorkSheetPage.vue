@@ -199,6 +199,7 @@ export default {
                     successUrl: `patient/${this.patient.id}/fiche/${this.getWorksheet.id}/success`,
                     cancelUrl: `patient/${this.patient.id}/fiche/${this.getWorksheet.id}/cancel`,
                     userId: `${this.patient.id}`,
+                    userType: "patient",
                 })
                 .then((response) => {
                     window.location.href = response.data;

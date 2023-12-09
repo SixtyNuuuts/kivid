@@ -2,11 +2,13 @@
 
 namespace App\Service;
 
-use App\Entity\Patient;
+use App\Entity\User;
 use App\Entity\Subscription;
 use App\Modele\SubscriptionPlan;
 use Doctrine\ORM\EntityManagerInterface;
 use Stripe\Subscription as StripeSubscription;
+use App\Entity\Doctor;
+use App\Entity\Patient;
 
 class SubscriptionService
 {
@@ -35,12 +37,17 @@ class SubscriptionService
     }
 
     public function createSubscription(
-        Patient $patient,
+        User $user,
         StripeSubscription $stripeSubscription
     ): void {
         $subscription = new Subscription();
 
-        $subscription->setPatient($patient);
+        if ($user instanceof Patient) {
+            $subscription->setPatient($user);
+        }
+        elseif ($user instanceof Doctor) {
+            $subscription->setDoctor($user);
+        }
 
         $subscription->setStripeSubscriptionId($stripeSubscription->id);
         $subscription->setStripeCustomerId($stripeSubscription->customer);

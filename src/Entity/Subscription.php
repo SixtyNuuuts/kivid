@@ -15,39 +15,45 @@ class Subscription
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"patient_read"})
+     * @Groups({"patient_read, doctor_read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient_read"})
+     * @Groups({"patient_read, doctor_read"})
      */
     private $stripeSubscriptionId;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient_read"})
+     * @Groups({"patient_read, doctor_read"})
      */
     private $stripeCustomerId;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"patient_read"})
+     * @Groups({"patient_read, doctor_read"})
      */
     private $currentPeriodStart;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"patient_read"})
+     * @Groups({"patient_read, doctor_read"})
      */
     private $currentPeriodEnd;
 
     /**
      * @ORM\ManyToOne(targetEntity=Patient::class, inversedBy="subscriptions")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      */
     private $patient;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Doctor::class, inversedBy="subscriptions")
+     * @ORM\JoinColumn(nullable=true)
+     */
+    private $doctor;
 
     public function getId(): ?int
     {
@@ -117,6 +123,18 @@ class Subscription
     public function setPatient(?Patient $patient): self
     {
         $this->patient = $patient;
+
+        return $this;
+    }
+
+    public function getDoctor(): ?Doctor
+    {
+        return $this->doctor;
+    }
+
+    public function setDoctor(?Doctor $doctor): self
+    {
+        $this->doctor = $doctor;
 
         return $this;
     }

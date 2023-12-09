@@ -260,7 +260,7 @@
                     </div>
                 </section>
                 <section
-                    v-if="'patient' === userType && activeTab === '2'"
+                    v-if="currentUser.subscriptionRequired && activeTab === '2'"
                     id="my-subscription"
                     class="kiv-block"
                 >
@@ -651,6 +651,7 @@ export default {
                     successUrl: "abonnement/success",
                     cancelUrl: "abonnement/cancel",
                     userId: `${this.currentUser.id}`,
+                    userType: `${this.userType}`,
                 })
                 .then((response) => {
                     window.location.href = response.data;
