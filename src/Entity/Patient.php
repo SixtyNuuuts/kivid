@@ -22,13 +22,13 @@ class Patient extends User
 
     /**
      * @ORM\ManyToOne(targetEntity=Doctor::class, inversedBy="patients")
-     * @Groups({"patient_read"})
+     * @Groups({"patient_read", "patient_listing_read"})
      */
     private $doctor;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"patient_read"})
+     * @Groups({"patient_read", "patient_listing_read"})
      */
     private $lastLoginAt;
 
@@ -40,7 +40,7 @@ class Patient extends User
 
     /**
      * @ORM\OneToMany(targetEntity=Subscription::class, mappedBy="patient", orphanRemoval=true)
-     * @Groups({"patient_read"})
+     * @Groups({"patient_read", "patient_listing_read"})
      */
     private $subscriptions;
 
@@ -62,7 +62,7 @@ class Patient extends User
 
     /**
      * @ORM\OneToMany(targetEntity=Worksheet::class, mappedBy="patient")
-     * @Groups({"patient_read"})
+     * @Groups({"patient_read", "patient_listing_read"})
      */
     private $worksheets;
 

@@ -17,13 +17,13 @@ class Worksheet
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"worksheet_read", "worksheet_doctor_read", "dashboard_worksheet_read", "patient_read", "public_worksheet_read"})
+     * @Groups({"worksheet_read", "worksheet_doctor_read", "dashboard_worksheet_read", "patient_read", "public_worksheet_read", "doctor_listing_read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"worksheet_read", "worksheet_doctor_read", "dashboard_worksheet_read", "patient_read", "public_worksheet_read"})
+     * @Groups({"worksheet_read", "worksheet_doctor_read", "dashboard_worksheet_read", "patient_read", "public_worksheet_read", "doctor_listing_read"})
      */
     private $title;
 

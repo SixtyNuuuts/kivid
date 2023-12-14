@@ -22,7 +22,7 @@ class Doctor extends User
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"doctor_read", "patient_read", "user_read"})
+     * @Groups({"doctor_read", "patient_read", "user_read", "doctor_listing_read"})
      */
     private $city;
 
@@ -34,13 +34,13 @@ class Doctor extends User
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"doctor_read", "patient_read", "user_read"})
+     * @Groups({"doctor_read", "patient_read", "user_read", "doctor_listing_read"})
      */
     private $entityName;
 
     /**
      * @ORM\OneToMany(targetEntity=Patient::class, mappedBy="doctor")
-     * @Groups({"doctor_read"})
+     * @Groups({"doctor_read", "doctor_listing_read"})
      */
     private $patients;
 
@@ -57,12 +57,13 @@ class Doctor extends User
 
     /**
      * @ORM\OneToMany(targetEntity=Worksheet::class, mappedBy="doctor")
+     * @Groups({"doctor_listing_read"})
      */
     private $worksheets;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"doctor_read", "user_read"})
+     * @Groups({"doctor_read", "user_read", "doctor_listing_read"})
      */
     private $numRppsAmeli;
 
@@ -91,7 +92,7 @@ class Doctor extends User
 
     /**
      * @ORM\OneToOne(targetEntity=FFMKRAdhesion::class, inversedBy="doctor", cascade={"persist", "remove"})
-     * @Groups({"doctor_read"})
+     * @Groups({"doctor_read", "doctor_listing_read"})
      */
     private $FFMKRAdhesion;
 

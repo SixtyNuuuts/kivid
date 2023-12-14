@@ -39,6 +39,9 @@ Encore
     // Public
     .addEntry('public-read-worksheet-page', './assets/vue/public/read-worksheet-page.js')
 
+    //Admin : listing
+    .addEntry('admin-listing-page', './assets/vue/admin/listing-page.js')
+        
     //FFMKR
     .addEntry('ffmkr-admin-dashboard-page', './assets/vue/ffmkr/admin/dashboard-page.js')
 
