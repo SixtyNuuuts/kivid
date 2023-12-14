@@ -14,10 +14,10 @@
       "js": [
         "/build/runtime.f6bd3957.js",
         "/build/327.a0186c93.js",
-        "/build/navbar.0ad3c21d.js"
+        "/build/navbar.364a1ab1.js"
       ],
       "css": [
-        "/build/navbar.51d5a314.css"
+        "/build/navbar.97520fe3.css"
       ]
     },
     "settings-page": {
@@ -26,7 +26,7 @@
         "/build/327.a0186c93.js",
         "/build/285.d1ed7012.js",
         "/build/735.2e8e57d0.js",
-        "/build/settings-page.161c4220.js"
+        "/build/settings-page.7433fb82.js"
       ],
       "css": [
         "/build/settings-page.7aabd78f.css"
@@ -97,10 +97,10 @@
         "/build/210.9d564997.js",
         "/build/561.47cb6e26.js",
         "/build/480.74d4e15a.js",
-        "/build/doctor-dashboard-page.f2bd3f49.js"
+        "/build/doctor-dashboard-page.555ac8f3.js"
       ],
       "css": [
-        "/build/doctor-dashboard-page.bdc2c3ea.css"
+        "/build/doctor-dashboard-page.e88007e9.css"
       ]
     },
     "doctor-worksheet-page": {
@@ -137,7 +137,7 @@
         "/build/26.8d489902.js",
         "/build/949.27b11c86.js",
         "/build/480.74d4e15a.js",
-        "/build/patient-read-worksheet-page.18244a41.js"
+        "/build/patient-read-worksheet-page.5a2b382c.js"
       ],
       "css": [
         "/build/patient-read-worksheet-page.65fbfd50.css"
