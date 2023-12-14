@@ -190,27 +190,28 @@ export default {
             }
         },
         stripeCheckout(indice) {
-            // this.axios
-            //     .post(`/subscription/checkout`, {
-            //         stripeSubPlanId: this.stripeSubPlans[indice].planId,
-            //         stripeCustomerId: this.stripeSubscription
-            //             ? this.stripeSubscription.customer
-            //             : null,
-            //         successUrl: `patient/${this.patient.id}/fiche/${this.getWorksheet.id}/success`,
-            //         cancelUrl: `patient/${this.patient.id}/fiche/${this.getWorksheet.id}/cancel`,
-            //         userId: `${this.patient.id}`,
-            //     })
-            //     .then((response) => {
-            //         window.location.href = response.data;
-            //     })
-            //     .catch((error) => {
-            //         console.log(error);
+            this.axios
+                .post(`/subscription/checkout`, {
+                    stripeSubPlanId: this.stripeSubPlans[indice].planId,
+                    stripeCustomerId: this.stripeSubscription
+                        ? this.stripeSubscription.customer
+                        : null,
+                    successUrl: `patient/${this.patient.id}/fiche/${this.getWorksheet.id}/success`,
+                    cancelUrl: `patient/${this.patient.id}/fiche/${this.getWorksheet.id}/cancel`,
+                    userId: `${this.patient.id}`,
+                    userType: "patient",
+                })
+                .then((response) => {
+                    window.location.href = response.data;
+                })
+                .catch((error) => {
+                    console.log(error);
 
-            //         f.openErrorNotification(
-            //             "Erreur",
-            //             "Erreur lors du processus d'abonnement"
-            //         );
-            //     });
+                    f.openErrorNotification(
+                        "Erreur",
+                        "Erreur lors du processus d'abonnement"
+                    );
+                });
         },
     },
     created() {

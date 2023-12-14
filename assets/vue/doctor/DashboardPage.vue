@@ -146,6 +146,25 @@
                 </aside>
             </main>
         </section>
+        <vs-dialog v-model="modalSubscription" class="request-subscription-modal">
+            <div
+                class="request-subscription"
+            >
+                <div class="icon-request-subscription">
+                    <i class="kiv-subscription icon-20"></i>
+                </div>
+                <div class="text-request-subscription">
+                    <p>
+                        Vous devez être abonné&nbsp;pour pouvoir&nbsp;prescrire&nbsp;une&nbsp;fiche
+                    </p>
+                </div>
+                <div class="btn-request-subscription">
+                    <vs-button @click="stripeCheckout(0)">
+                        Je m’abonne
+                    </vs-button>
+                </div>
+            </div>
+        </vs-dialog>
     </div>
 </template>
 
@@ -193,7 +212,11 @@ export default {
             prescriProcessStartOrigin: 'patient',
             worksheetStoreAdded: false,
             firstWorksheetProcess: false,
-            firstWorksheetTriggerAfterStoreProcess: false
+            firstWorksheetTriggerAfterStoreProcess: false,
+            stripeSubPlans: null,
+            stripeSubscription: null,
+            status: null,
+            modalSubscription: false,
         };
     },
     computed: {
@@ -262,6 +285,11 @@ export default {
             }
         },
         setPrescriProcessPatientChoice(patient) {
+            if(this.doctor.subscriptionRequired && !this.stripeSubscription)
+            {
+                this.modalSubscription = true;
+                return false;
+            }
             if (!this.prescriProcess) {
                 this.startPrescriProcess();
             }
@@ -344,7 +372,31 @@ export default {
         },
         toggleFirstWorksheetProcess() {
             this.firstWorksheetProcess = !this.firstWorksheetProcess;
-        }
+        },
+        stripeCheckout(indice) {
+            this.axios
+                .post(`/subscription/checkout`, {
+                    stripeSubPlanId: this.stripeSubPlans[indice].planId,
+                    stripeCustomerId: this.stripeSubscription
+                        ? this.stripeSubscription.customer
+                        : null,
+                    successUrl: `doctor/${this.doctor.id}/dashboard/success`,
+                    cancelUrl: `doctor/${this.doctor.id}/dashboard/cancel`,
+                    userId: `${this.doctor.id}`,
+                    userType: "doctor",
+                })
+                .then((response) => {
+                    window.location.href = response.data;
+                })
+                .catch((error) => {
+                    console.log(error);
+
+                    f.openErrorNotification(
+                        "Erreur",
+                        "Erreur lors du processus d'abonnement"
+                    );
+                });
+        },
     },
     created() {
         Vue.prototype.$vs = this.$vs;
@@ -358,6 +410,24 @@ export default {
         this.csrfTokenCreatePatient = data.csrfTokenCreatePatient;
         this.csrfTokenRemoveWorksheet = data.csrfTokenRemoveWorksheet;
         this.csrfTokenCreateWorksheet = data.csrfTokenCreateWorksheet;
+        
+        this.stripeSubPlans = data.stripeSubPlans;
+        this.stripeSubscription = data.stripeSubscription;
+        this.status = data.status;
+
+        if ("cancel" === this.status) {
+            f.openPrimaryNotification(
+                "Paiement annulé",
+                "Le paiement a été annulé"
+            );
+        }
+
+        if ("success" === this.status) {
+            f.openSuccessNotification(
+                "Paiement accepté",
+                "Vous pouvez profiter de votre abonnement"
+            );
+        }
 
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
@@ -633,6 +703,28 @@ export default {
         > *
         {
             display: none !important;
+        }
+    }
+}
+
+.request-subscription-modal
+{
+    .vs-dialog
+    {
+        max-width: 400px;
+
+        .request-subscription 
+        {
+            margin-top: 0 !important;
+            padding: 2rem !important;
+            padding-bottom: 1.2rem !important;
+
+            .text-request-subscription p 
+            {
+                font-size: 1.9rem !important;
+                margin-top: 3rem !important;
+                margin-bottom: 3rem !important;
+            } 
         }
     }
 }

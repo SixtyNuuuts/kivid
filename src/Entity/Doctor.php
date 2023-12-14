@@ -68,11 +68,6 @@ class Doctor extends User
     private $numRppsAmeli;
 
     /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $giveFreeAccessPrescri;
-
-    /**
     * @ORM\Column(type="boolean", nullable=true)
     * @Groups({"doctor_read"})
     */
@@ -91,6 +86,12 @@ class Doctor extends User
     private $premium;
 
     /**
+     * @ORM\OneToMany(targetEntity=Subscription::class, mappedBy="doctor", orphanRemoval=true)
+     * @Groups({"doctor_read"})
+     */
+    private $subscriptions;
+
+    /**
      * @ORM\OneToOne(targetEntity=FFMKRAdhesion::class, inversedBy="doctor", cascade={"persist", "remove"})
      * @Groups({"doctor_read", "doctor_listing_read"})
      */
@@ -100,6 +101,7 @@ class Doctor extends User
     {
         parent::__construct(['ROLE_DOCTOR']);
         $this->patients = new ArrayCollection();
+        $this->subscriptions = new ArrayCollection();
         $this->notifications = new ArrayCollection();
         $this->commentaries = new ArrayCollection();
         $this->worksheets = new ArrayCollection();
@@ -149,6 +151,36 @@ class Doctor extends User
     public function setEntityName(?string $entityName): self
     {
         $this->entityName = $entityName;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Subscription[]
+     */
+    public function getSubscriptions(): Collection
+    {
+        return $this->subscriptions;
+    }
+
+    public function addSubscription(Subscription $subscription): self
+    {
+        if (!$this->subscriptions->contains($subscription)) {
+            $this->subscriptions[] = $subscription;
+            $subscription->setDoctor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSubscription(Subscription $subscription): self
+    {
+        if ($this->subscriptions->removeElement($subscription)) {
+            // set the owning side to null (unless already changed)
+            if ($subscription->getDoctor() === $this) {
+                $subscription->setDoctor(null);
+            }
+        }
 
         return $this;
     }
@@ -281,18 +313,6 @@ class Doctor extends User
     public function setNumRppsAmeli(?string $numRppsAmeli): self
     {
         $this->numRppsAmeli = $numRppsAmeli;
-
-        return $this;
-    }
-
-    public function isGiveFreeAccessPrescri(): ?bool
-    {
-        return $this->giveFreeAccessPrescri;
-    }
-
-    public function setGiveFreeAccessPrescri(?bool $giveFreeAccessPrescri): self
-    {
-        $this->giveFreeAccessPrescri = $giveFreeAccessPrescri;
 
         return $this;
     }

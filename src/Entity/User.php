@@ -93,6 +93,12 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $civility;
 
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"patient_read", "doctor_read", "user_read", "dashboard_worksheet_read", "worksheet_read", "public_worksheet_read"})
+     */
+    private $subscriptionRequired;
+
     public function __construct(array $roles)
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -310,6 +316,18 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setCivility(?string $civility): self
     {
         $this->civility = $civility;
+
+        return $this;
+    }
+
+    public function isSubscriptionRequired(): ?bool
+    {
+        return $this->subscriptionRequired;
+    }
+
+    public function setSubscriptionRequired(?bool $subscriptionRequired): self
+    {
+        $this->subscriptionRequired = $subscriptionRequired;
 
         return $this;
     }

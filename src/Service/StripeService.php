@@ -5,6 +5,7 @@ namespace App\Service;
 use Stripe\StripeClient;
 use App\Entity\Subscription;
 use App\Repository\PatientRepository;
+use App\Repository\DoctorRepository;
 use App\Service\SubscriptionService;
 use Stripe\Webhook as StripeWebhook;
 use Doctrine\ORM\EntityManagerInterface;
@@ -21,6 +22,7 @@ class StripeService
     private $stripeWebhookSecretKey;
     private $subscriptionRepository;
     private $patientRepository;
+    private $doctorRepository;
     private $em;
 
     public function __construct(
@@ -28,12 +30,14 @@ class StripeService
         string $stripeWebhookSecretKey,
         SubscriptionRepository $subscriptionRepository,
         PatientRepository $patientRepository,
+        DoctorRepository $doctorRepository,
         EntityManagerInterface $entityManager
     ) {
         $this->stripe = new StripeClient($stripeSecretKey);
         $this->stripeWebhookSecretKey = $stripeWebhookSecretKey;
         $this->subscriptionRepository = $subscriptionRepository;
         $this->patientRepository = $patientRepository;
+        $this->doctorRepository = $doctorRepository;
         $this->em = $entityManager;
     }
 
@@ -42,7 +46,8 @@ class StripeService
         string $successUrl,
         string $cancelUrl,
         string $subPlanId,
-        string $userId
+        string $userId,
+        string $userType
     ): StripeCheckoutSession {
         $config = [
             'success_url' => $successUrl . '?session_id={CHECKOUT_SESSION_ID}',
@@ -50,10 +55,11 @@ class StripeService
             'allow_promotion_codes' => true,
             'payment_method_types' => ['card'],
             'mode' => 'subscription',
-            'client_reference_id' => $userId,
+            'client_reference_id' => $userType.'_'.$userId,
             'subscription_data' => [
                 'metadata' => [
                     'user_id' => $userId,
+                    'user_type' => $userType,
                 ],
             ],
             'line_items' => [
@@ -145,10 +151,18 @@ class StripeService
                 if (!$subscription) {
                     $newSubscription = new Subscription();
 
-                    $patient = $this->patientRepository->findOneBy([
-                        'id' => $event->data->object->lines->data[0]->metadata->user_id
-                    ]);
-                    $newSubscription->setPatient($patient);
+                    if ($event->data->object->lines->data[0]->metadata->user_type === 'patient') {
+                        $patient = $this->patientRepository->findOneBy([
+                            'id' => $event->data->object->lines->data[0]->metadata->user_id
+                        ]);
+                        $newSubscription->setPatient($patient);
+                    }
+                    elseif ($event->data->object->lines->data[0]->metadata->user_type === 'doctor') {
+                        $doctor = $this->doctorRepository->findOneBy([
+                            'id' => $event->data->object->lines->data[0]->metadata->user_id
+                        ]);
+                        $newSubscription->setDoctor($doctor);
+                    }
 
                     $newSubscription->setStripeSubscriptionId($stripeSubscriptionId);
                     $newSubscription->setStripeCustomerId($event->data->object->customer);

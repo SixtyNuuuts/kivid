@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\User;
+use App\Entity\Doctor;
 use App\Entity\Subscription;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -27,7 +28,7 @@ class SubscriptionRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('s')
             ->where('s.currentPeriodStart <= :now')
             ->andWhere('s.currentPeriodEnd >= :now')
-            ->andWhere('s.patient = :user')
+            ->andWhere($user instanceof Doctor?'s.doctor = :user':'s.patient = :user')
             ->setParameter('now', $now)
             ->setParameter('user', $user)
             ->orderBy('s.currentPeriodEnd', 'DESC')

@@ -50,6 +50,7 @@ class PatientCrudController extends AbstractCrudController
             AssociationField::new('doctor', 'Praticien'),
             AssociationField::new('subscriptions', 'Abonnement(s)')->onlyOnIndex(),
             AssociationField::new('worksheets', 'Fiche(s)')->onlyOnIndex(),
+            BooleanField::new('subscriptionRequired', 'Compte qui nécessite un abonnement ?')->onlyOnForms(),
         ];
     }
 }

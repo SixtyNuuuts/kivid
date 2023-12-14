@@ -21,13 +21,13 @@
                     >
                         Mon Profil
                     </li>
-                    <!-- <li
-                        v-if="'patient' === userType"
+                    <li
+                        v-if="currentUser.subscriptionRequired"
                         @click="mySubscription()"
                         :class="{ active: activeTab === '2' }"
                     >
                         Mon Abonnement
-                    </li> -->
+                    </li>
                 </ul>
             </section>
             <transition name="fade">
@@ -259,8 +259,8 @@
                         </div>
                     </div>
                 </section>
-                <!-- <section
-                    v-if="'patient' === userType && activeTab === '2'"
+                <section
+                    v-if="currentUser.subscriptionRequired && activeTab === '2'"
                     id="my-subscription"
                     class="kiv-block"
                 >
@@ -417,7 +417,7 @@
                             </div>
                         </div>
                     </div>
-                </section> -->
+                </section>
             </transition>
         </main>
         <div class="cropper-modal" v-if="modalAvatar">
@@ -642,27 +642,28 @@ export default {
             return moment(datetime).format("DD/MM/YYYY");
         },
         stripeCheckout(indice) {
-            // this.axios
-            //     .post(`/subscription/checkout`, {
-            //         stripeSubPlanId: this.stripeSubPlans[indice].planId,
-            //         stripeCustomerId: this.stripeSubscription
-            //             ? this.stripeSubscription.customer
-            //             : null,
-            //         successUrl: "abonnement/success",
-            //         cancelUrl: "abonnement/cancel",
-            //         userId: `${this.currentUser.id}`,
-            //     })
-            //     .then((response) => {
-            //         window.location.href = response.data;
-            //     })
-            //     .catch((error) => {
-            //         console.log(error);
+            this.axios
+                .post(`/subscription/checkout`, {
+                    stripeSubPlanId: this.stripeSubPlans[indice].planId,
+                    stripeCustomerId: this.stripeSubscription
+                        ? this.stripeSubscription.customer
+                        : null,
+                    successUrl: "abonnement/success",
+                    cancelUrl: "abonnement/cancel",
+                    userId: `${this.currentUser.id}`,
+                    userType: `${this.userType}`,
+                })
+                .then((response) => {
+                    window.location.href = response.data;
+                })
+                .catch((error) => {
+                    console.log(error);
 
-            //         f.openErrorNotification(
-            //             "Erreur",
-            //             "Erreur lors du processus d'abonnement"
-            //         );
-            //     });
+                    f.openErrorNotification(
+                        "Erreur",
+                        "Erreur lors du processus d'abonnement"
+                    );
+                });
         },
         stripeCustomerPortalSession(stripeCustomerId) {
             this.axios
