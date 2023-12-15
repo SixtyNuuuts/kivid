@@ -282,7 +282,7 @@
                                     >
                                         <div class="sub-name">
                                             {{
-                                                stripeSubPlans.find(
+                                                Object.values(stripeSubPlans).find(
                                                     (p) =>
                                                         p.planId ===
                                                         stripeSubscription.plan
@@ -292,7 +292,7 @@
                                         </div>
                                         <div class="sub-price">
                                             {{
-                                                stripeSubPlans.find(
+                                                Object.values(stripeSubPlans).find(
                                                     (p) =>
                                                         p.planId ===
                                                         stripeSubscription.plan
