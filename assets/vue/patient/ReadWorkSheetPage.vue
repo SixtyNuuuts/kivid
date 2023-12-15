@@ -189,10 +189,10 @@ export default {
                 document.location.href = `/patient/${this.patient.id}/dashboard`;
             }
         },
-        stripeCheckout(indice) {
+        stripeCheckout(planIndex) {
             this.axios
                 .post(`/subscription/checkout`, {
-                    stripeSubPlanId: this.stripeSubPlans[indice].planId,
+                    stripeSubPlanId: this.stripeSubPlans[planIndex].planId,
                     stripeCustomerId: this.stripeSubscription
                         ? this.stripeSubscription.customer
                         : null,

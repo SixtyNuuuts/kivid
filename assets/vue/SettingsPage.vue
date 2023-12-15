@@ -307,9 +307,11 @@
                                         v-if="!stripeSubscription"
                                         class="sub-details"
                                     >
-                                        <div class="sub-name small">
-                                            Pour accéder complètement à mes
-                                            prescriptions :
+                                        <div v-if="'doctor' === userType" class="sub-name small">
+                                            Pour accéder à l'intégralité des fonctionnalités de prescription&nbsp;:
+                                        </div>
+                                        <div v-else class="sub-name small">
+                                            Pour accéder à l'intégralité du contenu des prescriptions&nbsp;:
                                         </div>
                                     </div>
 
@@ -356,7 +358,7 @@
                                     </vs-button>
                                     <vs-button
                                         v-if="!stripeSubscription"
-                                        @click="stripeCheckout(0)"
+                                        @click="stripeCheckout(userType)"
                                         class="mt-2"
                                     >
                                         <i class="kiv-subscription icon-20"></i>
@@ -641,10 +643,10 @@ export default {
         formatDate(datetime) {
             return moment(datetime).format("DD/MM/YYYY");
         },
-        stripeCheckout(indice) {
+        stripeCheckout(planIndex) {
             this.axios
                 .post(`/subscription/checkout`, {
-                    stripeSubPlanId: this.stripeSubPlans[indice].planId,
+                    stripeSubPlanId: this.stripeSubPlans[planIndex].planId,
                     stripeCustomerId: this.stripeSubscription
                         ? this.stripeSubscription.customer
                         : null,

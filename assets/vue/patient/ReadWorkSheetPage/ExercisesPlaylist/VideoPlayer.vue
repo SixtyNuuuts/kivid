@@ -51,12 +51,11 @@
                         </div>
                         <div class="text-request-subscription">
                             <p>
-                                Pour accéder complètement à votre prescription,
-                                veuillez vous abonner.
+                                Pour accéder à l'intégralité du contenu de votre prescription, vous devez être abonné.
                             </p>
                         </div>
                         <div class="btn-request-subscription">
-                            <vs-button @click="stripeCheckout()">
+                            <vs-button @click="stripeCheckout('patient')">
                                 Je m’abonne
                             </vs-button>
                         </div>
@@ -349,8 +348,8 @@ export default {
         closeVideoPlayer() {
             this.$emit("closeVideoPlayer", true);
         },
-        stripeCheckout() {
-            this.$emit("stripeCheckout", 0);
+        stripeCheckout(planIndex) {
+            this.$emit("stripeCheckout", planIndex);
         },
         switchExerciseWithAnimation(replaying) {
             if (!this.switchExeAnimationIsInProgress) {

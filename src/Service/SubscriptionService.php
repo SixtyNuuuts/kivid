@@ -24,9 +24,14 @@ class SubscriptionService
         //     'Abonnement Mensuel KIVID',
         //     9.90 * 100
         // );
-        $this->plans[] = new SubscriptionPlan( //test
+        $this->plans['patient'] = new SubscriptionPlan( //test Abo Patient
             'price_1JfYRrC71RxKshwfHNB7BS3P',
-            'Kivid Speedy Premium',
+            'Kivid Abo Patient',
+            0.1 * 100
+        );
+        $this->plans['doctor'] = new SubscriptionPlan( //test Abo Praticien
+            'price_1ONZjLC71RxKshwft1S9mLfM',
+            'Kivid Abo Praticien',
             0.1 * 100
         );
     }

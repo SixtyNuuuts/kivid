@@ -342,12 +342,11 @@
                 </div>
                 <div class="text-request-subscription">
                     <p>
-                        Pour avoir accès à l’ensemble des vidéos de la
-                        prescription, veuillez vous abonner.
+                        Pour avoir accès à l’ensemble des vidéos de la prescription, vous devez être abonné.
                     </p>
                 </div>
                 <div class="btn-request-subscription">
-                    <vs-button @click="stripeCheckout()">
+                    <vs-button @click="stripeCheckout('patient')">
                         Je m’abonne
                     </vs-button>
                 </div>
@@ -375,7 +374,7 @@
                 :csrfTokenCreateSessionStat="csrfTokenCreateSessionStat"
                 @resetExerciseForRePlaying="resetExerciseForRePlaying"
                 @closeVideoPlayer="closeVideoPlayer"
-                @stripeCheckout="stripeCheckout()"
+                @stripeCheckout="stripeCheckout"
             />
         </transition>
         <vs-dialog v-model="modalConfirmRemoveCommentary">
@@ -619,8 +618,8 @@ export default {
         isCommentaryBeingEdited(commentaryId) {
             return this.commentariesBeingEdited == commentaryId;
         },
-        stripeCheckout() {
-            this.$emit("stripeCheckout", 0);
+        stripeCheckout(planIndex) {
+            this.$emit("stripeCheckout", planIndex);
         },
         formatDate(datetime) {
             return moment(datetime).format("DD/MM/YYYY");
