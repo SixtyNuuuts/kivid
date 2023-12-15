@@ -159,7 +159,7 @@
                     </p>
                 </div>
                 <div class="btn-request-subscription">
-                    <vs-button @click="stripeCheckout(0)">
+                    <vs-button @click="stripeCheckout('doctor')">
                         Je m’abonne
                     </vs-button>
                 </div>
@@ -373,10 +373,10 @@ export default {
         toggleFirstWorksheetProcess() {
             this.firstWorksheetProcess = !this.firstWorksheetProcess;
         },
-        stripeCheckout(indice) {
+        stripeCheckout(planIndex) {
             this.axios
                 .post(`/subscription/checkout`, {
-                    stripeSubPlanId: this.stripeSubPlans[indice].planId,
+                    stripeSubPlanId: this.stripeSubPlans[planIndex].planId,
                     stripeCustomerId: this.stripeSubscription
                         ? this.stripeSubscription.customer
                         : null,
