@@ -160,7 +160,7 @@
                 </div>
                 <div class="btn-request-subscription">
                     <vs-button class="secondary" @click="stripeCheckout('doctor_monthly')">
-                        Je m'abonne au mois <span class="btn-request-subscription-price">(20€/mois)</span>
+                        Je m'abonne au mois <span class="btn-request-subscription-price">(15€/mois)</span>
                     </vs-button>
                     <vs-button class="secondary" @click="stripeCheckout('doctor_annual')">
                         Je m'abonne à l'année <span class="btn-request-subscription-price">(180€/an)</span>

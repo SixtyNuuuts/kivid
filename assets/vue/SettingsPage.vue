@@ -370,7 +370,7 @@
                                         class="mt-2 btn-request-subscription"
                                     >
                                         <i class="kiv-subscription icon-20"></i>
-                                        Je m'abonne au mois <span class="btn-request-subscription-price">(20€/mois)</span>
+                                        Je m'abonne au mois <span class="btn-request-subscription-price">(15€/mois)</span>
                                     </vs-button>
                                     <vs-button
                                         v-if="!stripeSubscription && 'doctor' === userType"
