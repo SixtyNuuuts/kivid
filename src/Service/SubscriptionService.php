@@ -26,13 +26,23 @@ class SubscriptionService
         // );
         $this->plans['patient'] = new SubscriptionPlan( //test Abo Patient
             'price_1JfYRrC71RxKshwfHNB7BS3P',
-            'Kivid Abo Patient',
+            'Kivid',
             0.1 * 100
         );
         $this->plans['doctor'] = new SubscriptionPlan( //test Abo Praticien
-            'price_1ONZjLC71RxKshwft1S9mLfM',
-            'Kivid Abo Praticien',
+            'price_1OQ3ieC71RxKshwfQehsD1YA',
+            'Kivid Pro',
             0.1 * 100
+        );
+        $this->plans['doctor_monthly'] = new SubscriptionPlan( //test Abo Praticien mensuel
+            'price_1OQ3ieC71RxKshwfQehsD1YA',
+            'Kivid Pro',
+            0.1 * 100
+        );
+        $this->plans['doctor_annual'] = new SubscriptionPlan( //test Abo Praticien annuel
+            'price_1OQ3EjC71RxKshwfsPnP0J44',
+            'Kivid Pro',
+            0.2 * 100
         );
     }
 

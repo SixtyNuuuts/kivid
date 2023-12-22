@@ -410,6 +410,7 @@ class FFMKRAdhesion
 
         // set the owning side of the relation if necessary
         if ($doctor !== null && $doctor->getFFMKRAdhesion() !== $this) {
+            $doctor->setSubscriptionRequired(false);
             $doctor->setFFMKRAdhesion($this);
         }
 

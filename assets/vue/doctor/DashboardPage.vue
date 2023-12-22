@@ -159,8 +159,11 @@
                     </p>
                 </div>
                 <div class="btn-request-subscription">
-                    <vs-button @click="stripeCheckout('doctor')">
-                        Je m’abonne
+                    <vs-button class="secondary" @click="stripeCheckout('doctor_monthly')">
+                        Je m'abonne au mois <span class="btn-request-subscription-price">(20€/mois)</span>
+                    </vs-button>
+                    <vs-button class="secondary" @click="stripeCheckout('doctor_annual')">
+                        Je m'abonne à l'année <span class="btn-request-subscription-price">(180€/an)</span>
                     </vs-button>
                 </div>
             </div>
@@ -704,6 +707,36 @@ export default {
         {
             display: none !important;
         }
+    }
+}
+
+.btn-request-subscription
+{
+    .vs-button
+    {
+        box-shadow: 0px 2px 10px 0 rgba(231,223,205, 1);
+
+        .btn-request-subscription-price
+        {
+            text-transform: uppercase;
+            font-size: 1.1rem;
+            margin-left: 0.8rem;
+            color: #c1b79d;
+            position: relative;
+            top: 0.05rem;
+        }
+
+        &:hover 
+        {
+            .btn-request-subscription-price
+            {
+                color: #fff;
+            }
+        }
+    }
+    .vs-button:not(:last-child)
+    {
+        margin-bottom: 2rem;
     }
 }
 

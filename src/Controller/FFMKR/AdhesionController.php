@@ -60,7 +60,8 @@ class AdhesionController extends AbstractController
             );
 
         $doctor->getFFMKRAdhesion()->setNumcli((int)$numcli)->setFirstname(strtoupper($doctor->getFirstname()))->setLastName(strtoupper($doctor->getLastname()))->setEmail($doctor->getEmail());
-
+        $doctor->setSubscriptionRequired(false);
+        
         $this->em->flush();
 
         return $this->json(
