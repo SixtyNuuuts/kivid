@@ -105,6 +105,7 @@ class Doctor extends User
         $this->notifications = new ArrayCollection();
         $this->commentaries = new ArrayCollection();
         $this->worksheets = new ArrayCollection();
+        $this->setSubscriptionRequired(true);
     }
 
     public function getDescription(): ?string

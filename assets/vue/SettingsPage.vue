@@ -299,7 +299,7 @@
                                                             .id
                                                 ).price / 100
                                             }}
-                                            € <span>/ mois</span>
+                                            € <span>/ <span v-if="stripeSubscription.plan.interval==='year'">an</span><span v-else>mois</span></span>
                                         </div>
                                     </div>
 
@@ -357,12 +357,28 @@
                                         Gérer l'abonnement
                                     </vs-button>
                                     <vs-button
-                                        v-if="!stripeSubscription"
-                                        @click="stripeCheckout(userType)"
-                                        class="mt-2"
+                                        v-if="!stripeSubscription && 'patient' === userType"
+                                        @click="stripeCheckout('patient')"
+                                        class="mt-2 btn-request-subscription"
                                     >
                                         <i class="kiv-subscription icon-20"></i>
                                         Je m’abonne
+                                    </vs-button>
+                                    <vs-button
+                                        v-if="!stripeSubscription && 'doctor' === userType"
+                                        @click="stripeCheckout('doctor_monthly')"
+                                        class="mt-2 btn-request-subscription"
+                                    >
+                                        <i class="kiv-subscription icon-20"></i>
+                                        Je m'abonne au mois <span class="btn-request-subscription-price">(20€/mois)</span>
+                                    </vs-button>
+                                    <vs-button
+                                        v-if="!stripeSubscription && 'doctor' === userType"
+                                        @click="stripeCheckout('doctor_annual')"
+                                        class="btn-request-subscription"
+                                    >
+                                        <i class="kiv-subscription icon-20"></i>
+                                        Je m'abonne à l'année <span class="btn-request-subscription-price">(180€/an)</span>
                                     </vs-button>
                                 </div>
                                 <div>
@@ -898,6 +914,30 @@ export default {
     margin-top: 2rem;
 }
 
+.btn-request-subscription
+{
+    &:not(:last-child)
+    {
+        margin-bottom: 1rem;
+    }
+
+    .btn-request-subscription-price
+    {
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        margin-left: 0.6rem;
+        color: #fff;
+    }
+
+    &:hover 
+    {
+        .btn-request-subscription-price
+        {
+            color: #fff;
+        }
+    }
+}
+
 #settings {
     header {
         background-color: $black;
@@ -1257,6 +1297,10 @@ export default {
                         padding: 2.7rem;
                         padding-top: 1.7rem;
                         justify-content: space-between;
+
+                        @media (max-width: 410px) {
+                            padding: 1.7rem;
+                        }
 
                         .sub-details {
                             display: flex;
