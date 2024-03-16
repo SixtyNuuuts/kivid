@@ -361,24 +361,21 @@
                                         @click="stripeCheckout('patient')"
                                         class="mt-2 btn-request-subscription"
                                     >
-                                        <i class="kiv-subscription icon-20"></i>
-                                        Je m’abonne
+                                        <span><i class="kiv-subscription icon-20"></i> Je m’abonne</span>
                                     </vs-button>
                                     <vs-button
                                         v-if="!stripeSubscription && 'doctor' === userType"
                                         @click="stripeCheckout('doctor_monthly')"
                                         class="mt-2 btn-request-subscription"
                                     >
-                                        <i class="kiv-subscription icon-20"></i>
-                                        Je m'abonne au mois <span class="btn-request-subscription-price">(15€/mois)</span>
+                                        <span><i class="kiv-subscription icon-20"></i> Je m'abonne au mois</span> <span class="btn-request-subscription-price">( 20€/mois )</span>
                                     </vs-button>
                                     <vs-button
                                         v-if="!stripeSubscription && 'doctor' === userType"
                                         @click="stripeCheckout('doctor_annual')"
                                         class="btn-request-subscription"
                                     >
-                                        <i class="kiv-subscription icon-20"></i>
-                                        Je m'abonne à l'année <span class="btn-request-subscription-price">(180€/an)</span>
+                                        <span><i class="kiv-subscription icon-20"></i> Je m'abonne à l'année</span> <span class="btn-request-subscription-price">( <span class="btn-request-subscription-reduc">-25%</span> <del class="btn-request-subscription-price-crossed">20€/mois</del> 15€/mois )</span>
                                     </vs-button>
                                 </div>
                                 <div>
@@ -916,25 +913,54 @@ export default {
 
 .btn-request-subscription
 {
+    width: 100%;
+    max-width: 24.7rem;
+     
+    i {
+        font-size: 1rem !important;
+        position: relative;
+        top: 0rem !important;
+        margin-right: 0.1rem;
+    }
+
     &:not(:last-child)
     {
         margin-bottom: 1rem;
+    }
+
+    .vs-button__content
+    {
+        flex-direction: column; 
     }
 
     .btn-request-subscription-price
     {
         text-transform: uppercase;
         font-size: 0.9rem;
-        margin-left: 0.6rem;
-        color: #fff;
+        margin-top: 0.1rem;
+        color: #fdd2c4;
     }
 
-    &:hover 
+    .btn-request-subscription-reduc
     {
-        .btn-request-subscription-price
-        {
-            color: #fff;
-        }
+        background-color: #fcb099;
+        color: #fff;
+        padding: 0.1rem 0.3rem;
+        border-radius: 0.2rem;
+        margin: 0 0rem;
+        font-size: 0.6rem;
+        position: relative;
+        top: -0.1rem;
+        font-weight: bold;
+        transition: 0.25s;
+    }
+
+    .btn-request-subscription-price-crossed
+    {
+        text-transform: line-through;
+        font-size: 0.8rem;
+        color: #ffc5b3;
+        transition: 0.25s;
     }
 }
 

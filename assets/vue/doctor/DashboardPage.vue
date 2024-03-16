@@ -160,10 +160,10 @@
                 </div>
                 <div class="btn-request-subscription">
                     <vs-button class="secondary" @click="stripeCheckout('doctor_monthly')">
-                        Je m'abonne au mois <span class="btn-request-subscription-price">(15€/mois)</span>
+                        <span>Je m'abonne au mois</span> <span class="btn-request-subscription-price">( 20€/mois )</span>
                     </vs-button>
                     <vs-button class="secondary" @click="stripeCheckout('doctor_annual')">
-                        Je m'abonne à l'année <span class="btn-request-subscription-price">(180€/an)</span>
+                        <span>Je m'abonne à l'année</span> <span class="btn-request-subscription-price">( <span class="btn-request-subscription-reduc">-25%</span> <del class="btn-request-subscription-price-crossed">20€/mois</del> 15€/mois )</span>
                     </vs-button>
                 </div>
             </div>
@@ -712,9 +712,18 @@ export default {
 
 .btn-request-subscription
 {
+    width: 100%;
+    max-width: 27rem;
+
     .vs-button
     {
         box-shadow: 0px 2px 10px 0 rgba(231,223,205, 1);
+        width: 100%;
+
+        .vs-button__content
+        {
+           flex-direction: column; 
+        }
 
         .btn-request-subscription-price
         {
@@ -724,6 +733,30 @@ export default {
             color: #c1b79d;
             position: relative;
             top: 0.05rem;
+            margin-top: 0.2rem;
+            transition: 0.25s;
+        }
+
+        .btn-request-subscription-reduc
+        {
+            background-color: #e3dfd3;
+            color: #fff;
+            padding: 0rem 0.3rem;
+            border-radius: 0.2rem;
+            margin: 0 0rem;
+            font-size: 0.7rem;
+            position: relative;
+            top: -0.1rem;
+            font-weight: bold;
+            transition: 0.25s;
+         }
+
+        .btn-request-subscription-price-crossed
+        {
+            text-transform: line-through;
+            font-size: 1rem;
+            color: #d7d3c8;
+            transition: 0.25s;
         }
 
         &:hover 
@@ -731,6 +764,17 @@ export default {
             .btn-request-subscription-price
             {
                 color: #fff;
+            }
+
+            .btn-request-subscription-reduc
+            {
+                background-color: #fcb099;
+                color: #fff;
+            }
+
+            .btn-request-subscription-price-crossed
+            {
+                color: #ffc5b3;
             }
         }
     }
